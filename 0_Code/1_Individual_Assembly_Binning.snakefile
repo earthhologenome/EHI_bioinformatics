@@ -550,7 +550,16 @@ rule coverM_assembly:
 #     threads:
 #     shell:
 ################################################################################
-
+### Upload outputs to ENA        *** IN PROGRESS ***
+###
+# rule upload_to_ENA:
+#     input:
+#     output:
+#     params:
+#     message:
+#     threads:
+#     shell:
+################################################################################
 
 
 onsuccess:
