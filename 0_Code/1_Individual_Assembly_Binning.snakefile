@@ -1,7 +1,7 @@
 ################################################################################
 ################################################################################
 ################################################################################
-### Snakefile for EHI's individual assembly and binnsing pipeline            ###
+### Snakefile for EHI's individual assembly and binning pipeline             ###
 ### Raphael Eisenhofer 01/2022                                               ###
 ###                                                                          ###
 ################################################################################
@@ -188,7 +188,7 @@ rule coverM:
             > {output}
         """
 ################################################################################
-### Create figures/table from CoverM output        *** IN PROGRESS ***
+### Create figures/table from host CoverM output        *** IN PROGRESS ***
 ###
 # rule create_host_mapping_reports:
 #     input:
@@ -560,7 +560,6 @@ rule coverM_assembly:
 #     threads:
 #     shell:
 ################################################################################
-
 
 onsuccess:
     shell("""
