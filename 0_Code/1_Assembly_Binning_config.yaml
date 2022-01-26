@@ -1,0 +1,4 @@
+### Config file for assembly/binning pipeline
+### RE 01/2022
+
+assembler: metaspades
