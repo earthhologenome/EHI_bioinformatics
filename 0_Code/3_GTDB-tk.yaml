@@ -1,0 +1,7 @@
+ name: GTDB-tk
+ channels:
+    - conda-forge
+    - bioconda
+    - defaults
+ dependencies:
+    - gtdbtk=1.7.0

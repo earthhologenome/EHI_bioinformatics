@@ -1,0 +1,6 @@
+ name: dRep
+ channels:
+    - bioconda
+ dependencies:
+    - drep
+    - pigz=2.6
