@@ -1,7 +1,7 @@
 ################################################################################
 ################################################################################
 ################################################################################
-# This BASH script prepares the 1_Preprocess_QC.snakefile for EHI sample input.
+# This BASH script automatically uploads raw EHI reads to the ENA.
 # Raphael Eisenhofer 4/2022
 #         .----------------.  .----------------.  .----------------.
 #        | .--------------. || .--------------. || .--------------. |
@@ -31,7 +31,6 @@ while read group ref;
 
 # Download reference genomes, and put them into their respective sample group folders
 ## NOTE -> ADD IF STATEMENT TO NOT RUN IF REF FILE ALREADY EXISTS?
-## NOTE -> STORE PRE-INDEXED GENOMES AND COPY TO FOLDER
 while reads group ref;
   do wget $ref &&
      mv $ref 1_References/$group/;
@@ -65,7 +64,6 @@ for group in temp/*.snakefile;
   do sed -i'' "s@0_Logs@0_Logs/$(basename ${group/_1_Preprocess_QC.snakefile/})@" $group;
    done
 
-### Launch snakefiles
 
 # Clean up temp files
 rm -r temp
