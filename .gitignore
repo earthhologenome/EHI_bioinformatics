@@ -1,2 +1,6 @@
-2_Reads/*
+2_Reads/0_Raw/*/
+2_Reads/1_Untrimmed/*/
 3_Outputs/*
+.snakemake/*
+temp/*
+PR_Preprocessing_input.csv

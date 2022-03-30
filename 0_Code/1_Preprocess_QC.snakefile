@@ -1,49 +1,51 @@
 ################################################################################
 ################################################################################
 ################################################################################
-# Snakefile for quality controlling (trimming/mapping to host) reads and assembly
-# Raphael Eisenhofer 10/2021
-#
+# EHI snakefile for preprocessing raw reads (trimming/mapping to host)
+# Raphael Eisenhofer 4/2022
+#         .----------------.  .----------------.  .----------------.
+#        | .--------------. || .--------------. || .--------------. |
+#        | |  _________   | || |  ____  ____  | || |     _____    | |
+#        | | |_   ___  |  | || | |_   ||   _| | || |    |_   _|   | |
+#        | |   | |_  \_|  | || |   | |__| |   | || |      | |     | |
+#        | |   |  _|  _   | || |   |  __  |   | || |      | |     | |
+#        | |  _| |___/ |  | || |  _| |  | |_  | || |     _| |_    | |
+#        | | |_________|  | || | |____||____| | || |    |_____|   | |
+#        | |              | || |              | || |              | |
+#        | '--------------' || '--------------' || '--------------' |
+#         '----------------'  '----------------'  '----------------'
 ################################################################################
 ################################################################################
 ################################################################################
 
-### Setup group and sample wildcards:
+### Setup sample inputs
 import os
 from glob import glob
 
-# GROUP = [os.path.basename(dir)
-#          for dir in glob(f"2_Reads/0_Untrimmed/*")]
-# SAMPLE = [os.path.relpath(fn, "2_Reads/0_Untrimmed/").replace("_1.fastq.gz", "")
-#             for group in GROUP
-#             for fn in glob(f"2_Reads/0_Untrimmed/{group}/*_1.fastq.gz")]
+SAMPLE = [os.path.basename(fn).replace("_R_1.fastq.gz", "")
+            for fn in glob(f"2_Reads/1_Untrimmed/*_R_1.fastq.gz")]
 
-SAMPLE = [os.path.basename(fn).replace("_1.fastq.gz", "")
-            for fn in glob(f"2_Reads/0_Untrimmed/*_1.fastq.gz")]
-
-# print(GROUP)
+print("Detected the following samples:")
 print(SAMPLE)
+
 ################################################################################
 ### Setup the desired outputs
 rule all:
     input:
-        expand("2_Reads/1_Trimmed/{sample}_trimmed_1.fastq.gz", sample=SAMPLE),
-        expand("2_Reads/1_Trimmed/{sample}_trimmed_2.fastq.gz", sample=SAMPLE),
-        expand("3_Outputs/1_QC/1_Host_BAMs/{sample}_host.bam", sample=SAMPLE),
         "3_Outputs/1_QC/2_CoverM/coverM_mapped_host.tsv"
 ################################################################################
 ### Preprocess the reads using fastp
 rule fastp:
     input:
-        r1i = "2_Reads/0_Untrimmed/{sample}_1.fastq.gz",
-        r2i = "2_Reads/0_Untrimmed/{sample}_2.fastq.gz"
+        r1i = "2_Reads/1_Untrimmed/{sample}_R_1.fastq.gz",
+        r2i = "2_Reads/1_Untrimmed/{sample}_R_2.fastq.gz"
     output:
-        r1o = "2_Reads/1_Trimmed/{sample}_trimmed_1.fastq.gz",
-        r2o = "2_Reads/1_Trimmed/{sample}_trimmed_2.fastq.gz",
-        fastp_html = "2_Reads/2_fastp_results/{sample}.html",
-        fastp_json = "2_Reads/2_fastp_results/{sample}.json"
+        r1o = "2_Reads/2_Trimmed/{sample}_trimmed_1.fastq.gz",
+        r2o = "2_Reads/2_Trimmed/{sample}_trimmed_2.fastq.gz",
+        fastp_html = "2_Reads/3_fastp_results/{sample}.html",
+        fastp_json = "2_Reads/3_fastp_results/{sample}.json"
     conda:
-        "1_QC.yaml"
+        "1_Preprocess_QC.yaml"
     threads:
         8
     benchmark:
@@ -78,7 +80,7 @@ rule index_ref:
         bt2_index = "1_References/CattedRefs.fna.gz.rev.2.bt2l",
         catted_ref = "1_References/CattedRefs.fna.gz"
     conda:
-        "1_QC.yaml"
+        "1_Preprocess_QC.yaml"
     threads:
         40
     log:
@@ -101,19 +103,19 @@ rule index_ref:
 ### Map samples to host genomes, then split BAMs:
 rule map_to_ref:
     input:
-        r1i = "2_Reads/1_Trimmed/{sample}_trimmed_1.fastq.gz",
-        r2i = "2_Reads/1_Trimmed/{sample}_trimmed_2.fastq.gz",
+        r1i = "2_Reads/2_Trimmed/{sample}_trimmed_1.fastq.gz",
+        r2i = "2_Reads/2_Trimmed/{sample}_trimmed_2.fastq.gz",
         catted_ref = "1_References/CattedRefs.fna.gz",
         bt2_index = "1_References/CattedRefs.fna.gz.rev.2.bt2l"
     output:
         all_bam = "3_Outputs/1_QC/1_BAMs/{sample}.bam",
         host_bam = "3_Outputs/1_QC/1_Host_BAMs/{sample}_host.bam",
-        non_host_r1 = "2_Reads/3_Host_removed/{sample}_non_host_1.fastq.gz",
-        non_host_r2 = "2_Reads/3_Host_removed/{sample}_non_host_2.fastq.gz",
+        non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq.gz",
+        non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq.gz",
     conda:
-        "1_QC.yaml"
+        "1_Preprocess_QC.yaml"
     threads:
-        8
+        20
     benchmark:
         "3_Outputs/0_Logs/{sample}_mapping.benchmark.tsv"
     log:
@@ -143,19 +145,19 @@ rule map_to_ref:
 ### Calculate % of each sample's reads mapping to host genome/s
 rule coverM:
     input:
-        expand("3_Outputs/1_QC/1_BAMs/{sample}.bam", sample=SAMPLE)
+        "3_Outputs/1_QC/1_BAMs/{sample}.bam"
     output:
-        "3_Outputs/1_QC/2_CoverM/coverM_mapped_host.tsv"
+        "3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv"
     params:
         assembly = "1_References/CattedRefs.fna.gz"
     conda:
-        "1_QC.yaml"
+        "1_Preprocess_QC.yaml"
     threads:
         40
     benchmark:
-        "3_Outputs/0_Logs/coverM.benchmark.tsv"
+        "3_Outputs/0_Logs/{sample}_coverM.benchmark.tsv"
     log:
-        "3_Outputs/0_Logs/coverM.log"
+        "3_Outputs/0_Logs/{sample}_coverM.log"
     message:
         "Calculating percentage of reads mapped to host genome/s using coverM"
     shell:

@@ -8,3 +8,5 @@
     - samtools=1.12
     - bowtie2=2.4.4
     - coverm=0.6.1
+    - nonpareil=3.4.1
+    - ena-upload-cli=0.5.3
