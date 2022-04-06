@@ -110,8 +110,8 @@ rule map_to_ref:
     output:
         all_bam = "3_Outputs/1_QC/1_BAMs/{sample}.bam",
         host_bam = "3_Outputs/1_QC/1_Host_BAMs/{sample}_host.bam",
-        non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq.gz",
-        non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq.gz",
+        non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq",
+        non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq",
     conda:
         "1_Preprocess_QC.yaml"
     threads:
@@ -133,13 +133,44 @@ rule map_to_ref:
             -2 {input.r2i} \
         | samtools view -b -@ {threads} - | samtools sort -@ {threads} -o {output.all_bam} - &&
 
-        # Split extract non-host reads
+        # Extract non-host reads (note we're not compressing for nonpareil)
         samtools view -b -f12 -@ {threads} {output.all_bam} \
-        | samtools fastq -@ {threads} -c 6 -1 {output.non_host_r1} -2 {output.non_host_r2} - &&
+        | samtools fastq -@ {threads} -1 {output.non_host_r1} -2 {output.non_host_r2} - &&
 
         # Send host reads to BAM
         samtools view -b -F12 -@ {threads} {output.all_bam} \
         | samtools sort -@ {threads} -o {output.host_bam} -
+        """
+################################################################################
+### Estimate diversity and required sequencing effort using nonpareil
+rule nonpareil:
+    input:
+        non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq",
+        non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq",
+    output:
+        npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
+    params:
+        sample = "3_Outputs/1_QC/3_nonpareil/{sample}"
+    conda:
+        "1_Preprocess_QC.yaml"
+    threads:
+        10
+    benchmark:
+        "3_Outputs/0_Logs/{sample}_nonpareil.benchmark.tsv"
+    message:
+        "Estimating microbial diversity using nonpareil"
+    shell:
+        """
+        #Run nonpareil
+        nonpareil \
+            -s {input.non_host_r1} \
+            -f fastq \
+            -t {threads} \
+            -b {params.sample}
+
+        #Compress reads
+        pigz -p {threads} {input.non_host_r1}
+        pigz -p {threads} {input.non_host_r2}
         """
 ################################################################################
 ### Calculate % of each sample's reads mapping to host genome/s
