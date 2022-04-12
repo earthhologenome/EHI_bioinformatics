@@ -103,7 +103,7 @@ rule gtdbtk:
     shell:
         """
         # Specify path to reference data:
-        GTDBTK_DATA_PATH=/home/projects/ku-cbd/people/rapeis/0_DBs/release202/
+        GTDBTK_DATA_PATH=/home/projects/ku-cbd/people/rapeis/0_DBs/release207/
 
         # Run GTDB-tk:
         gtdbtk classify_wf \
@@ -158,7 +158,7 @@ rule Coassembly_index:
             done
 
         # Concatenate the dereplicated MAGs into a single file
-        cat {params.MAGs}/*_renamed.fa.gz > {params.catted_MAGs} 
+        cat {params.MAGs}/*_renamed.fa.gz > {params.catted_MAGs}
 
         # Index the MAG catalogue
         bowtie2-build \
