@@ -22,8 +22,8 @@
 import os
 from glob import glob
 
-SAMPLE = [os.path.basename(fn).replace("_R_1.fastq.gz", "")
-            for fn in glob(f"2_Reads/1_Untrimmed/*_R_1.fastq.gz")]
+SAMPLE = [os.path.basename(fn).replace("_R1.fastq.gz", "")
+            for fn in glob(f"2_Reads/1_Untrimmed/*_R1.fastq.gz")]
 
 print("Detected the following samples:")
 print(SAMPLE)
@@ -37,8 +37,8 @@ rule all:
 ### Preprocess the reads using fastp
 rule fastp:
     input:
-        r1i = "2_Reads/1_Untrimmed/{sample}_R_1.fastq.gz",
-        r2i = "2_Reads/1_Untrimmed/{sample}_R_2.fastq.gz"
+        r1i = "2_Reads/1_Untrimmed/{sample}_R1.fastq.gz",
+        r2i = "2_Reads/1_Untrimmed/{sample}_R2.fastq.gz"
     output:
         r1o = "2_Reads/2_Trimmed/{sample}_trimmed_1.fastq.gz",
         r2o = "2_Reads/2_Trimmed/{sample}_trimmed_2.fastq.gz",
