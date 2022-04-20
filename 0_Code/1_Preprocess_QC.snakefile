@@ -147,6 +147,7 @@ rule nonpareil:
     input:
         non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq",
         non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq",
+        all_bam = "3_Outputs/1_QC/1_BAMs/{sample}.bam",
     output:
         npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
     params:
@@ -176,7 +177,7 @@ rule nonpareil:
 ### Calculate % of each sample's reads mapping to host genome/s
 rule coverM:
     input:
-        "3_Outputs/1_QC/1_BAMs/{sample}.bam"
+        "3_Outputs/1_QC/3_nonpareil/{sample}.npo""
     output:
         "3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv"
     params:
