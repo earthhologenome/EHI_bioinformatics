@@ -32,7 +32,7 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-        "3_Outputs/1_QC/2_CoverM/coverM_mapped_host.tsv"
+        expand("3_Outputs/1_QC/2_CoverM/{sample}coverM_mapped_host.tsv", sample=SAMPLE)
 ################################################################################
 ### Preprocess the reads using fastp
 rule fastp:
