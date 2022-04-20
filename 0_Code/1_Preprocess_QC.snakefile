@@ -67,8 +67,8 @@ rule fastp:
             --thread {threads} \
             --html {output.fastp_html} \
             --json {output.fastp_json} \
-            --adapter_sequence CTGTCTCTTATACACATCT \
-            --adapter_sequence_r2 CTGTCTCTTATACACATCT \
+            --adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
+            --adapter_sequence_r2  AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
         &> {log}
         """
 ################################################################################
