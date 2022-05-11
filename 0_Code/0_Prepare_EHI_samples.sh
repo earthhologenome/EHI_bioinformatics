@@ -18,54 +18,56 @@
 ################################################################################
 ################################################################################
 
-### General setup
-# Create temp dir, get reference genome groups, create sample group directories
-mkdir temp
-cut -f3,4 -d ',' PR_Preprocessing_Input.csv | sed '1d;' | uniq | tr ' ' '_' | tr ',' '\t' > temp/group_genome.txt
-cut -f1,3,10,11 -d ',' PR_Preprocessing_Input.csv | sed '1d;' | tr ' ' '_' | tr ',' '\t' | sed 's/_1.fq.gz//g' > temp/group_alias_file_seqbatch.txt
+## Run preprocessing pipeline
+#Rename raw sequencing files to EHIXXXXX numbers
+#Create read groups (extract species column, sort, get unique values)
+cut -f5 SEB001_experiment_checklist.tsv | sed '1d; s/ /_/g' | sort | uniq > genome_groups.tsv
+while read group;
+  do mkdir -p /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed/$group &&
+     mkdir -p /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/1_References/$group;
+   done < genome_groups.tsv
 
-while read group ref;
-  do mkdir -p 2_Reads/1_Untrimmed/$group &&
-     mkdir -p 1_References/$group;
-   done < temp/group_genome.txt
+#Manually put reference genomes in their respective folders
+#Can automate this eventually, as AirTable has ftp links (or with preindexed computerome paths)
 
-# Download reference genomes, and put them into their respective sample group folders
-## NOTE -> ADD IF STATEMENT TO NOT RUN IF REF FILE ALREADY EXISTS?
-## NOTE -> STORE PRE-INDEXED GENOMES AND COPY TO FOLDER
-while reads group ref;
-  do wget $ref &&
-     mv $ref 1_References/$group/;
-   done < temp/group_genome.txt
+#extract first (EHIXXXXX#), fifth (species), and last (reverse file name)
+cut -f1,5,15 SEB001_experiment_checklist.tsv | sed '1d; s/ /_/g' > EHIno_group_filename.tsv
 
-# Rename raw filenames to EHI alias (e.g. EHI00001)
-## NOTE -> Option to add hanlding of disparate file suffixes (e.g. .fq and .fastq)
-while read alias group file seqbatch;
-  do cp 2_Reads/0_Raw/$seqbatch/"$file"_1.fq.gz 2_Reads/1_Untrimmed/$group/"$alias"_R_1.fastq.gz &&
-     cp 2_Reads/0_Raw/$seqbatch/"$file"_2.fq.gz 2_Reads/1_Untrimmed/$group/"$alias"_R_2.fastq.gz;
-   done < temp/group_alias_file_seqbatch.txt
+#Sym link raw reads
+ln -s /home/projects/ku-cbd/people/antalb/ehi_novogene/* /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed
+
+#Create folders in 1_Untrimmed, rename sym-linked files
+while read EHI group filename;
+  do mv /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed/*"$filename" /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed/"$group"/"$EHI"_1.fastq.gz &&
+     mv /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed/*${filename/_1.fq/_2.fq} /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed/"$group"/"$EHI"_2.fastq.gz;
+done < EHIno_group_filename.tsv
 
 
-### Setup 1_Preprocess_QC snakefiles -- one per sample group
-for group in 1_References/*;
-  do cp 0_Code/1_Preprocess_QC.snakefile temp/$(basename $group)_1_Preprocess_QC.snakefile;
-   done
+
+##Setup a snakefile per species
+mkdir temp_snakefiles
+
+for group in /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/1_References/*;
+  do cp /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/0_Code/1_Preprocess_QC.snakefile temp/$(basename $group)_1_Preprocess_QC.snakefile;
+done
 
 # Edit sample group paths for read input
 for group in temp/*.snakefile;
-  do sed -i'' "s@1_Untrimmed/\*_1.fq.gz@1_Untrimmed/$(basename ${group/_1_Preprocess_QC.snakefile/})/*_1.fq.gz@" $group;
-   done
+  do sed -i'' "s@1_Untrimmed/\*_1.fastq.gz@1_Untrimmed/$(basename ${group/_1_Preprocess_QC.snakefile/})/*_1.fastq.gz@" $group;
+done
 
 # Edit target reference genome path for input/output in rule 'index_ref' and input in rule 'map_to_ref'
 for group in temp/*.snakefile;
   do sed -i'' "s@\"1_References@\"1_References/$(basename ${group/_1_Preprocess_QC.snakefile/})@" $group;
-   done
+done
 
 # Edit snakefile to create a 'log' and 'benchmark' folder per group
 for group in temp/*.snakefile;
   do sed -i'' "s@0_Logs@0_Logs/$(basename ${group/_1_Preprocess_QC.snakefile/})@" $group;
-   done
+done
 
-### Launch snakefiles
 
-# Clean up temp files
-rm -r temp
+##Launch snakefiles on Computerome!
+for i in temp/*.snakefile;
+  do snakemake -s snakefile -j 30 --cluster "qsub -l nodes=1:ppn={threads},mem={memory},walltime=00:NN:00:00" --use-conda --conda-frontend conda;
+done
