@@ -103,7 +103,7 @@ rule gtdbtk:
     shell:
         """
         # Specify path to reference data:
-        GTDBTK_DATA_PATH=/home/projects/ku-cbd/people/rapeis/0_DBs/release207/
+        GTDBTK_DATA_PATH=/home/projects/ku-cbd/people/rapeis/0_DBs/release207_v2
 
         # Run GTDB-tk:
         gtdbtk classify_wf \

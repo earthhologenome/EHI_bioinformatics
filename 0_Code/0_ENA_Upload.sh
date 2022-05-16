@@ -104,6 +104,12 @@ cat R1.tsv R2.tsv > R1R2.tsv
 paste EHInumbers2.tsv EHInumbers2.tsv R1R2.tsv fastq.tsv > merged.tsv
 cat run_headers.tsv merged.tsv > SEB001_ENA_run_sheet.tsv
 
+##In this example, there is no EHI00048, so remove from exp/run table
+cp SEB001_experiment_checklist.tsv SEB001_experiment_checklist.tsv1 && rm SEB001_experiment_checklist.tsv
+grep -v 'EHI00048' SEB001_experiment_checklist.tsv1 > SEB001_experiment_checklist.tsv && rm SEB001_experiment_checklist.tsv1
+cp SEB001_ENA_run_sheet.tsv SEB001_ENA_run_sheet.tsv1 && rm SEB001_ENA_run_sheet.tsv
+grep -v 'EHI00048' SEB001_ENA_run_sheet.tsv1 > SEB001_ENA_run_sheet.tsv && rm SEB001_ENA_run_sheet.tsv1
+
 
 ##Submit the experiment and run ENA sheets, and upload the raw reads to ENA!
 ena-upload-cli \
@@ -112,5 +118,4 @@ ena-upload-cli \
 --experiment SEB001_experiment_checklist.tsv \
 --run SEB001_ENA_run_sheet.tsv \
 --secret /home/projects/ku-cbd/people/rapeis/EHI/0_Software/.secret.yml \
---data /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed/*/*.fastq.gz \
---draft
+--data /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed/*/*.fastq.gz
