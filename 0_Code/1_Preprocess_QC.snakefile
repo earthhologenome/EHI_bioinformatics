@@ -177,7 +177,7 @@ rule nonpareil:
 ### Calculate % of each sample's reads mapping to host genome/s
 rule coverM:
     input:
-        "3_Outputs/1_QC/3_nonpareil/{sample}.npo""
+        "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
     output:
         "3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv"
     params:
