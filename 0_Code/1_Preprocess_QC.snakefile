@@ -40,8 +40,8 @@ rule fastp:
         r1i = "2_Reads/1_Untrimmed/{sample}_R1.fastq.gz",
         r2i = "2_Reads/1_Untrimmed/{sample}_R2.fastq.gz"
     output:
-        r1o = "2_Reads/2_Trimmed/{sample}_trimmed_1.fastq.gz",
-        r2o = "2_Reads/2_Trimmed/{sample}_trimmed_2.fastq.gz",
+        r1o = temp("2_Reads/2_Trimmed/{sample}_trimmed_1.fastq.gz"),
+        r2o = temp("2_Reads/2_Trimmed/{sample}_trimmed_2.fastq.gz"),
         fastp_html = "2_Reads/3_fastp_results/{sample}.html",
         fastp_json = "2_Reads/3_fastp_results/{sample}.json"
     conda:
@@ -108,7 +108,7 @@ rule map_to_ref:
         catted_ref = "1_References/CattedRefs.fna.gz",
         bt2_index = "1_References/CattedRefs.fna.gz.rev.2.bt2l"
     output:
-        all_bam = "3_Outputs/1_QC/1_BAMs/{sample}.bam",
+        all_bam = temp("3_Outputs/1_QC/1_BAMs/{sample}.bam"),
         host_bam = "3_Outputs/1_QC/1_Host_BAMs/{sample}_host.bam",
         non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq",
         non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq",
@@ -208,6 +208,4 @@ onsuccess:
     shell("""
             mail -s "workflow completed" raph.eisenhofer@gmail.com < {log}
 
-            #Clean up files
-            rm 3_Outputs/1_QC/1_BAMs/*/*.bam
           """)

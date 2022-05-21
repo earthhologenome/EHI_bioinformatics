@@ -131,11 +131,20 @@ cp SEB001_ENA_run_sheet.tsv SEB001_ENA_run_sheet.tsv1 && rm SEB001_ENA_run_sheet
 grep -v 'EHI00048' SEB001_ENA_run_sheet.tsv1 > SEB001_ENA_run_sheet.tsv && rm SEB001_ENA_run_sheet.tsv1
 
 
-##Submit the experiment and run ENA sheets, and upload the raw reads to ENA!
+##FTP is not very stable (had a lot of issues with stalling halfway through submission)
+##We'll use aspera cli instead:
+# https://d3gcli72yxqn2z.cloudfront.net/connect_latest/v4/bin/ibm-aspera-connect_4.1.3.93_linux.tar.gz
+# or: https://www.ibm.com/aspera/connect/
+
+##Upload the files via aspera (they are stored temporarily on ENA server, and can be linked after)
+
+
+##Submit the experiment and run ENA sheets, linking the files we uploaded in the previous step
 ena-upload-cli \
 --action add \
 --center 'Earth Hologenome Initiative' \
 --experiment SEB001_experiment_checklist.tsv \
 --run SEB001_ENA_run_sheet.tsv \
 --secret /home/projects/ku-cbd/people/rapeis/EHI/0_Software/.secret.yml \
---data /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed/*/*.fastq.gz
+--data /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed/*/*.fastq.gz \
+--no_data_upload
