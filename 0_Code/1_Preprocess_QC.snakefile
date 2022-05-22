@@ -176,6 +176,7 @@ rule nonpareil:
         nonpareil \
             -s {input.non_host_r1} \
             -f fastq \
+            -T kmer \
             -t {threads} \
             -b {params.sample}
 
