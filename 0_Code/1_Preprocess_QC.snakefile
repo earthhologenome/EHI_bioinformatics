@@ -170,6 +170,8 @@ rule nonpareil:
         "Estimating microbial diversity using nonpareil"
     shell:
         """
+        mkdir -p 3_Outputs/1_QC/3_nonpareil
+
         #Run nonpareil
         nonpareil \
             -s {input.non_host_r1} \
