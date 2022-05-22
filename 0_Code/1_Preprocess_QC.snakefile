@@ -48,6 +48,8 @@ rule fastp:
         "0_Code/1_Preprocess_QC.yaml"
     threads:
         8
+    resources:
+        mem_gb=24
     benchmark:
         "3_Outputs/0_Logs/{sample}_fastp.benchmark.tsv"
     log:
@@ -83,6 +85,8 @@ rule index_ref:
         "0_Code/1_Preprocess_QC.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     log:
         "3_Outputs/0_Logs/host_genome_indexing.log"
     message:
@@ -116,6 +120,8 @@ rule map_to_ref:
         "0_Code/1_Preprocess_QC.yaml"
     threads:
         20
+    resources:
+        mem_gb=90
     benchmark:
         "3_Outputs/0_Logs/{sample}_mapping.benchmark.tsv"
     log:
@@ -156,6 +162,8 @@ rule nonpareil:
         "0_Code/1_Preprocess_QC.yaml"
     threads:
         10
+    resources:
+        mem_gb=45
     benchmark:
         "3_Outputs/0_Logs/{sample}_nonpareil.benchmark.tsv"
     message:
@@ -186,6 +194,8 @@ rule coverM:
         "0_Code/1_Preprocess_QC.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{sample}_coverM.benchmark.tsv"
     log:
