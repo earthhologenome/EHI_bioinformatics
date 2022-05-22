@@ -32,7 +32,8 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-        expand("3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv", sample=SAMPLE)
+        expand("3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
+        expand("3_Outputs/1_QC/3_nonpareil/{sample}.npo", sample=SAMPLE)
 ################################################################################
 ### Preprocess the reads using fastp
 rule fastp:
@@ -153,7 +154,6 @@ rule nonpareil:
     input:
         non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq",
         non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq",
-        all_bam = "3_Outputs/1_QC/1_BAMs/{sample}.bam",
     output:
         npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
     params:
@@ -188,7 +188,7 @@ rule nonpareil:
 ### Calculate % of each sample's reads mapping to host genome/s
 rule coverM:
     input:
-        "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
+        "3_Outputs/1_QC/1_BAMs/{sample}.bam"
     output:
         "3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv"
     params:
@@ -196,9 +196,9 @@ rule coverM:
     conda:
         "0_Code/1_Preprocess_QC.yaml"
     threads:
-        40
+        10
     resources:
-        mem_gb=180
+        mem_gb=45
     benchmark:
         "3_Outputs/0_Logs/{sample}_coverM.benchmark.tsv"
     log:
