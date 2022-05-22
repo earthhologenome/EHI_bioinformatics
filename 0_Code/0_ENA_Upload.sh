@@ -148,3 +148,5 @@ ena-upload-cli \
 --secret /home/projects/ku-cbd/people/rapeis/EHI/0_Software/.secret.yml \
 --data /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/2_Reads/1_Untrimmed/*/*.fastq.gz \
 --no_data_upload
+
+mv receipt.xml SEB001_receipt_run.xml
