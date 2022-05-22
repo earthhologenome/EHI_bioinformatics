@@ -45,7 +45,7 @@ rule fastp:
         fastp_html = "2_Reads/3_fastp_results/{sample}.html",
         fastp_json = "2_Reads/3_fastp_results/{sample}.json"
     conda:
-        "1_Preprocess_QC.yaml"
+        "0_Code/1_Preprocess_QC.yaml"
     threads:
         8
     benchmark:
@@ -80,7 +80,7 @@ rule index_ref:
         bt2_index = "1_References/CattedRefs.fna.gz.rev.2.bt2l",
         catted_ref = "1_References/CattedRefs.fna.gz"
     conda:
-        "1_Preprocess_QC.yaml"
+        "0_Code/1_Preprocess_QC.yaml"
     threads:
         40
     log:
@@ -113,7 +113,7 @@ rule map_to_ref:
         non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq",
         non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq",
     conda:
-        "1_Preprocess_QC.yaml"
+        "0_Code/1_Preprocess_QC.yaml"
     threads:
         20
     benchmark:
@@ -153,7 +153,7 @@ rule nonpareil:
     params:
         sample = "3_Outputs/1_QC/3_nonpareil/{sample}"
     conda:
-        "1_Preprocess_QC.yaml"
+        "0_Code/1_Preprocess_QC.yaml"
     threads:
         10
     benchmark:
@@ -183,7 +183,7 @@ rule coverM:
     params:
         assembly = "1_References/CattedRefs.fna.gz"
     conda:
-        "1_Preprocess_QC.yaml"
+        "0_Code/1_Preprocess_QC.yaml"
     threads:
         40
     benchmark:
