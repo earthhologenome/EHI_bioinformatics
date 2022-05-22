@@ -48,26 +48,35 @@ done < EHIno_group_filename.tsv
 mkdir temp_snakefiles
 
 for group in /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/1_References/*;
-  do cp /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/0_Code/1_Preprocess_QC.snakefile temp/$(basename $group)_1_Preprocess_QC.snakefile;
+  do cp /home/projects/ku-cbd/people/rapeis/EHI/SEB001/EHI_bioinformatics/0_Code/1_Preprocess_QC.snakefile temp_snakefiles/$(basename $group)_1_Preprocess_QC.snakefile;
 done
 
 # Edit sample group paths for read input
-for group in temp/*.snakefile;
+for group in temp_snakefiles/*.snakefile;
   do sed -i'' "s@1_Untrimmed/\*_1.fastq.gz@1_Untrimmed/$(basename ${group/_1_Preprocess_QC.snakefile/})/*_1.fastq.gz@" $group;
 done
 
+for group in temp_snakefiles/*.snakefile;
+  do sed -i'' "s@1_Untrimmed/{sample}_1.fastq.gz@1_Untrimmed/$(basename ${group/_1_Preprocess_QC.snakefile/})/{sample}_1.fastq.gz@" $group;
+done
+
+for group in temp_snakefiles/*.snakefile;
+  do sed -i'' "s@1_Untrimmed/{sample}_2.fastq.gz@1_Untrimmed/$(basename ${group/_1_Preprocess_QC.snakefile/})/{sample}_2.fastq.gz@" $group;
+done
+
+
 # Edit target reference genome path for input/output in rule 'index_ref' and input in rule 'map_to_ref'
-for group in temp/*.snakefile;
+for group in temp_snakefiles/*.snakefile;
   do sed -i'' "s@\"1_References@\"1_References/$(basename ${group/_1_Preprocess_QC.snakefile/})@" $group;
 done
 
 # Edit snakefile to create a 'log' and 'benchmark' folder per group
-for group in temp/*.snakefile;
+for group in temp_snakefiles/*.snakefile;
   do sed -i'' "s@0_Logs@0_Logs/$(basename ${group/_1_Preprocess_QC.snakefile/})@" $group;
 done
 
 
 ##Launch snakefiles on Computerome!
-for i in temp/*.snakefile;
+for i in temp_snakefiles/*.snakefile;
   do snakemake -s snakefile -j 30 --cluster "qsub -l nodes=1:ppn={threads},mem={memory},walltime=00:NN:00:00" --use-conda --conda-frontend conda;
 done
