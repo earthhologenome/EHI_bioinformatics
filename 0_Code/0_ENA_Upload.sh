@@ -137,7 +137,7 @@ grep -v 'EHI00048' SEB001_ENA_run_sheet.tsv1 > SEB001_ENA_run_sheet.tsv && rm SE
 # or: https://www.ibm.com/aspera/connect/
 
 ##Upload the files via aspera (they are stored temporarily on ENA server, and can be linked after)
-
+ascp -QT -l100M -L- ../EHI_bioinformatics/2_Reads/1_Untrimmed/*/*.fastq.gz Webin-61693@webin.ebi.ac.uk:
 
 ##Submit the experiment and run ENA sheets, linking the files we uploaded in the previous step
 ena-upload-cli \
