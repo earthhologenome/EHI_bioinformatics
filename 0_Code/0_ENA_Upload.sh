@@ -150,3 +150,9 @@ ena-upload-cli \
 --no_data_upload
 
 mv receipt.xml SEB001_receipt_run.xml
+
+##Now manually enter in the ERX & ERR accessions into the EHI AirTable
+grep '<RUN' SEB001_receipt_run.xml | cut -f4 -d '"' > SEB001_run_aliases.tsv
+grep '<EXPERIMENT' SEB001_receipt_run.xml | cut -f2 -d '"' > SEB001_run_ERX.tsv
+grep '<RUN' SEB001_receipt_run.xml | cut -f2 -d '"' > SEB001_run_ERR.tsv
+paste SEB001_run_aliases.tsv SEB001_run_ERR.tsv SEB001_run_ERX.tsv > SEB001_run_mapping.tsv
