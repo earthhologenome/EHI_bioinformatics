@@ -44,6 +44,8 @@ rule Coassembly:
         "2_Assembly_Binning.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly.benchmark.tsv"
     log:
@@ -111,6 +113,8 @@ rule QUAST:
         "2_Assembly_Binning.yaml"
     threads:
         20
+    resources:
+        mem_gb=90
     message:
         "Running -QUAST on {wildcards.group} coassembly"
     shell:
@@ -139,6 +143,8 @@ rule Coassembly_index:
         "2_Assembly_Binning.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_indexing.benchmark.tsv"
     log:
@@ -169,6 +175,8 @@ rule Coassembly_mapping:
         "2_Assembly_Binning.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_mapping.benchmark.tsv"
     log:
@@ -209,6 +217,8 @@ rule metaWRAP_binning:
         "2_MetaWRAP.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_binning.benchmark.tsv"
     log:
@@ -261,6 +271,8 @@ rule metaWRAP_refinement:
         "2_MetaWRAP.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
     log:
@@ -308,6 +320,8 @@ rule coverM_assembly:
         "2_Assembly_Binning.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
     log:

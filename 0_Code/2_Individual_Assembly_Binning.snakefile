@@ -39,6 +39,8 @@ rule Assembly:
         "2_Assembly_Binning.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly.benchmark.tsv"
     log:
@@ -94,7 +96,9 @@ rule QUAST:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        8
+        20
+    resources:
+        mem_gb=80
     message:
         "Running QUAST on {wildcards.sample} assembly"
     shell:
@@ -118,6 +122,8 @@ rule assembly_index:
         "2_Assembly_Binning.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_indexing.benchmark.tsv"
     log:
@@ -147,7 +153,9 @@ rule assembly_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        8
+        10
+    resources:
+        mem_gb=45
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_mapping.benchmark.tsv"
     log:
@@ -183,6 +191,8 @@ rule metaWRAP_binning:
         "2_MetaWRAP.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_binning.benchmark.tsv"
     log:
@@ -234,6 +244,8 @@ rule metaWRAP_refinement:
         "2_MetaWRAP.yaml"
     threads:
         40
+    resources:
+        mem_gb=180
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_bin_refinement.benchmark.tsv"
     log:
@@ -288,7 +300,9 @@ rule reformat_metawrap:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        8
+        1
+    resources:
+        mem_gb=24
     message:
         "Reformatting metaWRAP outputs"
     shell:
@@ -320,6 +334,8 @@ rule coverM_assembly:
         "2_Assembly_Binning.yaml"
     threads:
         8
+    resources:
+        mem_gb=45
     benchmark:
         "3_Outputs/0_Logs/coverM_assembly.benchmark.tsv"
     log:
