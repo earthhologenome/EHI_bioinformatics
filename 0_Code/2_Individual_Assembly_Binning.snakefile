@@ -284,7 +284,7 @@ rule reformat_metawrap:
         all_folder = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins",
         wd = "3_Outputs/5_Refined_Bins",
         stats_no_header = "3_Outputs/5_Refined_Bins/All_bins_no_header.stats",
-        sample = "{sample}"
+        sample = lambda wildcards: "{sample}"
     conda:
         "2_Assembly_Binning.yaml"
     threads:
