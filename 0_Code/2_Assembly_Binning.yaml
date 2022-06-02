@@ -8,7 +8,7 @@
     - megahit=1.2.9
     - bowtie2=2.4.4
     - bbmap=38.93
-    - quast=5.1
+    - quast=5.0.2
     - coverm=0.6.1
     - samtools=1.14
     - pigz=2.6
