@@ -115,8 +115,8 @@ rule map_to_ref:
     input:
         r1i = "2_Reads/2_Trimmed/{sample}_trimmed_1.fastq.gz",
         r2i = "2_Reads/2_Trimmed/{sample}_trimmed_2.fastq.gz",
-        catted_ref = "1_References/CattedRefs.fna.gz",
-        bt2_index = "1_References/CattedRefs.fna.gz.rev.2.bt2l"
+        catted_ref = "1_References/CattedRefs_renamed.fna.gz",
+        bt2_index = "1_References/CattedRefs_renamed.fna.gz.rev.2.bt2l"
     output:
         all_bam = temp("3_Outputs/1_QC/1_BAMs/{sample}.bam"),
         host_bam = "3_Outputs/1_QC/1_Host_BAMs/{sample}_host.bam",
@@ -211,7 +211,7 @@ rule coverM:
     output:
         "3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv"
     params:
-        assembly = "1_References/CattedRefs.fna.gz"
+        assembly = "1_References/CattedRefs_renamed.fna.gz"
     conda:
         "0_Code/1_Preprocess_QC.yaml"
     threads:
