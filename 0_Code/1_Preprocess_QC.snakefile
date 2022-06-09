@@ -81,7 +81,9 @@ rule index_ref:
         "1_References"
     output:
         bt2_index = "1_References/CattedRefs.fna.gz.rev.2.bt2l",
-        catted_ref = "1_References/CattedRefs.fna.gz"
+        rn_catted_ref = "1_References/CattedRefs_renamed.fna.gz"
+    params:
+        catted_ref = temp("1_References/CattedRefs.fna.gz")
     conda:
         "0_Code/1_Preprocess_QC.yaml"
     threads:
@@ -95,16 +97,16 @@ rule index_ref:
     shell:
         """
         # Concatenate input reference genomes
-        cat {input}/*.gz > {input}/CattedRefs.fna.gz
+        cat {input}/*.gz > {params.catted_ref}
 
         # Add '_' separator for CoverM
-        rename.sh in={output.catted_ref} ow=t
+        rename.sh in={params.catted_ref} out={output.rn_catted_ref}
 
         # Index catted genomes
         bowtie2-build \
             --large-index \
             --threads {threads} \
-            {output.catted_ref} {output.catted_ref} \
+            {output.rn_catted_ref} {output.rn_catted_ref} \
         &> {log}
         """
 ################################################################################
