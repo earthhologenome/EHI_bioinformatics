@@ -97,6 +97,9 @@ rule index_ref:
         # Concatenate input reference genomes
         cat {input}/*.gz > {input}/CattedRefs.fna.gz
 
+        # Add '_' separator for CoverM
+        rename.sh in={output.catted_ref} ow=t
+
         # Index catted genomes
         bowtie2-build \
             --large-index \
@@ -224,7 +227,7 @@ rule coverM:
         #Calculate % mapping to host using coverM
         coverm genome \
             -b {input} \
-            -f {params.assembly} \
+            -s _ \
             -m relative_abundance \
             -t {threads} \
             --min-covered-fraction 0 \
