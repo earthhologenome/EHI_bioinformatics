@@ -102,7 +102,7 @@ rule index_ref:
         # Add '_' separator for CoverM
         rename.sh in={params.catted_ref} \
         out={output.rn_catted_ref} \
-        prefix={input} \
+        prefix=$(basename {input}) \
         -Xmx{resources.mem_gb}G
 
         # Index catted genomes
