@@ -100,7 +100,7 @@ rule index_ref:
         cat {input}/*.gz > {params.catted_ref}
 
         # Add '_' separator for CoverM
-        rename.sh in={params.catted_ref} out={output.rn_catted_ref}
+        rename.sh in={params.catted_ref} out={output.rn_catted_ref} -Xmx{resources.mem_gb}G
 
         # Index catted genomes
         bowtie2-build \
