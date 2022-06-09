@@ -80,7 +80,7 @@ rule index_ref:
     input:
         "1_References"
     output:
-        bt2_index = "1_References/CattedRefs.fna.gz.rev.2.bt2l",
+        bt2_index = "1_References/CattedRefs_renamed.fna.gz.rev.2.bt2l",
         rn_catted_ref = "1_References/CattedRefs_renamed.fna.gz"
     params:
         catted_ref = temp("1_References/CattedRefs.fna.gz")
