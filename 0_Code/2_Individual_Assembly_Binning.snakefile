@@ -286,7 +286,7 @@ rule metaWRAP_refinement:
         pigz -p {threads} {params.outdir}/*_bins/*.fa
         """
 ################################################################################
-### Calculate the number of reads that mapped to coassemblies
+### Combine metawrap stats for dereplication
 rule reformat_metawrap:
     input:
         expand("3_Outputs/5_Refined_Bins/{sample}_metawrap_70_10_bins.stats", sample=SAMPLE)
@@ -296,7 +296,7 @@ rule reformat_metawrap:
         all_folder = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins",
         wd = "3_Outputs/5_Refined_Bins",
         stats_no_header = "3_Outputs/5_Refined_Bins/All_bins_no_header.stats",
-        sample = lambda wildcards: "{sample}"
+        sample = lambda wildcards: {sample}
     conda:
         "2_Assembly_Binning.yaml"
     threads:
@@ -312,11 +312,16 @@ rule reformat_metawrap:
         cp {params.wd}/*/metawrap_70_10_bins/* {params.all_folder}
 
         # Setup headers for combined metawrap file:
-        echo -e bin' \t 'completeness' \t 'contamination' \t 'GC' \t 'lineage' \t 'N50' \t 'size' \t 'binner > {params.wd}/header.txt
+        echo -e genome'\t'completeness'\t'contamination'\t'GC'\t'lineage'\t'N50'\t'size'\t'binner > {params.wd}/header.txt
 
         #Cat the bin info from each group together
-        grep -v 'contamination' {params.wd}/{params.sample}_metawrap_70_10_bins.stats >> {params.stats_no_header}
+        for i in {params.wd}/*.stats;
+            do grep -v 'contamination' $i >> {params.stats_no_header};
+                done
         cat {params.wd}/header.txt {params.stats_no_header} > {output.stats}
+
+        #Format for dRep input
+        cut -f1,2,3 --output-delimiter=, {output.stats} | sed 's/,/.fa,/' | sed 's/genome.fa/bin/' > {params.wd}/All_bins_dRep.csv
 
         # Clean up
         rm {params.stats_no_header}
