@@ -172,6 +172,13 @@ rule nonpareil:
         """
         mkdir -p 3_Outputs/1_QC/3_nonpareil
 
+        #IF statement to account for situations where there are not enough
+        #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
+        #In this case, if R1 has > 100 Mbytes, run, else, skip:
+
+        if [ $(( $(stat -c '%s' {input.non_host_r1}) )) > 100 ]
+        then
+
         #Run nonpareil
         nonpareil \
             -s {input.non_host_r1} \
@@ -180,6 +187,13 @@ rule nonpareil:
             -t {threads} \
             -b {params.sample}
 
+        else
+
+        #Create dummy file for snakemake to proceed
+        touch {output.npo}
+
+        fi
+        
         #Compress reads
         pigz -p {threads} {input.non_host_r1}
         pigz -p {threads} {input.non_host_r2}
