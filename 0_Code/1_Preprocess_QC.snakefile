@@ -193,7 +193,7 @@ rule nonpareil:
         touch {output.npo}
 
         fi
-        
+
         #Compress reads
         pigz -p {threads} {input.non_host_r1}
         pigz -p {threads} {input.non_host_r2}
@@ -224,7 +224,7 @@ rule coverM:
         #Calculate % mapping to host using coverM
         coverm genome \
             -b {input} \
-            -s _ \
+            -f {params.assembly} \
             -m relative_abundance \
             -t {threads} \
             --min-covered-fraction 0 \

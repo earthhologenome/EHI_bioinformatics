@@ -78,5 +78,5 @@ done
 
 ##Launch snakefiles on Computerome!
 for i in temp_snakefiles/*.snakefile;
-  do snakemake -s snakefile -j 30 --cluster "qsub -l nodes=1:ppn={threads},{resources.mem_gb}G,walltime=00:NN:00:00" --use-conda --conda-frontend conda;
+  do snakemake -s snakefile -j 30 --cluster "qsub -l nodes=1:ppn={threads},mem={resources.mem_gb}G,walltime=00:08:00:00" --use-conda --conda-frontend conda;
 done
