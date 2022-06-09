@@ -148,8 +148,8 @@ rule assembly_mapping:
         mapped_bam = "3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam"
     params:
         assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta",
-        r1 = "2_Reads/4_Host_removed/{sample}_non_host_1.fastq.gz",
-        r2 = "2_Reads/4_Host_removed/{sample}_non_host_2.fastq.gz"
+        r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq.gz",
+        r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq.gz"
     conda:
         "2_Assembly_Binning.yaml"
     threads:
