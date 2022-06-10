@@ -184,7 +184,7 @@ rule nonpareil:
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
         #In this case, if R1 has > 100 Mbytes, run, else, skip:
 
-        if [ $(( $(stat -c '%s' {input.non_host_r1}) )) > 100 ]
+        if [ $(( $(stat -c '%s' {input.non_host_r1}) / 1024 / 1024 )) -gt 100 ]
         then
 
         #Run nonpareil
