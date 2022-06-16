@@ -233,7 +233,7 @@ rule coverM:
         coverm genome \
             -b {input} \
             -s _ \
-            -m relative_abundance \
+            -m relative_abundance count \
             -t {threads} \
             --min-covered-fraction 0 \
             > {output}
