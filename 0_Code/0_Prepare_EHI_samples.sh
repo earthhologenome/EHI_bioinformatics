@@ -87,7 +87,7 @@ done
 
 # Edit snakefile to output non-host reads into group-specific folders
 for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@2_Reads/4_Host_removed/@2_Reads/4_Host_removed/$(basename ${group/_1_Preprocess_QC.snakefile/})@g" $group;
+  do sed -i'' "s@2_Reads/4_Host_removed/@2_Reads/4_Host_removed/$(basename ${group/_1_Preprocess_QC.snakefile/})/@g" $group;
 done
 
 ##Launch snakefiles on Computerome!
