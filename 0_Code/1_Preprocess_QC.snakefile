@@ -275,7 +275,7 @@ rule report:
         #Create preprocessing report
         mkdir -p {params.tmpdir}
         for i in {input.coverm}; do echo $(basename ${{i/_coverM_mapped_host.tsv}}) >> {params.tmpdir}/names.tsv; done
-        for i in {input.coverm}; do grep -v 'Genome' $i | grep -v 'unmapped' cut -f3; done >> {params.tmpdir}/non_host_reads.tsv
+        for i in {input.coverm}; do grep -v 'Genome' $i | grep -v 'unmapped' | cut -f3; done >> {params.tmpdir}/non_host_reads.tsv
 
         for i in {input.fastp}; do grep '"total_reads"' $i | sed -n 1p | cut -f2 --delimiter=: | tr -d ','; done >> {params.tmpdir}/read_pre_filt.tsv
         for i in {input.fastp}; do grep '"total_reads"' $i | sed -n 2p | cut -f2 --delimiter=: | tr -d ','; done >> {params.tmpdir}/read_post_filt.tsv
