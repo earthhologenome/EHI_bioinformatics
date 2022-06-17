@@ -85,6 +85,11 @@ for group in temp_snakefiles/*.snakefile;
   do sed -i'' "s@_nonpareil_metadata@$(basename ${group/_1_Preprocess_QC.snakefile/})_nonpareil_metadata@g" $group;
 done
 
+# Edit snakefile to output non-host reads into group-specific folders
+for group in temp_snakefiles/*.snakefile;
+  do sed -i'' "s@2_Reads/4_Host_removed/@2_Reads/4_Host_removed/$(basename ${group/_1_Preprocess_QC.snakefile/})@g" $group;
+done
+
 ##Launch snakefiles on Computerome!
 for i in temp_snakefiles/*.snakefile;
   do snakemake -s snakefile -j 30 --cluster "qsub -A ku-cbd -W group_list=ku-cbd -l nodes=1:ppn={threads},mem={resources.mem_gb}G,walltime=00:08:00:00" --use-conda --conda-frontend conda;
