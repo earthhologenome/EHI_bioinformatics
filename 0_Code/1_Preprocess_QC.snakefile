@@ -283,11 +283,10 @@ rule report:
         for i in {input.fastp}; do grep '"total_bases"' $i | sed -n 2p | cut -f2 --delimiter=: | tr -d ','; done >> {params.tmpdir}/bases_post_filt.tsv
         for i in {input.fastp}; do grep 'adapter_trimmed_reads' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_reads.tsv
         for i in {input.fastp}; do grep 'adapter_trimmed_bases' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_bases.tsv
-        cd {params.tmpdir}
-        paste names.tsv read_pre_filt.tsv read_post_filt.tsv bases_pre_filt.tsv bases_post_filt.tsv adapter_trimmed_reads.tsv adapter_trimmed_bases.tsv non_host_reads.tsv > preprocessing_stats.tsv
+
+        paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/non_host_reads.tsv > {params.tmpdir}/preprocessing_stats.tsv
         echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\tnon_host_reads" > headers.tsv
-        cat headers.tsv preprocessing_stats.tsv > {output.report}
-        cd ../
+        cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
         rm -r {params.tmpdir}
         """
 ################################################################################
