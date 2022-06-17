@@ -239,8 +239,57 @@ rule coverM:
             > {output}
         """
 ################################################################################
+### Create summary table from outputs
+rule report:
+    input:
+        coverm = expand("3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
+        fastp = expand("2_Reads/3_fastp_results/{sample}.json", sample=SAMPLE),
+        npar = expand("3_Outputs/1_QC/3_nonpareil/{sample}.npo", sample=SAMPLE)
+    output:
+        report = "3_Outputs/1_QC/_report.tsv",
+        npar_metadata = "3_Outputs/1_QC/_nonpareil_metadata.tsv"
+    params:
+        tmpdir = "3_Outputs/1_QC/temp"
+    conda:
+        "0_Code/1_Preprocess_QC.yaml"
+    threads:
+        1
+    resources:
+        mem_gb=45
+    message:
+        "Creating a final preprocessing report"
+    shell:
+        """
+        #Create nonpareil sample metadata file
+        mkdir -p {params.tmpdir}
+        for i in {input.npar}; do echo $i >> {params.tmpdir}/files.txt; done
+        for i in {input.npar}; do echo ${i/.npo/} >> {params.tmpdir}/names.txt; done
+        for i in {input.npar}; do echo "#f03b20" >> {params.tmpdir}/colours.txt; done
+        echo -e "File\tName\tColour" > {params.tmpdir}/headers.txt
+        paste {params.tmpdir}/files.txt {params.tmpdir}/names.txt {params.tmpdir}/colours.txt > {params.tmpdir}/merged.tsv
+        cat {params.tmpdir}/headers.txt {params.tmpdir}/merged.tsv > {output.npar_metadata}
+        rm -r {params.tmpdir}
+
+        #Create preprocessing report
+        mkdir -p {params.tmpdir}
+        for i in {input.coverm}; do echo ${i/_coverM_mapped_host.tsv} >> {params.tmpdir}/names.tsv; done
+        for i in {input.coverm}; do grep -v Genome $i | grep -v unmapped cut -f3; done >> {params.tmpdir}/non_host_reads.tsv
+
+        for i in {input.fastp}; do grep '"total_reads"' $i | sed -n 1p | cut -f2 --delimiter=: | tr -d ','; done >> {params.tmpdir}/read_pre_filt.tsv
+        for i in {input.fastp}; do grep '"total_reads"' $i | sed -n 2p | cut -f2 --delimiter=: | tr -d ','; done >> {params.tmpdir}/read_post_filt.tsv
+        for i in {input.fastp}; do grep '"total_bases"' $i | sed -n 1p | cut -f2 --delimiter=: | tr -d ','; done >> {params.tmpdir}/bases_pre_filt.tsv
+        for i in {input.fastp}; do grep '"total_bases"' $i | sed -n 2p | cut -f2 --delimiter=: | tr -d ','; done >> {params.tmpdir}/bases_post_filt.tsv
+        for i in {input.fastp}; do grep 'adapter_trimmed_reads' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_reads.tsv
+        for i in {input.fastp}; do grep 'adapter_trimmed_bases' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_bases.tsv
+        cd {params.tmpdir}
+        paste names.tsv read_pre_filt.tsv read_post_filt.tsv bases_pre_filt.tsv bases_post_filt.tsv adapter_trimmed_reads.tsv adapter_trimmed_bases.tsv non_host_reads.tsv > preprocessing_stats.tsv
+        echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\tnon_host_reads" > headers.tsv
+        cat headers.tsv preprocessing_stats.tsv > {output.report}
+        cd ../
+        rm -r {params.tmpdir}
+        """
+################################################################################
 onsuccess:
     shell("""
             mail -s "workflow completed" raph.eisenhofer@gmail.com < {log}
-
           """)

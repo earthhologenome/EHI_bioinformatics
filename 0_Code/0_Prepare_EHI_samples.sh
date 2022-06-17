@@ -75,6 +75,15 @@ for group in temp_snakefiles/*.snakefile;
   do sed -i'' "s@0_Logs@0_Logs/$(basename ${group/_1_Preprocess_QC.snakefile/})@" $group;
 done
 
+# Edit snakefile to have group name in final report
+for group in temp_snakefiles/*.snakefile;
+  do sed -i'' "s@_report.tsv@$(basename ${group/_1_Preprocess_QC.snakefile/})_report.tsv@" $group;
+done
+
+# Edit snakefile to have group name in nonpareil metadata
+for group in temp_snakefiles/*.snakefile;
+  do sed -i'' "s@_nonpareil_metadata@$(basename ${group/_1_Preprocess_QC.snakefile/})_nonpareil_metadata@" $group;
+done
 
 ##Launch snakefiles on Computerome!
 for i in temp_snakefiles/*.snakefile;
