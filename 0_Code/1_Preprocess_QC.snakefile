@@ -32,8 +32,10 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-        expand("3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
-        expand("3_Outputs/1_QC/3_nonpareil/{sample}.npo", sample=SAMPLE)
+#        expand("3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
+#        expand("3_Outputs/1_QC/3_nonpareil/{sample}.npo", sample=SAMPLE),
+        "3_Outputs/1_QC/_report.tsv",
+        "3_Outputs/1_QC/_nonpareil_metadata.tsv"
 ################################################################################
 ### Preprocess the reads using fastp
 rule fastp:

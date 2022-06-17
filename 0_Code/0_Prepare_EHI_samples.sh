@@ -77,12 +77,12 @@ done
 
 # Edit snakefile to have group name in final report
 for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@_report.tsv@$(basename ${group/_1_Preprocess_QC.snakefile/})_report.tsv@" $group;
+  do sed -i'' "s@_report.tsv@$(basename ${group/_1_Preprocess_QC.snakefile/})_report.tsv@g" $group;
 done
 
 # Edit snakefile to have group name in nonpareil metadata
 for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@_nonpareil_metadata@$(basename ${group/_1_Preprocess_QC.snakefile/})_nonpareil_metadata@" $group;
+  do sed -i'' "s@_nonpareil_metadata@$(basename ${group/_1_Preprocess_QC.snakefile/})_nonpareil_metadata@g" $group;
 done
 
 ##Launch snakefiles on Computerome!
