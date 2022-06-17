@@ -265,7 +265,7 @@ rule report:
         #Create nonpareil sample metadata file
         mkdir -p {params.tmpdir}
         for i in {input.npar}; do echo $i >> {params.tmpdir}/files.txt; done
-        for i in {input.npar}; do echo ${i/.npo/} >> {params.tmpdir}/names.txt; done
+        for i in {input.npar}; do echo ${{i/.npo/}} >> {params.tmpdir}/names.txt; done
         for i in {input.npar}; do echo "#f03b20" >> {params.tmpdir}/colours.txt; done
         echo -e "File\tName\tColour" > {params.tmpdir}/headers.txt
         paste {params.tmpdir}/files.txt {params.tmpdir}/names.txt {params.tmpdir}/colours.txt > {params.tmpdir}/merged.tsv
@@ -274,7 +274,7 @@ rule report:
 
         #Create preprocessing report
         mkdir -p {params.tmpdir}
-        for i in {input.coverm}; do echo ${i/_coverM_mapped_host.tsv} >> {params.tmpdir}/names.tsv; done
+        for i in {input.coverm}; do echo ${{i/_coverM_mapped_host.tsv}} >> {params.tmpdir}/names.tsv; done
         for i in {input.coverm}; do grep -v Genome $i | grep -v unmapped cut -f3; done >> {params.tmpdir}/non_host_reads.tsv
 
         for i in {input.fastp}; do grep '"total_reads"' $i | sed -n 1p | cut -f2 --delimiter=: | tr -d ','; done >> {params.tmpdir}/read_pre_filt.tsv
