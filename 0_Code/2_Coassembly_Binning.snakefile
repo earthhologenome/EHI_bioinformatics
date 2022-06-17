@@ -13,11 +13,11 @@ import os
 from glob import glob
 
 GROUP = [os.path.basename(dir)
-         for dir in glob(f"2_Reads/3_Host_removed/*")]
+         for dir in glob(f"2_Reads/4_Host_removed/*")]
 
-SAMPLE = [os.path.relpath(fn, "2_Reads/3_Host_removed").replace("_non_host_1.fastq.gz", "")
+SAMPLE = [os.path.relpath(fn, "2_Reads/4_Host_removed").replace("_M_1.fastq.gz", "")
             for group in GROUP
-            for fn in glob(f"2_Reads/3_Host_removed/{group}/*_1.fastq.gz")]
+            for fn in glob(f"2_Reads/4_Host_removed/{group}/*_1.fastq.gz")]
 
 print("Detected these sample groups:")
 print(GROUP)
@@ -32,7 +32,7 @@ rule all:
 ### Perform Coassemblies on each sample group
 rule Coassembly:
     input:
-        reads = "2_Reads/3_Host_removed/{group}"
+        reads = "2_Reads/4_Host_removed/{group}"
     output:
         Coassembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
     params:
@@ -81,8 +81,8 @@ rule Coassembly:
         else
 
         # Set up input reads variable for megahit
-        R1=$(for i in 2_Reads/3_Host_removed/{wildcards.group}/*_1.fastq.gz; do echo $i | tr '\n' ,; done)
-        R2=$(for i in 2_Reads/3_Host_removed/{wildcards.group}/*_2.fastq.gz; do echo $i | tr '\n' ,; done)
+        R1=$(for i in 2_Reads/4_Host_removed/{wildcards.group}/*_1.fastq.gz; do echo $i | tr '\n' ,; done)
+        R2=$(for i in 2_Reads/4_Host_removed/{wildcards.group}/*_2.fastq.gz; do echo $i | tr '\n' ,; done)
 
         # Run megahit
             megahit \
@@ -170,7 +170,7 @@ rule Coassembly_mapping:
     params:
         outdir = directory("3_Outputs/3_Coassembly_Mapping/BAMs/{group}"),
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
-        read_dir = "2_Reads/3_Host_removed/{group}"
+        read_dir = "2_Reads/4_Host_removed/{group}"
     conda:
         "2_Assembly_Binning.yaml"
     threads:
