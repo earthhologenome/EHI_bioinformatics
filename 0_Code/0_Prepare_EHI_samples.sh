@@ -92,5 +92,5 @@ done
 
 ##Launch snakefiles on Computerome!
 for i in temp_snakefiles/*.snakefile;
-  do snakemake -s snakefile -j 30 --cluster "qsub -A ku-cbd -W group_list=ku-cbd -l nodes=1:ppn={threads},mem={resources.mem_gb}G,walltime=00:08:00:00" --use-conda --conda-frontend conda;
+  do snakemake -s snakefile -j 30 --cluster "qsub -A ku-cbd -W group_list=ku-cbd -l nodes=1:thinnode:ppn={threads},mem={resources.mem_gb}G,walltime=00:08:00:00" --use-conda --conda-frontend conda  --conda-prefix /home/projects/ku-cbd/people/rapeis/0_Software/CONDA;
 done

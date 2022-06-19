@@ -174,9 +174,9 @@ rule Coassembly_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        40
+        20
     resources:
-        mem_gb=180
+        mem_gb=90
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_mapping.benchmark.tsv"
     log:
@@ -281,6 +281,9 @@ rule metaWRAP_refinement:
         "Refining {wildcards.group} bins with MetaWRAP's bin refinement module"
     shell:
         """
+        # Setup checkM path
+        printf "/home/projects/ku-cbd/people/rapeis/0_DBs/CHECKM" | checkm data setRoot        
+
         metawrap bin_refinement \
             -m {params.memory} \
             -t {threads} \
