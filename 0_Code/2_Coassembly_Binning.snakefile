@@ -236,7 +236,7 @@ rule metaWRAP_binning:
         for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_2.fastq}}); done
 
         #Symlink BAMs for metaWRAP
-        for bam in {params.bams}/*.bam; do ln -s `pwd`/$bam {params.outdir}/work_files/$(basename $bam); done
+        for bam in {params.bams}/*.bam; do ln -sf `pwd`/$bam {params.outdir}/work_files/$(basename $bam); done
 
         # Run metaWRAP binning
         metawrap binning -o {params.outdir} \
@@ -282,7 +282,7 @@ rule metaWRAP_refinement:
     shell:
         """
         # Setup checkM path
-        printf "/home/projects/ku-cbd/people/rapeis/0_DBs/CHECKM" | checkm data setRoot        
+        printf "/home/projects/ku-cbd/people/rapeis/0_DBs/CHECKM" | checkm data setRoot
 
         metawrap bin_refinement \
             -m {params.memory} \

@@ -210,7 +210,7 @@ rule metaWRAP_binning:
         echo "@" > {params.outdir}/work_files/$(basename {params.basename}_2.fastq)
 
         #Symlink BAMs for metaWRAP
-        ln -s `pwd`/{input} {params.outdir}/work_files/$(basename {input})
+        ln -sf `pwd`/{input} {params.outdir}/work_files/$(basename {input})
 
         # Run metaWRAP binning
         metawrap binning -o {params.outdir} \
