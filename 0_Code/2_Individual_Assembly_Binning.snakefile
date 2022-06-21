@@ -202,7 +202,7 @@ rule metaWRAP_binning:
     shell:
         """
         # Create dummy fastq/assembly files to trick metaWRAP into running without mapping
-        mkdir {params.outdir}/work_files
+        mkdir -p {params.outdir}/work_files
 
         touch {params.outdir}/work_files/assembly.fa.bwt
 
