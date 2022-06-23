@@ -2,10 +2,13 @@
 Bioinformatics pipeline to process EHI data
 
 ### General information:
-This pipeline uses snakemake, and manages dependencies using conda (or mamba) for reproducibility and deployability.
+This pipeline uses snakemake, and manages dependencies using conda (or mamba) for reproducibility and deployability. The 0_Code directory contains the snakefiles, scripts, and conda environment yamls. 
 
-The 0_Code directory contains the snakefiles, scripts, and conda environment yamls. 
-
+## Getting started:
+Firstly, you'll want to clone this directory to the system where you want to run the analyses:
+```
+git clone https://github.com/anttonalberdi/EHI_bioinformatics.git
+```
 
 ## Preprocessing pipeline (1_Preprocess_QC.snakefile)
 *updated 23/06/2022, Raphael Eisenhofer*
