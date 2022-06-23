@@ -14,6 +14,7 @@ The 0_Code directory contains the snakefiles, scripts, and conda environment yam
 This step of the pipeline quality filters (including adapter trimming, polyX tail removal) metagenomic reads using fastp (0.23.1). Host genomes are indexed using BowTie2 (2.4.4), before the fastp-filtered reads being mapped to the host genome/s using BowTie2 (default settings). Nonpareil (3.4.1) is then run on the host-filtered reads to estimate metagenome diversity and assembly coverage. CoverM (0.6.1) is run on the host-mapped BAMs to calculate the read counts against the host genome/s. Finally, the summary statistics of the preprocessing and host mapping are collated into a final report.
 
 Here is a simplified DAG (directed acyclic graph) of the above steps:
+
 ![1_Preprocess_QC](figures/dag_1_Preprocess_QC.png)
 
 ### Usage:
@@ -43,4 +44,5 @@ snakemake \
 I've written the pipeline such that it loads the required conda environments from a shared directory (no need to install the environment each time you run it), and handles the requesting of optimised resources (RAM/CPUs) for each job based on the specific snakemake rule.
 
 Here's a illustrative summary of each rule and it's input files and output files:
+
 ![1_Preprocess_QC](figures/file_structure_1_Preprocess_QC.png)
