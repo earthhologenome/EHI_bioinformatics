@@ -25,9 +25,14 @@ Currently, the snakefile searches for .fastq.gz files located in this path (assu
 ```
 2_Reads/1_Untrimmed/*_1.fastq.gz
 ```
-Therefore, you'll need to put your reads in this directory (note that the fastq file suffixes should be **'_1.fastq.gz'** and **'_2.fastq.gz'**).
+There are a couple of options for getting your data here:
+- 1) Create symbolic links. This means you don't have to move or copy the files:
+`ln -s reads_folder/*.fastq.gz 2_Reads/1_Untrimmed/`
+- 2) You can just put the reads in this directory.
 
-Next, you'll need to put your host reference genome/s in the following directory:
+(note that the fastq file suffixes should be **'_1.fastq.gz'** and **'_2.fastq.gz'**).
+
+Next, you'll need to do the same thing for your host reference genome/s, symbolic linking them or placing them in this folder:
 ```
 1_References/
 ```
@@ -44,7 +49,10 @@ snakemake \
 --conda-prefix /home/projects/ku-cbd/people/rapeis/0_Software/CONDA \
 --latency-wait 600
 ```
-I've written the pipeline such that it loads the required conda environments from a shared directory (no need to install the environment each time you run it), and handles the requesting of optimised resources (RAM/CPUs) for each job based on the specific snakemake rule.
+
+I recommend adding the `--dry-run` command to the above code initially, as this will let you figure out if everything is working as expected.
+
+I've written the pipeline such that it handles the requesting of optimised resources (RAM/CPUs) for each job based on the specific snakemake rule. The `--conda-prefix` snakemake option tells snakemake to look for conda environment in a particular directory, which saves having to reinstall them each time you run from a new directory. Note that the above path is only for Computerome 2.0 -- I'll setup a shared folder on Mjolnir when I get access soon.
 
 Here's a illustrative summary of each rule and it's input files and output files:
 
