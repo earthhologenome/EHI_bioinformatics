@@ -12,7 +12,7 @@
 import os
 from glob import glob
 
-SAMPLE = [os.path.basename(fn).replace("_1.fastq.gz", "")
+SAMPLE = [os.path.basename(fn).replace("_M_1.fastq.gz", "")
             for fn in glob(f"2_Reads/4_Host_removed/*_M_1.fastq.gz")]
 
 MAGS = [os.path.relpath(fn, "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins").replace(".fa.gz", "")
