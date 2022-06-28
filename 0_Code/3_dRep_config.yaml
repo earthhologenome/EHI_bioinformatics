@@ -1,4 +1,8 @@
 ### Config file for dRep
-### RE 02/2022
+### RE 06/2022
 
 ANI: 0.98
+
+GTDB_data: /home/projects/ku-cbd/people/rapeis/0_DBs/release207_v2
+
+DRAM_data: /home/databases/ku-cbd/DRAM/20210705/20210705.dram.config

@@ -88,6 +88,7 @@ rule gtdbtk:
     output:
          "3_Outputs/8_GTDB-tk/{group}/classify/{group}.bac120.summary.tsv"
     params:
+        GTDB_data = expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir = "3_Outputs/8_GTDB-tk/{group}",
         bins = "3_Outputs/7_Dereplication/{group}/dereplicated_genomes"
     conda:
@@ -103,7 +104,7 @@ rule gtdbtk:
     shell:
         """
         # Specify path to reference data:
-        GTDBTK_DATA_PATH=/home/projects/ku-cbd/people/rapeis/0_DBs/release207_v2
+        GTDBTK_DATA_PATH={params.GTDB_data}
 
         # Run GTDB-tk:
         gtdbtk classify_wf \
