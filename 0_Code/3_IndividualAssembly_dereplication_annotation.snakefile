@@ -59,7 +59,7 @@ rule dereplication:
             do sed '1d;' $i | cut -f 1,2,3 --output-delimiter ',' >> {input.bins}/bin_info.txt;
                 done
         sed -i'' 's@^@{input.bins}/All_metawrap_70_10_bins/@g' {input.bins}/bin_info.txt
-        sed -i'' 's/,/.fa,/' {input.bins}/bin_info.txt
+        sed -i'' 's/,/.fa.gz,/' {input.bins}/bin_info.txt
         cat {input.bins}/header.txt {input.bins}/bin_info.txt > {input.bins}/genome_info.csv
         rm {input.bins}/*.txt
 
