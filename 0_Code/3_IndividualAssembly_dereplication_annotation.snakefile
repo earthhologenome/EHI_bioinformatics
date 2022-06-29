@@ -33,7 +33,7 @@ rule all:
 ### Dereplicate refined bins using dRep
 rule dereplication:
     input:
-        bins = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins/"
+        bins = "3_Outputs/5_Refined_Bins/"
     output:
         drep = "3_Outputs/7_Dereplication/figures/Primary_clustering_dendrogram.pdf"
     params:
@@ -64,7 +64,7 @@ rule dereplication:
         rm {input.bins}/*.txt
 
 # Decompress bins (dRep can't handle .gz input) -- learned this the hard way!
-# gunzip {input.bins}/bins/*.fa.gz
+# gunzip {input.bins}/All_metawrap_70_10_bins/*.fa.gz
 
         # Run dRep
             dRep dereplicate \
@@ -72,12 +72,12 @@ rule dereplication:
                 -p {threads} \
                 -comp 70 \
                 -sa {params.ANI} \
-                -g {input.bins}/bins/*.fa.gz \
+                -g {input.bins}/All_metawrap_70_10_bins/*.fa.gz \
                 --genomeInfo {input.bins}/genome_info.csv
                 2> {log}
 
 # Rename output, compress bins
-# pigz -p {threads} {input.bins}/bins/*.fa
+# pigz -p {threads} {input.bins}/All_metawrap_70_10_bins/*.fa
 # pigz -p {threads} {params.workdir}/dereplicated_genomes/*.fa
         """
 ################################################################################
