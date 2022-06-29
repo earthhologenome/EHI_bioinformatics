@@ -86,7 +86,7 @@ rule gtdbtk:
     input:
         "3_Outputs/7_Dereplication/figures/Primary_clustering_dendrogram.pdf"
     output:
-        "3_Outputs/8_GTDB-tk/classify/bac120.summary.tsv"
+        "3_Outputs/8_GTDB-tk/classify/gtdbtk.bac120.summary.tsv"
     params:
         GTDB_data = expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir = "3_Outputs/8_GTDB-tk/",
@@ -116,9 +116,9 @@ rule gtdbtk:
         --cpus {threads}
 
         # Create a merged summary output for DRAM:
-        if [ -s "{params.outdir}/classify/ar122.summary.tsv" ]
+        if [ -s "{params.outdir}/classify/gtdbtk.ar122.summary.tsv" ]
         then
-        sed '1d;' {params.outdir}/classify/ar122.summary.tsv > {params.outdir}/ar122.tsv
+        sed '1d;' {params.outdir}/classify/gtdbtk.ar122.summary.tsv > {params.outdir}/ar122.tsv
         cat {output} {params.outdir}/ar122.tsv > {params.outdir}/gtdbtk_combined_summary.tsv
         rm {params.outdir}/ar122.tsv
 
