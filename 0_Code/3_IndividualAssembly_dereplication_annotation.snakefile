@@ -131,7 +131,7 @@ rule gtdbtk:
 ### Index the MAG catalogue
 rule Coassembly_index:
     input:
-        "3_Outputs/8_GTDB-tk/classify/bac120.summary.tsv"
+        "3_Outputs/8_GTDB-tk/classify/gtdbtk.bac120.summary.tsv"
     output:
         "3_Outputs/9_MAG_catalogue_mapping/MAGs.fa.gz.rev.2.bt2l"
     params:
