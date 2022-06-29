@@ -206,7 +206,7 @@ rule MAG_catalogue_mapping:
             -x {params.MAGs} \
             -1 {input.r1} \
             -2 {input.r2} \
-        | samtools sort -@ {threads} -o {output}; done
+        | samtools sort -@ {threads} -o {output}
         """
 ################################################################################
 ### Create the final count table using CoverM
