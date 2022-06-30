@@ -233,7 +233,7 @@ rule coverM_assembly:
         """
         coverm genome \
             -b {input} \
-            -s = \
+            -s ^ \
             -m count covered_fraction length \
             -t {threads} \
             --min-covered-fraction 0 \
