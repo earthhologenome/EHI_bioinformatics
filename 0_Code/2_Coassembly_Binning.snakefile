@@ -12,9 +12,6 @@
 import os
 from glob import glob
 
-# GROUP = [os.path.basename(dir)
-#          for dir in glob(f"2_Reads/4_Host_removed/*")]
-
 GROUP = [ dir for dir in os.listdir('2_Reads/4_Host_removed')
          if os.path.isdir(os.path.join('2_Reads/4_Host_removed', dir)) ]
 
