@@ -50,6 +50,18 @@ snakemake \
 --latency-wait 600
 ```
 
+For Mjolnir, I use the following:
+```
+snakemake \
+-s 0_Code/1_Preprocess_QC.snakefile \
+-j 10 \
+--cluster "sbatch --mem {resources.mem_gb}G --cores {threads}"
+--use-conda \
+--conda-frontend conda \
+--conda-prefix /projects/mjolnir1/people/ncl550/0_software \
+--latency-wait 600
+```
+
 I recommend adding the `--dry-run` command to the above code initially, as this will let you figure out if everything is working as expected.
 
 I've written the pipeline such that it handles the requesting of optimised resources (RAM/CPUs) for each job based on the specific snakemake rule. The `--conda-prefix` snakemake option tells snakemake to look for conda environment in a particular directory, which saves having to reinstall them each time you run from a new directory. Note that the above path is only for Computerome 2.0 -- I'll setup a shared folder on Mjolnir when I get access soon.
