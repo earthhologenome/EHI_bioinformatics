@@ -55,7 +55,7 @@ For Mjolnir, I use the following:
 snakemake \
 -s 0_Code/1_Preprocess_QC.snakefile \
 -j 10 \
---cluster "sbatch --mem {resources.mem_gb}G --cores {threads}"
+--cluster "sbatch --mem {resources.mem_gb}G --cores {threads}" \
 --use-conda \
 --conda-frontend conda \
 --conda-prefix /projects/mjolnir1/people/ncl550/0_software \
