@@ -255,7 +255,7 @@ rule metaWRAP_refinement:
     shell:
         """
         # Setup checkM path
-        export checkmdb={config[checkmdm]}
+        export checkmdb={config[checkmdb]}
         printf $checkmdb | checkm data setRoot
 
         metawrap bin_refinement \
