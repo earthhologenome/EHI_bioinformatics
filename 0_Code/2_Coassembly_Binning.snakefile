@@ -282,8 +282,9 @@ rule metaWRAP_refinement:
     shell:
         """
         # Setup checkM path
-        printf "/home/projects/ku-cbd/people/rapeis/0_DBs/CHECKM" | checkm data setRoot
-
+        export checkmdb={config[checkmdm]}
+        printf $checkmdb | checkm data setRoot
+        
         metawrap bin_refinement \
             -m {params.memory} \
             -t {threads} \
