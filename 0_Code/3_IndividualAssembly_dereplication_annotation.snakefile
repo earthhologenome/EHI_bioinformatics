@@ -240,6 +240,25 @@ rule coverM_assembly:
             > {output}
         """
 ################################################################################
+### Create genome-scale metabolic models (GEMs)
+### Adapted from metaGEM: 
+### https://github.com/franciscozorrilla/metaGEM/wiki/Reconstruct-&-evaluate-genome-scale-metabolic-models-with-CarveMe-and-memote
+# rule extractProteinBins:
+#     message:
+#         "Extract ORF annotated protein fasta files for each bin from reassembly checkm files."
+#     shell:
+#         """
+#         mkdir -p 3_Outputs/12_protein_bins
+
+#         echo -e "Begin moving and renaming ORF annotated protein fasta bins from dereplicated_genomes/ to protein_bins/ ... \n"
+#         for bin in 3_Outputs/7_Dereplication/dereplicated_genomes/*.fa.gz;
+#             do var=$(echo $bin/genes.faa | sed 's|reassembled_bins/||g'|sed 's|/reassembled_bins.checkm/bins||'|sed 's|/genes||g'|sed 's|/|_|g'|sed 's/permissive/p/g'|sed 's/orig/o/g'|sed 's/strict/s/g');
+#             cp $bin/*.faa {config[path][root]}/{config[folder][proteinBins]}/$var;
+#         done
+#         """
+
+
+################################################################################
 ### Setup DRAM groups to split into multiple jobs for efficiency.
 ### We can use snakemake checkpoints for this :)
 #     input:

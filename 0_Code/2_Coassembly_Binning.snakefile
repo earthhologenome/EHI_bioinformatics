@@ -345,7 +345,7 @@ rule coverM_assembly:
         # Clean up metaWRAP temp files
         rm -rf {params.binning_files}/work_files
         rm -f {params.binning_files}/*/*.fa
-        rm -rf {params.refinement_files}/work_files
+#        rm -rf {params.refinement_files}/work_files
 
         # Create directory for dereplication groups:
         mkdir -p 3_Outputs/5_Refined_Bins/dRep_groups

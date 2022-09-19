@@ -279,7 +279,7 @@ rule metaWRAP_refinement:
 
         # Compress, clean outputs:
         rm -r {params.binning_wfs}
-        rm -r {params.refinement_wfs}
+#        rm -r {params.refinement_wfs}
         rm {input.concoct}/*.fa
         rm {input.maxbin2}/*.fa
         rm {input.metabat2}/*.fa
