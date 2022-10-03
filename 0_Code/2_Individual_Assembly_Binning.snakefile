@@ -63,7 +63,7 @@ rule Assembly:
                 2> {log}
 
         # Remove contigs shorter than 1,500 bp
-            reformat.sh
+            reformat.sh \
                 in={params.workdir}/scaffolds.fasta \
                 out={output.assembly} \
                 minlength=1500
