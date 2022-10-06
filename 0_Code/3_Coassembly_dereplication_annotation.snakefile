@@ -150,10 +150,10 @@ rule Coassembly_index:
         # Rename dereplicated MAG headers for CoverM compatibility
         for i in {params.MAGs}/*.fa.gz;
             do rename.sh \
-                in=$i \
-                out=${i/.fa.gz/_renamed.fa.gz} \
+                in={{$i}} \
+                out=${{i/.fa.gz/_renamed.fa.gz}} \
                 zl=9 \
-                prefix=$(basename ${i/.fa.gz/-});
+                prefix=$(basename ${{i/.fa.gz/-}});
             done
 
         # Concatenate the dereplicated MAGs into a single file
@@ -195,7 +195,7 @@ rule MAG_catalogue_mapping:
             --time \
             --threads {threads} \
             -x {params.MAGs} \
-            -1 $fq1 \
+            -1 {{$fq1}} \
             -2 ${{fq1/_1.fastq.gz/_2.fastq.gz}} \
         | samtools sort -@ {threads} -o {params.BAMs}/$(basename ${{fq1/_1.fastq.gz/.bam}}); done
 
