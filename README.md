@@ -38,19 +38,7 @@ Next, you'll need to do the same thing for your host reference genome/s, symboli
 ```
 Note that the host reference genome/s need to be gzip compressed -- **'.gz'** suffix (default when downloading from NCBI). 
 
-That's all the setup required to get the pipeline running. Now you just need to launch the snakefile using snakemake. How you do this depends on your HPC server job queueing system. For Computerome 2.0, I use the following one liner (can be called directly from your terminal):
-```
-snakemake \
--s 0_Code/1_Preprocess_QC.snakefile \
--j 30 \
---cluster "qsub -A ku-cbd -W group_list=ku-cbd -l nodes=1:thinnode:ppn={threads},mem={resources.mem_gb}G,walltime=00:08:00:00" \
---use-conda \
---conda-frontend conda  \
---conda-prefix /home/projects/ku-cbd/people/rapeis/0_Software/CONDA \
---latency-wait 600
-```
-
-For Mjolnir, I use the following:
+That's all the setup required to get the pipeline running. Now you just need to launch the snakefile using snakemake. How you do this depends on your HPC server job queueing system. For Mjolnir, I use the following:
 ```
 snakemake \
 -s 0_Code/1_Preprocess_QC.snakefile \
