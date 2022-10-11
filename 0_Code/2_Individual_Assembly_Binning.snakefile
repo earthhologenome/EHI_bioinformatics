@@ -134,7 +134,7 @@ rule assembly_index:
         "Indexing {wildcards.sample} assembly using Bowtie2"
     shell:
         """
-        # Index the coassembly
+        # Index the assembly
         bowtie2-build \
             --large-index \
             --threads {threads} \
@@ -330,7 +330,7 @@ rule reformat_metawrap:
         rm {params.wd}/header.txt
         """
 ################################################################################
-### Calculate the number of reads that mapped to coassemblies
+### Calculate the number of reads that mapped to assemblies
 rule coverM_assembly:
     input:
         expand("3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam", sample=SAMPLE)
