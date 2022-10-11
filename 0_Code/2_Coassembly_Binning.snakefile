@@ -176,7 +176,7 @@ rule Coassembly_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        20
+        96
     resources:
         mem_gb=90
     benchmark:
@@ -218,7 +218,7 @@ rule metaWRAP_binning:
     conda:
         "2_MetaWRAP.yaml"
     threads:
-        40
+        48
     resources:
         mem_gb=180
     benchmark:
@@ -272,7 +272,7 @@ rule metaWRAP_refinement:
     conda:
         "2_MetaWRAP.yaml"
     threads:
-        40
+        48
     resources:
         mem_gb=180
     benchmark:
@@ -325,7 +325,7 @@ rule coverM_assembly:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        40
+        48
     resources:
         mem_gb=180
     benchmark:
