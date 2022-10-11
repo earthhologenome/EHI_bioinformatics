@@ -18,6 +18,8 @@
 ################################################################################
 ################################################################################
 
+configfile: "1_Preprocess_QC_config.yaml"
+
 ### Setup sample inputs
 import os
 from glob import glob
@@ -47,6 +49,9 @@ rule fastp:
         r2o = temp("2_Reads/2_Trimmed/{sample}_trimmed_2.fastq.gz"),
         fastp_html = "2_Reads/3_fastp_results/{sample}.html",
         fastp_json = "2_Reads/3_fastp_results/{sample}.json"
+    params:
+        adapter1 = expand("{adapter1}", adapter1=config['adapter1']),
+        adapter2 = expand("{adapter2}", adapter2=config['adapter2'])
     conda:
         "1_Preprocess_QC.yaml"
     threads:
@@ -72,8 +77,8 @@ rule fastp:
             --thread {threads} \
             --html {output.fastp_html} \
             --json {output.fastp_json} \
-            --adapter_sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
-            --adapter_sequence_r2  AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
+            --adapter_sequence {params.adapter1} \
+            --adapter_sequence_r2 {params.adapter2} \
         &> {log}
         """
 ################################################################################
