@@ -364,7 +364,7 @@ rule coverM_assembly:
     resources:
         mem_gb=45
     log:
-        "3_Outputs/0_Logs/coverM_assembly.log"
+        "3_Outputs/0_Logs/{sample}_coverM_assembly.log"
     message:
         "Calculating assembly mapping rate for {wildcards.sample} with CoverM"
     shell:
