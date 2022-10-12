@@ -18,7 +18,7 @@
 ################################################################################
 ################################################################################
 
-configfile: "1_Preprocess_QC_config.yaml"
+configfile: "0_Code/1_Preprocess_QC_config.yaml"
 
 ### Setup sample inputs
 import os

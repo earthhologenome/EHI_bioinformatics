@@ -8,7 +8,7 @@
 ################################################################################
 ################################################################################
 
-configfile: "2_Assembly_Binning_config.yaml"
+configfile: "0_Code/2_Assembly_Binning_config.yaml"
 
 ### Setup sample wildcard:
 import os
