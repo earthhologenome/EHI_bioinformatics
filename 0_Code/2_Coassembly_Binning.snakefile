@@ -45,9 +45,9 @@ rule Coassembly:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        40
+        48
     resources:
-        mem_gb=180
+        mem_gb=256
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly.benchmark.tsv"
     log:
@@ -114,7 +114,7 @@ rule QUAST:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        20
+        10
     resources:
         mem_gb=90
     message:
@@ -144,7 +144,7 @@ rule Coassembly_index:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        40
+        48
     resources:
         mem_gb=180
     benchmark:
@@ -178,7 +178,7 @@ rule Coassembly_mapping:
     threads:
         96
     resources:
-        mem_gb=90
+        mem_gb=128
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_mapping.benchmark.tsv"
     log:
@@ -220,7 +220,7 @@ rule metaWRAP_binning:
     threads:
         48
     resources:
-        mem_gb=180
+        mem_gb=256
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_binning.benchmark.tsv"
     log:
@@ -274,7 +274,7 @@ rule metaWRAP_refinement:
     threads:
         48
     resources:
-        mem_gb=180
+        mem_gb=256
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
     log:
