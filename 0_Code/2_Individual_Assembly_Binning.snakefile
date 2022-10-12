@@ -385,8 +385,6 @@ rule generate_summary:
         "3_Outputs/5_Refined_Bins/All_bins.stats"
     output:
         "3_Outputs/assembly_summary.tsv"
-    params:
-        sample = "{sample}"
     conda:
         "2_Assembly_Binning.yaml"
     threads:
