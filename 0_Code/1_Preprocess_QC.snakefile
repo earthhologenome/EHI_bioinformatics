@@ -172,7 +172,9 @@ rule nonpareil:
     output:
         npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
     params:
-        sample = "3_Outputs/1_QC/3_nonpareil/{sample}"
+        sample = "3_Outputs/1_QC/3_nonpareil/{sample}",
+        badsample_r1 = "2_Reads/5_Poor_samples/{sample}_M_1.fastq.gz",
+        badsample_r2 = "2_Reads/5_Poor_samples/{sample}_M_2.fastq.gz"
     conda:
         "1_Preprocess_QC.yaml"
     threads:
@@ -190,10 +192,8 @@ rule nonpareil:
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
         #In this case, if R1 has > 100 Mbytes, run, else, skip:
-
         if [ $(( $(stat -c '%s' {input.non_host_r1}) / 1024 / 1024 )) -gt 100 ]
         then
-
         #Run nonpareil
         nonpareil \
             -s {input.non_host_r1} \
@@ -201,23 +201,29 @@ rule nonpareil:
             -T kmer \
             -t {threads} \
             -b {params.sample}
-
         else
-
         #Create dummy file for snakemake to proceed
         touch {output.npo}
-
         fi
 
         #Compress reads
         pigz -p {threads} {input.non_host_r1}
         pigz -p {threads} {input.non_host_r2}
+
+        #Move samples that don't have enough reads for assembly to a new folder
+        #This saves time, and prevents errors in the next pipeline!
+        if [ $(( $(stat -c '%s' {input.non_host_r1}) / 1024 / 1024 )) -lt 200 ]
+        then
+        mv {input.non_host_r1} {param.badsample_r1} && mv {input.non_host_r2} {param.badsample_r2}
+        fi
+        
         """
 ################################################################################
 ### Calculate % of each sample's reads mapping to host genome/s
 rule coverM:
     input:
-        "3_Outputs/1_QC/1_BAMs/{sample}.bam"
+        bam = "3_Outputs/1_QC/1_BAMs/{sample}.bam",
+        npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
     output:
         "3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv"
     params:
@@ -238,20 +244,25 @@ rule coverM:
         """
         #Calculate % mapping to host using coverM
         coverm genome \
-            -b {input} \
+            -b {input.bam} \
             -s _ \
             -m relative_abundance count \
             -t {threads} \
             --min-covered-fraction 0 \
             > {output}
+
+        #Remove empty nonpareil (.npo) files to streamline future plotting
+        if [ $(stat -c '%s' {input.npo}) -lt 1 ]
+        then
+        rm {input.npo}
+        fi
         """
 ################################################################################
 ### Create summary table from outputs
 rule report:
     input:
         coverm = expand("3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
-        fastp = expand("2_Reads/3_fastp_results/{sample}.json", sample=SAMPLE),
-        npar = expand("3_Outputs/1_QC/3_nonpareil/{sample}.npo", sample=SAMPLE)
+        fastp = expand("2_Reads/3_fastp_results/{sample}.json", sample=SAMPLE)
     output:
         report = "3_Outputs/1_QC/_report.tsv",
         npar_metadata = "3_Outputs/1_QC/_nonpareil_metadata.tsv"
