@@ -23,7 +23,7 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-        "3_Outputs/6_CoverM/coverM_assemblies_rel_abun.txt",
+        "3_Outputs/assembly_summary.tsv",
         "3_Outputs/5_Refined_Bins/All_bins.stats"
 
 ################################################################################
@@ -110,6 +110,20 @@ rule QUAST:
             -o {output.report} \
             --threads {threads} \
             {input.assembly}
+
+        # Parse select metrics for final report
+        grep N50 {output.report}/report.tsv | cut -f2 > {output.report}/n50.tsv
+        grep L50 {output.report}/report.tsv | cut -f2 > {output.report}/l50.tsv
+        grep "# contigs" {output.report}/report.tsv | cut -f2 > {output.report}/ncontigs.tsv
+        grep "Largest contig" {output.report}/report.tsv | cut -f2 > {output.report}/largestcontig.tsv
+        grep "Total length" {output.report}/report.tsv | cut -f2 > {output.report}/totallength.tsv
+
+        # paste into a single table
+        paste {output.report}/n50.tsv \
+            {output.report}/l50.tsv \
+            {output.report}/ncontigs.tsv \
+            {output.report}/largestcontig.tsv \
+            {output.report}/totallength.tsv > {output.report}/{sample}_assembly_report.tsv
         """
 ################################################################################
 ### Index each sample's assembly
@@ -325,6 +339,11 @@ rule reformat_metawrap:
         #Format for dRep input
         cut -f1,2,3 --output-delimiter=, {output.stats} | sed 's/,/.fa,/' | sed 's/genome.fa/bin/' > {params.wd}/All_bins_dRep.csv
 
+        #Print the number of MAGs to a file for combining with the assembly report
+        for sample in {params.wd}/*;
+            do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > $sample_bins.tsv;
+        done
+
         # Clean up
         rm {params.stats_no_header}
         rm {params.wd}/header.txt
@@ -333,22 +352,21 @@ rule reformat_metawrap:
 ### Calculate the number of reads that mapped to assemblies
 rule coverM_assembly:
     input:
-        expand("3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam", sample=SAMPLE)
+        "3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam"
     output:
-        "3_Outputs/6_CoverM/coverM_assemblies_rel_abun.txt"
+        "3_Outputs/6_CoverM/{sample}_coverM_rel_abun.txt"
     params:
+        sample = "{sample}"
     conda:
         "2_Assembly_Binning.yaml"
     threads:
         8
     resources:
         mem_gb=45
-    benchmark:
-        "3_Outputs/0_Logs/coverM_assembly.benchmark.tsv"
     log:
         "3_Outputs/0_Logs/coverM_assembly.log"
     message:
-        "Calculating assembly mapping rate with CoverM"
+        "Calculating assembly mapping rate for {wildcards.sample} with CoverM"
     shell:
         """
         coverm genome \
@@ -358,4 +376,58 @@ rule coverM_assembly:
             -s _ \
             --min-covered-fraction 0 \
             > {output}
+        """
+################################################################################
+### Generate output summary table
+rule generate_summary:
+    input:
+        expand("3_Outputs/6_CoverM/{sample}_coverM_rel_abun.txt", sample=SAMPLE),
+        "3_Outputs/5_Refined_Bins/All_bins.stats"
+    output:
+        "3_Outputs/assembly_summary.tsv"
+    params:
+        sample = "{sample}"
+    conda:
+        "2_Assembly_Binning.yaml"
+    threads:
+        1
+    resources:
+        mem_gb=16
+    log:
+        "3_Outputs/0_Logs/summarise_assembly.log"
+    message:
+        "Creating final summary table"
+    shell:
+        """
+        Create the final output summary table
+        #parse QUAST outputs for assembly stats
+        echo -e "N50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
+        cat 2_Assemblies/*_QUAST/*_assembly_report.tsv > temp_report.tsv
+
+        #Create sampleid column
+        for sample in 2_Assemblies/*_QUAST;
+            do echo ${{sample/_QUAST/}} >> sampleids.tsv;
+        done
+
+        paste sampleids.tsv temp_report.tsv > temp2_report.tsv
+
+        #Add in the # of bins
+        cat *_bins.tsv > number_bins.tsv
+        paste temp2_report.tsv number_bins.tsv > temp3_report.tsv
+
+        #Add in the % mapping to assembly stats
+        for sample in 3_Outputs/6_CoverM/*_coverM_rel_abun.txt;
+            do sed -n 3p $sample | cut -f2 > $sample_relabun.tsv;
+        done
+
+        cat *_relabun.tsv > all_relabun.tsv
+
+        paste temp3_report.tsv all_relabun.tsv > temp4_report.tsv
+
+        #Combine them into the final assembly report
+        cat headers.tsv temp4_report.tsv > {output}
+
+        #Clean up
+        rm headers.tsv && rm temp_report.tsv && rm temp2_report.tsv && rm *_bins.tsv
+        rm *_relabun.tsv
         """
