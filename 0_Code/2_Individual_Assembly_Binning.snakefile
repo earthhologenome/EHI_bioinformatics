@@ -123,7 +123,7 @@ rule QUAST:
             {output.report}/l50.tsv \
             {output.report}/ncontigs.tsv \
             {output.report}/largestcontig.tsv \
-            {output.report}/totallength.tsv > {output.report}/{sample}_assembly_report.tsv
+            {output.report}/totallength.tsv > {output.report}/{wildcards.sample}_assembly_report.tsv
         """
 ################################################################################
 ### Index each sample's assembly
