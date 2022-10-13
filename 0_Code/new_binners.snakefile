@@ -297,8 +297,8 @@ rule binny:
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
     input:
-        concoct = "3_Outputs/4_Binning/{sample}/concoct_bins",
-        maxbin2 = "3_Outputs/4_Binning/{sample}/maxbin2_bins",
+        concoct = "3_Outputs/4_Binning/{sample}/binny_bins",
+        maxbin2 = "3_Outputs/4_Binning/{sample}/semibin_bins",
         metabat2 = "3_Outputs/4_Binning/{sample}/metabat2_bins",
     output:
         stats = "3_Outputs/5_Refined_Bins/{sample}_metawrap_70_10_bins.stats",
