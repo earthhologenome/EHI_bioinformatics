@@ -402,6 +402,7 @@ rule generate_summary:
         echo -e "N50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
         cat 2_Assemblies/*_QUAST/*_assembly_report.tsv > temp_report.tsv
 
+
         #Create sampleid column
         for sample in 2_Assemblies/*_QUAST;
             do echo ${{sample/_QUAST/}} >> sampleids.tsv;
