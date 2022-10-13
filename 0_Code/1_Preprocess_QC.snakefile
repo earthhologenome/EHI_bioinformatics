@@ -266,7 +266,8 @@ rule report:
         report = "3_Outputs/1_QC/_report.tsv",
         npar_metadata = "3_Outputs/1_QC/_nonpareil_metadata.tsv"
     params:
-        tmpdir = "3_Outputs/1_QC/temp"
+        tmpdir = "3_Outputs/1_QC/temp",
+        npar = expand("3_Outputs/1_QC/3_nonpareil/{sample}.npo", sample=SAMPLE)
     conda:
         "1_Preprocess_QC.yaml"
     threads:
@@ -279,9 +280,9 @@ rule report:
         """
         #Create nonpareil sample metadata file
         mkdir -p {params.tmpdir}
-        for i in {input.npar}; do echo $(basename $i) >> {params.tmpdir}/files.txt; done
-        for i in {input.npar}; do echo $(basename ${{i/.npo/}}) >> {params.tmpdir}/names.txt; done
-        for i in {input.npar}; do echo "#f03b20" >> {params.tmpdir}/colours.txt; done
+        for i in {params.npar}; do echo $(basename $i) >> {params.tmpdir}/files.txt; done
+        for i in {params.npar}; do echo $(basename ${{i/.npo/}}) >> {params.tmpdir}/names.txt; done
+        for i in {params.npar}; do echo "#f03b20" >> {params.tmpdir}/colours.txt; done
         echo -e "File\tName\tColour" > {params.tmpdir}/headers.txt
         paste {params.tmpdir}/files.txt {params.tmpdir}/names.txt {params.tmpdir}/colours.txt > {params.tmpdir}/merged.tsv
         cat {params.tmpdir}/headers.txt {params.tmpdir}/merged.tsv > {output.npar_metadata}
