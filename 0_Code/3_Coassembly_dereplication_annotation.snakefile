@@ -105,7 +105,7 @@ rule gtdbtk:
     shell:
         """
         # Specify path to reference data:
-        GTDBTK_DATA_PATH={params.GTDB_data}
+        export GTDBTK_DATA_PATH={params.GTDB_data}
 
         # Run GTDB-tk:
         gtdbtk classify_wf \
