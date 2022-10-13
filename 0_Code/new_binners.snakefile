@@ -221,7 +221,7 @@ rule metabat2:
         # Run metabat2
         metabat2 \
             -i {input.assembly} \
-            -a {output.metabat2_depth} \
+            -a {output.metabat2_depths} \
             -o {output.metabat2}/metabat2_bin \
             -m {params.minlength} \
             -t {threads} --unbinned
