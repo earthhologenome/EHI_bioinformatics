@@ -1,0 +1,6 @@
+ name: rosella
+ channels:
+    - conda-forge
+    - bioconda
+ dependencies:
+    - rosella=0.4.2

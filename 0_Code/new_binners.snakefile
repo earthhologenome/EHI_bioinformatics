@@ -259,43 +259,77 @@ rule semibin:
             -t {threads}
         """
 ################################################################################
-### Bin each sample's contigs using binny
-rule binny:
+### Bin each sample's contigs using rosella
+rule rosella:
     input:
         bam = "3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam",
-        assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta"
+        assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta",
+        metabat2_depths = "3_Outputs/4_Binning/{sample}/{sample}_metabat_depth.txt"
     output:
-        binny = directory("3_Outputs/4_Binning/{sample}/binny_bins")
+        rosella = directory("3_Outputs/4_Binning/{sample}/rosella")
     params:
         minlength = expand("{minlength}", minlength=config['minlength'])
     conda:
-        "binny.yaml"
+        "rosella.yaml"
     threads:
         48
     resources:
         mem_gb=180
     benchmark:
-        "3_Outputs/0_Logs/{sample}_metabat2_binning.benchmark.tsv"
+        "3_Outputs/0_Logs/{sample}_rosella_binning.benchmark.tsv"
     log:
-        "3_Outputs/0_Logs/{sample}_metabat2_binning.log"
+        "3_Outputs/0_Logs/{sample}_rosella_binning.log"
     message:
-        "Binning {wildcards.sample} contigs with metabat2"
+        "Binning {wildcards.sample} contigs with rosella"
     shell:
         """
-        # Run metabat2
-        metabat2 \
-            -i {input.assembly} \
-            -o {output.binny} \
-            -m {params.minlength} \
-            -t {threads} --unbinned
+        # Run rosella
+        rosella bin \
+            -r {input.assembly} \
+            --coverage-values {input.metabat2_depths} \
+            -o {output.rosella} \
+            -t {threads}
         """
+################################################################################
+### Bin each sample's contigs using binny
+## N.B, not sure if it's possible to call binny like other binners...
+## I've opened an issue here: https://github.com/a-h-b/binny/issues
+# rule binny:
+#     input:
+#         bam = "3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam",
+#         assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta"
+#     output:
+#         binny = directory("3_Outputs/4_Binning/{sample}/binny_bins")
+#     params:
+#         minlength = expand("{minlength}", minlength=config['minlength'])
+#     conda:
+#         "binny.yaml"
+#     threads:
+#         48
+#     resources:
+#         mem_gb=180
+#     benchmark:
+#         "3_Outputs/0_Logs/{sample}_metabat2_binning.benchmark.tsv"
+#     log:
+#         "3_Outputs/0_Logs/{sample}_metabat2_binning.log"
+#     message:
+#         "Binning {wildcards.sample} contigs with metabat2"
+#     shell:
+#         """
+#         # Run metabat2
+#         metabat2 \
+#             -i {input.assembly} \
+#             -o {output.binny} \
+#             -m {params.minlength} \
+#             -t {threads} --unbinned
+#         """
 ################################################################################
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
     input:
-        concoct = "3_Outputs/4_Binning/{sample}/binny_bins",
-        maxbin2 = "3_Outputs/4_Binning/{sample}/semibin_bins",
-        metabat2 = "3_Outputs/4_Binning/{sample}/metabat2_bins",
+        a = "3_Outputs/4_Binning/{sample}/rosella_bins",
+        b = "3_Outputs/4_Binning/{sample}/semibin_bins",
+        c = "3_Outputs/4_Binning/{sample}/metabat2_bins",
     output:
         stats = "3_Outputs/5_Refined_Bins/{sample}_metawrap_70_10_bins.stats",
         contigmap = "3_Outputs/5_Refined_Bins/{sample}_metawrap_70_10_bins.contigs"
@@ -328,9 +362,9 @@ rule metaWRAP_refinement:
             -m {params.memory} \
             -t {threads} \
             -o {params.outdir} \
-            -A {input.concoct} \
-            -B {input.maxbin2} \
-            -C {input.metabat2} \
+            -A {input.a} \
+            -B {input.b} \
+            -C {input.c} \
             -c 70 \
             -x 10
 
@@ -346,9 +380,9 @@ rule metaWRAP_refinement:
         # Compress, clean outputs:
         rm -r {params.binning_wfs}
 #        rm -r {params.refinement_wfs}
-        rm {input.concoct}/*.fa
-        rm {input.maxbin2}/*.fa
-        rm {input.metabat2}/*.fa
+        rm {input.a}/*.fa
+        rm {input.b}/*.fa
+        rm {input.c}/*.fa
 
         pigz -p {threads} {params.outdir}/*_bins/*.fa
         """
