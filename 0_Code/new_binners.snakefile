@@ -233,7 +233,7 @@ rule semibin:
         bam = "3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam",
         assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta"
     output:
-        metabat2 = directory("3_Outputs/4_Binning/{sample}/semibin_bins")
+        semibin = directory("3_Outputs/4_Binning/{sample}/semibin_bins")
     params:
         env = expand("{env}", env=config['env'])
     conda:
