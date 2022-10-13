@@ -155,7 +155,7 @@ rule Coassembly_index:
         # Rename dereplicated MAG headers for CoverM compatibility
         for i in {params.MAGs}/*.fa.gz;
             do rename.sh \
-                in={{$i}} \
+                in=$i \
                 out=${{i/.fa.gz/_renamed.fa.gz}} \
                 zl=9 \
                 prefix=$(basename ${{i/.fa.gz/-}});
