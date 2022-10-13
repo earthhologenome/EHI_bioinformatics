@@ -216,7 +216,8 @@ rule coverM_assembly:
     input:
         "3_Outputs/9_MAG_catalogue_mapping/{group}/BAMs/Done.txt"
     output:
-        "3_Outputs/10_Final_tables/{group}_final_count_table.txt"
+        count_table = "3_Outputs/10_Final_tables/{group}_final_count_table.txt",
+        mapping_rate = "3_Outputs/10_Final_tables/{group}_mapping_rate.txt"
     params:
         BAMs = "3_Outputs/9_MAG_catalogue_mapping/{group}/BAMs",
     conda:
@@ -239,7 +240,16 @@ rule coverM_assembly:
             -m count covered_fraction length \
             -t {threads} \
             --min-covered-fraction 0 \
-            > {output}
+            > {output.count_table}
+
+        #relative abundance for report
+        coverm genome \
+            -b {params.BAMs}/*.bam \
+            -s - \
+            -m relative_abundance \
+            -t {threads} \
+            --min-covered-fraction 0 \
+            > {output.mapping_rate}
         """
 ################################################################################
 ### Functionally annotate/distil MAGs with DRAM
