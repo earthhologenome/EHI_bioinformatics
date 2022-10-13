@@ -212,9 +212,9 @@ rule nonpareil:
 
         #Move samples that don't have enough reads for assembly to a new folder
         #This saves time, and prevents errors in the next pipeline!
-        if [ $(( $(stat -c '%s' {input.non_host_r1}) / 1024 / 1024 )) -lt 200 ]
+        if [ $(( $(stat -c '%s' {input.non_host_r1}.gz) / 1024 / 1024 )) -lt 200 ]
         then
-        mv {input.non_host_r1} {params.badsample_r1} && mv {input.non_host_r2} {params.badsample_r2}
+        mv {input.non_host_r1}.gz {params.badsample_r1} && mv {input.non_host_r2}.gz {params.badsample_r2}
         fi
         """
 ################################################################################
