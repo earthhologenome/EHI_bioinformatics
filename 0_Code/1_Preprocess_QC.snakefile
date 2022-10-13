@@ -188,6 +188,7 @@ rule nonpareil:
     shell:
         """
         mkdir -p 3_Outputs/1_QC/3_nonpareil
+        mkdir -p 2_Reads/5_Poor_samples
 
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
