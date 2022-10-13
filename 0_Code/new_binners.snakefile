@@ -265,7 +265,7 @@ rule binny:
         bam = "3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam",
         assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta"
     output:
-        metabat2 = directory("3_Outputs/4_Binning/{sample}/metabat2_bins")
+        binny = directory("3_Outputs/4_Binning/{sample}/binny_bins")
     params:
         minlength = expand("{minlength}", minlength=config['minlength'])
     conda:
@@ -289,8 +289,7 @@ rule binny:
         # Run metabat2
         metabat2 \
             -i {input.assembly} \
-            -a {output.metabat2_depth} \
-            -o {output.metabat2}/metabat2_bin \
+            -o {output.binny} \
             -m {params.minlength} \
             -t {threads} --unbinned
         """
