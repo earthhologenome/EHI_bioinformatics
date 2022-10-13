@@ -13,3 +13,4 @@
     - samtools=1.14
     - pigz=2.6
     - genozip
+    - metabat2=2.15

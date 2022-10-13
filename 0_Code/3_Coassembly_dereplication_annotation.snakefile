@@ -29,7 +29,8 @@ len(MAGS)
 ### Setup the desired outputs
 rule all:
     input:
-        expand("3_Outputs/11_DRAM/{group}/Distillate/{group}_product.html", group=GROUP)
+#        expand("3_Outputs/11_DRAM/{group}/Distillate/{group}_product.html", group=GROUP)
+        expand("3_Outputs/10_Final_tables/{group}_final_count_table.txt", group=GROUP)
 ################################################################################
 ### Dereplicate refined bins using dRep
 rule dereplication:
@@ -242,76 +243,76 @@ rule coverM_assembly:
         """
 ################################################################################
 ### Functionally annotate/distil MAGs with DRAM
-rule DRAM_annotate:
-    input:
-        "3_Outputs/10_Final_tables/{group}_final_count_table.txt"
-    output:
-        "3_Outputs/11_DRAM/{group}/Distillate/{group}_product.html"
-    params:
-        bins = "3_Outputs/7_Dereplication/{group}/dereplicated_genomes",
-        workdir = "3_Outputs/11_DRAM/{group}",
-        gtdbtax = "3_Outputs/8_GTDB-tk/{group}/gtdbtk_combined_summary.tsv",
-    conda:
-        "3_DRAM.yaml"
-    threads:
-        40
-    benchmark:
-        "3_Outputs/0_Logs/{group}_DRAM.benchmark.tsv"
-    log:
-        "3_Outputs/0_Logs/{group}_DRAM.log"
-    message:
-        "Functionally annotating {wildcards.group} MAGs using DRAM"
-    shell:
-        """
-        ## Split bins into groups to parallelize DRAM:
-        # How many bins?
-        count=$(find {params.bins}/ -name '*.fa.gz' -type f|wc -l)
-        # How many bins per group (using 5 groups)?
-        groupsize=$(((count +4) / 5))
-        # Move bins into separate group folders:
-        for group in `seq 1 5`;
-            do mkdir -p {params.workdir}/"group$group";
-            find {params.bins} -type f | head -n $groupsize |
-            xargs -i mv "{{}}" {params.workdir}/"group$group"; done
+# rule DRAM_annotate:
+#     input:
+#         "3_Outputs/10_Final_tables/{group}_final_count_table.txt"
+#     output:
+#         "3_Outputs/11_DRAM/{group}/Distillate/{group}_product.html"
+#     params:
+#         bins = "3_Outputs/7_Dereplication/{group}/dereplicated_genomes",
+#         workdir = "3_Outputs/11_DRAM/{group}",
+#         gtdbtax = "3_Outputs/8_GTDB-tk/{group}/gtdbtk_combined_summary.tsv",
+#     conda:
+#         "3_DRAM.yaml"
+#     threads:
+#         40
+#     benchmark:
+#         "3_Outputs/0_Logs/{group}_DRAM.benchmark.tsv"
+#     log:
+#         "3_Outputs/0_Logs/{group}_DRAM.log"
+#     message:
+#         "Functionally annotating {wildcards.group} MAGs using DRAM"
+#     shell:
+#         """
+#         ## Split bins into groups to parallelize DRAM:
+#         # How many bins?
+#         count=$(find {params.bins}/ -name '*.fa.gz' -type f|wc -l)
+#         # How many bins per group (using 5 groups)?
+#         groupsize=$(((count +4) / 5))
+#         # Move bins into separate group folders:
+#         for group in `seq 1 5`;
+#             do mkdir -p {params.workdir}/"group$group";
+#             find {params.bins} -type f | head -n $groupsize |
+#             xargs -i mv "{{}}" {params.workdir}/"group$group"; done
 
-        # Create checkm tsv for input to DRAM:
-        echo -e "Bin Id\tCompleteness\tContamination" > {params.workdir}/header.txt
-        sed '1d;' 3_Outputs/5_Refined_Bins/dRep_groups/{wildcards.group}/genome_info.csv |
-        tr ',' '\t' > {params.workdir}/bininfo.txt
-        cat {params.workdir}/header.txt {params.workdir}/bininfo.txt > {params.workdir}checkm.tsv
+#         # Create checkm tsv for input to DRAM:
+#         echo -e "Bin Id\tCompleteness\tContamination" > {params.workdir}/header.txt
+#         sed '1d;' 3_Outputs/5_Refined_Bins/dRep_groups/{wildcards.group}/genome_info.csv |
+#         tr ',' '\t' > {params.workdir}/bininfo.txt
+#         cat {params.workdir}/header.txt {params.workdir}/bininfo.txt > {params.workdir}checkm.tsv
 
-        # Clean up
-        rm {params.workdir}/*.txt
+#         # Clean up
+#         rm {params.workdir}/*.txt
 
-        # Run DRAM-annotate:
-        for group in {params.workdir}/group*;
-        do echo DRAM.py annotate \
-        -i '$group/*.fa.gz' \
-        --gtdb_taxonomy {params.gtdbtax} \
-        --checkm_quality {params.workdir}checkm.tsv \
-        --threads 8 \
-        --min_contig_size 2500 \
-        -o "$group"_DRAM;
-            done | parallel -j 5
+#         # Run DRAM-annotate:
+#         for group in {params.workdir}/group*;
+#         do echo DRAM.py annotate \
+#         -i '$group/*.fa.gz' \
+#         --gtdb_taxonomy {params.gtdbtax} \
+#         --checkm_quality {params.workdir}checkm.tsv \
+#         --threads 8 \
+#         --min_contig_size 2500 \
+#         -o "$group"_DRAM;
+#             done | parallel -j 5
 
-        # Merge DRAM groups
-        DRAM.py merge_annotation \
-        -i {params.workdir}/'group*_DRAM' \
-        -o {params.workdir}/merged_DRAM
+#         # Merge DRAM groups
+#         DRAM.py merge_annotation \
+#         -i {params.workdir}/'group*_DRAM' \
+#         -o {params.workdir}/merged_DRAM
 
-        # Distill annotations:
-        DRAM.py distill \
-        -i {params.workdir}/merged_DRAM/annotations.tsv \
-        --rrna_path {params.workdir}/merged_DRAM/rrnas.tsv \
-        --trna_path {params.workdir}/merged_DRAM/trnas.tsv \
-        -o {params.workdir}/Distillate
+#         # Distill annotations:
+#         DRAM.py distill \
+#         -i {params.workdir}/merged_DRAM/annotations.tsv \
+#         --rrna_path {params.workdir}/merged_DRAM/rrnas.tsv \
+#         --trna_path {params.workdir}/merged_DRAM/trnas.tsv \
+#         -o {params.workdir}/Distillate
 
-        # Rename, clean, compress:
-        for i in {params.workdir}/Distillate/*;
-            do mv $i {params.workdir}/Distillate/$(basename {wildcards.group}_"$i");
-                done
-        pigz -p {threads} {params.workdir}/Distillate/*
-        rm -r {params.workdir}/group*_DRAM
-        """
-################################################################################
-###
+#         # Rename, clean, compress:
+#         for i in {params.workdir}/Distillate/*;
+#             do mv $i {params.workdir}/Distillate/$(basename {wildcards.group}_"$i");
+#                 done
+#         pigz -p {threads} {params.workdir}/Distillate/*
+#         rm -r {params.workdir}/group*_DRAM
+#         """
+# ################################################################################
+# ###

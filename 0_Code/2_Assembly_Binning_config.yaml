@@ -1,5 +1,13 @@
 ### Config file for assembly/binning pipeline
 ### RE 02/2022
 
+#assembler you want to use (megahit or metaspades)
 assembler: megahit
+#path to checkmdb
 checkmdb: /projects/mjolnir1/people/ncl550/0_software/checkm_2015
+#min contig length for binning
+minlength: 1500
+#pre-trained environment model for SemiBin (choice of: human_gut, dog_gut, ocean, soil, cat_gut, human_oral, mouse_gut, pig_gut, built_environment, wastewater, global)
+#n.b. global is a generic model
+#training a new model takes quite a bit of time, and I've not done enough research to deterine whether it's worth the time cost. Possible to implement this as an option in the future though.
+env: global
