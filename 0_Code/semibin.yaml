@@ -1,4 +1,4 @@
-name: semibin
+ name: semibin
  channels:
     - conda-forge
     - bioconda

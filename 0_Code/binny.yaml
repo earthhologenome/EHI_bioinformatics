@@ -1,4 +1,4 @@
-name: binny
+ name: binny
  channels:
     - conda-forge
     - bioconda
