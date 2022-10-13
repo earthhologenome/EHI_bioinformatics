@@ -202,7 +202,7 @@ rule MAG_catalogue_mapping:
             --time \
             --threads {threads} \
             -x {params.MAGs} \
-            -1 {{$fq1}} \
+            -1 $fq1 \
             -2 ${{fq1/_1.fastq.gz/_2.fastq.gz}} \
         | samtools sort -@ {threads} -o {params.BAMs}/$(basename ${{fq1/_1.fastq.gz/.bam}}); done
 
