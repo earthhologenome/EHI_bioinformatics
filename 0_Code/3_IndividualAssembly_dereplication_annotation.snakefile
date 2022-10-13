@@ -245,7 +245,7 @@ rule coverM_assembly:
         #relative abundance for report
         coverm genome \
             -b {params.BAMs}/*.bam \
-            -s - \
+            -s ^ \
             -m relative_abundance \
             -t {threads} \
             --min-covered-fraction 0 \

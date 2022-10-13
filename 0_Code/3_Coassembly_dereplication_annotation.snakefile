@@ -159,7 +159,7 @@ rule Coassembly_index:
                 in=$i \
                 out=${{i/.fa.gz/_renamed.fa.gz}} \
                 zl=9 \
-                prefix=$(basename ${{i/.fa.gz/-}});
+                prefix=$(basename ${{i/.fa.gz/^}});
             done
 
         # Concatenate the dereplicated MAGs into a single file
@@ -236,7 +236,7 @@ rule coverM_assembly:
         """
         coverm genome \
             -b {params.BAMs}/*.bam \
-            -s - \
+            -s ^ \
             -m count covered_fraction length \
             -t {threads} \
             --min-covered-fraction 0 \
@@ -245,7 +245,7 @@ rule coverM_assembly:
         #relative abundance for report
         coverm genome \
             -b {params.BAMs}/*.bam \
-            -s - \
+            -s ^ \
             -m relative_abundance \
             -t {threads} \
             --min-covered-fraction 0 \
