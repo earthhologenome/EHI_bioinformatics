@@ -282,10 +282,6 @@ rule binny:
         "Binning {wildcards.sample} contigs with metabat2"
     shell:
         """
-        # Create contig depth file
-        jgi_summarize_bam_contig_depths \
-            --outputDepth {output.metabat2_depths} {input.bam}
-
         # Run metabat2
         metabat2 \
             -i {input.assembly} \
