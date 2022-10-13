@@ -179,7 +179,7 @@ rule MAG_catalogue_mapping:
     output:
         "3_Outputs/9_MAG_catalogue_mapping/{group}/BAMs/Done.txt"
     params:
-        reads = "2_Reads/3_Host_removed/{group}",
+        reads = "2_Reads/4_Host_removed/{group}",
         BAMs = "3_Outputs/9_MAG_catalogue_mapping/{group}/BAMs",
         MAGs = "3_Outputs/9_MAG_catalogue_mapping/{group}/{group}_MAGs.fa.gz"
     conda:
