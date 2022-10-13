@@ -190,56 +190,6 @@ rule assembly_mapping:
         | samtools sort -@ {threads} -o {output.mapped_bam}
         """
 ################################################################################
-### Bin each sample's contigs using metaWRAP's binning module
-rule metaWRAP_binning:
-    input:
-        "3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam"
-    output:
-        concoct = directory("3_Outputs/4_Binning/{sample}/concoct_bins"),
-        maxbin2 = directory("3_Outputs/4_Binning/{sample}/maxbin2_bins"),
-        metabat2 = directory("3_Outputs/4_Binning/{sample}/metabat2_bins")
-    params:
-        outdir = "3_Outputs/4_Binning/{sample}",
-        assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta",
-        basename = "3_Outputs/3_Assembly_Mapping/BAMs/{sample}",
-        memory = "180"
-    conda:
-        "2_MetaWRAP.yaml"
-    threads:
-        48
-    resources:
-        mem_gb=180
-    benchmark:
-        "3_Outputs/0_Logs/{sample}_assembly_binning.benchmark.tsv"
-    log:
-        "3_Outputs/0_Logs/{sample}_assembly_binning.log"
-    message:
-        "Binning {wildcards.sample} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
-    shell:
-        """
-        # Create dummy fastq/assembly files to trick metaWRAP into running without mapping
-        mkdir -p {params.outdir}/work_files
-
-        touch {params.outdir}/work_files/assembly.fa.bwt
-
-        echo "@" > {params.outdir}/work_files/$(basename {params.basename}_1.fastq)
-        echo "@" > {params.outdir}/work_files/$(basename {params.basename}_2.fastq)
-
-        #Symlink BAMs for metaWRAP
-        ln -sf `pwd`/{input} {params.outdir}/work_files/$(basename {input})
-
-        # Run metaWRAP binning
-        metawrap binning -o {params.outdir} \
-            -t {threads} \
-            -m {params.memory} \
-            -a {params.assembly} \
-            -l 1500 \
-            --metabat2 \
-            --maxbin2 \
-            --concoct \
-        {params.outdir}/work_files/*_1.fastq {params.outdir}/work_files/*_2.fastq
-        """
-################################################################################
 ### Bin each sample's contigs using MetaBAT2
 rule metabat2:
     input:
@@ -287,7 +237,7 @@ rule semibin:
     params:
         env = expand("{env}", env=config['env'])
     conda:
-        "2_Assembly_Binning.yaml"
+        "semibin.yaml"
     threads:
         48
     resources:
@@ -310,17 +260,16 @@ rule semibin:
         """
 ################################################################################
 ### Bin each sample's contigs using binny
-rule binnny:
+rule binny:
     input:
         bam = "3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam",
         assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta"
     output:
-        metabat2_depths = "3_Outputs/4_Binning/{sample}/{sample}_metabat_depth.txt",
         metabat2 = directory("3_Outputs/4_Binning/{sample}/metabat2_bins")
     params:
         minlength = expand("{minlength}", minlength=config['minlength'])
     conda:
-        "2_Assembly_Binning.yaml"
+        "binny.yaml"
     threads:
         48
     resources:
