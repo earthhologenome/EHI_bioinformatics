@@ -11,7 +11,7 @@ git clone https://github.com/anttonalberdi/EHI_bioinformatics.git
 ```
 
 ## Preprocessing pipeline (1_Preprocess_QC.snakefile)
-*updated 23/06/2022, Raphael Eisenhofer*
+*updated 14/10/2022, Raphael Eisenhofer*
 
 ### What this pipeline does:
 This step of the pipeline quality filters (including adapter trimming, polyX tail removal) metagenomic reads using fastp (0.23.1). Host genomes are indexed using BowTie2 (2.4.4), before the fastp-filtered reads being mapped to the host genome/s using BowTie2 (default settings). Nonpareil (3.4.1) is then run on the host-filtered reads to estimate metagenome diversity and assembly coverage. CoverM (0.6.1) is run on the host-mapped BAMs to calculate the read counts against the host genome/s. Finally, the summary statistics of the preprocessing and host mapping are collated into a final report.
@@ -43,16 +43,18 @@ That's all the setup required to get the pipeline running. Now you just need to 
 snakemake \
 -s 0_Code/1_Preprocess_QC.snakefile \
 -j 10 \
---cluster "sbatch --mem {resources.mem_gb}G --cores {threads}" \
+--cluster "sbatch --mem {resources.mem_gb}G --time {resources.time} --cores {threads}" \
 --use-conda \
 --conda-frontend conda \
 --conda-prefix /projects/mjolnir1/people/ncl550/0_software \
 --latency-wait 600
 ```
 
-I recommend adding the `--dry-run` command to the above code initially, as this will let you figure out if everything is working as expected.
+`snakemake -s 0_Code/1_Preprocess_QC.snakefile -j 10 --cluster "sbatch --mem {resources.mem_gb}G --cores --time {resources.time} {threads}" --use-conda --conda-frontend conda --conda-prefix /projects/mjolnir1/people/ncl550/0_software --latency-wait 600`
 
-I've written the pipeline such that it handles the requesting of optimised resources (RAM/CPUs) for each job based on the specific snakemake rule. The `--conda-prefix` snakemake option tells snakemake to look for conda environment in a particular directory, which saves having to reinstall them each time you run from a new directory. Note that the above path is only for Computerome 2.0 -- I'll setup a shared folder on Mjolnir when I get access soon.
+I recommend adding the `--dry-run` or `-n` command to the above code initially, as this will let you figure out if everything is working as expected.
+
+I've written the pipeline such that it handles the requesting of optimised resources (RAM/CPUs) for each job based on the specific snakemake rule. The `--conda-prefix` snakemake option tells snakemake to look for conda environment in a particular directory, which saves having to reinstall them each time you run from a new directory. 
 
 Here's a illustrative summary of each rule and it's input files and output files:
 
