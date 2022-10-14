@@ -284,7 +284,7 @@ rule rosella:
     shell:
         """
         # Run rosella
-        rosella bin \
+        rosella recover \
             -r {input.assembly} \
             --coverage-values {input.metabat2_depths} \
             -o {output.rosella} \
