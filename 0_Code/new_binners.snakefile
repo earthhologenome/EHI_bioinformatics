@@ -201,7 +201,7 @@ rule metabat2:
     params:
         minlength = expand("{minlength}", minlength=config['minlength'])
     conda:
-        "2_Assembly_Binning.yaml"
+        "metabat2.yaml"
     threads:
         48
     resources:
