@@ -1,5 +1,7 @@
- name: aviary
+ name: rosella
  channels:
     - bioconda
  dependencies:
-    - aviary
+    - python=3 
+    - scipy=1.8.1 
+    - scikit-bio
