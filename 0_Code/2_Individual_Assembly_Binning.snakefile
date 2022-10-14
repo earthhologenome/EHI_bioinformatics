@@ -416,7 +416,7 @@ rule generate_summary:
 
         #Add in the % mapping to assembly stats
         for sample in 3_Outputs/6_CoverM/*_coverM_rel_abun.txt;
-            do sed -n 3p $sample | cut -f2 > $(basename {{$sample/_coverM_rel_abun.txt/}})_relabun.tsv;
+            do sed -n 3p $sample | cut -f2 > $(basename ${{sample/_coverM_rel_abun.txt/}})_relabun.tsv;
         done
 
         cat *_relabun.tsv > all_relabun.tsv
