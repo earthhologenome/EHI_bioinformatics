@@ -323,6 +323,11 @@ rule reformat_metawrap:
         "Reformatting metaWRAP outputs"
     shell:
         """
+        #Print the number of MAGs to a file for combining with the assembly report
+        for sample in {params.wd}/*/;
+            do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > "$sample"_bins.tsv;
+        done
+
         # Copy each sample's bins to a single folder
         mkdir -p {params.all_folder}
         cp {params.wd}/*/metawrap_70_10_bins/* {params.all_folder}
@@ -338,11 +343,6 @@ rule reformat_metawrap:
 
         #Format for dRep input
         cut -f1,2,3 --output-delimiter=, {output.stats} | sed 's/,/.fa,/' | sed 's/genome.fa/bin/' > {params.wd}/All_bins_dRep.csv
-
-        #Print the number of MAGs to a file for combining with the assembly report
-        for sample in {params.wd}/*;
-            do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > "$sample"_bins.tsv;
-        done
 
         # Clean up
         rm {params.stats_no_header}
