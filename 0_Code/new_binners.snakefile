@@ -266,7 +266,7 @@ rule rosella:
         assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta",
         metabat2_depths = "3_Outputs/4_Binning/{sample}/{sample}_metabat_depth.txt"
     output:
-        rosella = directory("3_Outputs/4_Binning/{sample}/rosella")
+        rosella = directory("3_Outputs/4_Binning/{sample}/rosella_bins")
     params:
         minlength = expand("{minlength}", minlength=config['minlength'])
     conda:
