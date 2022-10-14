@@ -427,6 +427,6 @@ rule generate_summary:
         cat headers.tsv temp4_report.tsv > {output}
 
         #Clean up
-        rm headers.tsv && rm tem*_report.tsv && rm *_bins.tsv && rm sampleids.tsv
-        rm *_relabun.tsv
+#        rm headers.tsv && rm tem*_report.tsv && rm *_bins.tsv && rm sampleids.tsv
+#        rm *_relabun.tsv
         """
