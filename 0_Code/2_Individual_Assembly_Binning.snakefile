@@ -42,7 +42,8 @@ rule Assembly:
     threads:
         48
     resources:
-        mem_gb=256
+        mem_gb=256,
+        time=12:00:00
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly.benchmark.tsv"
     log:
@@ -100,7 +101,8 @@ rule QUAST:
     threads:
         10
     resources:
-        mem_gb=80
+        mem_gb=80,
+        time=00:15:00
     message:
         "Running QUAST on {wildcards.sample} assembly"
     shell:
@@ -114,9 +116,9 @@ rule QUAST:
         # Parse select metrics for final report
         grep N50 {output.report}/report.tsv | cut -f2 > {output.report}/n50.tsv
         grep L50 {output.report}/report.tsv | cut -f2 > {output.report}/l50.tsv
-        grep "# contigs" {output.report}/report.tsv | cut -f2 > {output.report}/ncontigs.tsv
+        grep "# contigs (>= 0 bp)" {output.report}/report.tsv | cut -f2 > {output.report}/ncontigs.tsv
         grep "Largest contig" {output.report}/report.tsv | cut -f2 > {output.report}/largestcontig.tsv
-        grep "Total length" {output.report}/report.tsv | cut -f2 > {output.report}/totallength.tsv
+        grep "Total length (>= 0 bp)" {output.report}/report.tsv | cut -f2 > {output.report}/totallength.tsv
 
         # paste into a single table
         paste {output.report}/n50.tsv \
@@ -139,7 +141,8 @@ rule assembly_index:
     threads:
         24
     resources:
-        mem_gb=180
+        mem_gb=180,
+        time=02:00:00
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_indexing.benchmark.tsv"
     log:
@@ -171,7 +174,8 @@ rule assembly_mapping:
     threads:
         24
     resources:
-        mem_gb=80
+        mem_gb=80,
+        time=04:00:00
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_mapping.benchmark.tsv"
     log:
@@ -208,7 +212,8 @@ rule metaWRAP_binning:
     threads:
         48
     resources:
-        mem_gb=180
+        mem_gb=180,
+        time=08:00:00
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_binning.benchmark.tsv"
     log:
@@ -261,7 +266,8 @@ rule metaWRAP_refinement:
     threads:
         48
     resources:
-        mem_gb=256
+        mem_gb=256,
+        time=06:00:00
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_bin_refinement.benchmark.tsv"
     log:
@@ -318,7 +324,8 @@ rule reformat_metawrap:
     threads:
         1
     resources:
-        mem_gb=24
+        mem_gb=24,
+        time=00:05:00
     message:
         "Reformatting metaWRAP outputs"
     shell:
@@ -362,7 +369,8 @@ rule coverM_assembly:
     threads:
         8
     resources:
-        mem_gb=45
+        mem_gb=45,
+        time=02:00:00
     log:
         "3_Outputs/0_Logs/{sample}_coverM_assembly.log"
     message:
@@ -390,7 +398,8 @@ rule generate_summary:
     threads:
         1
     resources:
-        mem_gb=16
+        mem_gb=16,
+        time=00:05:00
     log:
         "3_Outputs/0_Logs/summarise_assembly.log"
     message:
@@ -405,7 +414,7 @@ rule generate_summary:
 
         #Create sampleid column
         for sample in 3_Outputs/2_Assemblies/*_QUAST;
-            do echo ${{sample/_QUAST/}} >> sampleids.tsv;
+            do echo $(basename ${{sample/_QUAST/}}) >> sampleids.tsv;
         done
 
         paste sampleids.tsv temp_report.tsv > temp2_report.tsv

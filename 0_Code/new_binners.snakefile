@@ -114,9 +114,9 @@ rule QUAST:
         # Parse select metrics for final report
         grep N50 {output.report}/report.tsv | cut -f2 > {output.report}/n50.tsv
         grep L50 {output.report}/report.tsv | cut -f2 > {output.report}/l50.tsv
-        grep "# contigs" {output.report}/report.tsv | cut -f2 > {output.report}/ncontigs.tsv
+        grep "# contigs (>= 0 bp)" {output.report}/report.tsv | cut -f2 > {output.report}/ncontigs.tsv
         grep "Largest contig" {output.report}/report.tsv | cut -f2 > {output.report}/largestcontig.tsv
-        grep "Total length" {output.report}/report.tsv | cut -f2 > {output.report}/totallength.tsv
+        grep "Total length (>= 0 bp)" {output.report}/report.tsv | cut -f2 > {output.report}/totallength.tsv
 
         # paste into a single table
         paste {output.report}/n50.tsv \
@@ -489,7 +489,7 @@ rule generate_summary:
 
         #Create sampleid column
         for sample in 3_Outputs/2_Assemblies/*_QUAST;
-            do echo ${{sample/_QUAST/}} >> sampleids.tsv;
+            do echo $(basename ${{sample/_QUAST/}}) >> sampleids.tsv;
         done
 
         paste sampleids.tsv temp_report.tsv > temp2_report.tsv

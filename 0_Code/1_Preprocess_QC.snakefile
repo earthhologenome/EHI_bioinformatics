@@ -57,7 +57,8 @@ rule fastp:
     threads:
         8
     resources:
-        mem_gb=24
+        mem_gb=24,
+        time=00:30:00
     benchmark:
         "3_Outputs/0_Logs/{sample}_fastp.benchmark.tsv"
     log:
@@ -94,7 +95,8 @@ rule index_ref:
     conda:
         "1_Preprocess_QC.yaml"
     threads:
-        40
+        48,
+        time=02:00:00
     resources:
         mem_gb=180
     log:
@@ -135,7 +137,8 @@ rule map_to_ref:
     conda:
         "1_Preprocess_QC.yaml"
     threads:
-        20
+        24,
+        time=02:00:00
     resources:
         mem_gb=90
     benchmark:
@@ -178,9 +181,10 @@ rule nonpareil:
     conda:
         "1_Preprocess_QC.yaml"
     threads:
-        10
+        16
     resources:
-        mem_gb=45
+        mem_gb=45,
+        time=02:00:00
     benchmark:
         "3_Outputs/0_Logs/{sample}_nonpareil.benchmark.tsv"
     message:
@@ -231,9 +235,10 @@ rule coverM:
     conda:
         "1_Preprocess_QC.yaml"
     threads:
-        10
+        16
     resources:
-        mem_gb=45
+        mem_gb=45,
+        time=00:30:00
     benchmark:
         "3_Outputs/0_Logs/{sample}_coverM.benchmark.tsv"
     log:
@@ -274,7 +279,8 @@ rule report:
     threads:
         1
     resources:
-        mem_gb=45
+        mem_gb=45,
+        time=00:05:00
     message:
         "Creating a final preprocessing report"
     shell:
