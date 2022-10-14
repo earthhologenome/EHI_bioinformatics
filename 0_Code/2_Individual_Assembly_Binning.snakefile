@@ -325,7 +325,7 @@ rule reformat_metawrap:
         """
         #Print the number of MAGs to a file for combining with the assembly report
         for sample in {params.wd}/*/;
-            do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > '$sample'_bins.tsv;
+            do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > $(basename $sample)_bins.tsv;
         done
 
         # Copy each sample's bins to a single folder
@@ -399,7 +399,7 @@ rule generate_summary:
         """
         #Create the final output summary table
         #parse QUAST outputs for assembly stats
-        echo -e "N50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
+        echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
         cat 3_Outputs/2_Assemblies/*_QUAST/*_assembly_report.tsv > temp_report.tsv
 
 
@@ -416,7 +416,7 @@ rule generate_summary:
 
         #Add in the % mapping to assembly stats
         for sample in 3_Outputs/6_CoverM/*_coverM_rel_abun.txt;
-            do sed -n 3p $sample | cut -f2 > '$sample'_relabun.tsv;
+            do sed -n 3p $sample | cut -f2 > $(basename {{$sample/_coverM_rel_abun.txt/}})_relabun.tsv;
         done
 
         cat *_relabun.tsv > all_relabun.tsv
@@ -427,6 +427,5 @@ rule generate_summary:
         cat headers.tsv temp4_report.tsv > {output}
 
         #Clean up
-#        rm headers.tsv && rm tem*_report.tsv && rm *_bins.tsv && rm sampleids.tsv
-#        rm *_relabun.tsv
+#        rm *.tsv
         """
