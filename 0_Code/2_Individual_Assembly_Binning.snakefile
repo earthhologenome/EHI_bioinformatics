@@ -341,7 +341,7 @@ rule reformat_metawrap:
 
         #Print the number of MAGs to a file for combining with the assembly report
         for sample in {params.wd}/*;
-            do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > $sample_bins.tsv;
+            do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > "$sample"_bins.tsv;
         done
 
         # Clean up
