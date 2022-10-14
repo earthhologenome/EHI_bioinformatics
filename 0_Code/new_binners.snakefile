@@ -268,7 +268,8 @@ rule rosella:
     output:
         rosella = directory("3_Outputs/4_Binning/{sample}/rosella_bins")
     params:
-        minlength = expand("{minlength}", minlength=config['minlength'])
+        minlength = expand("{minlength}", minlength=config['minlength']),
+        dir = "3_Outputs/4_Binning/{sample}"
     conda:
         "rosella.yaml"
     threads:
@@ -289,6 +290,11 @@ rule rosella:
             --coverage-values {input.metabat2_depths} \
             -o {output.rosella} \
             -t {threads}
+
+        # Move misc files from rosella output in case they interfere with refinement
+        mv {output.rosella}/*.png {params.dir}
+        mv {output.rosella}/*.tsv {params.dir}
+        mv {output.rosella}/*.json {params.dir}
         """
 ################################################################################
 ### Bin each sample's contigs using binny
@@ -328,7 +334,7 @@ rule rosella:
 rule metaWRAP_refinement:
     input:
         a = "3_Outputs/4_Binning/{sample}/rosella_bins",
-        b = "3_Outputs/4_Binning/{sample}/semibin_bins",
+        b = "3_Outputs/4_Binning/{sample}/semibin_bins/output_recluster_bins",
         c = "3_Outputs/4_Binning/{sample}/metabat2_bins",
     output:
         stats = "3_Outputs/5_Refined_Bins/{sample}_metawrap_70_10_bins.stats",
