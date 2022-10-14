@@ -407,6 +407,11 @@ rule reformat_metawrap:
         "Reformatting metaWRAP outputs"
     shell:
         """
+        #Print the number of MAGs to a file for combining with the assembly report
+        for sample in {params.wd}/*/;
+            do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > '$sample'_bins.tsv;
+        done
+
         # Copy each sample's bins to a single folder
         mkdir -p {params.all_folder}
         cp {params.wd}/*/metawrap_70_10_bins/* {params.all_folder}
@@ -422,11 +427,6 @@ rule reformat_metawrap:
 
         #Format for dRep input
         cut -f1,2,3 --output-delimiter=, {output.stats} | sed 's/,/.fa,/' | sed 's/genome.fa/bin/' > {params.wd}/All_bins_dRep.csv
-
-        #Print the number of MAGs to a file for combining with the assembly report
-        for sample in {params.wd}/*;
-            do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > $sample_bins.tsv;
-        done
 
         # Clean up
         rm {params.stats_no_header}
@@ -481,14 +481,14 @@ rule generate_summary:
         "Creating final summary table"
     shell:
         """
-        Create the final output summary table
+        #Create the final output summary table
         #parse QUAST outputs for assembly stats
         echo -e "N50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
-        cat 2_Assemblies/*_QUAST/*_assembly_report.tsv > temp_report.tsv
+        cat 3_Outputs/2_Assemblies/*_QUAST/*_assembly_report.tsv > temp_report.tsv
 
 
         #Create sampleid column
-        for sample in 2_Assemblies/*_QUAST;
+        for sample in 3_Outputs/2_Assemblies/*_QUAST;
             do echo ${{sample/_QUAST/}} >> sampleids.tsv;
         done
 
@@ -500,7 +500,7 @@ rule generate_summary:
 
         #Add in the % mapping to assembly stats
         for sample in 3_Outputs/6_CoverM/*_coverM_rel_abun.txt;
-            do sed -n 3p $sample | cut -f2 > $sample_relabun.tsv;
+            do sed -n 3p $sample | cut -f2 > '$sample'_relabun.tsv;
         done
 
         cat *_relabun.tsv > all_relabun.tsv
@@ -511,6 +511,6 @@ rule generate_summary:
         cat headers.tsv temp4_report.tsv > {output}
 
         #Clean up
-        rm headers.tsv && rm temp_report.tsv && rm temp2_report.tsv && rm *_bins.tsv
+        rm headers.tsv && rm tem*_report.tsv && rm *_bins.tsv && rm sampleids.tsv
         rm *_relabun.tsv
         """
