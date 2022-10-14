@@ -397,7 +397,7 @@ rule generate_summary:
         "Creating final summary table"
     shell:
         """
-        Create the final output summary table
+        #Create the final output summary table
         #parse QUAST outputs for assembly stats
         echo -e "N50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
         cat 2_Assemblies/*_QUAST/*_assembly_report.tsv > temp_report.tsv
