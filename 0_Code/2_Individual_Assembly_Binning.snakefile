@@ -400,11 +400,11 @@ rule generate_summary:
         #Create the final output summary table
         #parse QUAST outputs for assembly stats
         echo -e "N50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
-        cat 2_Assemblies/*_QUAST/*_assembly_report.tsv > temp_report.tsv
+        cat 3_Outputs/2_Assemblies/*_QUAST/*_assembly_report.tsv > temp_report.tsv
 
 
         #Create sampleid column
-        for sample in 2_Assemblies/*_QUAST;
+        for sample in 3_Outputs/2_Assemblies/*_QUAST;
             do echo ${{sample/_QUAST/}} >> sampleids.tsv;
         done
 
