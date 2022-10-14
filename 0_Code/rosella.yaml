@@ -1,6 +1,5 @@
- name: rosella
+ name: aviary
  channels:
-    - conda-forge
     - bioconda
  dependencies:
-    - rosella=0.4.2
+    - aviary
