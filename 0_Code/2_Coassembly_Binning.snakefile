@@ -47,7 +47,8 @@ rule Coassembly:
     threads:
         48
     resources:
-        mem_gb=256
+        mem_gb=256,
+        time='36:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly.benchmark.tsv"
     log:
@@ -116,7 +117,8 @@ rule QUAST:
     threads:
         10
     resources:
-        mem_gb=90
+        mem_gb=90,
+        time='01:00:00'
     message:
         "Running -QUAST on {wildcards.group} coassembly"
     shell:
@@ -146,7 +148,8 @@ rule Coassembly_index:
     threads:
         48
     resources:
-        mem_gb=180
+        mem_gb=180,
+        time='04:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_indexing.benchmark.tsv"
     log:
@@ -178,7 +181,8 @@ rule Coassembly_mapping:
     threads:
         96
     resources:
-        mem_gb=128
+        mem_gb=128,
+        time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_mapping.benchmark.tsv"
     log:
@@ -220,7 +224,8 @@ rule metaWRAP_binning:
     threads:
         48
     resources:
-        mem_gb=256
+        mem_gb=256,
+        time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_binning.benchmark.tsv"
     log:
@@ -274,7 +279,8 @@ rule metaWRAP_refinement:
     threads:
         48
     resources:
-        mem_gb=256
+        mem_gb=256,
+        time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
     log:
@@ -327,7 +333,8 @@ rule coverM_assembly:
     threads:
         48
     resources:
-        mem_gb=180
+        mem_gb=180,
+        time='06:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
     log:

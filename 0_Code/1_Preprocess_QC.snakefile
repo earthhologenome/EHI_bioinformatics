@@ -58,7 +58,7 @@ rule fastp:
         8
     resources:
         mem_gb=24,
-        time=00:30:00
+        time='00:30:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_fastp.benchmark.tsv"
     log:
@@ -96,7 +96,7 @@ rule index_ref:
         "1_Preprocess_QC.yaml"
     threads:
         48,
-        time=02:00:00
+        time='02:00:00'
     resources:
         mem_gb=180
     log:
@@ -138,7 +138,7 @@ rule map_to_ref:
         "1_Preprocess_QC.yaml"
     threads:
         24,
-        time=02:00:00
+        time='02:00:00'
     resources:
         mem_gb=90
     benchmark:
@@ -184,7 +184,7 @@ rule nonpareil:
         16
     resources:
         mem_gb=45,
-        time=02:00:00
+        time='02:00:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_nonpareil.benchmark.tsv"
     message:
@@ -238,7 +238,7 @@ rule coverM:
         16
     resources:
         mem_gb=45,
-        time=00:30:00
+        time='00:30:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_coverM.benchmark.tsv"
     log:
@@ -280,7 +280,7 @@ rule report:
         1
     resources:
         mem_gb=45,
-        time=00:05:00
+        time='00:05:00'
     message:
         "Creating a final preprocessing report"
     shell:
