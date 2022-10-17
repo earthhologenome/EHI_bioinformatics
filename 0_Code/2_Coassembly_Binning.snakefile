@@ -179,7 +179,7 @@ rule Coassembly_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        72
+        48
     resources:
         mem_gb=128,
         time='24:00:00'
