@@ -42,8 +42,7 @@ rule Assembly:
     threads:
         48
     resources:
-        mem_gb=256,
-        time=12:00:00
+        mem_gb=256, time=12:00:00
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly.benchmark.tsv"
     log:
