@@ -131,10 +131,10 @@ rule QUAST:
             --threads {threads} \
             {input.Coassembly}
 
-        # Rename QUAST files
-        for i in {output.report}/*;
-            do mv $i {output.report}/{wildcards.group}_$(basename $i);
-                done
+        # # Rename QUAST files
+        # for i in {output.report}/*;
+        #     do mv $i {output.report}/{wildcards.group}_$(basename $i);
+        #         done
         
         # Parse select metrics for final report
         grep N50 {output.report}/report.tsv | cut -f2 > {output.report}/n50.tsv
