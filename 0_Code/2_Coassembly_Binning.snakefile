@@ -195,9 +195,9 @@ rule Coassembly_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        60
+        72
     resources:
-        mem_gb=128,
+        mem_gb=256,
         time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_mapping.benchmark.tsv"
