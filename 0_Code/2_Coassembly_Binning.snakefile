@@ -29,7 +29,9 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-        expand("3_Outputs/6_CoverM/{group}_assembly_coverM.txt", group=GROUP)
+#        expand("3_Outputs/6_CoverM/{group}_assembly_coverM.txt", group=GROUP)
+         "3_Outputs/coassembly_summary.tsv"
+         
 ################################################################################
 ### Perform Coassemblies on each sample group
 rule Coassembly:
@@ -133,6 +135,20 @@ rule QUAST:
         for i in {output.report}/*;
             do mv $i {output.report}/{wildcards.group}_$(basename $i);
                 done
+        
+        # Parse select metrics for final report
+        grep N50 {output.report}/report.tsv | cut -f2 > {output.report}/n50.tsv
+        grep L50 {output.report}/report.tsv | cut -f2 > {output.report}/l50.tsv
+        grep "# contigs (>= 0 bp)" {output.report}/report.tsv | cut -f2 > {output.report}/ncontigs.tsv
+        grep "Largest contig" {output.report}/report.tsv | cut -f2 > {output.report}/largestcontig.tsv
+        grep "Total length (>= 0 bp)" {output.report}/report.tsv | cut -f2 > {output.report}/totallength.tsv
+
+        # paste into a single table
+        paste {output.report}/n50.tsv \
+            {output.report}/l50.tsv \
+            {output.report}/ncontigs.tsv \
+            {output.report}/largestcontig.tsv \
+            {output.report}/totallength.tsv > {output.report}/{wildcards.sample}_assembly_report.tsv
         """
 ################################################################################
 ### Map reads to the coassemblies
@@ -179,7 +195,7 @@ rule Coassembly_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        48
+        96
     resources:
         mem_gb=128,
         time='24:00:00'
@@ -271,8 +287,10 @@ rule metaWRAP_refinement:
         concoct = "3_Outputs/4_Binning/{group}/concoct_bins",
         maxbin2 = "3_Outputs/4_Binning/{group}/maxbin2_bins",
         metabat2 = "3_Outputs/4_Binning/{group}/metabat2_bins",
+        binning_wfs = "3_Outputs/4_Binning/{group}/work_files",
+        refinement_wfs = "3_Outputs/5_Refined_Bins/{group}/work_files",
         outdir = "3_Outputs/5_Refined_Bins/{group}",
-        memory = "180",
+        memory = "256",
         group = "{group}"
     conda:
         "2_MetaWRAP.yaml"
@@ -314,6 +332,12 @@ rule metaWRAP_refinement:
 
         # Compress output bins
         pigz -p {threads} {params.outdir}/*bins/*.fa
+
+        rm -r {params.binning_wfs}
+        rm -r {params.refinement_wfs}
+        rm {params.concoct}/*.fa
+        rm {params.maxbin2}/*.fa
+        rm {params.metabat2}/*.fa
         """
 ################################################################################
 ### Calculate the number of reads that mapped to coassemblies
@@ -328,6 +352,7 @@ rule coverM_assembly:
         binning_files = "3_Outputs/4_Binning/{group}",
         refinement_files = "3_Outputs/5_Refined_Bins/{group}",
         memory = "180",
+        group = "{group}"
     conda:
         "2_Assembly_Binning.yaml"
     threads:
@@ -351,11 +376,60 @@ rule coverM_assembly:
             --min-covered-fraction 0 \
             > {output}
 
-        # Clean up metaWRAP temp files
-        rm -rf {params.binning_files}/work_files
-        rm -f {params.binning_files}/*/*.fa
-#        rm -rf {params.refinement_files}/work_files
-
         # Create directory for dereplication groups:
         mkdir -p 3_Outputs/5_Refined_Bins/dRep_groups
+
+        #Print the number of MAGs to a file for combining with the assembly report
+        ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {params.group}_bins.tsv;
+        """
+################################################################################
+### Generate output summary table
+rule generate_summary:
+    input:
+        expand("3_Outputs/6_CoverM/{group}_assembly_coverM.txt", group=GROUP)
+    output:
+        "3_Outputs/coassembly_summary.tsv"
+    conda:
+        "2_Assembly_Binning.yaml"
+    threads:
+        1
+    resources:
+        mem_gb=16,
+        time='00:05:00'
+    log:
+        "3_Outputs/0_Logs/summarise_assembly.log"
+    message:
+        "Creating final coassembly summary table"
+    shell:
+        """
+        #Create the final output summary table
+        #parse QUAST outputs for assembly stats
+        echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
+        cat 3_Outputs/2_Assemblies/*_QUAST/*_assembly_report.tsv > temp_report.tsv
+
+        #Create groupid column
+        for group in 3_Outputs/2_Assemblies/*_QUAST;
+            do echo $(basename ${{group/_QUAST/}}) >> groupids.tsv;
+        done
+
+        paste groupids.tsv temp_report.tsv > temp2_report.tsv
+
+        #Add in the # of bins
+        cat *_bins.tsv > number_bins.tsv
+        paste temp2_report.tsv number_bins.tsv > temp3_report.tsv
+
+        #Add in the % mapping to assembly stats
+        for group in 3_Outputs/6_CoverM/*_assembly_coverM.txt;
+            do sed -n 3p $group | cut -f2 > $(basename ${{group/_assembly_coverM.txt/}})_relabun.tsv;
+        done
+
+        cat *_relabun.tsv > all_relabun.tsv
+
+        paste temp3_report.tsv all_relabun.tsv > temp4_report.tsv
+
+        #Combine them into the final assembly report
+        cat headers.tsv temp4_report.tsv > {output}
+
+        #Clean up
+#        rm *.tsv
         """
