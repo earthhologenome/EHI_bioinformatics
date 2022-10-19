@@ -145,10 +145,10 @@ rule QUAST:
 
         # paste into a single table
         paste {output.report}/n50.tsv \
-            {output.report}/l50.tsv \
-            {output.report}/ncontigs.tsv \
-            {output.report}/largestcontig.tsv \
-            {output.report}/totallength.tsv > {output.report}/{wildcards.group}_assembly_report.tsv
+              {output.report}/l50.tsv \
+              {output.report}/ncontigs.tsv \
+              {output.report}/largestcontig.tsv \
+              {output.report}/totallength.tsv > {output.report}/{wildcards.group}_assembly_report.tsv
         """
 ################################################################################
 ### Map reads to the coassemblies
