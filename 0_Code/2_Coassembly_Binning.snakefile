@@ -31,7 +31,7 @@ rule all:
     input:
 #        expand("3_Outputs/6_CoverM/{group}_assembly_coverM.txt", group=GROUP)
          "3_Outputs/coassembly_summary.tsv"
-         
+
 ################################################################################
 ### Perform Coassemblies on each sample group
 rule Coassembly:
@@ -148,7 +148,7 @@ rule QUAST:
             {output.report}/l50.tsv \
             {output.report}/ncontigs.tsv \
             {output.report}/largestcontig.tsv \
-            {output.report}/totallength.tsv > {output.report}/{wildcards.sample}_assembly_report.tsv
+            {output.report}/totallength.tsv > {output.report}/{wildcards.group}_assembly_report.tsv
         """
 ################################################################################
 ### Map reads to the coassemblies
