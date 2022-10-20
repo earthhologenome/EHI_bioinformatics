@@ -428,7 +428,7 @@ rule generate_summary:
             do cut -f"$sample" 3_Outputs/6_CoverM/{params.group}_assembly_coverM.txt | sed -n 3p >> {params.group}_relabun.tsv;
         done
 
-        paste {params.group}_temp3_report.tsv {params.group}_rel_relabun.tsv > {params.group}_temp4_report.tsv
+        paste {params.group}_temp3_report.tsv {params.group}_relabun.tsv > {params.group}_temp4_report.tsv
 
         #Combine them into the final assembly report
         cat headers.tsv {params.group}_temp4_report.tsv > {output}
