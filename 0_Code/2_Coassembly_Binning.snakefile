@@ -421,7 +421,7 @@ rule generate_summary:
             do echo $(basename ${{sample/.bam/}}) > {params.group}_$(basename "$sample")_id.tsv;
         done
 
-        ll 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam | wc -l > {params.group}_n_samples.tsv
+        ls -l 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam | wc -l > {params.group}_n_samples.tsv
 
         nsamples=$( cat {params.group}_n_samples.tsv )
         for sample in `seq 2 $namples`;
