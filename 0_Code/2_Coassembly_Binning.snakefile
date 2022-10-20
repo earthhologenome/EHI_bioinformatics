@@ -30,7 +30,7 @@ print(SAMPLE)
 rule all:
     input:
 #        expand("3_Outputs/6_CoverM/{group}_assembly_coverM.txt", group=GROUP)
-         "3_Outputs/coassembly_summary.tsv"
+        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUP)
 
 ################################################################################
 ### Perform Coassemblies on each sample group
@@ -386,13 +386,13 @@ rule coverM_assembly:
 ### Generate output summary table
 rule generate_summary:
     input:
-        expand("3_Outputs/6_CoverM/{group}_assembly_coverM.txt", group=GROUP)
+        "3_Outputs/6_CoverM/{group}_assembly_coverM.txt"
     output:
-        "3_Outputs/coassembly_summary.tsv"
+        "3_Outputs/{group}_coassembly_summary.tsv"
     conda:
         "2_Assembly_Binning.yaml"
     params:
-          group = "{group}"
+        group = "{group}"
     threads:
         1
     resources:
