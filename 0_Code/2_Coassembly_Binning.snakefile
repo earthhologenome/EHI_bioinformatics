@@ -399,7 +399,7 @@ rule generate_summary:
         mem_gb=16,
         time='00:05:00'
     message:
-        "Creating final coassembly summary table for {wildcards.group}"
+        "Creating final coassembly summary table for"
     shell:
         """
         #Create the final output summary table
