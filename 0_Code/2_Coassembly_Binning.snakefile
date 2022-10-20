@@ -398,10 +398,8 @@ rule generate_summary:
     resources:
         mem_gb=16,
         time='00:05:00'
-    log:
-        "3_Outputs/0_Logs/summarise_assembly.log"
     message:
-        "Creating final coassembly summary table"
+        "Creating final coassembly summary table for {wildcards.group}"
     shell:
         """
         #Create the final output summary table
