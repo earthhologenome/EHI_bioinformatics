@@ -424,7 +424,7 @@ rule generate_summary:
         ls -l 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam | wc -l > {params.group}_n_samples.tsv
 
         nsamples=$( cat {params.group}_n_samples.tsv )
-        for sample in `seq 2 $namples`;
+        for sample in `seq 2 $nsamples`;
             do cut -f"$sample" 3_Outputs/6_CoverM/{params.group}_assembly_coverM.txt | sed -n 3p >> {params.group}_relabun.tsv;
         done
 
