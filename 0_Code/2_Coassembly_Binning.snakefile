@@ -399,7 +399,7 @@ rule generate_summary:
         mem_gb=16,
         time='00:05:00'
     message:
-        "Creating final coassembly summary table for"
+        "Creating final coassembly summary table"
     shell:
         """
         #Create the final output summary table
@@ -425,7 +425,7 @@ rule generate_summary:
 
         nsamples=$( cat {params.group}_n_samples.tsv )
         for sample in `seq 2 $namples`;
-            do cut -f"$sample" 3_Outputs/6_CoverM/{wildcards.sample}_assembly_coverM.txt | sed -n 3p >> {params.group}_relabun.tsv;
+            do cut -f"$sample" 3_Outputs/6_CoverM/{params.group}_assembly_coverM.txt | sed -n 3p >> {params.group}_relabun.tsv;
         done
 
         paste {params.group}_temp3_report.tsv {params.group}_rel_relabun.tsv > {params.group}_temp4_report.tsv
