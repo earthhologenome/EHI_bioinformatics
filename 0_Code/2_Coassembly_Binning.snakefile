@@ -241,7 +241,7 @@ rule metaWRAP_binning:
         48
     resources:
         mem_gb=256,
-        time='24:00:00'
+        time='48:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_binning.benchmark.tsv"
     log:
@@ -405,30 +405,33 @@ rule generate_summary:
         #Create the final output summary table
         #parse QUAST outputs for assembly stats
         echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
-        cat 3_Outputs/2_Coassemblies/*_QUAST/*_assembly_report.tsv > temp_report.tsv
+        cat 3_Outputs/2_Coassemblies/{wildcards.group}_QUAST/{wildcards.group}_assembly_report.tsv > {wildcards.group}_temp_report.tsv
 
         #Create groupid column
-        for group in 3_Outputs/2_Coassemblies/*_QUAST;
-            do echo $(basename ${{group/_QUAST/}}) >> groupids.tsv;
-        done
+        echo {wildcards.group} > {wildcards.group}_groupid.tsv
 
-        paste groupids.tsv temp_report.tsv > temp2_report.tsv
+        paste {wildcards.group}_groupid.tsv {wildcards.group}_temp_report.tsv > {wildcards.group}_temp2_report.tsv
 
         #Add in the # of bins
-        cat *_bins.tsv > number_bins.tsv
-        paste temp2_report.tsv number_bins.tsv > temp3_report.tsv
+        cat {wildcards.group}_bins.tsv > {wildcards.group}_number_bins.tsv
+        paste {wildcards.group}_temp2_report.tsv {wildcards.group}_number_bins.tsv > {wildcards.group}_temp3_report.tsv
 
         #Add in the % mapping to assembly stats
-        for group in 3_Outputs/6_CoverM/*_assembly_coverM.txt;
-            do sed -n 3p $group | cut -f2 > $(basename ${{group/_assembly_coverM.txt/}})_relabun.tsv;
+        for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{wildcards.group}/*.bam;
+            do echo $(basename ${{sample/.bam/}}) > {wildcards.group}_"$sample"_id.tsv;
         done
 
-        cat *_relabun.tsv > all_relabun.tsv
+        ll 3_Outputs/3_Coassembly_Mapping/BAMs/{wildcards.group}/*.bam | wc -l > {wildcards.group}_n_samples.tsv
 
-        paste temp3_report.tsv all_relabun.tsv > temp4_report.tsv
+        nsamples=$( cat {wildcards.group}_n_samples.tsv )
+        for sample in `seq 2 $namples`;
+            do cut -f"$sample" 3_Outputs/6_CoverM/{wildcards.sample}_assembly_coverM.txt | sed -n 3p >> {wildcards.group}_relabun.tsv;
+        done
+
+        paste {wildcards.group}_temp3_report.tsv {wildcards.group}_rel_relabun.tsv > {wildcards.group}_temp4_report.tsv
 
         #Combine them into the final assembly report
-        cat headers.tsv temp4_report.tsv > {output}
+        cat headers.tsv {wildcards.group}_temp4_report.tsv > {output}
 
         #Clean up
 #        rm *.tsv
