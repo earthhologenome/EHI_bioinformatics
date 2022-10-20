@@ -391,6 +391,8 @@ rule generate_summary:
         "3_Outputs/coassembly_summary.tsv"
     conda:
         "2_Assembly_Binning.yaml"
+    params:
+          group = "{group}"
     threads:
         1
     resources:
@@ -405,33 +407,33 @@ rule generate_summary:
         #Create the final output summary table
         #parse QUAST outputs for assembly stats
         echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
-        cat 3_Outputs/2_Coassemblies/{wildcards.group}_QUAST/{wildcards.group}_assembly_report.tsv > {wildcards.group}_temp_report.tsv
+        cat 3_Outputs/2_Coassemblies/{params.group}_QUAST/{params.group}_assembly_report.tsv > {params.group}_temp_report.tsv
 
         #Create groupid column
-        echo {wildcards.group} > {wildcards.group}_groupid.tsv
+        echo {params.group} > {params.group}_groupid.tsv
 
-        paste {wildcards.group}_groupid.tsv {wildcards.group}_temp_report.tsv > {wildcards.group}_temp2_report.tsv
+        paste {params.group}_groupid.tsv {params.group}_temp_report.tsv > {params.group}_temp2_report.tsv
 
         #Add in the # of bins
-        cat {wildcards.group}_bins.tsv > {wildcards.group}_number_bins.tsv
-        paste {wildcards.group}_temp2_report.tsv {wildcards.group}_number_bins.tsv > {wildcards.group}_temp3_report.tsv
+        cat {params.group}_bins.tsv > {params.group}_number_bins.tsv
+        paste {params.group}_temp2_report.tsv {params.group}_number_bins.tsv > {params.group}_temp3_report.tsv
 
         #Add in the % mapping to assembly stats
-        for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{wildcards.group}/*.bam;
-            do echo $(basename ${{sample/.bam/}}) > {wildcards.group}_"$sample"_id.tsv;
+        for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
+            do echo $(basename ${{sample/.bam/}}) > {params.group}_"$sample"_id.tsv;
         done
 
-        ll 3_Outputs/3_Coassembly_Mapping/BAMs/{wildcards.group}/*.bam | wc -l > {wildcards.group}_n_samples.tsv
+        ll 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam | wc -l > {params.group}_n_samples.tsv
 
-        nsamples=$( cat {wildcards.group}_n_samples.tsv )
+        nsamples=$( cat {params.group}_n_samples.tsv )
         for sample in `seq 2 $namples`;
-            do cut -f"$sample" 3_Outputs/6_CoverM/{wildcards.sample}_assembly_coverM.txt | sed -n 3p >> {wildcards.group}_relabun.tsv;
+            do cut -f"$sample" 3_Outputs/6_CoverM/{wildcards.sample}_assembly_coverM.txt | sed -n 3p >> {params.group}_relabun.tsv;
         done
 
-        paste {wildcards.group}_temp3_report.tsv {wildcards.group}_rel_relabun.tsv > {wildcards.group}_temp4_report.tsv
+        paste {params.group}_temp3_report.tsv {params.group}_rel_relabun.tsv > {params.group}_temp4_report.tsv
 
         #Combine them into the final assembly report
-        cat headers.tsv {wildcards.group}_temp4_report.tsv > {output}
+        cat headers.tsv {params.group}_temp4_report.tsv > {output}
 
         #Clean up
 #        rm *.tsv
