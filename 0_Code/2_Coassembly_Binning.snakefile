@@ -418,7 +418,7 @@ rule generate_summary:
 
         #Add in the % mapping to assembly stats
         for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
-            do echo $(basename ${{sample/.bam/}}) > {params.group}_"$sample"_id.tsv;
+            do echo $(basename ${{sample/.bam/}}) > {params.group}_$(basename "$sample")_id.tsv;
         done
 
         ll 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam | wc -l > {params.group}_n_samples.tsv
