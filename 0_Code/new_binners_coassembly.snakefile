@@ -287,7 +287,7 @@ rule semibin:
         SemiBin single_easy_bin \
             -i {input.assembly} \
             -o {output.semibin} \
-            -b {input.bam}/*.bam \
+            -b {input.bams}/*.bam \
             -t {threads}
         """
 ################################################################################
