@@ -333,9 +333,9 @@ rule rosella:
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
     input:
-        a = directory("3_Outputs/4_Binning/{group}/rosella_bins"),
-        b = directory("3_Outputs/4_Binning/{group}/semibin_bins/output_recluster_bins"),
-        c = directory("3_Outputs/4_Binning/{group}/metabat2_bins"),    
+        a = "3_Outputs/4_Binning/{group}/rosella_bins",
+        b = "3_Outputs/4_Binning/{group}/semibin_bins/output_recluster_bins",
+        c = "3_Outputs/4_Binning/{group}/metabat2_bins",    
     output:
         stats = "3_Outputs/5_Refined_Bins/{group}/{group}_metawrap_70_10_bins.stats",
         contigmap = "3_Outputs/5_Refined_Bins/{group}/{group}_metawrap_70_10_bins.contigs"
