@@ -248,7 +248,7 @@ rule metabat2:
         """
         # Create contig depth file
         jgi_summarize_bam_contig_depths \
-            --outputDepth {output.metabat2_depths} {input.bam}/*.bam
+            --outputDepth {output.metabat2_depths} {input.bams}/*.bam
 
         # Run metabat2
         metabat2 \
