@@ -265,7 +265,7 @@ rule semibin:
         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
     output:
-        semibin = directory("3_Outputs/4_Binning/{group}/semibin_bins")
+        semibin = directory("3_Outputs/4_Binning/{group}/semibin_bins/output_recluster_bins")
     params:
         env = expand("{env}", env=config['env'])
     conda:
