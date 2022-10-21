@@ -407,24 +407,27 @@ rule generate_summary:
         echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
         cat 3_Outputs/2_Coassemblies/{params.group}_QUAST/{params.group}_assembly_report.tsv > {params.group}_temp_report.tsv
 
-        #Create groupid column
-        echo {params.group} > {params.group}_groupid.tsv
+        # #Add in the % mapping to assembly stats
+        # for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
+        #     do echo $(basename ${{sample/.bam/}}) > {params.group}_$(basename "$sample")_id.tsv;
+        # done
 
-        paste {params.group}_groupid.tsv {params.group}_temp_report.tsv > {params.group}_temp2_report.tsv
+        #Add in the % mapping to assembly stats
+        for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
+            do echo $(basename ${{sample/.bam/}}) >> {params.group}_sample_ids.tsv;
+        done
+
+        paste {params.group}_sample_ids.tsv {params.group}_temp_report.tsv > {params.group}_temp2_report.tsv
 
         #Add in the # of bins
         cat {params.group}_bins.tsv > {params.group}_number_bins.tsv
         paste {params.group}_temp2_report.tsv {params.group}_number_bins.tsv > {params.group}_temp3_report.tsv
 
-        #Add in the % mapping to assembly stats
-        for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
-            do echo $(basename ${{sample/.bam/}}) > {params.group}_$(basename "$sample")_id.tsv;
-        done
-
         ls -l 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam | wc -l > {params.group}_n_samples.tsv
 
         nsamples=$( cat {params.group}_n_samples.tsv )
         nsamples1=$(( nsamples + 1 ))
+        echo $nsamples1
         for sample in `seq 2 $nsamples1`;
             do cut -f"$sample" 3_Outputs/6_CoverM/{params.group}_assembly_coverM.txt | sed -n 3p >> {params.group}_relabun.tsv;
         done
