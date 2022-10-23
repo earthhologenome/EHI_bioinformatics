@@ -285,6 +285,7 @@ rule semibin:
         """
         # Run semibin
         SemiBin single_easy_bin \
+            -r /projects/mjolnir1/people/ncl550/0_software/GTDB_SemiBin \
             -i {input.assembly} \
             -o {output.semibin} \
             -b {input.bams}/*.bam \
