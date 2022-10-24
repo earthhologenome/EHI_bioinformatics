@@ -274,7 +274,7 @@ rule semibin:
         48
     resources:
         mem_gb=180,
-        time='48:00:00'
+        time='54:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_semibin_binning.benchmark.tsv"
     log:
@@ -309,7 +309,7 @@ rule rosella:
         48
     resources:
         mem_gb=180,
-        time='24:00:00'
+        time='54:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_rosella_binning.benchmark.tsv"
     log:
