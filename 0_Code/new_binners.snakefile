@@ -358,8 +358,8 @@ rule metaWRAP_refinement:
     threads:
         48
     resources:
-        mem_gb=256,
-        time='08:00:00'
+        mem_gb=512,
+        time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_bin_refinement.benchmark.tsv"
     log:

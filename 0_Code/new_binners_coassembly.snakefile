@@ -267,7 +267,8 @@ rule semibin:
     output:
         semibin = directory("3_Outputs/4_Binning/{group}/semibin_bins/output_recluster_bins")
     params:
-        env = expand("{env}", env=config['env'])
+        env = expand("{env}", env=config['env']),
+        output = "3_Outputs/4_Binning/{group}/semibin_bins/")
     conda:
         "semibin.yaml"
     threads:
@@ -287,7 +288,7 @@ rule semibin:
         SemiBin single_easy_bin \
             -r /projects/mjolnir1/people/ncl550/0_software/GTDB_SemiBin \
             -i {input.assembly} \
-            -o {output.semibin} \
+            -o {params.output} \
             -b {input.bams}/*.bam \
             -t {threads}
         """
@@ -351,8 +352,8 @@ rule metaWRAP_refinement:
     threads:
         48
     resources:
-        mem_gb=256,
-        time='24:00:00'
+        mem_gb=512,
+        time='36:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
     log:
