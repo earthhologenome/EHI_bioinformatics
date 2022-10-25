@@ -268,7 +268,7 @@ rule semibin:
         semibin = directory("3_Outputs/4_Binning/{group}/semibin_bins/output_recluster_bins")
     params:
         env = expand("{env}", env=config['env']),
-        output = "3_Outputs/4_Binning/{group}/semibin_bins/")
+        output = "3_Outputs/4_Binning/{group}/semibin_bins/"
     conda:
         "semibin.yaml"
     threads:
