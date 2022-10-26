@@ -116,7 +116,7 @@ rule gtdbtk:
         --extension "gz" \
         --out_dir {params.outdir} \
         --cpus {threads} \
-        --scratch_dir {params.outdir} \
+#        --scratch_dir {params.outdir} \
         --prefix {wildcards.group}
 
         # Create a merged summary output for DRAM:
