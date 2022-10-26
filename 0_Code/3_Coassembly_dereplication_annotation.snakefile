@@ -46,7 +46,8 @@ rule dereplication:
     threads:
         48
     resources:
-        mem_gb=256
+        mem_gb=256,
+        time=24:00:00
     benchmark:
         "3_Outputs/0_Logs/{group}_dRep.benchmark.tsv"
     log:
@@ -96,7 +97,8 @@ rule gtdbtk:
     threads:
         48
     resources:
-        mem_gb=180
+        mem_gb=512,
+        time=24:00:00
     benchmark:
         "3_Outputs/0_Logs/{group}_gtdbtk.benchmark.tsv"
     log:
@@ -144,7 +146,8 @@ rule Coassembly_index:
     threads:
         48
     resources:
-        mem_gb=90
+        mem_gb=90,
+        time=10:00:00
     benchmark:
         "3_Outputs/0_Logs/{group}_MAG_indexing.benchmark.tsv"
     log:
@@ -186,9 +189,10 @@ rule MAG_catalogue_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        48
+        72
     resources:
-        mem_gb=90
+        mem_gb=128,
+        time=24:00:00
     benchmark:
         "3_Outputs/0_Logs/{group}_MAG_mapping.benchmark.tsv"
     log:
@@ -225,7 +229,8 @@ rule coverM_assembly:
     threads:
         48
     resources:
-        mem_gb=90
+        mem_gb=90,
+        time=10:00:00
     benchmark:
         "3_Outputs/0_Logs/{group}_coverm.benchmark.tsv"
     log:
