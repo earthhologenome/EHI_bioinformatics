@@ -189,7 +189,7 @@ rule MAG_catalogue_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        72
+        64
     resources:
         mem_gb=128,
         time='24:00:00'
