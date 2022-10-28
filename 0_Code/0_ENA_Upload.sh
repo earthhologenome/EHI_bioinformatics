@@ -114,7 +114,7 @@ cat "$SeqBatch"_experiment_checklist.csv | tr ',' '\t' > "$SeqBatch"_experiment_
 
 #Rename raw sequencing files to EHIXXXXX numbers
 #Create read groups (extract species column, sort, get unique values)
-cut -f5 SEB001_experiment_checklist.tsv | sed '1d; s/ /_/g' | sort | uniq > genome_groups.tsv
+cut -f5 "SeqBatch"_experiment_checklist.tsv | sed '1d; s/ /_/g' | sort | uniq > genome_groups.tsv
 while read group;
   do mkdir -p `pwd`/2_Reads/1_Untrimmed/$group &&
      mkdir -p `pwd`/1_References/$group;
@@ -124,7 +124,7 @@ while read group;
 #Can automate this eventually, as AirTable has ftp links (or with preindexed computerome paths)
 
 #extract first (EHIXXXXX#), fifth (species), and last (reverse file name)
-cut -f1,5,15 SEB001_experiment_checklist.tsv | sed '1d; s/ /_/g' > EHIno_group_filename.tsv
+cut -f1,5,15 "SeqBatch"_experiment_checklist.tsv | sed '1d; s/ /_/g' > EHIno_group_filename.tsv
 
 #Move the read files into their appropriate folders
 ln -s `pwd`/2_Reads/0_Raw/* `pwd`/2_Reads/1_Untrimmed
