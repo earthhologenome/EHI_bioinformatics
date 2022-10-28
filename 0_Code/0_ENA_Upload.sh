@@ -127,7 +127,7 @@ while read group;
 cut -f1,5,15 "$SeqBatch"_experiment_checklist.tsv | sed '1d; s/ /_/g' > EHIno_group_filename.tsv
 
 #Move the read files into their appropriate folders
-ln -s `pwd`/2_Reads/0_Raw/* `pwd`/2_Reads/1_Untrimmed
+ln -sf `pwd`/2_Reads/0_Raw/* `pwd`/2_Reads/1_Untrimmed
 
 #Create folders in 1_Untrimmed, rename sym-linked files
 while read EHI group filename;
