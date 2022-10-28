@@ -95,10 +95,10 @@ rule index_ref:
     conda:
         "1_Preprocess_QC.yaml"
     threads:
-        48,
-        time='02:00:00'
+        48
     resources:
-        mem_gb=180
+        mem_gb=180,
+        time='02:00:00'
     log:
         "3_Outputs/0_Logs/host_genome_indexing.log"
     message:
@@ -137,10 +137,10 @@ rule map_to_ref:
     conda:
         "1_Preprocess_QC.yaml"
     threads:
-        24,
-        time='02:00:00'
+        24
     resources:
-        mem_gb=90
+        mem_gb=90,
+        time='02:00:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_mapping.benchmark.tsv"
     log:
