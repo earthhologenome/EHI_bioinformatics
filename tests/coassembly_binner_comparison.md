@@ -30,3 +30,22 @@ The new binners had 17 fewer bins for coassembly transect 2.
 The mapping rates for the new binners are not quite as good. I think
 Rosella is seriously underperforming when looking at the metawrap
 refinement figures.
+
+## Benchmark for time:
+coassembly_transect1 (new binners):
+metabat2 = 0.2 hours
+semibin = 4.7 hours
+rosella = 32.7 hours
+
+coassembly_transect1 (old trio):
+metawrap binning = 48.1 hours !
+
+
+
+coassembly_transect2 (new binners):
+metabat2 = 0.2 hours
+semibin = 4.9 hours
+rosella = 23.3
+
+coassembly_transect2 (old trio):
+metawrap binning = 21.3 !ss
