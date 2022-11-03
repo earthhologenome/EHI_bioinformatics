@@ -18,6 +18,12 @@
 ################################################################################
 ################################################################################
 
+# Error logging etc.
+set -e
+
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
+
 # Setup variables for the pipeline
 
 echo "Please type in the sequencing batch number -- e.g. SEB001"
@@ -194,15 +200,20 @@ cut -f1 "$SeqBatch"_experiment_checklist.tsv | sed '1d;' > EHInumbers.tsv
 cat EHInumbers.tsv EHInumbers.tsv > EHInumbers2.tsv
 #Add _1 suffix to EHI number???
 #Add raw R1 fastq filename suffix to EHI number
-sed 's/$/_1.fastq.gz/g' EHInumbers.tsv > R1.tsv
+sed 's/$/_1.fastq.gz/g' EHInumbers.tsv | sed 's@^@2_Reads/1_Untrimmed/all/@g' > R1.tsv
 #Add raw R2 fastq filename suffix to EHI number
-sed 's/$/_2.fastq.gz/g' EHInumbers.tsv > R2.tsv
+sed 's/$/_2.fastq.gz/g' EHInumbers.tsv | sed 's@^@2_Reads/1_Untrimmed/all/@g' > R2.tsv
 #Create column containing 'fastq' string
 while read EHI; do echo "fastq" >> fastq.tsv; done < EHInumbers2.tsv
 #Merge table
 cat R1.tsv R2.tsv > R1R2.tsv
 paste EHInumbers2.tsv EHInumbers2.tsv R1R2.tsv fastq.tsv > merged.tsv
 cat run_headers.tsv merged.tsv > "$SeqBatch"_ENA_run_sheet.tsv
+
+#Create all directory, symlink reads for ena-upload-cli
+mkdir -p 2_Reads/1_Untrimmed/all 
+
+ln -sf `pwd`/2_Reads/1_Untrimmed/*/*.fastq.gz 2_Reads/1_Untrimmed/all
 
 # ##In this example, there is no EHI00048, so remove from exp/run table
 # cp "$SeqBatch"_experiment_checklist.tsv "$SeqBatch"_experiment_checklist.tsv1 && rm "$SeqBatch"_experiment_checklist.tsv
@@ -226,7 +237,7 @@ ena-upload-cli \
 --experiment "$SeqBatch"_experiment_checklist.tsv \
 --run "$SeqBatch"_ENA_run_sheet.tsv \
 --secret /projects/mjolnir1/people/ncl550/0_software/.secret.yml \
---data `pwd`/2_Reads/1_Untrimmed/*/*.fastq.gz \
+--data `pwd`/2_Reads/1_Untrimmed/all/*.fastq.gz \
 --no_data_upload
 
 mv receipt.xml "$SeqBatch"_receipt_run.xml
