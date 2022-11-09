@@ -342,7 +342,6 @@ rule metaWRAP_refinement:
         stats = "3_Outputs/5_Refined_Bins/{group}/{group}_metawrap_70_10_bins.stats",
         contigmap = "3_Outputs/5_Refined_Bins/{group}/{group}_metawrap_70_10_bins.contigs"
     params:
-        binning_wfs = "3_Outputs/4_Binning/{group}/work_files",
         refinement_wfs = "3_Outputs/5_Refined_Bins/{group}/work_files",
         outdir = "3_Outputs/5_Refined_Bins/{group}",
         memory = "256",
@@ -388,7 +387,6 @@ rule metaWRAP_refinement:
         # Compress output bins
         pigz -p {threads} {params.outdir}/*bins/*.fa
 
-        rm -r {params.binning_wfs}
         rm -r {params.refinement_wfs}
         rm {input.a}/*.fa
         rm {input.b}/*.fa

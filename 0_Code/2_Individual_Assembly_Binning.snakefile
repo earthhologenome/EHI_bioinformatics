@@ -252,8 +252,8 @@ rule metaWRAP_refinement:
         maxbin2 = "3_Outputs/4_Binning/{sample}/maxbin2_bins",
         metabat2 = "3_Outputs/4_Binning/{sample}/metabat2_bins",
     output:
-        stats = "3_Outputs/5_Refined_Bins/{sample}_metawrap_70_10_bins.stats",
-        contigmap = "3_Outputs/5_Refined_Bins/{sample}_metawrap_70_10_bins.contigs"
+        stats = "3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.stats",
+        contigmap = "3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.contigs"
     params:
         outdir = "3_Outputs/5_Refined_Bins/{sample}",
         bindir = "3_Outputs/5_Refined_Bins/{sample}/metawrap_70_10_bins",
@@ -291,8 +291,8 @@ rule metaWRAP_refinement:
             -x 10
 
         # Rename metawrap bins to match coassembly group:
-        cp {params.outdir}/metawrap_70_10_bins.stats {output.stats}
-        cp {params.outdir}/metawrap_70_10_bins.contigs {output.contigmap}
+        mv {params.outdir}/metawrap_70_10_bins.stats {output.stats}
+        mv {params.outdir}/metawrap_70_10_bins.contigs {output.contigmap}
         sed -i'' '2,$s/bin/{params.sample}_bin/g' {output.stats}
         sed -i'' 's/bin/{params.sample}_bin/g' {output.contigmap}
         for bin in {params.bindir}/*.fa;
@@ -312,7 +312,7 @@ rule metaWRAP_refinement:
 ### Combine metawrap stats for dereplication
 rule reformat_metawrap:
     input:
-        expand("3_Outputs/5_Refined_Bins/{sample}_metawrap_70_10_bins.stats", sample=SAMPLE)
+        expand("3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.stats", sample=SAMPLE)
     output:
         stats = "3_Outputs/5_Refined_Bins/All_bins.stats",
     params:
@@ -343,13 +343,13 @@ rule reformat_metawrap:
         echo -e genome'\t'completeness'\t'contamination'\t'GC'\t'lineage'\t'N50'\t'size'\t'binner > {params.wd}/header.txt
 
         #Cat the bin info from each group together
-        for i in {params.wd}/*.stats;
+        for i in {params.wd}/*/*.stats;
             do grep -v 'contamination' $i >> {params.stats_no_header};
                 done
         cat {params.wd}/header.txt {params.stats_no_header} > {output.stats}
 
-        #Format for dRep input
-        cut -f1,2,3 --output-delimiter=, {output.stats} | sed 's/,/.fa,/' | sed 's/genome.fa/bin/' > {params.wd}/All_bins_dRep.csv
+#        #Format for dRep input
+#        cut -f1,2,3 --output-delimiter=, {output.stats} | sed 's/,/.fa,/' | sed 's/genome.fa/bin/' > {params.wd}/All_bins_dRep.csv
 
         # Clean up
         rm {params.stats_no_header}
@@ -436,5 +436,5 @@ rule generate_summary:
         cat headers.tsv temp4_report.tsv > {output}
 
         #Clean up
-#        rm *.tsv
+        rm *.tsv
         """

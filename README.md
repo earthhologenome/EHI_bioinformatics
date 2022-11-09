@@ -50,7 +50,7 @@ snakemake \
 --latency-wait 600
 ```
 
-`snakemake -s 0_Code/1_Preprocess_QC.snakefile -j 10 --cluster "sbatch --mem {resources.mem_gb}G --cores --time {resources.time} {threads}" --use-conda --conda-frontend conda --conda-prefix /projects/mjolnir1/people/ncl550/0_software --latency-wait 600`
+`snakemake -s 0_Code/1_Preprocess_QC.snakefile -j 10 --cluster "sbatch --mem {resources.mem_gb}G --cores {threads} --time {resources.time} {threads}" --use-conda --conda-frontend conda --conda-prefix /projects/mjolnir1/people/ncl550/0_software --latency-wait 600`
 
 I recommend adding the `--dry-run` or `-n` command to the above code initially, as this will let you figure out if everything is working as expected.
 
