@@ -40,9 +40,9 @@ rule Assembly:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        48
+        24
     resources:
-        mem_gb=255,
+        mem_gb=128,
         time='12:00:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly.benchmark.tsv"
@@ -99,9 +99,9 @@ rule QUAST:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        10
+        8
     resources:
-        mem_gb=80,
+        mem_gb=64,
         time='00:15:00'
     message:
         "Running QUAST on {wildcards.sample} assembly"
@@ -141,7 +141,7 @@ rule assembly_index:
     threads:
         24
     resources:
-        mem_gb=180,
+        mem_gb=128,
         time='02:00:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_indexing.benchmark.tsv"
@@ -174,7 +174,7 @@ rule assembly_mapping:
     threads:
         24
     resources:
-        mem_gb=80,
+        mem_gb=128,
         time='04:00:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_mapping.benchmark.tsv"
@@ -210,9 +210,9 @@ rule metaWRAP_binning:
     conda:
         "2_MetaWRAP.yaml"
     threads:
-        48
+        24
     resources:
-        mem_gb=180,
+        mem_gb=128,
         time='08:00:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_assembly_binning.benchmark.tsv"
@@ -264,7 +264,7 @@ rule metaWRAP_refinement:
     conda:
         "2_MetaWRAP.yaml"
     threads:
-        48
+        24
     resources:
         mem_gb=256,
         time='06:00:00'

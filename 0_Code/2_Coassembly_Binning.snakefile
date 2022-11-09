@@ -47,9 +47,9 @@ rule Coassembly:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        48
+        24
     resources:
-        mem_gb=256,
+        mem_gb=128,
         time='36:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly.benchmark.tsv"
@@ -117,9 +117,9 @@ rule QUAST:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        10
+        8
     resources:
-        mem_gb=90,
+        mem_gb=48,
         time='01:00:00'
     message:
         "Running -QUAST on {wildcards.group} coassembly"
@@ -162,9 +162,9 @@ rule Coassembly_index:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        48
+        24
     resources:
-        mem_gb=180,
+        mem_gb=128,
         time='04:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_indexing.benchmark.tsv"
@@ -195,9 +195,9 @@ rule Coassembly_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        54
+        24
     resources:
-        mem_gb=256,
+        mem_gb=128,
         time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_mapping.benchmark.tsv"
@@ -356,9 +356,9 @@ rule coverM_assembly:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        48
+        24
     resources:
-        mem_gb=180,
+        mem_gb=128,
         time='06:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
