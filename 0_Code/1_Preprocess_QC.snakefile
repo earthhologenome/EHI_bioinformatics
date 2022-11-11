@@ -95,9 +95,9 @@ rule index_ref:
     conda:
         "1_Preprocess_QC.yaml"
     threads:
-        48
+        24
     resources:
-        mem_gb=180,
+        mem_gb=96,
         time='02:00:00'
     log:
         "3_Outputs/0_Logs/host_genome_indexing.log"
