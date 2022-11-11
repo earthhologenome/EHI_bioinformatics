@@ -46,7 +46,7 @@ rule dereplication:
     threads:
         24
     resources:
-        mem_gb=256,
+        mem_gb=250,
         time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_dRep.benchmark.tsv"
@@ -95,9 +95,9 @@ rule gtdbtk:
     conda:
         "3_GTDB-tk.yaml"
     threads:
-        32
+        24
     resources:
-        mem_gb=256,
+        mem_gb=250,
         time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_gtdbtk.benchmark.tsv"
@@ -144,7 +144,7 @@ rule Coassembly_index:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        32
+        24
     resources:
         mem_gb=90,
         time='10:00:00'
