@@ -95,9 +95,9 @@ rule gtdbtk:
     conda:
         "3_GTDB-tk.yaml"
     threads:
-        48
+        32
     resources:
-        mem_gb=512,
+        mem_gb=256,
         time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_gtdbtk.benchmark.tsv"
@@ -144,7 +144,7 @@ rule Coassembly_index:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        24
+        32
     resources:
         mem_gb=90,
         time='10:00:00'
@@ -189,7 +189,7 @@ rule MAG_catalogue_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        48
+        32
     resources:
         mem_gb=128,
         time='24:00:00'
