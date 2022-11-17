@@ -337,7 +337,7 @@ rule reformat_metawrap:
 
         # Copy each sample's bins to a single folder
         mkdir -p {params.all_folder}
-        cp {params.wd}/{params.sample}/metawrap_70_10_bins/* {params.all_folder}
+        cp {params.wd}/{wildcards.sample}/metawrap_70_10_bins/* {params.all_folder}
 
         # Setup headers for combined metawrap file:
         echo -e genome'\t'completeness'\t'contamination'\t'GC'\t'lineage'\t'N50'\t'size'\t'binner > {params.wd}/header.txt
