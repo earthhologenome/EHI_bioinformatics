@@ -314,13 +314,11 @@ rule reformat_metawrap:
     input:
         expand("3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.stats", sample=SAMPLE)
     output:
-        sample_stats = "3_Outputs/5_Refined_Bins/{sample}_bins.stats",
         stats = "3_Outputs/5_Refined_Bins/All_bins.stats",
     params:
         all_folder = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins",
         wd = "3_Outputs/5_Refined_Bins",
         stats_no_header = "3_Outputs/5_Refined_Bins/All_bins_no_header.stats",
-        sample = "{sample}"
     conda:
         "2_Assembly_Binning.yaml"
     threads:
@@ -346,7 +344,7 @@ rule reformat_metawrap:
 
         #Cat the bin info from each group together
 #        for i in {params.wd}/*/*.stats;
-         for i in {input}
+         for i in {wildcards.sample}
             do grep -v 'contamination' $i >> {params.stats_no_header};
                 done
         cat {params.wd}/header.txt {params.stats_no_header} > {output.stats}
