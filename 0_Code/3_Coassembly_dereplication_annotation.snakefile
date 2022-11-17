@@ -46,7 +46,7 @@ rule dereplication:
     threads:
         24
     resources:
-        mem_gb=256,
+        mem_gb=250,
         time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_dRep.benchmark.tsv"
@@ -95,9 +95,9 @@ rule gtdbtk:
     conda:
         "3_GTDB-tk.yaml"
     threads:
-        48
+        24
     resources:
-        mem_gb=512,
+        mem_gb=250,
         time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_gtdbtk.benchmark.tsv"
@@ -116,7 +116,6 @@ rule gtdbtk:
         --extension "gz" \
         --out_dir {params.outdir} \
         --cpus {threads} \
-#        --scratch_dir {params.outdir} \
         --prefix {wildcards.group}
 
         # Create a merged summary output for DRAM:
@@ -189,7 +188,7 @@ rule MAG_catalogue_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        48
+        24
     resources:
         mem_gb=128,
         time='24:00:00'
