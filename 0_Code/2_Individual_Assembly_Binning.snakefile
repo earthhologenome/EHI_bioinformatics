@@ -314,6 +314,7 @@ rule reformat_metawrap:
     input:
         expand("3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.stats", sample=SAMPLE)
     output:
+        sample_stats = "3_Outputs/5_Refined_Bins/{sample}_bins.stats",
         stats = "3_Outputs/5_Refined_Bins/All_bins.stats",
     params:
         all_folder = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins",
