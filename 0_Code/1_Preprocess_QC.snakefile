@@ -36,8 +36,8 @@ rule all:
     input:
 #        expand("3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
 #        expand("3_Outputs/1_QC/3_nonpareil/{sample}.npo", sample=SAMPLE),
-        "3_Outputs/1_QC/_report.tsv",
-        "3_Outputs/1_QC/_nonpareil_metadata.tsv"
+        "3_Outputs/1_QC/preprocessing_report.tsv",
+        "3_Outputs/1_QC/nonpareil_metadata.tsv"
 ################################################################################
 ### Preprocess the reads using fastp
 rule fastp:
@@ -269,8 +269,8 @@ rule report:
         coverm = expand("3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
         fastp = expand("2_Reads/3_fastp_results/{sample}.json", sample=SAMPLE)
     output:
-        report = "3_Outputs/1_QC/_report.tsv",
-        npar_metadata = "3_Outputs/1_QC/_nonpareil_metadata.tsv"
+        report = "3_Outputs/1_QC/preprocessing_report.tsv",
+        npar_metadata = "3_Outputs/1_QC/nonpareil_metadata.tsv"
     params:
         tmpdir = "3_Outputs/1_QC/temp",
         npar = expand("3_Outputs/1_QC/3_nonpareil/{sample}.npo", sample=SAMPLE)

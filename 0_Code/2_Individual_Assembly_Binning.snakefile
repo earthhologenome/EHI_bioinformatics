@@ -253,7 +253,8 @@ rule metaWRAP_refinement:
         metabat2 = "3_Outputs/4_Binning/{sample}/metabat2_bins",
     output:
         stats = "3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.stats",
-        contigmap = "3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.contigs"
+        contigmap = "3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.contigs",
+        outdir = "3_Outputs/5_Refined_Bins/{sample}"
     params:
         outdir = "3_Outputs/5_Refined_Bins/{sample}",
         bindir = "3_Outputs/5_Refined_Bins/{sample}/metawrap_70_10_bins",
