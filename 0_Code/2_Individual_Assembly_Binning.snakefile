@@ -340,7 +340,9 @@ rule reformat_metawrap:
         # Copy each sample's bins to a single folder
         mkdir -p {params.all_folder}
 #        cp {params.wd}/{input}/metawrap_70_10_bins/* {params.all_folder}
-        cp '{input}/metawrap_70_10_bins/*.gz' {params.all_folder}
+        for i in {input};
+            do cp $i/metawrap_70_10_bins/*.gz {params.all_folder}
+        done
 
 
         # Setup headers for combined metawrap file:
