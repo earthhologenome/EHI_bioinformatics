@@ -312,7 +312,8 @@ rule metaWRAP_refinement:
 ### Combine metawrap stats for dereplication
 rule reformat_metawrap:
     input:
-        expand("3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.stats", sample=SAMPLE)
+#        expand("3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.stats", sample=SAMPLE)
+        expand("3_Outputs/5_Refined_Bins/{sample}", sample=SAMPLE)
     output:
         stats = "3_Outputs/5_Refined_Bins/All_bins.stats",
     params:
@@ -331,20 +332,23 @@ rule reformat_metawrap:
     shell:
         """
         #Print the number of MAGs to a file for combining with the assembly report
-        for sample in {params.wd}/{input}/;
+#        for sample in {params.wd}/{input}/;
+        for sample in {input};
             do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > $(basename $sample)_bins.tsv;
         done
 
         # Copy each sample's bins to a single folder
         mkdir -p {params.all_folder}
-        cp {params.wd}/{input}/metawrap_70_10_bins/* {params.all_folder}
+#        cp {params.wd}/{input}/metawrap_70_10_bins/* {params.all_folder}
+        cp {input}/metawrap_70_10_bins/* {params.all_folder}
+
 
         # Setup headers for combined metawrap file:
         echo -e genome'\t'completeness'\t'contamination'\t'GC'\t'lineage'\t'N50'\t'size'\t'binner > {params.wd}/header.txt
 
         #Cat the bin info from each group together
 #        for i in {params.wd}/*/*.stats;
-         for i in {input};
+         for i in {input}/{sample}_metawrap_70_10_bins.stats;
             do grep -v 'contamination' $i >> {params.stats_no_header};
                 done
         cat {params.wd}/header.txt {params.stats_no_header} > {output.stats}
