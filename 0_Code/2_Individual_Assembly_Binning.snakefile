@@ -319,6 +319,7 @@ rule reformat_metawrap:
         all_folder = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins",
         wd = "3_Outputs/5_Refined_Bins",
         stats_no_header = "3_Outputs/5_Refined_Bins/All_bins_no_header.stats",
+        sample = "{sample}"
     conda:
         "2_Assembly_Binning.yaml"
     threads:
@@ -337,13 +338,14 @@ rule reformat_metawrap:
 
         # Copy each sample's bins to a single folder
         mkdir -p {params.all_folder}
-        cp {params.wd}/*/metawrap_70_10_bins/* {params.all_folder}
+        cp {params.wd}/{params.sample}/metawrap_70_10_bins/* {params.all_folder}
 
         # Setup headers for combined metawrap file:
         echo -e genome'\t'completeness'\t'contamination'\t'GC'\t'lineage'\t'N50'\t'size'\t'binner > {params.wd}/header.txt
 
         #Cat the bin info from each group together
-        for i in {params.wd}/*/*.stats;
+#        for i in {params.wd}/*/*.stats;
+         for i in {input}
             do grep -v 'contamination' $i >> {params.stats_no_header};
                 done
         cat {params.wd}/header.txt {params.stats_no_header} > {output.stats}
