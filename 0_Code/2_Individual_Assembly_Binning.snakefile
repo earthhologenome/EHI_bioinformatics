@@ -331,20 +331,20 @@ rule reformat_metawrap:
     shell:
         """
         #Print the number of MAGs to a file for combining with the assembly report
-        for sample in {params.wd}/*/;
+        for sample in {params.wd}/{input}/;
             do ls -l $sample/metawrap_70_10_bins/*.fa.gz | wc -l > $(basename $sample)_bins.tsv;
         done
 
         # Copy each sample's bins to a single folder
         mkdir -p {params.all_folder}
-        cp {params.wd}/{wildcards.sample}/metawrap_70_10_bins/* {params.all_folder}
+        cp {params.wd}/{input}/metawrap_70_10_bins/* {params.all_folder}
 
         # Setup headers for combined metawrap file:
         echo -e genome'\t'completeness'\t'contamination'\t'GC'\t'lineage'\t'N50'\t'size'\t'binner > {params.wd}/header.txt
 
         #Cat the bin info from each group together
 #        for i in {params.wd}/*/*.stats;
-         for i in {wildcards.sample}
+         for i in {input};
             do grep -v 'contamination' $i >> {params.stats_no_header};
                 done
         cat {params.wd}/header.txt {params.stats_no_header} > {output.stats}
