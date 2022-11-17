@@ -350,8 +350,8 @@ rule reformat_metawrap:
 
         #Cat the bin info from each group together
 #        for i in {params.wd}/*/*.stats;
-         for i in {input}/*_metawrap_70_10_bins.stats;
-            do grep -v 'contamination' $i >> {params.stats_no_header};
+         for i in {input};
+            do grep -v 'contamination' $i/*_metawrap_70_10_bins.stats >> {params.stats_no_header};
                 done
         cat {params.wd}/header.txt {params.stats_no_header} > {output.stats}
 
