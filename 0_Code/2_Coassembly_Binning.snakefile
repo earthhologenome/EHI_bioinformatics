@@ -238,7 +238,7 @@ rule metaWRAP_binning:
     conda:
         "2_MetaWRAP.yaml"
     threads:
-        48
+        32
     resources:
         mem_gb=256,
         time='96:00:00'
@@ -295,7 +295,7 @@ rule metaWRAP_refinement:
     conda:
         "2_MetaWRAP.yaml"
     threads:
-        48
+        32
     resources:
         mem_gb=512,
         time='36:00:00'
