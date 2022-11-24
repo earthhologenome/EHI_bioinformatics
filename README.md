@@ -183,3 +183,6 @@ Additionally, a report is created for you with some of the more juicier tidbits 
 
 Here's a visualisation of the pipeline:
 ![Overview](figures/assembly_filegraph_MULTIPLE.png)
+
+# 3_Dereplication_annotation_pipeline
+TBD
