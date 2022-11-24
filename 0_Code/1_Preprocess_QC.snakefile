@@ -18,7 +18,7 @@
 ################################################################################
 ################################################################################
 
-configfile: "0_Code/1_Preprocess_QC_config.yaml"
+configfile: "0_Code/configs/1_Preprocess_QC_config.yaml"
 
 ### Setup sample inputs
 import os
@@ -53,7 +53,7 @@ rule fastp:
         adapter1 = expand("{adapter1}", adapter1=config['adapter1']),
         adapter2 = expand("{adapter2}", adapter2=config['adapter2'])
     conda:
-        "1_Preprocess_QC.yaml"
+        "conda_envs/1_Preprocess_QC.yaml"
     threads:
         8
     resources:
@@ -93,7 +93,7 @@ rule index_ref:
     params:
         catted_ref = temp("1_References/CattedRefs.fna.gz")
     conda:
-        "1_Preprocess_QC.yaml"
+        "conda_envs/1_Preprocess_QC.yaml"
     threads:
         24
     resources:
@@ -135,7 +135,7 @@ rule map_to_ref:
         non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq",
         non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq",
     conda:
-        "1_Preprocess_QC.yaml"
+        "conda_envs/1_Preprocess_QC.yaml"
     threads:
         24
     resources:
@@ -179,7 +179,7 @@ rule nonpareil:
         badsample_r1 = "2_Reads/5_Poor_samples/{sample}_M_1.fastq.gz",
         badsample_r2 = "2_Reads/5_Poor_samples/{sample}_M_2.fastq.gz"
     conda:
-        "1_Preprocess_QC.yaml"
+        "conda_envs/1_Preprocess_QC.yaml"
     threads:
         16
     resources:
@@ -233,7 +233,7 @@ rule coverM:
     params:
         assembly = "1_References/CattedRefs_renamed.fna.gz"
     conda:
-        "1_Preprocess_QC.yaml"
+        "conda_envs/1_Preprocess_QC.yaml"
     threads:
         16
     resources:
@@ -275,7 +275,7 @@ rule report:
         tmpdir = "3_Outputs/1_QC/temp",
         npar = expand("3_Outputs/1_QC/3_nonpareil/{sample}.npo", sample=SAMPLE)
     conda:
-        "1_Preprocess_QC.yaml"
+        "conda_envs/1_Preprocess_QC.yaml"
     threads:
         1
     resources:
@@ -313,7 +313,7 @@ rule report:
         rm -r {params.tmpdir}
         """
 ################################################################################
-onsuccess:
-    shell("""
-            mail -s "workflow completed" raph.eisenhofer@gmail.com < {log}
-          """)
+# onsuccess:
+#     shell("""
+#             mail -s "workflow completed" raph.eisenhofer@gmail.com < {log}
+#           """)

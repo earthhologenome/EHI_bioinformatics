@@ -8,7 +8,7 @@
 ################################################################################
 ################################################################################
 
-configfile: "0_Code/3_dRep_config.yaml"
+configfile: "0_Code/configs/3_dRep_config.yaml"
 
 ### Setup sample wildcard:
 import os
@@ -42,7 +42,7 @@ rule dereplication:
         ANI = expand("{ANI}", ANI=config['ANI']),
         workdir = "3_Outputs/7_Dereplication/"
     conda:
-        "3_dRep.yaml"
+        "conda_envs/3_dRep.yaml"
     threads:
         24
     resources:
@@ -95,7 +95,7 @@ rule gtdbtk:
         outdir = "3_Outputs/8_GTDB-tk/",
         bins = "3_Outputs/7_Dereplication/dereplicated_genomes"
     conda:
-        "3_GTDB-tk.yaml"
+        "conda_envs/3_GTDB-tk.yaml"
     threads:
         24
     resources:
@@ -142,7 +142,7 @@ rule Coassembly_index:
         MAGs = "3_Outputs/7_Dereplication/dereplicated_genomes",
         catted_MAGs = "3_Outputs/9_MAG_catalogue_mapping/MAGs.fa.gz",
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         24
     resources:
@@ -191,7 +191,7 @@ rule MAG_catalogue_mapping:
         BAMs = "3_Outputs/9_MAG_catalogue_mapping/BAMs",
         MAGs = "3_Outputs/9_MAG_catalogue_mapping/MAGs.fa.gz"
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         24
     resources:
@@ -225,7 +225,7 @@ rule coverM_assembly:
     params:
         BAMs = "3_Outputs/9_MAG_catalogue_mapping/BAMs",
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         24
     resources:

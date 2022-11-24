@@ -8,7 +8,7 @@
 ################################################################################
 ################################################################################
 
-configfile: "0_Code/2_Assembly_Binning_config.yaml"
+configfile: "0_Code/configs/2_Assembly_Binning_config.yaml"
 
 ### Setup sample wildcard:
 import os
@@ -38,7 +38,7 @@ rule Assembly:
         workdir = "3_Outputs/2_Assemblies/{sample}",
         assembler = expand("{assembler}", assembler=config['assembler']),
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         24
     resources:
@@ -97,7 +97,7 @@ rule QUAST:
     output:
         report = directory("3_Outputs/2_Assemblies/{sample}_QUAST")
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         8
     resources:
@@ -137,7 +137,7 @@ rule assembly_index:
     params:
         assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta"
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         24
     resources:
@@ -170,7 +170,7 @@ rule assembly_mapping:
         r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq.gz",
         r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq.gz"
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         24
     resources:
@@ -208,7 +208,7 @@ rule metaWRAP_binning:
         basename = "3_Outputs/3_Assembly_Mapping/BAMs/{sample}",
         memory = "180"
     conda:
-        "2_MetaWRAP.yaml"
+        "conda_envs/2_MetaWRAP.yaml"
     threads:
         24
     resources:
@@ -263,7 +263,7 @@ rule metaWRAP_refinement:
         memory = "180",
         sample = "{sample}"
     conda:
-        "2_MetaWRAP.yaml"
+        "conda_envs/2_MetaWRAP.yaml"
     threads:
         24
     resources:
@@ -322,7 +322,7 @@ rule reformat_metawrap:
         wd = "3_Outputs/5_Refined_Bins",
         stats_no_header = "3_Outputs/5_Refined_Bins/All_bins_no_header.stats",
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         1
     resources:
@@ -367,7 +367,7 @@ rule coverM_assembly:
     params:
         sample = "{sample}"
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         8
     resources:
@@ -396,7 +396,7 @@ rule generate_summary:
     output:
         "3_Outputs/assembly_summary.tsv"
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         1
     resources:
