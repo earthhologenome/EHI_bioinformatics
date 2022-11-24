@@ -84,7 +84,15 @@ Here's a illustrative summary of each rule and it's input files and output files
 
 # 2_Assembly_binning_pipeline
 
-From here you have a couple of options regarding your assembly and binning strategy. Generally, if you have deeply sequenced samples (>10 Gbp), use the [Individual_assembly_binning_pipeline](#individual_assembly_binning_pipeline). Otherwise, I would recommend the [Coassembly_binning_pipeline](#coassembly_binning_pipeline). Be careful not to coassembly samples that are too different from oneanother -- generally it's best to coassemble samples that come from the same individual or population/site.
+Here lies your first major decision:
+
+![Morpheus](figures/morpheus-red-pill-vs-blue-pill_480.jpg)
+
+You take the **blue pill** (*coassembly*), the story ends, you wake up, beleiving that strain-level diversity doesn't exist.
+
+You take the **red pill** (*individual assembly*), you stay in Wonderland, and I show you how deep the rabbit hole goes...
+
+In all seriousness, from here you have a couple of options regarding your assembly and binning strategy. Generally, if you have deeply sequenced samples (>10 Gbp), use the [Individual_assembly_binning_pipeline](#individual_assembly_binning_pipeline). Otherwise, I would recommend the [Coassembly_binning_pipeline](#coassembly_binning_pipeline). Be careful not to coassemble samples that are too different from oneanother -- generally it's best to coassemble samples that come from the same individual or population/site.
 
 
 # Coassembly_binning_pipeline
