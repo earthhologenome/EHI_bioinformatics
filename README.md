@@ -72,6 +72,11 @@ The `-j` flag controls how many concurrent jobs you wish snakemake to submit to 
 
 I've written the pipeline such that it handles the requesting of optimised resources (RAM/CPUs) for each job based on the specific snakemake rule. The `--conda-prefix` snakemake option tells snakemake to look for conda environment in a particular directory, which saves having to reinstall them each time you run from a new directory. 
 
+### Outputs
+
+The following directories are created in the `3_Outputs` folder:
+- `2_Coassemblies` (where the coassemblies are stored, including QUAST outputs)
+
 Here's a illustrative summary of each rule and it's input files and output files:
 
 ![1_Preprocess_QC](figures/file_structure_1_Preprocess_QC.png)
@@ -85,7 +90,7 @@ From here you have a couple of options regarding your assembly and binning strat
 # Coassembly_binning_pipeline
 
 ### What this pipeline does:
-This pipeline merges reads from multiple samples and assembles them using either metaspades or megahit. The resulting assembly is then indexed and the preprocessed reads from the [1_Preprocessing_pipeline](#1_preprocessing_pipeline) are mapped to it using Bowtie2 (2.4.4). The output BAMs are then fed into the MetaWRAP binning and refinement modules. CoverM is then run on the BAMs to calculate the % of reads mapping to the coassemblies. Finally, a .tsv report is produced for your viewing pleasure.
+This pipeline merges reads from multiple samples and assembles them using either metaspades or megahit. The resulting assembly is then indexed (and a QUAST report created) and the preprocessed reads from the [1_Preprocessing_pipeline](#1_preprocessing_pipeline) are mapped to it using Bowtie2 (2.4.4). The output BAMs are then fed into the MetaWRAP binning and refinement modules. CoverM is then run on the BAMs to calculate the % of reads mapping to the coassemblies. Finally, a .tsv report is produced for your viewing pleasure.
 
 ### Configuration
 You can choose the assembler you want to use by adjusting the [2_Assembly_Binning_config.yaml](0_Code/configs/2_Assembly_Binning_config.yaml) file. You can also adjust the minimum contig size for binning (but do you think you should?). 
@@ -114,6 +119,20 @@ snakemake \
 Again, I recommend adding the `--dry-run` or `-n` command to the above code initially, as this will let you figure out if everything is working as expected.
 
 For `-j`, I would use a lower value here (not more than 10), as the rules in this pipeline are quite resource-hungry.
+
+### Outputs
+
+The following directories are created in the `3_Outputs/` folder:
+- `2_Coassemblies/` (where the coassemblies are stored, including QUAST outputs)
+- `3_Coassembly_Mapping/` (BAMs; I'd recommend deleting these after to save space, unless you think you need them)
+- `4_Refined_Bins/` (contains MetaWRAP refined bins, and the original bins)
+- `5_Coassembly_CoverM/` (CoverM outputs of BAMs)
+
+Additionally, a report is created for you with some of the more juicier tidbits of information you'd like to see:
+- `3_Outputs/<COASSEMBLY-NAME-PREFIX>_coassembly_summary.tsv`
+
+Here's a visualisation of the pipeline:
+
 
 
 # Individual_assembly_binning_pipeline
@@ -145,4 +164,16 @@ Again, I recommend adding the `--dry-run` or `-n` command to the above code init
 
 For `-j`, I would use a lower value here (not more than 10), as the rules in this pipeline are quite resource-hungry.
 
+### Outputs
+
+The following directories are created in the `3_Outputs/` folder:
+- `2_Assemblies/` (where the coassemblies are stored, including QUAST outputs)
+- `3_Assembly_Mapping/` (BAMs; I'd recommend deleting these after to save space, unless you think you need them)
+- `4_Refined_Bins/` (contains MetaWRAP refined bins, and the original bins)
+- `5_Assembly_CoverM/` (CoverM outputs of BAMs)
+
+Additionally, a report is created for you with some of the more juicier tidbits of information you'd like to see:
+- `3_Outputs/assembly_summary.tsv`
+
+Here's a visualisation of the pipeline:
 
