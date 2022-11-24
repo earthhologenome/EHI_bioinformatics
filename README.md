@@ -125,8 +125,9 @@ For `-j`, I would use a lower value here (not more than 10), as the rules in thi
 The following directories are created in the `3_Outputs/` folder:
 - `2_Coassemblies/` (where the coassemblies are stored, including QUAST outputs)
 - `3_Coassembly_Mapping/` (BAMs; I'd recommend deleting these after to save space, unless you think you need them)
-- `4_Refined_Bins/` (contains MetaWRAP refined bins, and the original bins)
-- `5_Coassembly_CoverM/` (CoverM outputs of BAMs)
+- `4_Binning` (Empty, all bins are saved in 5_Refined_Bins)
+- `5_Refined_Bins/` (contains MetaWRAP refined bins, and the original bins)
+- `6_Coassembly_CoverM/` (CoverM outputs of BAMs)
 
 Additionally, a report is created for you with some of the more juicier tidbits of information you'd like to see:
 - `3_Outputs/<COASSEMBLY-NAME-PREFIX>_coassembly_summary.tsv`
@@ -169,8 +170,9 @@ For `-j`, I would use a lower value here (not more than 10), as the rules in thi
 The following directories are created in the `3_Outputs/` folder:
 - `2_Assemblies/` (where the coassemblies are stored, including QUAST outputs)
 - `3_Assembly_Mapping/` (BAMs; I'd recommend deleting these after to save space, unless you think you need them)
-- `4_Refined_Bins/` (contains MetaWRAP refined bins, and the original bins)
-- `5_Assembly_CoverM/` (CoverM outputs of BAMs)
+- `4_Binning` (Empty, all bins are saved in 5_Refined_Bins)
+- `5_Refined_Bins/` (contains MetaWRAP refined bins, and the original bins)
+- `6_Assembly_CoverM/` (CoverM outputs of BAMs)
 
 Additionally, a report is created for you with some of the more juicier tidbits of information you'd like to see:
 - `3_Outputs/assembly_summary.tsv`
