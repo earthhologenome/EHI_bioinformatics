@@ -92,6 +92,8 @@ From here you have a couple of options regarding your assembly and binning strat
 ### What this pipeline does:
 This pipeline merges reads from multiple samples and assembles them using either metaspades or megahit. The resulting assembly is then indexed (and a QUAST report created) and the preprocessed reads from the [1_Preprocessing_pipeline](#1_preprocessing_pipeline) are mapped to it using Bowtie2 (2.4.4). The output BAMs are then fed into the MetaWRAP binning and refinement modules. CoverM is then run on the BAMs to calculate the % of reads mapping to the coassemblies. Finally, a .tsv report is produced for your viewing pleasure.
 
+![Overview](figures/coassembly_dag_MULTIPLE.png)
+
 ### Configuration
 You can choose the assembler you want to use by adjusting the [2_Assembly_Binning_config.yaml](0_Code/configs/2_Assembly_Binning_config.yaml) file. You can also adjust the minimum contig size for binning (but do you think you should?). 
 
@@ -133,13 +135,15 @@ Additionally, a report is created for you with some of the more juicier tidbits 
 - `3_Outputs/<COASSEMBLY-NAME-PREFIX>_coassembly_summary.tsv`
 
 Here's a visualisation of the pipeline:
-
+![Overview](figures/coassembly_filegraph_MULTIPLE.png)
 
 
 # Individual_assembly_binning_pipeline
 
 ### What this pipeline does:
 This uses the same software as the [Coassembly_binning_pipeline](#coassembly_binning_pipeline), but does assembly and binning on a per-sample basis instead. 
+
+![Overview](figures/assembly_dag_MULTIPLE.png)
 
 ### Configuration
 Same options as in the [Coassembly_binning_pipeline](#coassembly_binning_pipeline).
@@ -178,4 +182,4 @@ Additionally, a report is created for you with some of the more juicier tidbits 
 - `3_Outputs/assembly_summary.tsv`
 
 Here's a visualisation of the pipeline:
-
+![Overview](figures/assembly_filegraph_MULTIPLE.png)
