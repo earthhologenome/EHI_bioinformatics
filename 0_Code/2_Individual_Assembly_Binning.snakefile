@@ -363,7 +363,7 @@ rule coverM_assembly:
     input:
         "3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam"
     output:
-        "3_Outputs/6_CoverM/{sample}_coverM_rel_abun.txt"
+        "3_Outputs/6_Assembly_CoverM/{sample}_coverM_rel_abun.txt"
     params:
         sample = "{sample}"
     conda:
@@ -391,7 +391,7 @@ rule coverM_assembly:
 ### Generate output summary table
 rule generate_summary:
     input:
-        expand("3_Outputs/6_CoverM/{sample}_coverM_rel_abun.txt", sample=SAMPLE),
+        expand("3_Outputs/6_Assembly_CoverM/{sample}_coverM_rel_abun.txt", sample=SAMPLE),
         "3_Outputs/5_Refined_Bins/All_bins.stats"
     output:
         "3_Outputs/assembly_summary.tsv"
@@ -426,7 +426,7 @@ rule generate_summary:
         paste temp2_report.tsv number_bins.tsv > temp3_report.tsv
 
         #Add in the % mapping to assembly stats
-        for sample in 3_Outputs/6_CoverM/*_coverM_rel_abun.txt;
+        for sample in 3_Outputs/6_Assembly_CoverM/*_coverM_rel_abun.txt;
             do sed -n 3p $sample | cut -f2 > $(basename ${{sample/_coverM_rel_abun.txt/}})_relabun.tsv;
         done
 

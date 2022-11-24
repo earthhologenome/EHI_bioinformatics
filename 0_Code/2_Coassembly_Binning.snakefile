@@ -29,7 +29,6 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-#        expand("3_Outputs/6_CoverM/{group}_assembly_coverM.txt", group=GROUP)
         expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUP)
 
 ################################################################################
@@ -345,7 +344,7 @@ rule coverM_assembly:
     input:
         "3_Outputs/5_Refined_Bins/{group}/{group}_metawrap_70_10_bins.stats"
     output:
-        "3_Outputs/6_CoverM/{group}_assembly_coverM.txt"
+        "3_Outputs/6_Coassembly_CoverM/{group}_assembly_coverM.txt"
     params:
         mapped_bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
@@ -386,7 +385,7 @@ rule coverM_assembly:
 ### Generate output summary table
 rule generate_summary:
     input:
-        "3_Outputs/6_CoverM/{group}_assembly_coverM.txt"
+        "3_Outputs/6_Coassembly_CoverM/{group}_assembly_coverM.txt"
     output:
         "3_Outputs/{group}_coassembly_summary.tsv"
     conda:
@@ -429,7 +428,7 @@ rule generate_summary:
         nsamples1=$(( nsamples + 1 ))
         echo $nsamples1
         for sample in `seq 2 $nsamples1`;
-            do cut -f"$sample" 3_Outputs/6_CoverM/{params.group}_assembly_coverM.txt | sed -n 3p >> {params.group}_relabun.tsv;
+            do cut -f"$sample" 3_Outputs/6_Coassembly_CoverM/{params.group}_assembly_coverM.txt | sed -n 3p >> {params.group}_relabun.tsv;
         done
 
         paste {params.group}_temp3_report.tsv {params.group}_relabun.tsv > {params.group}_temp4_report.tsv
