@@ -1,4 +1,4 @@
-# EHI_Bioinformatics
+# EHI_Bioinformatics   🐨->💩->🦠->🧬->🖥️->😏
 Bioinformatics pipeline to process EHI data.
 
 *updated 24/11/2022, Raphael Eisenhofer*
@@ -31,10 +31,10 @@ Here is a simplified DAG (directed acyclic graph) of the above steps:
 
 ![1_Preprocess_QC](figures/dag_1_Preprocess_QC.png)
 
-### Configuration
+### 🔧 Configuration
 The only thing that the user may wish to configure is the choice of adapter sequence that fastp uses to trim the raw reads. This can be adjusted by editing the [1_Preprocess_QC_config.yaml](0_Code/configs/1_Preprocess_QC_config.yaml) file. The default sequences are basic Illumina adapters that we use for the EHI (sequenced by NovoGene).
 
-### Usage:
+### ⚙️ Usage:
 Currently, the snakefile searches for .fastq.gz files located in this path (assuming you are launching the snakefile from the current directory):
 ```
 2_Reads/1_Untrimmed/*_1.fastq.gz
@@ -72,7 +72,7 @@ The `-j` flag controls how many concurrent jobs you wish snakemake to submit to 
 
 I've written the pipeline such that it handles the requesting of optimised resources (RAM/CPUs) for each job based on the specific snakemake rule. The `--conda-prefix` snakemake option tells snakemake to look for conda environment in a particular directory, which saves having to reinstall them each time you run from a new directory. 
 
-### Outputs
+### 💩 Outputs
 
 The following directories are created in the `3_Outputs` folder:
 - `2_Coassemblies` (where the coassemblies are stored, including QUAST outputs)
@@ -102,10 +102,10 @@ This pipeline merges reads from multiple samples and assembles them using either
 
 ![Overview](figures/coassembly_dag_MULTIPLE.png)
 
-### Configuration
+### 🔧 Configuration
 You can choose the assembler you want to use by adjusting the [2_Assembly_Binning_config.yaml](0_Code/configs/2_Assembly_Binning_config.yaml) file. You can also adjust the minimum contig size for binning (but do you think you should?). 
 
-### Usage
+### ⚙️ Usage
 To set up your coassemblies, you need to create a folder for each coassembly in the `2_Reads/4_Host_removed` folder, e.g.:
 ```
 2_Reads/4_Host_removed/mY_aWeSoMe_CoAsSeMbLy1!!11!!!!
@@ -130,7 +130,7 @@ Again, I recommend adding the `--dry-run` or `-n` command to the above code init
 
 For `-j`, I would use a lower value here (not more than 10), as the rules in this pipeline are quite resource-hungry.
 
-### Outputs
+### 💩 Outputs
 
 The following directories are created in the `3_Outputs/` folder:
 - `2_Coassemblies/` (where the coassemblies are stored, including QUAST outputs)
@@ -152,10 +152,10 @@ This uses the same software as the [Coassembly_binning_pipeline](#coassembly_bin
 
 ![Overview](figures/assembly_dag_MULTIPLE.png)
 
-### Configuration
+### 🔧 Configuration
 Same options as in the [Coassembly_binning_pipeline](#coassembly_binning_pipeline).
 
-### Usage
+### ⚙️ Usage
 This is even easier to setup than the [Coassembly_binning_pipeline](#coassembly_binning_pipeline). The snakefile automatically uses any paired read files in the `2_Reads/4_Host_removed` (those created by the [1_Preprocessing_pipeline](#1_preprocessing_pipeline)). 
 
 It's as simple as running the below code:
@@ -176,7 +176,7 @@ Again, I recommend adding the `--dry-run` or `-n` command to the above code init
 
 For `-j`, I would use a lower value here (not more than 10), as the rules in this pipeline are quite resource-hungry.
 
-### Outputs
+### 💩 Outputs
 
 The following directories are created in the `3_Outputs/` folder:
 - `2_Assemblies/` (where the coassemblies are stored, including QUAST outputs)
