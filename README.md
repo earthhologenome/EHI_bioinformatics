@@ -52,6 +52,23 @@ Next, you'll need to do the same thing for your host reference genome/s, symboli
 ```
 Note that the host reference genome/s need to be gzip compressed -- **'.gz'** suffix (default when downloading from NCBI). 
 
+You need to have snakemake installed and in your path. You can do this either through conda, or use this module on Mjolnir:
+```
+module load snakemake/6.15.3
+```
+
+Before you run snakemake, make sure you're in a screen session. Screen creates a virtual session hosted by the remote server, and allows you to get back to where you left off in the event that your connection is lost (or your dog eats your laptop). Here's some basics to get you started:
+
+Create a new screen session:
+```
+screen -S mY_c0oL_sCrEen
+```
+Reconnect to your screen session when you log back into the remote server:
+```
+screen -r mY_c0oL_sCrEen
+```
+(*Yes* you can have screens within screens, like Inception, but this is obviously not recommended!). For more information about screen, [use the internet](https://letmegooglethat.com/?q=how+to+use+screen+in+linux).
+
 That's all the setup required to get the pipeline running. Now you just need to launch the snakefile using snakemake. How you do this depends on your HPC server job queueing system. For Mjolnir, I use the following:
 ```
 snakemake \
