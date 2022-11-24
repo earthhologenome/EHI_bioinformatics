@@ -88,7 +88,7 @@ Here lies your first major decision:
 
 ![Morpheus](figures/morpheus-red-pill-vs-blue-pill_480.jpg)
 
-You take the **blue pill** (*coassembly*), the story ends, you wake up, beleiving that strain-level diversity doesn't exist.
+You take the **blue pill** (*coassembly*), the story ends, you wake up, believing that strain-level diversity doesn't exist.
 
 You take the **red pill** (*individual assembly*), you stay in Wonderland, and I show you how deep the rabbit hole goes...
 
