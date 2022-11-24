@@ -134,7 +134,6 @@ The following directories are created in the `3_Outputs/` folder:
 Additionally, a report is created for you with some of the more juicier tidbits of information you'd like to see:
 - `3_Outputs/<COASSEMBLY-NAME-PREFIX>_coassembly_summary.tsv`
 
-Here's a visualisation of the pipeline:
 ![Overview](figures/coassembly_filegraph_MULTIPLE.png)
 
 
@@ -181,7 +180,6 @@ The following directories are created in the `3_Outputs/` folder:
 Additionally, a report is created for you with some of the more juicier tidbits of information you'd like to see:
 - `3_Outputs/assembly_summary.tsv`
 
-Here's a visualisation of the pipeline:
 ![Overview](figures/assembly_filegraph_MULTIPLE.png)
 
 # 3_Dereplication_annotation_pipeline
