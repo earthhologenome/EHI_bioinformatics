@@ -1,5 +1,3 @@
-### This repository has been moved to the EHI organisation account: https://github.com/earthhologenome/EHI_bioinformatics
-
 # EHI_Bioinformatics   🐨->💩->🦠->🧬->🖥️->😏
 Bioinformatics pipeline to process EHI data.
 
