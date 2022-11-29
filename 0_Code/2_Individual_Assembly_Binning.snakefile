@@ -254,7 +254,7 @@ rule metaWRAP_refinement:
     output:
         stats = "3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.stats",
         contigmap = "3_Outputs/5_Refined_Bins/{sample}/{sample}_metawrap_70_10_bins.contigs",
-        outdir = "3_Outputs/5_Refined_Bins/{sample}"
+        outdir = directory("3_Outputs/5_Refined_Bins/{sample}")
     params:
         outdir = "3_Outputs/5_Refined_Bins/{sample}",
         bindir = "3_Outputs/5_Refined_Bins/{sample}/metawrap_70_10_bins",
