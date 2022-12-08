@@ -1,0 +1,8 @@
+### Config file for eukaryotic assessment
+### RE 12/2022
+
+database: /projects/mjolnir1/data/databases/CAT/CAT_prepare_20210107/2021-01-07_CAT_database/
+
+taxonomy: /projects/mjolnir1/data/databases/CAT/CAT_prepare_20210107/2021-01-07_taxonomy/
+
+diamond: /projects/mjolnir1/data/databases/CAT/CAT_prepare_20210107/Diamond_2.0.6/diamond

@@ -344,13 +344,13 @@ rule coverM_assembly:
     input:
         "3_Outputs/5_Refined_Bins/{group}/{group}_metawrap_70_10_bins.stats"
     output:
-        "3_Outputs/6_Coassembly_CoverM/{group}_assembly_coverM.txt"
+        coverm = "3_Outputs/6_Coassembly_CoverM/{group}_assembly_coverM.txt",
+        euk = "3_Outputs/6_Coassembly_CoverM/{group}_eukaryotic_coverM.tsv"
     params:
         mapped_bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
         binning_files = "3_Outputs/4_Binning/{group}",
         refinement_files = "3_Outputs/5_Refined_Bins/{group}",
-        memory = "180",
         group = "{group}"
     conda:
         "conda_envs/2_Assembly_Binning.yaml"
@@ -373,7 +373,16 @@ rule coverM_assembly:
             -m relative_abundance \
             -t {threads} \
             --min-covered-fraction 0 \
-            > {output}
+            > {output.coverm}
+
+        #Run coverm for the eukaryotic assessment pipeline
+        coverm genome \
+            -s - \
+            -b {params.mapped_bams}/*.bam \
+            -m relative_abundance count mean \
+            -t {threads} \
+            --min-covered-fraction 0 \
+            > {output.euk}
 
         # Create directory for dereplication groups:
         mkdir -p 3_Outputs/5_Refined_Bins/dRep_groups
