@@ -40,7 +40,7 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-        expand("3_Outputs/{group}_eukaryotic_report.tsv", group=GROUP)
+        expand("3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output.tsv", group=GROUP)
 
 ################################################################################
 ### Classify contigs using CAT
