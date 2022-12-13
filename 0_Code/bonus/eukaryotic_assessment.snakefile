@@ -66,11 +66,11 @@ rule cat:
         mem_gb=256,
         time='24:00:00'
     benchmark:
-        "3_Outputs/0_Logs/{sample}_CAT.benchmark.tsv"
+        "3_Outputs/0_Logs/{group}_CAT.benchmark.tsv"
     log:
-        "3_Outputs/0_Logs/{sample}_CAT.log"
+        "3_Outputs/0_Logs/{group}_CAT.log"
     message:
-        "Using CAT to assign taxonomy to {wildcards.sample}'s contigs"
+        "Using CAT to assign taxonomy to {wildcards.group}'s contigs"
     shell:
         """
         CAT contigs \
