@@ -27,14 +27,9 @@ from glob import glob
 GROUP = [ dir for dir in os.listdir('2_Reads/4_Host_removed')
          if os.path.isdir(os.path.join('2_Reads/4_Host_removed', dir)) ]
 
-SAMPLE = [os.path.relpath(fn, "2_Reads/4_Host_removed").replace("_M_1.fastq.gz", "")
-            for group in GROUP
-            for fn in glob(f"2_Reads/4_Host_removed/{group}/*_1.fastq.gz")]
 
 print("Detected these sample groups:")
 print(GROUP)
-print("Detected the following samples:")
-print(SAMPLE)
 
 ################################################################################
 ### Setup the desired outputs
