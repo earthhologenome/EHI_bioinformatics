@@ -48,10 +48,10 @@ rule cat:
     input:
         contigs = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta"
     output:
-        diamond = temp("{group}.alignment.diamond"),
-        faa = "{group}.predicted_proteins.faa",
-        gff = "{group}.predicted_proteins.gff",
-        classif = "{group}/{group}.contig2classification.txt",
+        diamond = temp("3_Outputs/2_Coassemblies/{group}/{group}.alignment.diamond"),
+        faa = "3_Outputs/2_Coassemblies/{group}/{group}.predicted_proteins.faa",
+        gff = "3_Outputs/2_Coassemblies/{group}/{group}.predicted_proteins.gff",
+        classif = "3_Outputs/2_Coassemblies/{group}/{group}.contig2classification.txt",
         final_output = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output.tsv"
     params:
         group = "{group}",
@@ -82,6 +82,9 @@ rule cat:
             -n {threads} \
             --index_chunks 1
         
+        mv {group}.predicted_proteins.faa {output.faa}
+        mv {group}.predicted_proteins.gff {output.gff}
+        mv {group}.contig2classification.txt {output.classif}
         
         #Assign tax to main output
         CAT add_names \
