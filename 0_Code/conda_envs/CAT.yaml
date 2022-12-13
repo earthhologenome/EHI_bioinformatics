@@ -1,0 +1,7 @@
+ name: CAT
+ channels:
+    - bioconda
+    - defaults
+ dependencies:
+    - cat
+
