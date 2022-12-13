@@ -82,9 +82,9 @@ rule cat:
             -n {threads} \
             --index_chunks 1
         
-        mv {group}.predicted_proteins.faa {output.faa}
-        mv {group}.predicted_proteins.gff {output.gff}
-        mv {group}.contig2classification.txt {output.classif}
+        mv {wildcards.group}.predicted_proteins.faa {output.faa}
+        mv {wildcards.group}.predicted_proteins.gff {output.gff}
+        mv {wildcards.group}.contig2classification.txt {output.classif}
         
         #Assign tax to main output
         CAT add_names \
