@@ -54,7 +54,7 @@ rule cat:
         classif = "3_Outputs/2_Coassemblies/{group}/{group}.contig2classification.txt",
         final_output = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output.tsv"
     params:
-        group = "{group}"
+        group = "{group}",
         database = expand("{database}", database=config['database']),
         taxonomy = expand("{taxonomy}", taxonomy=config['taxonomy']),
         diamond = expand("{diamond}", diamond=config['diamond']),
