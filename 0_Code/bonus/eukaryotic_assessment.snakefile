@@ -59,7 +59,7 @@ rule cat:
         taxonomy = expand("{taxonomy}", taxonomy=config['taxonomy']),
         diamond = expand("{diamond}", diamond=config['diamond']),
     conda:
-        "conda_envs/CAT.yaml"
+        "../conda_envs/CAT.yaml"
     threads:
         24
     resources:
