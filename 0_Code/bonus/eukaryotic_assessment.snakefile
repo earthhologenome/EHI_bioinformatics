@@ -48,11 +48,11 @@ rule cat:
     input:
         contigs = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta"
     output:
-        diamond = temp("3_Outputs/2_Coassemblies/{group}/{group}.alignment.diamond"),
-        faa = "3_Outputs/2_Coassemblies/{group}/{group}.predicted_proteins.faa",
-        gff = "3_Outputs/2_Coassemblies/{group}/{group}.predicted_proteins.gff",
-        classif = "3_Outputs/2_Coassemblies/{group}/{group}.contig2classification.txt",
-        final_output = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output.tsv"
+        diamond = temp("{group}.alignment.diamond"),
+        faa = "{group}.predicted_proteins.faa",
+        gff = "{group}.predicted_proteins.gff",
+        classif = "{group}.contig2classification.txt",
+        final_output = "{group}.CAT_final_output.tsv"
     params:
         group = "{group}",
         database = expand("{database}", database=config['database']),
@@ -73,8 +73,6 @@ rule cat:
         "Using CAT to assign taxonomy to {wildcards.group}'s contigs"
     shell:
         """
-        cd 3_Outputs/2_Coassemblies/{params.group}
-
         CAT contigs \
             -c {input.contigs} \
             -o {params.group} \
