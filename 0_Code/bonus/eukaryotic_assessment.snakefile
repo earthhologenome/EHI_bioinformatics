@@ -73,9 +73,11 @@ rule cat:
         "Using CAT to assign taxonomy to {wildcards.group}'s contigs"
     shell:
         """
+        cd 3_Outputs/2_Coassemblies/{params.group}
+
         CAT contigs \
             -c {input.contigs} \
-            -o 3_Outputs/2_Coassemblies/{params.group} \
+            -o {params.group} \
             -d {params.database} \
             -t {params.taxonomy} \
             --path_to_diamond {params.diamond} \
