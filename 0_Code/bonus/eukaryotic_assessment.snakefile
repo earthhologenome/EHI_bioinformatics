@@ -87,6 +87,7 @@ rule cat:
         CAT add_names \
             -i {output.classif} \
             -t {params.taxonomy} \
+            --only_official \
             -o {output.final_output}
 
 

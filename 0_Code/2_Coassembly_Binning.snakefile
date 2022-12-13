@@ -446,5 +446,5 @@ rule generate_summary:
         cat headers.tsv {params.group}_temp4_report.tsv > {output}
 
         #Clean up
-#        rm *.tsv
+        rm *.tsv
         """
