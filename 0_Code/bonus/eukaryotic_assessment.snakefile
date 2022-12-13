@@ -75,7 +75,7 @@ rule cat:
         """
         CAT contigs \
             -c {input.contigs} \
-            -o {params.group} \
+            -o 3_Outputs/2_Coassemblies/{params.group} \
             -d {params.database} \
             -t {params.taxonomy} \
             --path_to_diamond {params.diamond} \
