@@ -1,6 +1,6 @@
 rule all:
     input:
-        folder("3_Outputs/test_bin")
+        directory("3_Outputs/test_bin")
 
 ################################################################################
 ### Functionally annotate MAGs with DRAM
@@ -8,7 +8,7 @@ rule DRAM:
     input:
         bin = "3_Outputs/test_bin.fa.gz"
     output:
-        annotation = folder("3_Outputs/test_bin"),
+        annotation = directory("3_Outputs/test_bin"),
     params:
         database = expand("{database}", database=config['database']),
     conda:
