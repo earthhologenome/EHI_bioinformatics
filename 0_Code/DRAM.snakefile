@@ -11,7 +11,7 @@ rule DRAM:
     input:
         bin = "3_Outputs/test_bin.fa.gz"
     output:
-        annotation = "3_Outputs/test_bin/annotations.tsv"),
+        annotation = "3_Outputs/test_bin/annotations.tsv",
     params:
         database = expand("{database}", database=config['database']),
     conda:
