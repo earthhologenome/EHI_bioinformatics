@@ -11,7 +11,7 @@ print(MAG)
 
 rule all:
     input:
-        expand("3_Outputs/12_DRAM/{MAG}/{MAG}_annotations.tsv.gz", MAG=MAG)
+        expand("3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz", MAG=MAG)
 
 ################################################################################
 ### Functionally annotate MAGs with DRAM
@@ -19,9 +19,10 @@ rule DRAM:
     input:
         bin = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins/{MAG}.fa.gz"
     output:
-        annotation = "3_Outputs/12_DRAM/{MAG}/{MAG}_annotations.tsv.gz",
+        annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz",
     params:
-        outdir = directory("3_Outputs/12_DRAM/{MAG}/")
+        outdir = directory("3_Outputs/12_DRAM/{MAG}_annotate")
+        mainout = directory("3_Outputs/12_DRAM/")
     # conda:
     #     "conda_envs/3_DRAM.yaml"
     threads:
@@ -50,6 +51,6 @@ rule DRAM:
 
         pigz -p {threads} {params.outdir}/*
 
-        for i in {params.outdir}/*; do mv $i {params.outdir}/{MAG}_$(basename $i); done
+        for i in {params.outdir}/*; do mv $i {params.mainout}/{MAG}_$(basename $i); done
 
         """
