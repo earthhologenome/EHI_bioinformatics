@@ -1,4 +1,14 @@
 
+### Setup sample wildcard:
+import os
+from glob import glob
+
+MAG = [os.path.basename(fn).replace(".fa.gz", "")
+            for fn in glob(f"3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins/*.fa.gz")]
+
+print("Detected the following MAGs:")
+print(MAG)
+
 rule all:
     input:
         expand("3_Outputs/12_DRAM/{MAG}/{MAG}_annotations.tsv", MAG=MAG)
