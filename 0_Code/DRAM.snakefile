@@ -11,7 +11,7 @@ print(MAG)
 
 rule all:
     input:
-        expand("3_Outputs/12_DRAM/{MAG}/{MAG}_annotations.tsv", MAG=MAG)
+        expand("3_Outputs/12_DRAM/{MAG}/{MAG}_annotations.tsv.gz", MAG=MAG)
 
 ################################################################################
 ### Functionally annotate MAGs with DRAM
@@ -52,5 +52,4 @@ rule DRAM:
 
         for i in {params.outdir}/*; do mv $i {params.outdir}/{MAG}_$(basename $i); done
 
-        echo {output.annotation}
         """
