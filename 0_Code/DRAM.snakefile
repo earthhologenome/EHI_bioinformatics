@@ -1,6 +1,9 @@
+
 rule all:
     input:
-        "3_Outputs/test_bin/annotations.tsv")
+        "3_Outputs/test_bin/annotations.tsv"
+
+
 
 ################################################################################
 ### Functionally annotate MAGs with DRAM
