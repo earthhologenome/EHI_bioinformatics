@@ -13,8 +13,8 @@ rule DRAM:
     output:
         annotation = "3_Outputs/test_bin/annotations.tsv",
     params:
-    conda:
-        "conda_envs/3_DRAM.yaml"
+    # conda:
+    #     "conda_envs/3_DRAM.yaml"
     threads:
         24
     resources:
@@ -28,7 +28,10 @@ rule DRAM:
         "Using DRAM to functionally annotate bin"
     shell:
         """
+        source activate /projects/mjolnir1/people/ncl550/0_software/miniconda3/envs/DRAM_more_modules
+        
         DRAM-setup.py import_config --config_loc /projects/mjolnir1/people/ncl550/0_software/20210705.dram.config
+
 
         DRAM.py annotate \
             -i {input.bin} \
