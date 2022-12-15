@@ -14,7 +14,7 @@ rule DRAM:
         annotation = "3_Outputs/test_bin/annotations.tsv",
     params:
     conda:
-        "conda_envs/DRAM.yaml"
+        "conda_envs/3_DRAM.yaml"
     threads:
         24
     resources:
