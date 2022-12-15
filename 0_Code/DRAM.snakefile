@@ -21,7 +21,7 @@ rule DRAM:
     output:
         annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz",
     params:
-        outdir = directory("3_Outputs/12_DRAM/{MAG}_annotate")
+        outdir = directory("3_Outputs/12_DRAM/{MAG}_annotate"),
         mainout = directory("3_Outputs/12_DRAM/")
     # conda:
     #     "conda_envs/3_DRAM.yaml"
