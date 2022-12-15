@@ -1,6 +1,6 @@
 rule all:
     input:
-        directory("3_Outputs/test_bin")
+        "3_Outputs/test_bin/annotations.tsv")
 
 ################################################################################
 ### Functionally annotate MAGs with DRAM
@@ -8,7 +8,7 @@ rule DRAM:
     input:
         bin = "3_Outputs/test_bin.fa.gz"
     output:
-        annotation = directory("3_Outputs/test_bin"),
+        annotation = "3_Outputs/test_bin/annotations.tsv"),
     params:
         database = expand("{database}", database=config['database']),
     conda:
