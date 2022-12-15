@@ -19,7 +19,7 @@ rule DRAM:
     input:
         bin = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins/{MAG}.fa.gz"
     output:
-        annotation = "3_Outputs/12_DRAM/{MAG}/{MAG}_annotations.tsv",
+        annotation = "3_Outputs/12_DRAM/{MAG}/{MAG}_annotations.tsv.gz",
     params:
         outdir = "3_Outputs/12_DRAM/{MAG}"
     # conda:
@@ -44,9 +44,11 @@ rule DRAM:
 
         DRAM.py annotate \
             -i {input.bin} \
-            -o {output.annotation} \
+            -o {output.outdir} \
             --threads {threads} \
             --min_contig_size 1500 
+
+        pigz -p {threads} {params.outdir}/*
 
         for i in {params.outdir}/*; do mv $i {params.outdir}/{MAG}_$(basename $i); done
 
