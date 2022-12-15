@@ -52,4 +52,5 @@ rule DRAM:
 
         for i in {params.outdir}/*; do mv $i {params.outdir}/{MAG}_$(basename $i); done
 
+        echo {output.annotation}
         """
