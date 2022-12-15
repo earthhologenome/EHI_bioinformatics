@@ -49,9 +49,10 @@ rule cat:
         contigs = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta"
     output:
         diamond = temp("3_Outputs/2_Coassemblies/{group}/{group}.alignment.diamond"),
-        faa = "3_Outputs/2_Coassemblies/{group}/{group}.predicted_proteins.faa",
-        gff = "3_Outputs/2_Coassemblies/{group}/{group}.predicted_proteins.gff",
+        faa = "3_Outputs/2_Coassemblies/{group}/{group}.predicted_proteins.faa.gz",
+        gff = "3_Outputs/2_Coassemblies/{group}/{group}.predicted_proteins.gff.gz",
         classif = "3_Outputs/2_Coassemblies/{group}/{group}.contig2classification.txt",
+        final_output_official = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output_OFFICAL.tsv",
         final_output = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output.tsv"
     params:
         group = "{group}",
@@ -82,19 +83,27 @@ rule cat:
             -n {threads} \
             --index_chunks 1
         
-        mv {wildcards.group}.predicted_proteins.faa {output.faa}
-        mv {wildcards.group}.predicted_proteins.gff {output.gff}
+
+        pigz -p {threads} {wildcards.group}.predicted_proteins.faa
+        pigz -p {threads} {wildcards.group}.predicted_proteins.gff
+        pigz -p {threads} {wildcards.group}.ORF2LCA.txt
+        mv {wildcards.group}.predicted_proteins.faa.gz {output.faa}
+        mv {wildcards.group}.predicted_proteins.gff.gz {output.gff}
         mv {wildcards.group}.contig2classification.txt {output.classif}
-        
+        mv {wildcards.group}.alignment.diamond {output.diamond}
+        mv {wildcards.group}.ORF2LCA.txt.gz 3_Outputs/2_Coassemblies/{wildcards.group}/
+        mv {wildcards.group}.log 3_Outputs/2_Coassemblies/{wildcards.group}/
+
         #Assign tax to main output
         CAT add_names \
             -i {output.classif} \
             -t {params.taxonomy} \
             --only_official \
+            -o {output.final_output_official}
+
+        CAT add_names \
+            -i {output.classif} \
+            -t {params.taxonomy} \
             -o {output.final_output}
 
-
-        #Compress
-        pigz -p {threads} {output.faa}
-        pigz -p {threads} {output.gff}
         """
