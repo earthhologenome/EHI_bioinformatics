@@ -13,7 +13,6 @@ rule DRAM:
     output:
         annotation = "3_Outputs/test_bin/annotations.tsv",
     params:
-        database = expand("{database}", database=config['database']),
     conda:
         "conda_envs/DRAM.yaml"
     threads:
