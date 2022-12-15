@@ -48,6 +48,6 @@ rule DRAM:
             --threads {threads} \
             --min_contig_size 1500 
 
-        for i in {params.outdir}/*; do mv $i {params.outdir}/{MAG}_"$(basename $i)"; done
+        for i in {params.outdir}/*; do mv $i {params.outdir}/{MAG}_$(basename $i); done
 
         """
