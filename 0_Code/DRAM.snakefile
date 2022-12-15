@@ -44,7 +44,7 @@ rule DRAM:
 
         DRAM.py annotate \
             -i {input.bin} \
-            -o {output.outdir} \
+            -o {params.outdir} \
             --threads {threads} \
             --min_contig_size 1500 
 
