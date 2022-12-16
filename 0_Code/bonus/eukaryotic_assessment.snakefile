@@ -111,7 +111,7 @@ rule cat:
 ### Summarise CAT outputs
 rule summarise_cat:
     input:
-        official = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output_OFFICAL.tsv",
+        official = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output_OFFICIAL.tsv",
         unofficial = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output.tsv",
         coverm = "3_Outputs/6_Coassembly_CoverM/{group}_eukaryotic_coverM.tsv"
     output:
