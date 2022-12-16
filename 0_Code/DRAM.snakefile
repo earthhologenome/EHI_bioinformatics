@@ -47,6 +47,7 @@ rule DRAM:
             -i {input.bin} \
             -o {params.outdir} \
             --threads {threads} \
+            --use_uniref \
             --min_contig_size 1500 
 
         pigz -p {threads} {params.outdir}/*
