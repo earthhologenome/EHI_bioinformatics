@@ -128,7 +128,7 @@ rule summarise_cat:
     resources:
         mem_gb=16,
         time='01:00:00'
-     log:
+    log:
         "3_Outputs/0_Logs/{group}_CAT_summary.log"
     message:
         "Summarising CAT outputs for {wildcards.group}'s"
