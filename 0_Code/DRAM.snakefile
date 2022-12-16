@@ -50,7 +50,10 @@ rule DRAM:
             --use_uniref \
             --min_contig_size 1500 
 
-        pigz -p {threads} {params.outdir}/*
+        pigz -p {threads} {params.outdir}/genes*
+        pigz -p {threads} {params.outdir}/*.tsv
+        pigz -p {threads} {params.outdir}/scaffolds.fna
+        pigz -p {threads} {params.outdir}/genbank/*
 
         for i in {params.outdir}/*; do mv $i {params.mainout}/{MAG}_$(basename $i); done
 
