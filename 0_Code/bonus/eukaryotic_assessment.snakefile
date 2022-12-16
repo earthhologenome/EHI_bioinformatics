@@ -52,7 +52,7 @@ rule cat:
         faa = "3_Outputs/2_Coassemblies/{group}/{group}.predicted_proteins.faa.gz",
         gff = "3_Outputs/2_Coassemblies/{group}/{group}.predicted_proteins.gff.gz",
         classif = "3_Outputs/2_Coassemblies/{group}/{group}.contig2classification.txt",
-        final_output_official = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output_OFFICAL.tsv",
+        final_output_official = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output_OFFICIAL.tsv",
         final_output = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output.tsv"
     params:
         group = "{group}",
