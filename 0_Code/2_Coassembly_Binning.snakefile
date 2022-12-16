@@ -379,7 +379,7 @@ rule coverM_assembly:
         coverm genome \
             -s - \
             -b {params.mapped_bams}/*.bam \
-            -m relative_abundance count mean \
+            -m relative_abundance count mean covered_fraction \
             -t {threads} \
             --min-covered-fraction 0 \
             > {output.euk}
@@ -412,7 +412,7 @@ rule generate_summary:
         """
         #Create the final output summary table
         #parse QUAST outputs for assembly stats
-        echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\taseembly_mapping_percent" > headers.tsv
+        echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\tassembly_mapping_percent" > headers.tsv
         cat 3_Outputs/2_Coassemblies/{params.group}_QUAST/{params.group}_assembly_report.tsv > {params.group}_temp_report.tsv
 
         # #Add in the % mapping to assembly stats

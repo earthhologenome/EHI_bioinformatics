@@ -22,7 +22,7 @@ rule DRAM:
         annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz",
     params:
         outdir = directory("3_Outputs/12_DRAM/{MAG}_annotate"),
-        mainout = directory("3_Outputs/12_DRAM/")
+        mainout = directory("3_Outputs/12_DRAM")
     # conda:
     #     "conda_envs/3_DRAM.yaml"
     threads:
@@ -47,7 +47,7 @@ rule DRAM:
             -i {input.bin} \
             -o {params.outdir} \
             --threads {threads} \
-            --use_uniref \
+#            --use_uniref \
             --min_contig_size 1500 
 
         pigz -p {threads} {params.outdir}/genes*
@@ -55,6 +55,6 @@ rule DRAM:
         pigz -p {threads} {params.outdir}/scaffolds.fna
         pigz -p {threads} {params.outdir}/genbank/*
 
-        for i in {params.outdir}/*; do mv $i {params.mainout}/{MAG}_$(basename $i); done
+        for i in {params.outdir}/*; do mv $i {params.mainout}/{MAG}_$((basename $i)); done
 
         """
