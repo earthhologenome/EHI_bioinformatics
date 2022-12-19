@@ -115,12 +115,13 @@ rule summarise_cat:
         unofficial = "3_Outputs/2_Coassemblies/{group}/{group}.CAT_final_output.tsv",
         coverm = "3_Outputs/6_Coassembly_CoverM/{group}_eukaryotic_coverM.tsv"
     output:
-        full_output = "3_Outputs/non_bacterial/{group}_CAT_full_table.tsv",
-        superkingdom_output = "3_Outputs/non_bacterial/{group}_superkingdom_summary.tsv.tsv",
-        kingdom_output = "3_Outputs/non_bacterial/{group}_kingdom_summary.tsv.tsv",
+        full_output = "3_Outputs/non_bacterial/{group}_CAT_full_table.tsv.gz",
+        superkingdom_output = "3_Outputs/non_bacterial/{group}_superkingdom_summary.tsv",
+        kingdom_output = "3_Outputs/non_bacterial/{group}_kingdom_summary.tsv",
         phylum_output = "3_Outputs/non_bacterial/{group}_phylum_summary.tsv"
     params:
         group = "{group}",
+        uncompressed = "3_Outputs/non_bacterial/{group}_CAT_full_table.tsv"
     conda:
         "../conda_envs/R_tidyverse.yaml"
     threads:
@@ -137,4 +138,6 @@ rule summarise_cat:
         mkdir -p 3_Outputs/non_bacterial/
 
         Rscript 0_Code/bonus/summarise_CAT.R {params.group} {input.coverm} {input.official} {input.unofficial}
+
+        gzip {params.uncompressed}
         """
