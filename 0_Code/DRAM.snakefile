@@ -35,7 +35,7 @@ rule DRAM:
     log:
         "3_Outputs/0_Logs/{MAG}_DRAM.log"
     message:
-        "Using DRAM to functionally annotate bin"
+        "Using DRAM to functionally annotate {wildcards.MAG}"
     shell:
         """
         source activate /projects/mjolnir1/people/ncl550/0_software/miniconda3/envs/DRAM_more_modules
@@ -55,6 +55,6 @@ rule DRAM:
         pigz -p {threads} {params.outdir}/scaffolds.fna
         pigz -p {threads} {params.outdir}/genbank/*
 
-        for i in {params.outdir}/*; do mv $i {params.mainout}/{MAG}_$((basename $i)); done
+        for i in {params.outdir}/*; do mv $i {params.mainout}/{MAG}_"$(basename $i)"; done
 
         """
