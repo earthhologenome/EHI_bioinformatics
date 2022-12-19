@@ -70,6 +70,7 @@ rule fastp:
             --out1 {output.r1o} --out2 {output.r2o} \
             --trim_poly_g \
             --trim_poly_x \
+            --low_complexity_filter \
             --n_base_limit 5 \
             --qualified_quality_phred 20 \
             --length_required 60 \
