@@ -36,7 +36,7 @@ coverm_official <- read_delim(args[2]) %>%
   inner_join(., cat_official, by = c("genome" = "number_contig")) %>%
   filter(superkingdom != "Bacteria" & superkingdom != "Archaea")
 
-write_tsv(coverm_official, paste0(args[1], "_CAT_full_table.tsv"))
+write_tsv(coverm_official, paste0("3_Outputs/non_bacterial/", args[1], "_CAT_full_table.tsv"))
 
 coverm_unofficial <- read_delim(args[2]) %>%
   clean_names() %>%
@@ -74,7 +74,7 @@ superkingdom_summary <- coverm_official %>%
   filter(relative_abundance > 0.2) %>%
   pivot_wider(., names_from = superkingdom, values_from = relative_abundance)
 
-write_tsv(superkingdom_summary, paste0(args[1], "_superkingdom_summary.tsv"))
+write_tsv(superkingdom_summary, paste0("3_Outputs/non_bacterial/", args[1], "_superkingdom_summary.tsv"))
 
 kingdom_summary <- coverm_unofficial %>%
   group_by(sample, kingdom) %>%
@@ -82,7 +82,7 @@ kingdom_summary <- coverm_unofficial %>%
   filter(relative_abundance > 0.2) %>%
   pivot_wider(., names_from = kingdom, values_from = relative_abundance)
 
-write_tsv(kingdom_summary, paste0(args[1], "_kingdom_summary.tsv"))
+write_tsv(kingdom_summary, paste0("3_Outputs/non_bacterial/", args[1], "_kingdom_summary.tsv"))
 
 phylum_summary <- coverm_official %>%
   group_by(sample, superkingdom, phylum) %>%
@@ -90,7 +90,7 @@ phylum_summary <- coverm_official %>%
   filter(relative_abundance > 0.2) %>%
   pivot_wider(names_from = !c("sample", "relative_abundance"), values_from = relative_abundance)
   
-write_tsv(phylum_summary, paste0(args[1], "_phylum_summary.tsv"))
+write_tsv(phylum_summary, paste0("3_Outputs/non_bacterial/", args[1], "_phylum_summary.tsv"))
 
 
 
