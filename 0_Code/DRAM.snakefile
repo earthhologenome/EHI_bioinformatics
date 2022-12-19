@@ -55,6 +55,5 @@ rule DRAM:
         pigz -p {threads} {params.outdir}/scaffolds.fna
         pigz -p {threads} {params.outdir}/genbank/*
 
-        for i in {params.outdir}/*; do mv $i {params.mainout}/{MAG}_"$(basename $i)"; done
-
+        for i in {params.outdir}/*.gz; do mv "$i" {params.mainout}/{MAG}_"$(basename "$i")"; done
         """
