@@ -10,13 +10,13 @@ args = commandArgs(trailingOnly=TRUE)
 
 
 # Import data
-cat_official <- read_delim(arg[3], delim = "\t") %>%
+cat_official <- read_delim(args[3], delim = "\t") %>%
   clean_names() %>%
   select(-c("lineage_scores", "lineage", "classification")) %>%
   mutate(number_contig = str_replace_all(number_contig, "-.*", ""),
          across(cols = c(3, 4, 5, 6, 7, 8, 9), .fns = ~ str_replace_all(., ":.*", "")))
 
-cat_unofficial <- read_delim(arg[4], delim = "\t") %>%
+cat_unofficial <- read_delim(args[4], delim = "\t") %>%
   clean_names() %>%
   select(-c("lineage_scores", "lineage", "classification")) %>%
   filter(str_detect(full_lineage_names, "Bacteria", negate = TRUE)) %>%
@@ -28,7 +28,7 @@ cat_unofficial <- read_delim(arg[4], delim = "\t") %>%
          )
 
 
-coverm_official <- read_delim("non_bacterial/coverm_outputs/test.tsv") %>%
+coverm_official <- read_delim(args[2]) %>%
   clean_names() %>%
   select(!ends_with("mean") & !ends_with("count") & !ends_with("fraction")) %>%
   pivot_longer(., cols = !genome, names_to = "sample", values_to = "relative_abundance") %>%
@@ -38,7 +38,7 @@ coverm_official <- read_delim("non_bacterial/coverm_outputs/test.tsv") %>%
 
 write_tsv(coverm_official, paste0(args[1], "_CAT_full_table.tsv"))
 
-coverm_unofficial <- read_delim("non_bacterial/coverm_outputs/test.tsv") %>%
+coverm_unofficial <- read_delim(args[2]) %>%
   clean_names() %>%
   select(!ends_with("mean") & !ends_with("count") & !ends_with("fraction")) %>%
   pivot_longer(., cols = !genome, names_to = "sample", values_to = "relative_abundance") %>%
