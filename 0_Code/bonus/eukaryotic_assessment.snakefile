@@ -134,5 +134,7 @@ rule summarise_cat:
         "Summarising CAT outputs for {wildcards.group}'s"
     shell:
         """
+        mkdir -p 3_Outputs/non_bacterial/
+
         Rscript 0_Code/bonus/summarise_CAT.R {params.group} {input.coverm} {input.official} {input.unofficial}
         """
