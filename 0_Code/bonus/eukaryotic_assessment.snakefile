@@ -40,7 +40,7 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-        expand("3_Outputs/non_bacterial/{group}_CAT_full_table.tsv", group=GROUP)
+        expand("3_Outputs/non_bacterial/{group}_CAT_full_table.tsv.gz", group=GROUP)
 
 ################################################################################
 ### Classify contigs using CAT
