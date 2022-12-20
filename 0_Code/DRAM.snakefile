@@ -53,7 +53,7 @@ rule DRAM:
             -i {input.bin} \
             -o {params.outdir} \
             --threads {threads} \
-#            --use_uniref \
+            --use_uniref \
             --min_contig_size 1500 
 
 
