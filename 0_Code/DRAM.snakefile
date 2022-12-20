@@ -33,9 +33,9 @@ rule DRAM:
         outdir = "3_Outputs/12_DRAM/{MAG}_annotate",
         mainout = "3_Outputs/12_DRAM"
     threads:
-        2
+        4
     resources:
-        mem_gb=32,
+        mem_gb=64,
         time='04:00:00'
     benchmark:
         "3_Outputs/0_Logs/{MAG}_DRAM.benchmark.tsv"
