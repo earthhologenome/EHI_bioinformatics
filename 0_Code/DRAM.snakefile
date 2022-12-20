@@ -11,7 +11,9 @@ print(MAG)
 
 rule all:
     input:
-        expand("3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz", MAG=MAG)
+        expand("3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz", MAG=MAG),
+        "3_Outputs/12_DRAM/DRAM.tar.gz"
+
 
 ################################################################################
 ### Functionally annotate MAGs with DRAM
@@ -19,7 +21,14 @@ rule DRAM:
     input:
         bin = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins/{MAG}.fa.gz"
     output:
-        annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv",
+        annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz",
+        genes = "3_Outputs/12_DRAM/{MAG}_genes.fna.gz",
+        genesfaa = "3_Outputs/12_DRAM/{MAG}_genes.faa.gz",
+        genesgff = "3_Outputs/12_DRAM/{MAG}_genes.gff.gz",
+        scaffolds = "3_Outputs/12_DRAM/{MAG}_scaffolds.fna.gz",
+        trnas = "3_Outputs/12_DRAM/{MAG}_trnas.tsv.gz",
+        rrnas = "3_Outputs/12_DRAM/{MAG}_rrnas.tsv.gz",
+        gbk = "3_Outputs/12_DRAM/{MAG}.gbk.gz",  
     params:
         outdir = "3_Outputs/12_DRAM/{MAG}_annotate",
         mainout = "3_Outputs/12_DRAM"
@@ -40,7 +49,6 @@ rule DRAM:
         
 #        DRAM-setup.py import_config --config_loc /projects/mjolnir1/people/ncl550/0_software/20210705.dram.config
 
-
         DRAM.py annotate \
             -i {input.bin} \
             -o {params.outdir} \
@@ -48,18 +56,32 @@ rule DRAM:
 #            --use_uniref \
             --min_contig_size 1500 
 
-        mv {params.outdir}/* {params.mainout}
+
+        pigz -p {threads} {params.outdir}/*.tsv
+        pigz -p {threads} {params.outdir}/*.fna
+        pigz -p {threads} {params.outdir}/*.faa
+        pigz -p {threads} {params.outdir}/*.gff
+        pigz -p {threads} {params.outdir}/genbank/*
+        
+        mv {params.outdir}/annotations.tsv.gz {output.annotations}
+        mv {params.outdir}/trnas.tsv.gz {output.trnas}
+        mv {params.outdir}/rrnas.tsv.gz {output.rrnas}
+        mv {params.outdir}/scaffolds.fna.gz {output.scaffolds}
+        mv {params.outdir}/genes.fna.gz {output.genes}
+        mv {params.outdir}/*.faa.gz {output.genesfaa}
+        mv {params.outdir}/*.gff.gz {output.genesgff}
+        mv {params.outdir}/genbank/* {output.gbk}
 
         """
-################################################################################
-### compress/store
+###############################################################################
+## compress/store
 rule compress:
     input:
-        bin = expand("3_Outputs/12_DRAM/{MAG}_annotations.tsv", MAG=MAG)
+        bin = expand("3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz", MAG=MAG)
     output:
-        annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz",
+        tar = "3_Outputs/12_DRAM/DRAM.tar.gz",
     params:
-        mainout = "3_Outputs/12_DRAM"
+        mainout = "3_Outputs/12_DRAM/"
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -68,15 +90,9 @@ rule compress:
         mem_gb=128,
         time='04:00:00'
     message:
-        "Compressing outputs"
+        "Tarballing outputs"
     shell:
         """
-        pigz -p {threads} {params.mainout}/*.tsv
-        pigz -p {threads} {params.mainout}/*.fna
-        pigz -p {threads} {params.mainout}/*.faa
-        pigz -p {threads} {params.mainout}/*.gff
-        pigz -p {threads} {params.mainout}/genbank/*
-
-        tar -cvf {params.mainout}/DRAM.tar.gz {params.mainout}
+        tar -cvf {output.tar} {params.mainout}
 
         """
