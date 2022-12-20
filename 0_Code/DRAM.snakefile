@@ -94,5 +94,6 @@ rule compress:
     shell:
         """
         tar -cvf {output.tar} {params.mainout}
-
+        rmdir {params.mainout}/*_annotate/genbank
+        rmdir {params.mainout}/*_annotate
         """
