@@ -21,7 +21,7 @@ rule DRAM:
     input:
         bin = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins/{MAG}.fa.gz"
     output:
-        annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz",
+        annotations = "3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz",
         genes = "3_Outputs/12_DRAM/{MAG}_genes.fna.gz",
         genesfaa = "3_Outputs/12_DRAM/{MAG}_genes.faa.gz",
         genesgff = "3_Outputs/12_DRAM/{MAG}_genes.gff.gz",
