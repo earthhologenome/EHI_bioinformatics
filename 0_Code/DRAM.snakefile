@@ -52,8 +52,8 @@ rule DRAM:
 
         """
 ################################################################################
-### Functionally annotate MAGs with DRAM
-rule DRAM:
+### compress/store
+rule compress:
     input:
         bin = expand("3_Outputs/12_DRAM/{MAG}_annotations.tsv")
     output:
@@ -76,5 +76,7 @@ rule DRAM:
         pigz -p {threads} {params.mainout}/*.faa
         pigz -p {threads} {params.mainout}/*.gff
         pigz -p {threads} {params.mainout}/genbank/*
-        
+
+        tar -cvf {params.mainout}/DRAM.tar.gz {params.mainout}
+
         """
