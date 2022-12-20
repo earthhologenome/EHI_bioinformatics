@@ -55,7 +55,7 @@ rule DRAM:
 ### compress/store
 rule compress:
     input:
-        bin = expand("3_Outputs/12_DRAM/{MAG}_annotations.tsv")
+        bin = expand("3_Outputs/12_DRAM/{MAG}_annotations.tsv", MAG=MAG)
     output:
         annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz",
     params:
