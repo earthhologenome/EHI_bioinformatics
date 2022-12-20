@@ -19,17 +19,15 @@ rule DRAM:
     input:
         bin = "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins/{MAG}.fa.gz"
     output:
-        annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz",
+        annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv",
     params:
         outdir = "3_Outputs/12_DRAM/{MAG}_annotate",
         mainout = "3_Outputs/12_DRAM"
-    # conda:
-    #     "conda_envs/3_DRAM.yaml"
     threads:
         2
     resources:
         mem_gb=32,
-        time='03:00:00'
+        time='04:00:00'
     benchmark:
         "3_Outputs/0_Logs/{MAG}_DRAM.benchmark.tsv"
     log:
@@ -50,10 +48,33 @@ rule DRAM:
 #            --use_uniref \
             --min_contig_size 1500 
 
-        pigz -p {threads} {params.outdir}/genes*
-        pigz -p {threads} {params.outdir}/*.tsv
-        pigz -p {threads} {params.outdir}/scaffolds.fna
-        pigz -p {threads} {params.outdir}/genbank/*
+        mv {params.outdir}/* {params.mainout}
 
-        for i in {params.outdir}/*.gz; do mv "$i" {params.mainout}/{MAG}_"$(basename "$i")"; done
+        """
+################################################################################
+### Functionally annotate MAGs with DRAM
+rule DRAM:
+    input:
+        bin = expand("3_Outputs/12_DRAM/{MAG}_annotations.tsv")
+    output:
+        annotation = "3_Outputs/12_DRAM/{MAG}_annotations.tsv.gz",
+    params:
+        mainout = "3_Outputs/12_DRAM"
+    conda:
+        "conda_envs/1_Preprocess_QC.yaml"
+    threads:
+        32
+    resources:
+        mem_gb=128,
+        time='04:00:00'
+    message:
+        "Compressing outputs"
+    shell:
+        """
+        pigz -p {threads} {params.mainout}/*.tsv
+        pigz -p {threads} {params.mainout}/*.fna
+        pigz -p {threads} {params.mainout}/*.faa
+        pigz -p {threads} {params.mainout}/*.gff
+        pigz -p {threads} {params.mainout}/genbank/*
+        
         """
