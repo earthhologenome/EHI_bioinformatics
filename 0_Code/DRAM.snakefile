@@ -35,7 +35,7 @@ rule DRAM:
     threads:
         2
     resources:
-        mem_gb=20,
+        mem_gb=24,
         time='04:00:00'
     benchmark:
         "3_Outputs/0_Logs/{MAG}_DRAM.benchmark.tsv"
