@@ -74,14 +74,14 @@ That's all the setup required to get the pipeline running. Now you just need to 
 snakemake \
 -s 0_Code/1_Preprocess_QC.snakefile \
 -j 20 \
---cluster "sbatch --mem {resources.mem_gb}G --time {resources.time} --cores {threads}" \
+--cluster "sbatch --mem {resources.mem_gb}G --time {resources.time} -c {threads} -v" \
 --use-conda \
 --conda-frontend conda \
 --conda-prefix /projects/mjolnir1/people/ncl550/0_software \
 --latency-wait 600
 ```
 
-`snakemake -s 0_Code/1_Preprocess_QC.snakefile -j 20 --cluster "sbatch --mem {resources.mem_gb}G --cores {threads} --time {resources.time}" --use-conda --conda-frontend conda --conda-prefix /projects/mjolnir1/people/ncl550/0_software --latency-wait 600`
+`snakemake -s 0_Code/1_Preprocess_QC.snakefile -j 20 --cluster "sbatch --mem {resources.mem_gb}G -c {threads} --time {resources.time} -v" --use-conda --conda-frontend conda --conda-prefix /projects/mjolnir1/people/ncl550/0_software --latency-wait 600`
 
 I recommend adding the `--dry-run` or `-n` command to the above code initially, as this will let you figure out if everything is working as expected.
 
@@ -182,14 +182,14 @@ It's as simple as running the below code:
 snakemake \
 -s 0_Code/1_Preprocess_QC.snakefile \
 -j 10 \
---cluster "sbatch --mem {resources.mem_gb}G --time {resources.time} --cores {threads}" \
+--cluster "sbatch --mem {resources.mem_gb}G --time {resources.time} -c {threads} -v" \
 --use-conda \
 --conda-frontend conda \
 --conda-prefix /projects/mjolnir1/people/ncl550/0_software \
 --latency-wait 600
 ```
 
-`snakemake -s 0_Code/1_Preprocess_QC.snakefile -j 10 --cluster "sbatch --mem {resources.mem_gb}G --cores {threads} --time {resources.time}" --use-conda --conda-frontend conda --conda-prefix /projects/mjolnir1/people/ncl550/0_software --latency-wait 600`
+`snakemake -s 0_Code/1_Preprocess_QC.snakefile -j 10 --cluster "sbatch --mem {resources.mem_gb}G -c {threads} --time {resources.time} -v" --use-conda --conda-frontend conda --conda-prefix /projects/mjolnir1/people/ncl550/0_software --latency-wait 600`
 
 Again, I recommend adding the `--dry-run` or `-n` command to the above code initially, as this will let you figure out if everything is working as expected.
 
