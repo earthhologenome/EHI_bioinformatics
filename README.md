@@ -1,4 +1,5 @@
-# EHI_Bioinformatics   🐨->💩->🦠->🧬->🖥️->😏
+# EHI_Bioinformatics   
+# 🐨->💩->🦠->🧬->🖥️->😏
 Bioinformatics pipeline to process EHI data.
 
 *updated 24/11/2022, Raphael Eisenhofer*
