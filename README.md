@@ -134,14 +134,16 @@ Once the files are ready, run the pipeline using the following code (SLURM job m
 snakemake \
 -s 0_Code/2_Coassembly_Binning.snakefile \
 -j 10 \
---cluster "sbatch --mem {resources.mem_gb}G --time {resources.time} --cores {threads}" \
+--cluster "sbatch --mem {resources.mem_gb}G --time {resources.time} -c {threads} -v" \
 --use-conda \
 --conda-frontend conda \
 --conda-prefix /projects/mjolnir1/people/ncl550/0_software \
 --latency-wait 600
 ```
 
-`snakemake -s 0_Code/2_Coassembly_Binning.snakefile -j 10 --cluster "sbatch --mem {resources.mem_gb}G --cores {threads} --time {resources.time}" --use-conda --conda-frontend conda --conda-prefix /projects/mjolnir1/people/ncl550/0_software --latency-wait 600`
+`snakemake -s 0_Code/2_Coassembly_Binning.snakefile -j 10 --cluster "sbatch --mem {resources.mem_gb}G -c {threads} --time {resources.time} -v" --use-conda --conda-frontend conda --conda-prefix /projects/mjolnir1/people/ncl550/0_software --latency-wait 600`
+
+If you wish, you can also add `--mail-type=end --mail-user=youremail@coolmail.com` to the `--cluster "sbatch ..."` call to get an email when the jobs are completed.
 
 Again, I recommend adding the `--dry-run` or `-n` command to the above code initially, as this will let you figure out if everything is working as expected.
 
