@@ -33,9 +33,9 @@ rule DRAM:
         outdir = "3_Outputs/12_DRAM/{MAG}_annotate",
         mainout = "3_Outputs/12_DRAM"
     threads:
-        4
+        2
     resources:
-        mem_gb=64,
+        mem_gb=20,
         time='04:00:00'
     benchmark:
         "3_Outputs/0_Logs/{MAG}_DRAM.benchmark.tsv"
@@ -53,7 +53,7 @@ rule DRAM:
             -i {input.bin} \
             -o {params.outdir} \
             --threads {threads} \
-            --use_uniref \
+#            --use_uniref \
             --min_contig_size 1500 
 
 
