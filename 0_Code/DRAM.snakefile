@@ -66,14 +66,14 @@ rule DRAM:
         #If statements for rrnas/trnas -- sometimes these won't be created
         if test -f {params.trnas}
         then 
-        mv {params.outdir}/trnas.tsv.gz {output.trnas}
+        mv {params.outdir}/trnas.tsv.gz {params.trnas}
         else
         echo "no trnas file"
         fi
 
         if test -f {params.rrnas}
         then 
-        mv {params.outdir}/rrnas.tsv.gz {output.rrnas}
+        mv {params.outdir}/rrnas.tsv.gz {params.rrnas}
         else
         echo "no rrnas file"
         fi
