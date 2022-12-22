@@ -26,12 +26,12 @@ rule DRAM:
         genesfaa = "3_Outputs/12_DRAM/{MAG}_genes.faa.gz",
         genesgff = "3_Outputs/12_DRAM/{MAG}_genes.gff.gz",
         scaffolds = "3_Outputs/12_DRAM/{MAG}_scaffolds.fna.gz",
-        trnas = "3_Outputs/12_DRAM/{MAG}_trnas.tsv.gz",
-        rrnas = "3_Outputs/12_DRAM/{MAG}_rrnas.tsv.gz",
         gbk = "3_Outputs/12_DRAM/{MAG}.gbk.gz",  
     params:
         outdir = "3_Outputs/12_DRAM/{MAG}_annotate",
-        mainout = "3_Outputs/12_DRAM"
+        mainout = "3_Outputs/12_DRAM",
+        trnas = "3_Outputs/12_DRAM/{MAG}_trnas.tsv.gz",
+        rrnas = "3_Outputs/12_DRAM/{MAG}_rrnas.tsv.gz",
     threads:
         2
     resources:
@@ -62,10 +62,23 @@ rule DRAM:
         pigz -p {threads} {params.outdir}/*.faa
         pigz -p {threads} {params.outdir}/*.gff
         pigz -p {threads} {params.outdir}/genbank/*
-        
-        mv {params.outdir}/annotations.tsv.gz {output.annotations}
+
+        #If statements for rrnas/trnas -- sometimes these won't be created
+        if test -f {params.trnas}
+        then 
         mv {params.outdir}/trnas.tsv.gz {output.trnas}
+        else
+        echo "no trnas file"
+        fi
+
+        if test -f {params.rrnas}
+        then 
         mv {params.outdir}/rrnas.tsv.gz {output.rrnas}
+        else
+        echo "no rrnas file"
+        fi
+
+        mv {params.outdir}/annotations.tsv.gz {output.annotations}
         mv {params.outdir}/scaffolds.fna.gz {output.scaffolds}
         mv {params.outdir}/genes.fna.gz {output.genes}
         mv {params.outdir}/*.faa.gz {output.genesfaa}
