@@ -103,6 +103,7 @@ rule DRAM:
         pigz -p {threads} {params.outdir}/*.faa
         pigz -p {threads} {params.outdir}/*.gff
         pigz -p {threads} {params.outdir}/genbank/*
+        pigz -p {threads} {output.distillate}/*
 
         #If statements for rrnas/trnas -- sometimes these won't be created
         if test -f {params.outdir}/trnas.tsv.gz
