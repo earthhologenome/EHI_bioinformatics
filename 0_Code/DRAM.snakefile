@@ -26,7 +26,8 @@ rule DRAM:
         genesfaa = "3_Outputs/12_DRAM/{MAG}_genes.faa.gz",
         genesgff = "3_Outputs/12_DRAM/{MAG}_genes.gff.gz",
         scaffolds = "3_Outputs/12_DRAM/{MAG}_scaffolds.fna.gz",
-        gbk = "3_Outputs/12_DRAM/{MAG}.gbk.gz",  
+        gbk = "3_Outputs/12_DRAM/{MAG}.gbk.gz",
+        distillate = directory("3_Outputs/12_DRAM/{MAG}_distillate")
     params:
         outdir = "3_Outputs/12_DRAM/{MAG}_annotate",
         mainout = "3_Outputs/12_DRAM",
@@ -56,6 +57,46 @@ rule DRAM:
 #            --use_uniref \
             --min_contig_size 1500 
 
+        #If statements for rrnas/trnas -- sometimes these won't be created
+        if test -f {params.outdir}/trnas.tsv.gz && test -f {params.outdir}/rrnas.tsv.gz
+        then
+        DRAM.py distill \
+            -i {params.outdir}/annotations.tsv \
+            --rrna_path {params.outdir}/rrnas.tsv \
+            --trna_path {params.outdir}/trnas.tsv \
+            -o {output.distillate}
+        else
+        echo "trnas AND rrnas are both not present"
+        fi
+
+        if test -f {params.outdir}/trnas.tsv.gz && test ! -f {params.outdir}/rrnas.tsv.gz
+        then
+        DRAM.py distill \
+            -i {params.outdir}/annotations.tsv \
+            --trna_path {params.outdir}/trnas.tsv \
+            -o {output.distillate}
+        else
+        echo "only trnas found"
+        fi
+
+        if test ! -f {params.outdir}/trnas.tsv.gz && test -f {params.outdir}/rrnas.tsv.gz
+        then
+        DRAM.py distill \
+            -i {params.outdir}/annotations.tsv \
+            --rrna_path {params.outdir}/rrnas.tsv \
+            -o {output.distillate}
+        else
+        echo "only rrnas found"
+        fi
+
+        if test ! -f {params.outdir}/trnas.tsv.gz && test ! -f {params.outdir}/rrnas.tsv.gz
+        then
+        DRAM.py distill \
+            -i {params.outdir}/annotations.tsv \
+            -o {output.distillate}
+        else
+        echo "neither trnas nor rrnas found"
+        fi        
 
         pigz -p {threads} {params.outdir}/*.tsv
         pigz -p {threads} {params.outdir}/*.fna
@@ -64,14 +105,14 @@ rule DRAM:
         pigz -p {threads} {params.outdir}/genbank/*
 
         #If statements for rrnas/trnas -- sometimes these won't be created
-        if test -f {params.trnas}
+        if test -f {params.outdir}/trnas.tsv.gz
         then 
         mv {params.outdir}/trnas.tsv.gz {params.trnas}
         else
         echo "no trnas file"
         fi
 
-        if test -f {params.rrnas}
+        if test -f {params.outdir}/rrnas.tsv.gz
         then 
         mv {params.outdir}/rrnas.tsv.gz {params.rrnas}
         else
@@ -98,9 +139,9 @@ rule compress:
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
-        32
+        2
     resources:
-        mem_gb=128,
+        mem_gb=32,
         time='04:00:00'
     message:
         "Tarballing outputs"
