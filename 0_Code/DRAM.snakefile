@@ -50,12 +50,12 @@ rule DRAM:
         
 #        DRAM-setup.py import_config --config_loc /projects/mjolnir1/people/ncl550/0_software/20210705.dram.config
 
-#         DRAM.py annotate \
-#             -i {input.bin} \
-#             -o {params.outdir} \
-#             --threads {threads} \
-# #            --use_uniref \
-#             --min_contig_size 1500 
+        DRAM.py annotate \
+            -i {input.bin} \
+            -o {params.outdir} \
+            --threads {threads} \
+#            --use_uniref \
+            --min_contig_size 1500 
 
         #If statements for rrnas/trnas -- sometimes these won't be created
         if test -f {params.outdir}/trnas.tsv && test -f {params.outdir}/rrnas.tsv
