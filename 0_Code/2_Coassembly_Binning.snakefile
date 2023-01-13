@@ -17,9 +17,9 @@ from glob import glob
 GROUP = [ dir for dir in os.listdir('2_Reads/4_Host_removed')
          if os.path.isdir(os.path.join('2_Reads/4_Host_removed', dir)) ]
 
-SAMPLE = [os.path.relpath(fn, "2_Reads/4_Host_removed").replace("_M_1.fastq.gz", "")
+SAMPLE = [os.path.relpath(fn, "2_Reads/4_Host_removed").replace("_M_1.fq.gz", "")
             for group in GROUP
-            for fn in glob(f"2_Reads/4_Host_removed/{group}/*_1.fastq.gz")]
+            for fn in glob(f"2_Reads/4_Host_removed/{group}/*_1.fq.gz")]
 
 print("Detected these sample groups:")
 print(GROUP)
@@ -40,8 +40,8 @@ rule Coassembly:
         Coassembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
     params:
         workdir = "3_Outputs/2_Coassemblies/{group}",
-        r1_cat = temp("3_Outputs/2_Coassemblies/{group}/{group}_1.fastq.gz"),
-        r2_cat = temp("3_Outputs/2_Coassemblies/{group}/{group}_2.fastq.gz"),
+        r1_cat = temp("3_Outputs/2_Coassemblies/{group}/{group}_1.fq.gz"),
+        r2_cat = temp("3_Outputs/2_Coassemblies/{group}/{group}_2.fq.gz"),
         assembler = expand("{assembler}", assembler=config['assembler']),
     conda:
         "conda_envs/2_Assembly_Binning.yaml"
@@ -65,8 +65,8 @@ rule Coassembly:
         then
 
         # Concatenate reads from the same group for Coassembly
-        cat {input.reads}/*_1.fastq.gz > {params.r1_cat}
-        cat {input.reads}/*_2.fastq.gz > {params.r2_cat}
+        cat {input.reads}/*_1.fq.gz > {params.r1_cat}
+        cat {input.reads}/*_2.fq.gz > {params.r2_cat}
 
         # Run metaspades
             metaspades.py \
@@ -85,8 +85,8 @@ rule Coassembly:
         else
 
         # Set up input reads variable for megahit
-        R1=$(for i in 2_Reads/4_Host_removed/{wildcards.group}/*_1.fastq.gz; do echo $i | tr '\n' ,; done)
-        R2=$(for i in 2_Reads/4_Host_removed/{wildcards.group}/*_2.fastq.gz; do echo $i | tr '\n' ,; done)
+        R1=$(for i in 2_Reads/4_Host_removed/{wildcards.group}/*_1.fq.gz; do echo $i | tr '\n' ,; done)
+        R2=$(for i in 2_Reads/4_Host_removed/{wildcards.group}/*_2.fq.gz; do echo $i | tr '\n' ,; done)
 
         # Run megahit
             megahit \
@@ -207,14 +207,14 @@ rule Coassembly_mapping:
     shell:
         """
         # Map reads to catted reference using Bowtie2
-        for fq1 in {params.read_dir}/*_1.fastq.gz; do \
+        for fq1 in {params.read_dir}/*_1.fq.gz; do \
         bowtie2 \
             --time \
             --threads {threads} \
             -x {params.assembly} \
             -1 $fq1 \
-            -2 ${{fq1/_1.fastq.gz/_2.fastq.gz}} \
-        | samtools sort -@ {threads} -o {params.outdir}/$(basename ${{fq1/_1.fastq.gz/.bam}}); done
+            -2 ${{fq1/_1.fq.gz/_2.fq.gz}} \
+        | samtools sort -@ {threads} -o {params.outdir}/$(basename ${{fq1/_1.fq.gz/.bam}}); done
 
         #Create output file for snakemake
         mkdir -p {output}
@@ -249,13 +249,13 @@ rule metaWRAP_binning:
         "Binning {wildcards.group} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
     shell:
         """
-        # Create dummy fastq/assembly files to trick metaWRAP into running without mapping
+        # Create dummy fq/assembly files to trick metaWRAP into running without mapping
         mkdir -p {params.outdir}/work_files
 
         touch {params.outdir}/work_files/assembly.fa.bwt
 
-        for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_1.fastq}}); done
-        for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_2.fastq}}); done
+        for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_1.fq}}); done
+        for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_2.fq}}); done
 
         #Symlink BAMs for metaWRAP
         for bam in {params.bams}/*.bam; do ln -sf `pwd`/$bam {params.outdir}/work_files/$(basename $bam); done
@@ -269,7 +269,7 @@ rule metaWRAP_binning:
             --metabat2 \
             --maxbin2 \
             --concoct \
-        {params.outdir}/work_files/*_1.fastq {params.outdir}/work_files/*_2.fastq
+        {params.outdir}/work_files/*_1.fq {params.outdir}/work_files/*_2.fq
 
         # Create dummy file for refinement input
         echo "Binning complete" > {output}

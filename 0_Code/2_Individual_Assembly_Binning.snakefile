@@ -14,8 +14,8 @@ configfile: "0_Code/configs/2_Assembly_Binning_config.yaml"
 import os
 from glob import glob
 
-SAMPLE = [os.path.basename(fn).replace("_M_1.fastq.gz", "")
-            for fn in glob(f"2_Reads/4_Host_removed/*_1.fastq.gz")]
+SAMPLE = [os.path.basename(fn).replace("_M_1.fq.gz", "")
+            for fn in glob(f"2_Reads/4_Host_removed/*_1.fq.gz")]
 
 print("Detected the following samples:")
 print(SAMPLE)
@@ -30,8 +30,8 @@ rule all:
 ### Perform assembly on each sample
 rule Assembly:
     input:
-        r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq.gz",
-        r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq.gz",
+        r1 = "2_Reads/4_Host_removed/{sample}_M_1.fq.gz",
+        r2 = "2_Reads/4_Host_removed/{sample}_M_2.fq.gz",
     output:
         assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta",
     params:
@@ -167,8 +167,8 @@ rule assembly_mapping:
         mapped_bam = "3_Outputs/3_Assembly_Mapping/BAMs/{sample}.bam"
     params:
         assembly = "3_Outputs/2_Assemblies/{sample}_contigs.fasta",
-        r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq.gz",
-        r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq.gz"
+        r1 = "2_Reads/4_Host_removed/{sample}_M_1.fq.gz",
+        r2 = "2_Reads/4_Host_removed/{sample}_M_2.fq.gz"
     conda:
         "conda_envs/2_Assembly_Binning.yaml"
     threads:
@@ -222,13 +222,13 @@ rule metaWRAP_binning:
         "Binning {wildcards.sample} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
     shell:
         """
-        # Create dummy fastq/assembly files to trick metaWRAP into running without mapping
+        # Create dummy fq/assembly files to trick metaWRAP into running without mapping
         mkdir -p {params.outdir}/work_files
 
         touch {params.outdir}/work_files/assembly.fa.bwt
 
-        echo "@" > {params.outdir}/work_files/$(basename {params.basename}_1.fastq)
-        echo "@" > {params.outdir}/work_files/$(basename {params.basename}_2.fastq)
+        echo "@" > {params.outdir}/work_files/$(basename {params.basename}_1.fq)
+        echo "@" > {params.outdir}/work_files/$(basename {params.basename}_2.fq)
 
         #Symlink BAMs for metaWRAP
         ln -sf `pwd`/{input} {params.outdir}/work_files/$(basename {input})
@@ -242,7 +242,7 @@ rule metaWRAP_binning:
             --metabat2 \
             --maxbin2 \
             --concoct \
-        {params.outdir}/work_files/*_1.fastq {params.outdir}/work_files/*_2.fastq
+        {params.outdir}/work_files/*_1.fq {params.outdir}/work_files/*_2.fq
         """
 ################################################################################
 ### Automatically refine bins using metaWRAP's refinement module

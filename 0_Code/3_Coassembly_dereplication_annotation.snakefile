@@ -201,14 +201,14 @@ rule MAG_catalogue_mapping:
     shell:
         """
         # Map reads to catted reference using Bowtie2
-        for fq1 in {params.reads}/*_1.fastq.gz; do \
+        for fq1 in {params.reads}/*_1.fq.gz; do \
         bowtie2 \
             --time \
             --threads {threads} \
             -x {params.MAGs} \
             -1 $fq1 \
-            -2 ${{fq1/_1.fastq.gz/_2.fastq.gz}} \
-        | samtools sort -@ {threads} -o {params.BAMs}/$(basename ${{fq1/_1.fastq.gz/.bam}}); done
+            -2 ${{fq1/_1.fq.gz/_2.fq.gz}} \
+        | samtools sort -@ {threads} -o {params.BAMs}/$(basename ${{fq1/_1.fq.gz/.bam}}); done
 
         #Create output file for snakemake
         echo "hi" > {output}

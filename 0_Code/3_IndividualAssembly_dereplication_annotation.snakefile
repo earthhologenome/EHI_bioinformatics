@@ -14,8 +14,8 @@ configfile: "0_Code/configs/3_dRep_config.yaml"
 import os
 from glob import glob
 
-SAMPLE = [os.path.basename(fn).replace("_M_1.fastq.gz", "")
-            for fn in glob(f"2_Reads/4_Host_removed/*_M_1.fastq.gz")]
+SAMPLE = [os.path.basename(fn).replace("_M_1.fq.gz", "")
+            for fn in glob(f"2_Reads/4_Host_removed/*_M_1.fq.gz")]
 
 MAGS = [os.path.relpath(fn, "3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins").replace(".fa.gz", "")
             for fn in glob(f"3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins/*.fa.gz")]
@@ -183,8 +183,8 @@ rule Coassembly_index:
 rule MAG_catalogue_mapping:
     input:
         index = "3_Outputs/9_MAG_catalogue_mapping/MAGs.fa.gz.rev.2.bt2l",
-        r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq.gz",
-        r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq.gz"
+        r1 = "2_Reads/4_Host_removed/{sample}_M_1.fq.gz",
+        r2 = "2_Reads/4_Host_removed/{sample}_M_2.fq.gz"
     output:
         "3_Outputs/9_MAG_catalogue_mapping/BAMs/{sample}.bam"
     params:

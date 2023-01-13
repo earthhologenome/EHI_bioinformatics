@@ -24,8 +24,8 @@ configfile: "0_Code/configs/1_Preprocess_QC_config.yaml"
 import os
 from glob import glob
 
-SAMPLE = [os.path.basename(fn).replace("_1.fastq.gz", "")
-            for fn in glob(f"2_Reads/1_Untrimmed/*_1.fastq.gz")]
+SAMPLE = [os.path.basename(fn).replace("_1.fq.gz", "")
+            for fn in glob(f"2_Reads/1_Untrimmed/*_1.fq.gz")]
 
 print("Detected the following samples:")
 print(SAMPLE)
@@ -40,11 +40,11 @@ rule all:
 ### Preprocess the reads using fastp
 rule fastp:
     input:
-        r1i = "2_Reads/1_Untrimmed/{sample}_1.fastq.gz",
-        r2i = "2_Reads/1_Untrimmed/{sample}_2.fastq.gz"
+        r1i = "2_Reads/1_Untrimmed/{sample}_1.fq.gz",
+        r2i = "2_Reads/1_Untrimmed/{sample}_2.fq.gz"
     output:
-        r1o = temp("2_Reads/2_Trimmed/{sample}_trimmed_1.fastq.gz"),
-        r2o = temp("2_Reads/2_Trimmed/{sample}_trimmed_2.fastq.gz"),
+        r1o = temp("2_Reads/2_Trimmed/{sample}_trimmed_1.fq.gz"),
+        r2o = temp("2_Reads/2_Trimmed/{sample}_trimmed_2.fq.gz"),
         fastp_html = "2_Reads/3_fastp_results/{sample}.html",
         fastp_json = "2_Reads/3_fastp_results/{sample}.json"
     params:
@@ -124,15 +124,15 @@ rule index_ref:
 ### Map samples to host genomes, then split BAMs:
 rule map_to_ref:
     input:
-        r1i = "2_Reads/2_Trimmed/{sample}_trimmed_1.fastq.gz",
-        r2i = "2_Reads/2_Trimmed/{sample}_trimmed_2.fastq.gz",
+        r1i = "2_Reads/2_Trimmed/{sample}_trimmed_1.fq.gz",
+        r2i = "2_Reads/2_Trimmed/{sample}_trimmed_2.fq.gz",
         catted_ref = "1_References/CattedRefs_renamed.fna.gz",
         bt2_index = "1_References/CattedRefs_renamed.fna.gz.rev.2.bt2l"
     output:
         all_bam = temp("3_Outputs/1_QC/1_BAMs/{sample}.bam"),
         host_bam = "3_Outputs/1_QC/1_Host_BAMs/{sample}_host.bam",
-        non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq",
-        non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq",
+        non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fq",
+        non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fq",
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -169,14 +169,14 @@ rule map_to_ref:
 ### Estimate diversity and required sequencing effort using nonpareil
 rule nonpareil:
     input:
-        non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fastq",
-        non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fastq",
+        non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fq",
+        non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fq",
     output:
         npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
     params:
         sample = "3_Outputs/1_QC/3_nonpareil/{sample}",
-        badsample_r1 = "2_Reads/5_Poor_samples/{sample}_M_1.fastq.gz",
-        badsample_r2 = "2_Reads/5_Poor_samples/{sample}_M_2.fastq.gz"
+        badsample_r1 = "2_Reads/5_Poor_samples/{sample}_M_1.fq.gz",
+        badsample_r2 = "2_Reads/5_Poor_samples/{sample}_M_2.fq.gz"
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
