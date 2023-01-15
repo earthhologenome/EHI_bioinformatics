@@ -8,7 +8,7 @@
 ################################################################################
 ################################################################################
 
-configfile: "0_Code/2_Assembly_Binning_config.yaml"
+configfile: "0_Code/configs/2_Assembly_Binning_config.yaml"
 
 ### Setup sample wildcard:
 import os
@@ -45,7 +45,7 @@ rule Coassembly:
         r2_cat = temp("3_Outputs/2_Coassemblies/{group}/{group}_2.fastq.gz"),
         assembler = expand("{assembler}", assembler=config['assembler']),
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         48
     resources:
@@ -115,7 +115,7 @@ rule QUAST:
     output:
         report = directory("3_Outputs/2_Coassemblies/{group}_QUAST"),
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         8
     resources:
@@ -160,7 +160,7 @@ rule Coassembly_index:
     params:
         Coassembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta"
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         32
     resources:
@@ -193,7 +193,7 @@ rule Coassembly_mapping:
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
         read_dir = "2_Reads/4_Host_removed/{group}"
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         32
     resources:
@@ -232,7 +232,7 @@ rule metabat2:
     params:
         minlength = expand("{minlength}", minlength=config['minlength'])
     conda:
-        "metabat2.yaml"
+        "conda_envs/metabat2.yaml"
     threads:
         32
     resources:
@@ -270,7 +270,7 @@ rule semibin:
         env = expand("{env}", env=config['env']),
         output = "3_Outputs/4_Binning/{group}/semibin_bins/"
     conda:
-        "semibin.yaml"
+        "conda_envs/semibin.yaml"
     threads:
         32
     resources:
@@ -309,7 +309,7 @@ rule metabinner:
         minlength = expand("{minlength}", minlength=config['minlength']),
         dir = "3_Outputs/4_Binning/{group}"
     conda:
-        "metabinner.yaml"
+        "conda_envs/metabinner.yaml"
     threads:
         32
     resources:
@@ -394,7 +394,7 @@ rule metaWRAP_refinement:
         memory = "256",
         group = "{group}"
     conda:
-        "2_MetaWRAP.yaml"
+        "conda_envs/2_MetaWRAP.yaml"
     threads:
         32
     resources:
@@ -454,7 +454,7 @@ rule coverM_assembly:
         memory = "180",
         group = "{group}"
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     threads:
         24
     resources:
@@ -490,7 +490,7 @@ rule generate_summary:
     output:
         "3_Outputs/{group}_coassembly_summary.tsv"
     conda:
-        "2_Assembly_Binning.yaml"
+        "conda_envs/2_Assembly_Binning.yaml"
     params:
         group = "{group}"
     threads:
