@@ -49,7 +49,7 @@ rule Coassembly:
     threads:
         48
     resources:
-        mem_gb=256,
+        mem_gb=512,
         time='36:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly.benchmark.tsv"
@@ -117,7 +117,7 @@ rule QUAST:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        10
+        8
     resources:
         mem_gb=90,
         time='01:00:00'
@@ -162,7 +162,7 @@ rule Coassembly_index:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        48
+        32
     resources:
         mem_gb=180,
         time='04:00:00'
@@ -195,7 +195,7 @@ rule Coassembly_mapping:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        54
+        32
     resources:
         mem_gb=256,
         time='24:00:00'
@@ -234,7 +234,7 @@ rule metabat2:
     conda:
         "metabat2.yaml"
     threads:
-        48
+        32
     resources:
         mem_gb=180,
         time='24:00:00'
@@ -272,7 +272,7 @@ rule semibin:
     conda:
         "semibin.yaml"
     threads:
-        48
+        32
     resources:
         mem_gb=180,
         time='54:00:00'
@@ -287,43 +287,53 @@ rule semibin:
         # Run semibin
         SemiBin single_easy_bin \
             -r /projects/mjolnir1/people/ncl550/0_software/GTDB_SemiBin \
+            --self-supervised \
+            --training-type self \
             -i {input.assembly} \
             -o {params.output} \
             -b {input.bams}/*.bam \
             -t {threads}
         """
 ################################################################################
-### Bin each sample's contigs using rosella
-rule rosella:
+### Bin each sample's contigs using metabinner
+rule metabinner:
     input:
         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
         metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt"
     output:
-        rosella = directory("3_Outputs/4_Binning/{group}/rosella_bins")
+        coverage_file = "3_Outputs/4_Binning/{group}/coverage_profile.tsv"
+        metabinner = directory("3_Outputs/4_Binning/{group}/metabinner_bins")
     params:
         minlength = expand("{minlength}", minlength=config['minlength']),
         dir = "3_Outputs/4_Binning/{group}"
     conda:
-        "rosella.yaml"
+        "metabinner.yaml"
     threads:
-        48
+        32
     resources:
         mem_gb=180,
         time='54:00:00'
     benchmark:
-        "3_Outputs/0_Logs/{group}_rosella_binning.benchmark.tsv"
+        "3_Outputs/0_Logs/{group}_metabinner_binning.benchmark.tsv"
     log:
-        "3_Outputs/0_Logs/{group}_rosella_binning.log"
+        "3_Outputs/0_Logs/{group}_metabinner_binning.log"
     message:
-        "Binning {wildcards.group} contigs with rosella"
+        "Binning {wildcards.group} contigs with metabinner"
     shell:
         """
-        # Run rosella
-        rosella recover \
-            -r {input.assembly} \
-            --coverage-values {input.metabat2_depths} \
-            -o {output.rosella} \
+        # Edit metabat2 coverage profile for use with metabinner
+        cat {input.metabat2_depths} | cut -f -1,4- > {output.coverage_file}
+
+        # Generate contig kmer profiles
+        python gen_kmer.py {input.assembly} 1500 4
+
+        # Run metabinner
+        bash run_metabinner.sh \
+            -a {input.assembly} \
+            -d {output.coverage_file} \
+            -k \
+            -o {output.metabinner} \
             -t {threads}
 
         # Move misc files from rosella output in case they interfere with refinement
@@ -331,6 +341,45 @@ rule rosella:
         mv {output.rosella}/*.tsv {params.dir}
         mv {output.rosella}/*.json {params.dir}
         """
+# ################################################################################
+# ### Bin each sample's contigs using rosella
+# rule rosella:
+#     input:
+#         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
+#         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
+#         metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt"
+#     output:
+#         rosella = directory("3_Outputs/4_Binning/{group}/rosella_bins")
+#     params:
+#         minlength = expand("{minlength}", minlength=config['minlength']),
+#         dir = "3_Outputs/4_Binning/{group}"
+#     conda:
+#         "rosella.yaml"
+#     threads:
+#         32
+#     resources:
+#         mem_gb=180,
+#         time='54:00:00'
+#     benchmark:
+#         "3_Outputs/0_Logs/{group}_rosella_binning.benchmark.tsv"
+#     log:
+#         "3_Outputs/0_Logs/{group}_rosella_binning.log"
+#     message:
+#         "Binning {wildcards.group} contigs with rosella"
+#     shell:
+#         """
+#         # Run rosella
+#         rosella recover \
+#             -r {input.assembly} \
+#             --coverage-values {input.metabat2_depths} \
+#             -o {output.rosella} \
+#             -t {threads}
+
+#         # Move misc files from rosella output in case they interfere with refinement
+#         mv {output.rosella}/*.png {params.dir}
+#         mv {output.rosella}/*.tsv {params.dir}
+#         mv {output.rosella}/*.json {params.dir}
+#         """
 ################################################################################################
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
@@ -349,7 +398,7 @@ rule metaWRAP_refinement:
     conda:
         "2_MetaWRAP.yaml"
     threads:
-        48
+        32
     resources:
         mem_gb=512,
         time='36:00:00'
@@ -409,7 +458,7 @@ rule coverM_assembly:
     conda:
         "2_Assembly_Binning.yaml"
     threads:
-        48
+        24
     resources:
         mem_gb=180,
         time='06:00:00'

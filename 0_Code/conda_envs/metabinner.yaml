@@ -1,6 +1,6 @@
- name: semibin
+ name: metabinner
  channels:
     - conda-forge
     - bioconda
  dependencies:
-    - semibin=1.4.0
+    - metabinner=1.4.4
