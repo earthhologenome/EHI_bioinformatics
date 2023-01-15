@@ -303,7 +303,7 @@ rule metabinner:
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
         metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt"
     output:
-        coverage_file = "3_Outputs/4_Binning/{group}/coverage_profile.tsv"
+        coverage_file = "3_Outputs/4_Binning/{group}/coverage_profile.tsv",
         metabinner = directory("3_Outputs/4_Binning/{group}/metabinner_bins")
     params:
         minlength = expand("{minlength}", minlength=config['minlength']),
