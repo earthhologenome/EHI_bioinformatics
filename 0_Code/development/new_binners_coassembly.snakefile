@@ -224,7 +224,6 @@ rule Coassembly_mapping:
 ### Bin each sample's contigs using MetaBAT2
 rule metabat2:
     input:
-        directory("3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete"),
         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
     output:
