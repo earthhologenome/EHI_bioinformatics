@@ -263,12 +263,13 @@ rule metabat2:
 ### Bin each sample's contigs using SemiBin
 rule semibin:
     input:
-        bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
-        assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
+        "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete"
     output:
         semibin = directory("3_Outputs/4_Binning/{group}/semibin_bins/output_recluster_bins")
     params:
         env = expand("{env}", env=config['env']),
+        assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
+        bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
         output = "3_Outputs/4_Binning/{group}/semibin_bins/"
     conda:
         "conda_envs/semibin.yaml"
@@ -290,9 +291,9 @@ rule semibin:
             -r /projects/mjolnir1/people/ncl550/0_software/GTDB_SemiBin \
             --self-supervised \
             --training-type self \
-            -i {input.assembly} \
+            -i {params.assembly} \
             -o {params.output} \
-            -b {input.bams}/*.bam \
+            -b {params.bams}/*.bam \
             -t {threads}
         """
 ################################################################################
