@@ -299,15 +299,15 @@ rule semibin:
 ### Bin each sample's contigs using metabinner
 rule metabinner:
     input:
-        bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
-        assembly_dir = "3_Outputs/2_Coassemblies/{group}/",
-        assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
         metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt"
     output:
         coverage_file = "3_Outputs/4_Binning/{group}/coverage_profile.tsv",
         metabinner = directory("3_Outputs/4_Binning/{group}/metabinner_bins")
     params:
         minlength = expand("{minlength}", minlength=config['minlength']),
+        bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
+        assembly_dir = "3_Outputs/2_Coassemblies/{group}/",
+        assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
         dir = "3_Outputs/4_Binning/{group}"
     conda:
         "conda_envs/metabinner.yaml"
@@ -328,14 +328,14 @@ rule metabinner:
         cat {input.metabat2_depths} | cut -f -1,4- > {output.coverage_file}
 
         # Generate contig kmer profiles
-        cd {input.assembly_dir}
+        cd {params.assembly_dir}
         python gen_kmer.py *contigs.fasta 1500 4
 
         # Run metabinner
         bash run_metabinner.sh \
-            -a {input.assembly} \
+            -a {params.assembly} \
             -d {output.coverage_file} \
-            -k {input.assembly_dir}/*kmer_4_f1500.csv \
+            -k {params.assembly_dir}/*kmer_4_f1500.csv \
             -o {output.metabinner} \
             -t {threads}
 
