@@ -224,14 +224,14 @@ rule Coassembly_mapping:
 ### Bin each sample's contigs using MetaBAT2
 rule metabat2:
     input:
-        complete = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete",
-        bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
-        assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
+        "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete"
     output:
         metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt",
         metabat2 = directory("3_Outputs/4_Binning/{group}/metabat2_bins")
     params:
-        minlength = expand("{minlength}", minlength=config['minlength'])
+        minlength = expand("{minlength}", minlength=config['minlength']),
+        bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
+        assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
     conda:
         "conda_envs/metabat2.yaml"
     threads:
@@ -249,11 +249,11 @@ rule metabat2:
         """
         # Create contig depth file
         jgi_summarize_bam_contig_depths \
-            --outputDepth {output.metabat2_depths} {input.bams}/*.bam
+            --outputDepth {output.metabat2_depths} {params.bams}/*.bam
 
         # Run metabat2
         metabat2 \
-            -i {input.assembly} \
+            -i {params.assembly} \
             -a {output.metabat2_depths} \
             -o {output.metabat2}/metabat2_bin \
             -m {params.minlength} \
