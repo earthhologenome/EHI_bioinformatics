@@ -187,7 +187,7 @@ rule Coassembly_mapping:
     input:
         bt2_index = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta.rev.2.bt2l"
     output:
-        directory("3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete")
+        "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete"
     params:
         outdir = directory("3_Outputs/3_Coassembly_Mapping/BAMs/{group}"),
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
@@ -224,6 +224,7 @@ rule Coassembly_mapping:
 ### Bin each sample's contigs using MetaBAT2
 rule metabat2:
     input:
+        complete = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete",
         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
     output:
