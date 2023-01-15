@@ -45,7 +45,7 @@ rule Coassembly:
         r2_cat = temp("3_Outputs/2_Coassemblies/{group}/{group}_2.fastq.gz"),
         assembler = expand("{assembler}", assembler=config['assembler']),
     conda:
-        "conda_envs/2_Assembly_Binning.yaml"
+        "../conda_envs/2_Assembly_Binning.yaml"
     threads:
         48
     resources:
@@ -115,7 +115,7 @@ rule QUAST:
     output:
         report = directory("3_Outputs/2_Coassemblies/{group}_QUAST"),
     conda:
-        "conda_envs/2_Assembly_Binning.yaml"
+        "../conda_envs/2_Assembly_Binning.yaml"
     threads:
         8
     resources:
@@ -160,7 +160,7 @@ rule Coassembly_index:
     params:
         Coassembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta"
     conda:
-        "conda_envs/2_Assembly_Binning.yaml"
+        "../conda_envs/2_Assembly_Binning.yaml"
     threads:
         32
     resources:
@@ -193,7 +193,7 @@ rule Coassembly_mapping:
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
         read_dir = "2_Reads/4_Host_removed/{group}"
     conda:
-        "conda_envs/2_Assembly_Binning.yaml"
+        "../conda_envs/2_Assembly_Binning.yaml"
     threads:
         32
     resources:
@@ -233,7 +233,7 @@ rule metabat2:
         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
     conda:
-        "conda_envs/metabat2.yaml"
+        "../conda_envs/metabat2.yaml"
     threads:
         32
     resources:
@@ -272,7 +272,7 @@ rule semibin:
         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
         output = "3_Outputs/4_Binning/{group}/semibin_bins/"
     conda:
-        "conda_envs/semibin.yaml"
+        "../conda_envs/semibin.yaml"
     threads:
         32
     resources:
@@ -311,7 +311,7 @@ rule metabinner:
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
         dir = "3_Outputs/4_Binning/{group}"
     conda:
-        "conda_envs/metabinner.yaml"
+        "../conda_envs/metabinner.yaml"
     threads:
         32
     resources:
@@ -396,7 +396,7 @@ rule metaWRAP_refinement:
         memory = "256",
         group = "{group}"
     conda:
-        "conda_envs/2_MetaWRAP.yaml"
+        "../conda_envs/2_MetaWRAP.yaml"
     threads:
         32
     resources:
@@ -456,7 +456,7 @@ rule coverM_assembly:
         memory = "180",
         group = "{group}"
     conda:
-        "conda_envs/2_Assembly_Binning.yaml"
+        "../conda_envs/2_Assembly_Binning.yaml"
     threads:
         24
     resources:
@@ -492,7 +492,7 @@ rule generate_summary:
     output:
         "3_Outputs/{group}_coassembly_summary.tsv"
     conda:
-        "conda_envs/2_Assembly_Binning.yaml"
+        "../conda_envs/2_Assembly_Binning.yaml"
     params:
         group = "{group}"
     threads:
