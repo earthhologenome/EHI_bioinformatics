@@ -299,6 +299,7 @@ rule semibin:
 rule metabinner:
     input:
         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
+        assembly_dir = "3_Outputs/2_Coassemblies/{group}/",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
         metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt"
     output:
@@ -326,20 +327,17 @@ rule metabinner:
         cat {input.metabat2_depths} | cut -f -1,4- > {output.coverage_file}
 
         # Generate contig kmer profiles
-        python gen_kmer.py {input.assembly} 1500 4
+        cd {input.assembly_dir}
+        python gen_kmer.py *contigs.fasta 1500 4
 
         # Run metabinner
         bash run_metabinner.sh \
             -a {input.assembly} \
             -d {output.coverage_file} \
-            -k \
+            -k {input.assembly_dir}/*kmer_4_f1500.csv \
             -o {output.metabinner} \
             -t {threads}
 
-        # Move misc files from rosella output in case they interfere with refinement
-        mv {output.rosella}/*.png {params.dir}
-        mv {output.rosella}/*.tsv {params.dir}
-        mv {output.rosella}/*.json {params.dir}
         """
 # ################################################################################
 # ### Bin each sample's contigs using rosella
@@ -384,7 +382,7 @@ rule metabinner:
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
     input:
-        a = "3_Outputs/4_Binning/{group}/rosella_bins",
+        a = "3_Outputs/4_Binning/{group}/metabinner_bins",
         b = "3_Outputs/4_Binning/{group}/semibin_bins/output_recluster_bins",
         c = "3_Outputs/4_Binning/{group}/metabat2_bins",    
     output:
@@ -400,7 +398,7 @@ rule metaWRAP_refinement:
     threads:
         32
     resources:
-        mem_gb=512,
+        mem_gb=256,
         time='36:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
