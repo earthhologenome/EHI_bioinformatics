@@ -222,7 +222,7 @@ rule Coassembly_mapping:
         """
 ################################################################################
 ### Create metabat2 contig coverage profile
-rule metabat2:
+rule metabat2_coverage:
     input:
         "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete"
     output:
