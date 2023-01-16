@@ -47,7 +47,7 @@ rule Coassembly:
     conda:
         "../conda_envs/2_Assembly_Binning.yaml"
     threads:
-        48
+        32
     resources:
         mem_gb=512,
         time='36:00:00'
@@ -221,12 +221,40 @@ rule Coassembly_mapping:
         mkdir -p {output}
         """
 ################################################################################
-### Bin each sample's contigs using MetaBAT2
+### Create metabat2 contig coverage profile
 rule metabat2:
     input:
         "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete"
     output:
         metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt",
+    params:
+        bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
+    conda:
+        "../conda_envs/metabat2.yaml"
+    threads:
+        8
+    resources:
+        mem_gb=64,
+        time='04:00:00'
+    benchmark:
+        "3_Outputs/0_Logs/{group}_metabat2_coverage.benchmark.tsv"
+    log:
+        "3_Outputs/0_Logs/{group}_metabat2_coverage.log"
+    message:
+        "Creating coverage profiles for {wildcards.group} contigs with metabat2"
+    shell:
+        """
+        # Create contig depth file
+        jgi_summarize_bam_contig_depths \
+            --outputDepth {output.metabat2_depths} {params.bams}/*.bam
+
+        """
+################################################################################
+### Bin each sample's contigs using MetaBAT2
+rule metabat2:
+    input:
+        metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt",
+    output:
         metabat2 = directory("3_Outputs/4_Binning/{group}/metabat2_bins")
     params:
         minlength = expand("{minlength}", minlength=config['minlength']),
@@ -247,14 +275,10 @@ rule metabat2:
         "Binning {wildcards.group} contigs with metabat2"
     shell:
         """
-        # Create contig depth file
-        jgi_summarize_bam_contig_depths \
-            --outputDepth {output.metabat2_depths} {params.bams}/*.bam
-
         # Run metabat2
         metabat2 \
             -i {params.assembly} \
-            -a {output.metabat2_depths} \
+            -a {input.metabat2_depths} \
             -o {output.metabat2}/metabat2_bin \
             -m {params.minlength} \
             -t {threads} --unbinned
@@ -307,7 +331,7 @@ rule metabinner:
     params:
         minlength = expand("{minlength}", minlength=config['minlength']),
         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
-        assembly_dir = "3_Outputs/2_Coassemblies/{group}/",
+        assembly_dir = "3_Outputs/2_Coassemblies/{group}",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
         dir = "3_Outputs/4_Binning/{group}"
     conda:
@@ -325,20 +349,33 @@ rule metabinner:
         "Binning {wildcards.group} contigs with metabinner"
     shell:
         """
+        # metabinner needs full paths for some reason, so create variables here:
+        contigs_path=`pwd`/{params.assembly_dir}
+        scripts_path=$(dirname $(which gen_kmer.py))
+        metabinner_path=$(dirname $(which run_metabinner.sh))
+        output_path=`pwd`/{output.metabinner}
+        coverage_path=`pwd`/{output.coverage_file}
+        kmer_path=`pwd`/{params.assembly_dir}
+
         # Edit metabat2 coverage profile for use with metabinner
         cat {input.metabat2_depths} | cut -f -1,4- > {output.coverage_file}
 
         # Generate contig kmer profiles
         cd {params.assembly_dir}
-        gen_kmer.py *contigs.fasta 1500 4
+        $scripts_path/gen_kmer.py *contigs.fasta 1499 4
+        cd ../../../
 
         # Run metabinner
         bash run_metabinner.sh \
-            -a {params.assembly} \
-            -d {output.coverage_file} \
-            -k {params.assembly_dir}/*kmer_4_f1500.csv \
-            -o {output.metabinner} \
+            -a $contigs_path/*_contigs.fasta \
+            -d $coverage_path \
+            -k $kmer_path/*_kmer_4_f1499.csv \
+            -o $output_path \
+            -p $metabinner_path \
             -t {threads}
+
+        rm -r {output.metabinner}/metabinner_res/intermediate_result
+        rm -r {output.metabinner}/unitem_profile/binning_methods
 
         """
 # ################################################################################
@@ -384,7 +421,7 @@ rule metabinner:
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
     input:
-        a = "3_Outputs/4_Binning/{group}/metabinner_bins",
+        a = "3_Outputs/4_Binning/{group}/metabinner_bins/metabinner_res/ensemble_res/greedy_cont_weight_3_mincomp_50.0_maxcont_15.0_bins/ensemble_3logtrans/addrefined2and3comps/greedy_cont_weight_3_mincomp_50.0_maxcont_15.0_bins",
         b = "3_Outputs/4_Binning/{group}/semibin_bins/output_recluster_bins",
         c = "3_Outputs/4_Binning/{group}/metabat2_bins",    
     output:

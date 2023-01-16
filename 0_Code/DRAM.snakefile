@@ -65,6 +65,8 @@ rule DRAM:
             --rrna_path {params.outdir}/rrnas.tsv \
             --trna_path {params.outdir}/trnas.tsv \
             -o {output.distillate}
+        mv {params.outdir}/rrnas.tsv {params.rrnas}
+        mv {params.outdir}/trnas.tsv {params.trnas}}
         else
         echo "trnas AND rrnas are both not present"
         fi
@@ -75,6 +77,7 @@ rule DRAM:
             -i {params.outdir}/annotations.tsv \
             --trna_path {params.outdir}/trnas.tsv \
             -o {output.distillate}
+        mv {params.outdir}/trnas.tsv {params.trnas}}
         else
         echo "only trnas found"
         fi
@@ -85,6 +88,7 @@ rule DRAM:
             -i {params.outdir}/annotations.tsv \
             --rrna_path {params.outdir}/rrnas.tsv \
             -o {output.distillate}
+        mv {params.outdir}/rrnas.tsv {params.rrnas}
         else
         echo "only rrnas found"
         fi
@@ -104,21 +108,6 @@ rule DRAM:
         pigz -p {threads} {params.outdir}/*.gff
         pigz -p {threads} {params.outdir}/genbank/*
         pigz -p {threads} {output.distillate}/*
-
-        #If statements for rrnas/trnas -- sometimes these won't be created
-        if test -f {params.outdir}/trnas.tsv.gz
-        then 
-        mv {params.outdir}/trnas.tsv.gz {params.trnas}
-        else
-        echo "no trnas file"
-        fi
-
-        if test -f {params.outdir}/rrnas.tsv.gz
-        then 
-        mv {params.outdir}/rrnas.tsv.gz {params.rrnas}
-        else
-        echo "no rrnas file"
-        fi
 
         mv {params.outdir}/annotations.tsv.gz {output.annotations}
         mv {params.outdir}/scaffolds.fna.gz {output.scaffolds}
