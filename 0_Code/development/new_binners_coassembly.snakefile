@@ -263,7 +263,7 @@ rule metabat2:
     conda:
         "../conda_envs/metabat2.yaml"
     threads:
-        32
+        24
     resources:
         mem_gb=180,
         time='24:00:00'
@@ -298,7 +298,7 @@ rule semibin:
     conda:
         "../conda_envs/semibin.yaml"
     threads:
-        32
+        24
     resources:
         mem_gb=180,
         time='54:00:00'
@@ -327,7 +327,7 @@ rule metabinner:
         metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt"
     output:
         coverage_file = "3_Outputs/4_Binning/{group}/coverage_profile.tsv",
-        metabinner = directory("3_Outputs/4_Binning/{group}/metabinner_bins")
+        metabinner = directory("3_Outputs/4_Binning/{group}/metabinner_bins/metabinner_res/ensemble_res/greedy_cont_weight_3_mincomp_50.0_maxcont_15.0_bins/ensemble_3logtrans/addrefined2and3comps/greedy_cont_weight_3_mincomp_50.0_maxcont_15.0_bins")
     params:
         minlength = expand("{minlength}", minlength=config['minlength']),
         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
@@ -337,7 +337,7 @@ rule metabinner:
     conda:
         "../conda_envs/metabinner.yaml"
     threads:
-        32
+        24
     resources:
         mem_gb=180,
         time='54:00:00'
@@ -435,7 +435,7 @@ rule metaWRAP_refinement:
     conda:
         "../conda_envs/2_MetaWRAP.yaml"
     threads:
-        32
+        24
     resources:
         mem_gb=256,
         time='36:00:00'
