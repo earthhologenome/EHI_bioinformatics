@@ -330,7 +330,7 @@ rule metabinner:
 
         # Generate contig kmer profiles
         cd {params.assembly_dir}
-        python gen_kmer.py *contigs.fasta 1500 4
+        gen_kmer.py *contigs.fasta 1500 4
 
         # Run metabinner
         bash run_metabinner.sh \
