@@ -374,8 +374,8 @@ rule metabinner:
             -p $metabinner_path \
             -t {threads}
 
-        rm -r {output.metabinner}/metabinner_res/intermediate_result
-        rm -r {output.metabinner}/unitem_profile/binning_methods
+#        rm -r {output.metabinner}/metabinner_res/intermediate_result
+#        rm -r {output.metabinner}/unitem_profile/binning_methods
 
         """
 # ################################################################################
