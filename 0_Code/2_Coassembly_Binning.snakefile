@@ -254,8 +254,9 @@ rule metaWRAP_binning:
 
         touch {params.outdir}/work_files/assembly.fa.bwt
 
-        for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_1.fq}}); done
-        for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_2.fq}}); done
+        for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_1.fastq}}); done
+        for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_2.fastq}}); done
+
 
         #Symlink BAMs for metaWRAP
         for bam in {params.bams}/*.bam; do ln -sf `pwd`/$bam {params.outdir}/work_files/$(basename $bam); done
@@ -269,7 +270,7 @@ rule metaWRAP_binning:
             --metabat2 \
             --maxbin2 \
             --concoct \
-        {params.outdir}/work_files/*_1.fq {params.outdir}/work_files/*_2.fq
+        {params.outdir}/work_files/*_1.fastq {params.outdir}/work_files/*_2.fastq
 
         # Create dummy file for refinement input
         echo "Binning complete" > {output}

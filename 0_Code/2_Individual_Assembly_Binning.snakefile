@@ -227,8 +227,8 @@ rule metaWRAP_binning:
 
         touch {params.outdir}/work_files/assembly.fa.bwt
 
-        echo "@" > {params.outdir}/work_files/$(basename {params.basename}_1.fq)
-        echo "@" > {params.outdir}/work_files/$(basename {params.basename}_2.fq)
+        echo "@" > {params.outdir}/work_files/$(basename {params.basename}_1.fastq)
+        echo "@" > {params.outdir}/work_files/$(basename {params.basename}_2.fastq)
 
         #Symlink BAMs for metaWRAP
         ln -sf `pwd`/{input} {params.outdir}/work_files/$(basename {input})
@@ -242,7 +242,7 @@ rule metaWRAP_binning:
             --metabat2 \
             --maxbin2 \
             --concoct \
-        {params.outdir}/work_files/*_1.fq {params.outdir}/work_files/*_2.fq
+        {params.outdir}/work_files/*_1.fastq {params.outdir}/work_files/*_2.fastq
         """
 ################################################################################
 ### Automatically refine bins using metaWRAP's refinement module
