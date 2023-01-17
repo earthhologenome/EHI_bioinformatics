@@ -49,7 +49,7 @@ rule Coassembly:
     threads:
         32
     resources:
-        mem_gb=512,
+        mem_gb=192,
         time='36:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly.benchmark.tsv"
@@ -197,7 +197,7 @@ rule Coassembly_mapping:
     threads:
         32
     resources:
-        mem_gb=256,
+        mem_gb=128,
         time='24:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_mapping.benchmark.tsv"
