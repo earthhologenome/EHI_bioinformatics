@@ -474,7 +474,7 @@ rule metaWRAP_refinement:
         pigz -p {threads} {params.outdir}/*bins/*.fa
 
         rm -r {params.refinement_wfs}
-        rm {input.a}/*.fa
+        rm {input.a}/*.fna
         rm {input.b}/*.fa
         rm {input.c}/*.fa
         """
