@@ -327,7 +327,8 @@ rule metabinner:
         metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt"
     output:
         coverage_file = "3_Outputs/4_Binning/{group}/coverage_profile.tsv",
-        metabinner = directory("3_Outputs/4_Binning/{group}/metabinner_bins")
+        metabinner = directory("3_Outputs/4_Binning/{group}/metabinner_bins"),
+        bins_path = directory("3_Outputs/4_Binning/{group}/metabinner_bins/metabinner_res/ensemble_res/greedy_cont_weight_3_mincomp_50.0_maxcont_15.0_bins/ensemble_3logtrans/addrefined2and3comps/greedy_cont_weight_3_mincomp_50.0_maxcont_15.0_bins")
     params:
         minlength = expand("{minlength}", minlength=config['minlength']),
         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
