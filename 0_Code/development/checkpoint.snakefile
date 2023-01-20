@@ -188,6 +188,8 @@ checkpoint get_r1_wildcard:
         index = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta.rev.2.bt2l"
     output:
         folder = "2_Reads/4_Host_removed/{group}/r1"
+    resources:
+        mem_gb=10
     shell:
         """
         mkdir -p {output.folder}
@@ -198,6 +200,8 @@ checkpoint get_r2_wildcard:
         index = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta.rev.2.bt2l"
     output:
         folder = "2_Reads/4_Host_removed/{group}/r2"
+    resources:
+        mem_gb=10
     shell:
         """
         mkdir -p {output.folder}
