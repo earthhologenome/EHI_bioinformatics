@@ -189,7 +189,8 @@ checkpoint get_r1_wildcard:
     output:
         folder = "2_Reads/4_Host_removed/{group}/r1"
     resources:
-        mem_gb=10
+        mem_gb=10,
+        time='00:05:00'
     shell:
         """
         mkdir -p {output.folder}
@@ -201,7 +202,8 @@ checkpoint get_r2_wildcard:
     output:
         folder = "2_Reads/4_Host_removed/{group}/r2"
     resources:
-        mem_gb=10
+        mem_gb=10,
+        time='00:05:00'
     shell:
         """
         mkdir -p {output.folder}
