@@ -17,9 +17,25 @@ from glob import glob
 GROUP = [ dir for dir in os.listdir('2_Reads/4_Host_removed')
          if os.path.isdir(os.path.join('2_Reads/4_Host_removed', dir)) ]
 
-SAMPLE = [os.path.relpath(fn, "2_Reads/4_Host_removed").replace("_M_1.fastq.gz", "")
-            for group in GROUP
-            for fn in glob(f"2_Reads/4_Host_removed/{group}/*_1.fastq.gz")]
+SAMPLE = [os.path.basename(fn).replace("_M_1.fastq.gz", "")
+            for fn in glob(f"2_Reads/4_Host_removed/*/*_1.fastq.gz")]
+
+
+#Set up functions for dyanamic expansion
+
+def read1_func(wildcards):
+    group_dir = f"2_Reads/4_Host_removed/{wildcards.group}"
+    sample_files = glob(f"{group_dir}/*_1.fastq.gz")
+    sample_basenames = [os.path.basename(fn).replace("_1.fastq.gz", "") for fn in sample_files]
+    return [f"{group_dir}/{sample}_1.fastq.gz" for sample in sample_basenames if sample in wildcards.sample]
+
+def read2_func(wildcards):
+    group_dir = f"2_Reads/4_Host_removed/{wildcards.group}"
+    sample_files = glob(f"{group_dir}/*_2.fastq.gz")
+    sample_basenames = [os.path.basename(fn).replace("_2.fastq.gz", "") for fn in sample_files]
+    return [f"{group_dir}/{sample}_2.fastq.gz" for sample in sample_basenames if sample in wildcards.sample]
+
+
 
 print("Detected these sample groups:")
 print(GROUP)
@@ -30,7 +46,8 @@ print(SAMPLE)
 rule all:
     input:
 #        expand("3_Outputs/6_CoverM/{group}_assembly_coverM.txt", group=GROUP)
-        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUP)
+        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUP),
+        expand("3_Outputs/3_Coassembly_Mapping/BAMs/{group}/{sample}.bam", group=GROUP, sample=SAMPLE, allow_missing=True)
 
 ################################################################################
 ### Perform Coassemblies on each sample group
@@ -185,11 +202,11 @@ rule Coassembly_index:
 ### Map reads to the coassemblies
 rule Coassembly_mapping:
     input:
-        read1 = "2_Reads/4_Host_removed/{group}/{sample}_M_1.fastq.gz",
-        read1 = "2_Reads/4_Host_removed/{group}/{sample}_M_2.fastq.gz",
+        read1 = dynamic(read1_func),
+        read2 = dynamic(read2_func),
         bt2_index = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta.rev.2.bt2l"
     output:
-        "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/{sample}.bam"
+        bam = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/{sample}.bam"
     params:
         outdir = directory("3_Outputs/3_Coassembly_Mapping/BAMs/{group}"),
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
@@ -202,11 +219,11 @@ rule Coassembly_mapping:
         mem_gb=128,
         time='24:00:00'
     benchmark:
-        "3_Outputs/0_Logs/{group}_coassembly_mapping.benchmark.tsv"
+        "3_Outputs/0_Logs/{group}_{sample}_coassembly_mapping.benchmark.tsv"
     log:
-        "3_Outputs/0_Logs/{group}_coassembly_mapping.log"
+        "3_Outputs/0_Logs/{group}_{sample}_coassembly_mapping.log"
     message:
-        "Mapping {wildcards.group} samples to coassembly using Bowtie2"
+        "Mapping samples to coassembly using Bowtie2"
     shell:
         """
         # Map reads to catted reference using Bowtie2
@@ -216,14 +233,17 @@ rule Coassembly_mapping:
             -x {params.assembly} \
             -1 {input.read1} \
             -2 {input.read2} \
-        | samtools sort -@ {threads} -o {output}
+        | samtools sort -@ {threads} -o {output.bam}
 
+        #Create output file for snakemake
+        mkdir -p {output}
         """
+
 ################################################################################
 ### Create metabat2 contig coverage profile
 rule metabat2_coverage:
     input:
-        expand("3_Outputs/3_Coassembly_Mapping/BAMs/{group}/{sample}.bam")
+        bams = expand("3_Outputs/3_Coassembly_Mapping/BAMs/{group}/{sample}.bam", group=GROUP, sample=SAMPLE)
     output:
         metabat2_depths = "3_Outputs/4_Binning/{group}/{group}_metabat_depth.txt",
     params:
@@ -286,7 +306,7 @@ rule metabat2:
 ### Bin each sample's contigs using SemiBin
 rule semibin:
     input:
-        "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete"
+        bams = expand("3_Outputs/3_Coassembly_Mapping/BAMs/{group}/{sample}.bam", group=GROUP, sample=SAMPLE)
     output:
         semibin = directory("3_Outputs/4_Binning/{group}/semibin_bins/output_recluster_bins")
     params:
