@@ -187,7 +187,7 @@ checkpoint get_r1_wildcard:
     input:
         index = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta.rev.2.bt2l"
     output:
-        folder = "2_Reads/4_Host_removed/{group}/r1"
+        folder = directory("2_Reads/4_Host_removed/{group}/r1")
     resources:
         mem_gb=10,
         time='00:05:00'
@@ -200,7 +200,7 @@ checkpoint get_r2_wildcard:
     input:
         index = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta.rev.2.bt2l"
     output:
-        folder = "2_Reads/4_Host_removed/{group}/r2"
+        folder = directory("2_Reads/4_Host_removed/{group}/r2")
     resources:
         mem_gb=10,
         time='00:05:00'
