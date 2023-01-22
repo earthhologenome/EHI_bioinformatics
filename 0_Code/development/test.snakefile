@@ -1,23 +1,41 @@
 import os
 from glob import glob
 
-GROUP = [ dir for dir in os.listdir('2_Reads/4_Host_removed/')
-         if os.path.isdir(os.path.join('2_Reads/4_Host_removed/', dir)) ]
+GROUPS = {}
 
-SAMPLE = [os.path.basename(fn).replace("_M_1.fastq.gz", "")
-            for fn in glob(f"2_Reads/4_Host_removed/*/*_M_1.fastq.gz")]
+# The directory where the 'groupN' folders are located
+parent_dir = '2_Reads/4_Host_removed'
+
+# Iterate through all the directories in the specified directory
+for group_name in os.listdir(parent_dir):
+    # Construct the full path to the current group directory
+    group_path = os.path.join(parent_dir, group_name)
+    # Check if the current item is a directory
+    if os.path.isdir(group_path):
+        # Initialize an empty list to store file names
+        samples = []
+        # Iterate through all the files in the current directory
+        for sample_name in os.listdir(group_path):
+            # Construct the full path to the current sample file
+            sample_path = os.path.join(group_path, sample_name)
+            # Check if the current item is a file
+            if os.path.isfile(sample_path) and sample_name.endswith("_M_1.fastq.gz"):
+                # Append the file name to the list of samples
+                samples.append(os.path.basename(sample_path).replace("_M_1.fastq.gz", ""))
+        # Add the group name and list of samples to the dictionary
+        GROUPS[group_name] = samples
 
 
-print(GROUP)
-print(SAMPLE)
+
+print(GROUPS)
 
 configfile: "0_Code/configs/2_Assembly_Binning_config.yaml"
   
 
-
 rule all:
     input:
-        expand("3_Outputs/4_Summary/{group}_coassembly_summary.tsv", group=GROUP)
+       expand("3_Outputs/4_Summary/{group}_coassembly_summary.tsv", group=GROUPS.keys()),
+
 
 
 rule Coassembly:
@@ -83,28 +101,29 @@ rule Coassembly:
 
 rule mapping:
     input:
-        r1 = lambda wildcards: ["2_Reads/4_Host_removed/{group}/{sample}_M_1.fastq.gz".format(group=group, sample=sample)
-                               for group in GROUP
-                               for sample in SAMPLE
-                               if os.path.isfile("2_Reads/4_Host_removed/{group}/{sample}_M_1.fastq.gz".format(group=group, sample=sample))],
         contigs = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta"
     output:
-        "3_Outputs/3_BAMs/{group}/{sample}.bam"   
+        "3_Outputs/3_BAMs/{group}/{sample}.bam"  
+    params:
+        r1 = "2_Reads/4_Host_removed/{group}/{sample}_M_1.fastq.gz",
+        r2 = "2_Reads/4_Host_removed/{group}/{sample}_M_2.fastq.gz",
+        threads = 24
     shell:
-        """
-        # Map reads to catted reference using Bowtie2
-        bowtie2 \
-            --time \
-            --threads {threads} \
-            -x {input.contigs} \
-            -1 {input.r1} \
-        | samtools sort -@ {threads} -o {output}
-        """
+            """
+            # Map reads to catted reference using Bowtie2
+            bowtie2 \
+                --time \
+                --threads {threads} \
+                -x {input.contigs} \
+                -1 {params.r1} \
+                -2 {params.r2} \
+            | samtools sort -@ {threads} -o {output}
+            """
 
 rule summary:
     input:
-        expand("3_Outputs/3_BAMs/{group}/{sample}.bam", group=GROUP, sample=SAMPLE)
+       bams = lambda wildcards: ["3_Outputs/3_BAMs/{}/{}.bam/".format(wildcards.group, sample) for sample in GROUPS[wildcards.group]],
     output:
-        expand("3_Outputs/4_Summary/{group}_coassembly_summary.tsv", group=GROUP)
+        "3_Outputs/4_Summary/{group}_coassembly_summary.tsv"
     shell:
-        "create_summary.py {input} > {output}"
+        "create_summary.py {input.bams} > {output}"

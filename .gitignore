@@ -1,6 +1,8 @@
 2_Reads/0_Raw/*/
 2_Reads/1_Untrimmed/*/
 3_Outputs/*
+2_Reads/4_Host_removed/
+2_Reads/4_Host_removed/*
 .snakemake/*
 temp/*
 PR_Preprocessing_input.csv
