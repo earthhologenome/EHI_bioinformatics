@@ -34,7 +34,7 @@ configfile: "0_Code/configs/2_Assembly_Binning_config.yaml"
 
 rule all:
     input:
-       expand("3_Outputs/4_Summary/{group}_coassembly_summary.tsv", group=GROUPS.keys()),
+       expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUPS.keys()),
 
 
 
@@ -124,6 +124,6 @@ rule summary:
     input:
        bams = lambda wildcards: ["3_Outputs/3_BAMs/{}/{}.bam/".format(wildcards.group, sample) for sample in GROUPS[wildcards.group]],
     output:
-        "3_Outputs/4_Summary/{group}_coassembly_summary.tsv"
+        "3_Outputs/{group}_coassembly_summary.tsv"
     shell:
         "create_summary.py {input.bams} > {output}"

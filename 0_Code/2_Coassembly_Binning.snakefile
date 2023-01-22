@@ -14,22 +14,38 @@ configfile: "0_Code/configs/2_Assembly_Binning_config.yaml"
 import os
 from glob import glob
 
-GROUP = [ dir for dir in os.listdir('2_Reads/4_Host_removed')
-         if os.path.isdir(os.path.join('2_Reads/4_Host_removed', dir)) ]
+GROUPS = {}
 
-SAMPLE = [os.path.relpath(fn, "2_Reads/4_Host_removed").replace("_M_1.fq.gz", "")
-            for group in GROUP
-            for fn in glob(f"2_Reads/4_Host_removed/{group}/*_1.fq.gz")]
+# The directory where the 'groupN' folders are located
+parent_dir = '2_Reads/4_Host_removed'
 
-print("Detected these sample groups:")
-print(GROUP)
-print("Detected the following samples:")
-print(SAMPLE)
+# Iterate through all the directories in the specified directory
+for group_name in os.listdir(parent_dir):
+    # Construct the path to the coassembly group directory
+    group_path = os.path.join(parent_dir, group_name)
+    # See if the current item is a directory
+    if os.path.isdir(group_path):
+        # Initialize an empty list to store sample file names
+        samples = []
+        # Iterate through all the files in the current directory
+        for sample_name in os.listdir(group_path):
+            # Construct the full path to the current sample file
+            sample_path = os.path.join(group_path, sample_name)
+            # Check if the current item is a file
+            if os.path.isfile(sample_path) and sample_name.endswith("_M_1.fastq.gz"):
+                # Append the file name to the list of samples
+                samples.append(os.path.basename(sample_path).replace("_M_1.fastq.gz", ""))
+        # Add the group name and list of samples to the dictionary
+        GROUPS[group_name] = samples
+
+print("Detected the following coassembly groups:")
+print(GROUPS)
+
 ################################################################################
 ### Setup the desired outputs
 rule all:
     input:
-        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUP)
+        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUPS.keys()),
 
 ################################################################################
 ### Perform Coassemblies on each sample group
@@ -186,44 +202,40 @@ rule Coassembly_mapping:
     input:
         bt2_index = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta.rev.2.bt2l"
     output:
-        directory("3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete")
+        bam = "3_Outputs/3_BAMs/{group}/{sample}.bam"  
     params:
-        outdir = directory("3_Outputs/3_Coassembly_Mapping/BAMs/{group}"),
+        r1 = "2_Reads/4_Host_removed/{group}/{sample}_M_1.fastq.gz",
+        r2 = "2_Reads/4_Host_removed/{group}/{sample}_M_2.fastq.gz",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
-        read_dir = "2_Reads/4_Host_removed/{group}"
     conda:
         "conda_envs/2_Assembly_Binning.yaml"
     threads:
-        24
+        8
     resources:
-        mem_gb=128,
-        time='24:00:00'
+        mem_gb=40,
+        time='08:00:00'
     benchmark:
-        "3_Outputs/0_Logs/{group}_coassembly_mapping.benchmark.tsv"
+        "3_Outputs/0_Logs/{group}_{sample}_coassembly_mapping.benchmark.tsv"
     log:
-        "3_Outputs/0_Logs/{group}_coassembly_mapping.log"
+        "3_Outputs/0_Logs/{group}_{sample}_coassembly_mapping.log"
     message:
-        "Mapping {wildcards.group} samples to coassembly using Bowtie2"
+        "Mapping {wildcards.sample} to {wildcards.group} coassembly using Bowtie2"
     shell:
         """
         # Map reads to catted reference using Bowtie2
-        for fq1 in {params.read_dir}/*_1.fq.gz; do \
         bowtie2 \
             --time \
             --threads {threads} \
             -x {params.assembly} \
-            -1 $fq1 \
-            -2 ${{fq1/_1.fq.gz/_2.fq.gz}} \
-        | samtools sort -@ {threads} -o {params.outdir}/$(basename ${{fq1/_1.fq.gz/.bam}}); done
-
-        #Create output file for snakemake
-        mkdir -p {output}
+            -1 {params.r1} \
+            -2 {params.r2} \
+        | samtools sort -@ {threads} -o {output.bam}
         """
 ################################################################################
 ### Bin contigs using metaWRAP's binning module
 rule metaWRAP_binning:
     input:
-        "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/Complete"
+        bams = lambda wildcards: ["3_Outputs/3_BAMs/{}/{}.bam/".format(wildcards.group, sample) for sample in GROUPS[wildcards.group]]
     output:
         "3_Outputs/4_Binning/{group}/Done.txt"
     params:
