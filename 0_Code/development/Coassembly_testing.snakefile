@@ -36,7 +36,6 @@ def read2_func(wildcards):
     return [f"{group_dir}/{sample}_2.fastq.gz" for sample in sample_basenames if sample in wildcards.sample]
 
 
-
 print("Detected these sample groups:")
 print(GROUP)
 print("Detected the following samples:")
@@ -46,8 +45,7 @@ print(SAMPLE)
 rule all:
     input:
 #        expand("3_Outputs/6_CoverM/{group}_assembly_coverM.txt", group=GROUP)
-        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUP),
-        expand("3_Outputs/3_Coassembly_Mapping/BAMs/{group}/{sample}.bam", group=GROUP, sample=SAMPLE, allow_missing=True)
+        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUP)
 
 ################################################################################
 ### Perform Coassemblies on each sample group
