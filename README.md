@@ -19,8 +19,7 @@ git clone https://github.com/anttonalberdi/EHI_bioinformatics.git
   - [Coassembly_binning_pipeline](#coassembly_binning_pipeline)
   - [Individual_assembly_binning_pipeline](#individual_assembly_binning_pipeline)
 - [3_Dereplication_annotation_pipeline](#3_Dereplication_annotation_pipeline)
-  - [](#)
-  - [](#)
+
 
 
 # 1_Preprocessing_pipeline
