@@ -64,7 +64,7 @@ rule Coassembly:
     threads:
         24
     resources:
-        mem_gb=128,
+        mem_gb=196,
         time='36:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly.benchmark.tsv"
