@@ -32,9 +32,9 @@ for group_name in os.listdir(parent_dir):
             # Construct the full path to the current sample file
             sample_path = os.path.join(group_path, sample_name)
             # Check if the current item is a file
-            if os.path.isfile(sample_path) and sample_name.endswith("_M_1.fastq.gz"):
+            if os.path.isfile(sample_path) and sample_name.endswith("_M_1.fq.gz"):
                 # Append the file name to the list of samples
-                samples.append(os.path.basename(sample_path).replace("_M_1.fastq.gz", ""))
+                samples.append(os.path.basename(sample_path).replace("_M_1.fq.gz", ""))
         # Add the group name and list of samples to the dictionary
         GROUPS[group_name] = samples
 
@@ -204,8 +204,8 @@ rule Coassembly_mapping:
     output:
         bam = "3_Outputs/3_BAMs/{group}/{sample}.bam"  
     params:
-        r1 = "2_Reads/4_Host_removed/{group}/{sample}_M_1.fastq.gz",
-        r2 = "2_Reads/4_Host_removed/{group}/{sample}_M_2.fastq.gz",
+        r1 = "2_Reads/4_Host_removed/{group}/{sample}_M_1.fq.gz",
+        r2 = "2_Reads/4_Host_removed/{group}/{sample}_M_2.fq.gz",
         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
     conda:
         "conda_envs/2_Assembly_Binning.yaml"
