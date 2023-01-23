@@ -36,16 +36,16 @@ Here is a simplified DAG (directed acyclic graph) of the above steps:
 The only thing that the user may wish to configure is the choice of adapter sequence that fastp uses to trim the raw reads. This can be adjusted by editing the [1_Preprocess_QC_config.yaml](0_Code/configs/1_Preprocess_QC_config.yaml) file. The default sequences are basic Illumina adapters that we use for the EHI (sequenced by NovoGene).
 
 ### ⚙️ Usage:
-Currently, the snakefile searches for .fastq.gz files located in this path (assuming you are launching the snakefile from the current directory):
+Currently, the snakefile searches for .fq.gz files located in this path (assuming you are launching the snakefile from the current directory):
 ```
-2_Reads/1_Untrimmed/*_1.fastq.gz
+2_Reads/1_Untrimmed/*_1.fq.gz
 ```
 There are a couple of options for getting your data here:
 - 1) Create symbolic links. This means you don't have to move or copy the files:
-`ln -s reads_folder/*.fastq.gz 2_Reads/1_Untrimmed/`
+`ln -s reads_folder/*.fq.gz 2_Reads/1_Untrimmed/`
 - 2) You can just put the reads in this directory.
 
-(note that the fastq file suffixes should be **'_1.fastq.gz'** and **'_2.fastq.gz'**).
+(note that the fastq file suffixes should be **'_1.fq.gz'** and **'_2.fq.gz'**).
 
 Next, you'll need to do the same thing for your host reference genome/s, symbolic linking them or placing them in this folder:
 ```
@@ -210,5 +210,47 @@ Additionally, a report is created for you with some of the more juicier tidbits 
 
 ![Overview](figures/assembly_filegraph_MULTIPLE.png)
 
-# 3_Dereplication_annotation_pipeline
-TBD
+# MAG_dereplication_annotation_mapping
+### What this pipeline does:
+This pipeline takes a set of MAGs and or genomes as input, dereplicates them using dRep, runs GTDB-tk on the dereplicated MAGs, and maps reads against the dereplicated MAG catalog, before finally creating a count table containing:
+- the number of reads mapping per MAG
+- covered_fraction of the MAGs per sample
+- the length of the MAGs 
+
+You can read why dereplication is an important component of short read mapping [here](https://instrain.readthedocs.io/en/latest/important_concepts.html#establishing-and-evaluating-genome-databases).
+
+
+### 🔧 Configuration
+
+The secondary clustering ANI can be adjusted by editing the `3_dRep_config.yaml` file. The default ANI threshold is 98% (0.98), which fits the legnth of our short reads well.
+
+### ⚙️ Usage:
+
+Currently, the snakefile searches for `_M_1.fq.gz` files located in the `2_Reads/4_Host_removed` path. Therefore you'll want to place all samples that you wish to map to the dereplicated MAG catalogue here. Additionally, it searches for MAGs `*.fa.gz` in the `3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins` folder, and for the MAG stats files `*.stats` in the `3_Outputs/5_Refined_Bins/` folder. Therefore, all the MAGs/genomes you wish to dereplicate need to go here:
+```
+3_Outputs/5_Refined_Bins/All_metawrap_70_10_bins
+```
+and the `*.stats` for the MAGs need to go here:
+```
+3_Outputs/5_Refined_Bins/
+```
+
+Once you're ready to get started, call snakemake like so:
+```
+snakemake \
+-s 0_Code/3_MAG_dereplication_annotation_mapping.snakefile \
+-j 20 \
+--cluster "sbatch --mem {resources.mem_gb}G --time {resources.time} -c {threads} -v" \
+--use-conda \
+--conda-frontend conda \
+--conda-prefix /projects/mjolnir1/people/ncl550/0_software \
+--latency-wait 600
+```
+
+### 💩 Outputs
+
+The following directories are created in the `3_Outputs/` folder:
+- `7_Dereplication/` (results from dRep)
+- `8_GTDB-tk/` (results from GTDB-tk, the `gtdbtk_combined_summary.tsv` file has the combined summary of bacteria and archaea)
+- `9_MAG_catalogue_mapping` (Contains the indexed MAG catalogue and a folder containing the BAMs)
+- `10_Final_tables/` (The final CoverM mapping stats)
