@@ -1,11 +1,11 @@
-# EHI_Bioinformatics   
+# EHI_Bioinformatics 
 # 🐨->💩->🦠->🧬->🖥️->😏
 Bioinformatics pipeline to process EHI data.
 
-*updated 24/11/2022, Raphael Eisenhofer*
+*updated 23/01/2023, Raphael Eisenhofer*
 
 #### General information:
-This pipeline uses snakemake, and manages dependencies using conda (or mamba) for reproducibility and deployability. The 0_Code directory contains the snakefiles, scripts, and conda environment yamls. 
+This pipeline uses [![Snakemake](https://img.shields.io/badge/snakemake-≥5.6.0-brightgreen.svg?style=flat)](https://snakemake.readthedocs.io), and manages dependencies using conda (or mamba) for reproducibility and deployability. The 0_Code directory contains the snakefiles, scripts, and conda environment yamls. 
 
 #### Getting started:
 Firstly, you'll want to clone this directory to the system where you want to run the analyses:
