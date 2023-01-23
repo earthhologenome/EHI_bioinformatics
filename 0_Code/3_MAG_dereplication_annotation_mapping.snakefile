@@ -1,7 +1,7 @@
 ################################################################################
 ################################################################################
 ################################################################################
-# Snakefile for MAG dereplication, taxonomic and functional annotation.
+# Snakefile for MAG dereplication, taxonomic annotation, and mapping.
 # Raphael Eisenhofer 02/2022
 #
 ################################################################################
@@ -29,7 +29,6 @@ len(MAGS)
 ### Setup the desired outputs
 rule all:
     input:
-#        expand("3_Outputs/11_DRAM/Distillate/DRAM_product.html")
         "3_Outputs/10_Final_tables/unfiltered_count_table.txt"
 ################################################################################
 ### Dereplicate refined bins using dRep
