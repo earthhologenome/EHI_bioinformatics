@@ -130,7 +130,7 @@ rule map_to_ref:
         bt2_index = "1_References/CattedRefs_renamed.fna.gz.rev.2.bt2l"
     output:
         all_bam = temp("3_Outputs/1_QC/1_BAMs/{sample}.bam"),
-        host_bam = "3_Outputs/1_QC/1_Host_BAMs/{sample}_host.bam",
+        host_bam = "3_Outputs/1_QC/1_Host_BAMs/{sample}_G.bam",
         non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fq",
         non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fq",
     conda:
