@@ -172,10 +172,10 @@ rule nonpareil:
         non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fq",
         non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fq",
     output:
-        npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
+        npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo",
+        bases = "{sample}_M_bp.txt",
     params:
         sample = "3_Outputs/1_QC/3_nonpareil/{sample}",
-        bases = "{sample}_M_bp.txt",
         badsample_r1 = "2_Reads/5_Poor_samples/{sample}_M_1.fq.gz",
         badsample_r2 = "2_Reads/5_Poor_samples/{sample}_M_2.fq.gz"
     conda:
@@ -310,6 +310,8 @@ rule report:
         for i in {input.fastp}; do grep '"total_bases"' $i | sed -n 2p | cut -f2 --delimiter=: | tr -d ','; done >> {params.tmpdir}/bases_post_filt.tsv
         for i in {input.fastp}; do grep 'adapter_trimmed_reads' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_reads.tsv
         for i in {input.fastp}; do grep 'adapter_trimmed_bases' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_bases.tsv
+
+        mv {input.bases} {params.tmpdir}
         for i in {input.bases}; do cat $i >> {params.tmpdir}/metagenomic_bases.tsv
 
         paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/metagenomic_bases.tsv > {params.tmpdir}/preprocessing_stats.tsv
