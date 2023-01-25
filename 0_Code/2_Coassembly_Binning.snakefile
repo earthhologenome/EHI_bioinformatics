@@ -309,7 +309,7 @@ rule metaWRAP_refinement:
     threads:
         32
     resources:
-        mem_gb=512,
+        mem_gb=256,
         time='36:00:00'
     benchmark:
         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
