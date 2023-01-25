@@ -466,7 +466,7 @@ rule generate_summary:
 ### Clean up
 rule clean:
     input:
-        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUP)
+        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUPS.keys())
     output:
         "3_Outputs/pipeline_complete.txt"
     shell:
