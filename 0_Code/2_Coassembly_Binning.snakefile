@@ -469,6 +469,13 @@ rule clean:
         expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUPS.keys())
     output:
         "3_Outputs/pipeline_complete.txt"
+    threads:
+        1
+    resources:
+        mem_gb=16,
+        time='00:05:00'
+    message:
+        "Cleaning up temp files"
     shell:
         """
         rm *.tsv
