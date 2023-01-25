@@ -426,12 +426,12 @@ rule generate_summary:
         #Create the final output summary table
         #parse QUAST outputs for assembly stats
         echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\tassembly_mapping_percent" > headers.tsv
-        cat 3_Outputs/2_Coassemblies/{params.group}_QUAST/{params.group}_assembly_report.tsv > {params.group}_temp_report.tsv
 
-        # #Add in the % mapping to assembly stats
-        # for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
-        #     do echo $(basename ${{sample/.bam/}}) > {params.group}_$(basename "$sample")_id.tsv;
-        # done
+     
+        for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
+            do cat 3_Outputs/2_Coassemblies/{params.group}_QUAST/{params.group}_assembly_report.tsv >> {params.group}_temp_report.tsv;
+        done
+
 
         #Add in the % mapping to assembly stats
         for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
