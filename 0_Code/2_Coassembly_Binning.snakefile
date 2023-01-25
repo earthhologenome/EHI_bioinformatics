@@ -202,7 +202,7 @@ rule Coassembly_mapping:
     input:
         bt2_index = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta.rev.2.bt2l"
     output:
-        bam = "3_Outputs/3_BAMs/{group}/{sample}.bam"  
+        bam = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/{sample}.bam"  
     params:
         r1 = "2_Reads/4_Host_removed/{group}/{sample}_M_1.fq.gz",
         r2 = "2_Reads/4_Host_removed/{group}/{sample}_M_2.fq.gz",
@@ -235,7 +235,7 @@ rule Coassembly_mapping:
 ### Bin contigs using metaWRAP's binning module
 rule metaWRAP_binning:
     input:
-        bams = lambda wildcards: ["3_Outputs/3_BAMs/{}/{}.bam/".format(wildcards.group, sample) for sample in GROUPS[wildcards.group]]
+        bams = lambda wildcards: ["3_Outputs/3_Coassembly_Mapping/BAMs/{}/{}.bam/".format(wildcards.group, sample) for sample in GROUPS[wildcards.group]]
     output:
         "3_Outputs/4_Binning/{group}/Done.txt"
     params:
