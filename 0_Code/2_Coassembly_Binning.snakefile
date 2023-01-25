@@ -46,6 +46,7 @@ print(GROUPS)
 rule all:
     input:
         expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUPS.keys()),
+        "3_Outputs/pipeline_complete.txt"
 
 ################################################################################
 ### Perform Coassemblies on each sample group
@@ -444,7 +445,7 @@ rule generate_summary:
         for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
             do cat {params.group}_bins.tsv >> {params.group}_number_bins.tsv;
         done
-        
+
         paste {params.group}_temp2_report.tsv {params.group}_number_bins.tsv > {params.group}_temp3_report.tsv
 
         ls -l 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam | wc -l > {params.group}_n_samples.tsv
@@ -460,7 +461,16 @@ rule generate_summary:
 
         #Combine them into the final assembly report
         cat headers.tsv {params.group}_temp4_report.tsv > {output}
-
-        #Clean up
+        """
+################################################################################
+### Clean up
+rule clean:
+    input:
+        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUP)
+    output:
+        "3_Outputs/pipeline_complete.txt"
+    shell:
+        """
         rm *.tsv
+        touch {output}
         """
