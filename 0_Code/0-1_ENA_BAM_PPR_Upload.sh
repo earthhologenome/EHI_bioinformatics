@@ -23,31 +23,31 @@
 
 # Helper function
 help() {
-    echo "###############################################"
-    echo "###############################################"
-    echo "Usage: $0 [-m metadata] [-i input_files] [-o output_xmls] [-c credentials]"
+    echo " "
+    echo "Usage: $0 [-m metadata] [-i input_files] [-o output_xmls] [-u username] [-p pass]"
+    echo " "
     echo " -m metadata = your metadata file, e.g. path/to/metadata.tsv"
     echo " -i input_files = path to your analysis files, e.g. path/to/files/"
     echo " -o ouput_xmls = path to where you wish to save .xmls and recipts, e.g. path/to/output/"
     echo " -u username = your ENA username, e.g. Webin-13337"
-    echo " -p password = your ENA password, e.g. aWeSoMePaSsWoRd1!"
+    echo " -p pass = your ENA password, e.g. aWeSoMePaSsWoRd1!"
 }
 
 # Load in variables
-while getopts ":m:i:o:c:u:p" opt; do
+while getopts ":m:i:o:u:p:" opt; do
     case $opt in
         m) metadata="$OPTARG";;
         i) input_files="$OPTARG";;
         o) output_xmls="$OPTARG";;
         u) username="$OPTARG";;
-        p) password="$OPTARG";;
+        p) pass="$OPTARG";;
         \?) help; exit 1;;
-        :) echo "Option -$OPTARG requires an argument."; exit 1;;
     esac
 done
 
 # If no input -> show help message and exit
-if [ -z "$metadata" ] || [ -z "$input_files" ] || [ -z "$output_xmls" ] || [ -z "$username" ] || [ -z "$password" ]; then
+if [ -z "$metadata" ] || [ -z "$input_files" ] || [ -z "$output_xmls" ] || [ -z "$username" ] || [ -z "$pass" ]; then
+    echo "All input fields are required!"
     help
     exit 1
 fi
@@ -57,10 +57,10 @@ fi
 echo "Uploading analysis files to the ENA data holding zone, please wait..."
 
 # first we have to set an environmental variable with our password so ascp does not prompt us:
-export ASPERA_SCP_PASS=$password
+export ASPERA_SCP_PASS=$pass
 
 # n.b. ' | tee aspera_log.txt' saves stdout to file for troubleshooting, while still printing it to stdout for user feedback.
-ascp -QT -l300M -L- `pwd`"$input_files"/* "$username":@webin.ebi.ac.uk: | tee aspera_log.txt
+#ascp -QT -l300M -L- `pwd`"$input_files"/* "$username":@webin.ebi.ac.uk: | tee aspera_log.txt
 
 echo "DONE!"
 
@@ -69,7 +69,16 @@ echo "Creating analysis XML files..."
 
 # create a hidden backup metadata table, remove header of metadata, as it isn't required
 cp $metadata ".$metadata_BACKUP"
-sed -i'' '1d' $metadata
+
+if [[ "$OSTYPE" == "linux"* ]]; then
+    sed -i'' '1d' $metadata
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    sed '1d' $metadata > temp.tsv
+    # stupid EOF issue with MAC!
+    echo " " > eof.txt && cat temp.tsv eof.txt > $metadata
+    rm temp.tsv && rm eof.txt
+fi
 
 mkdir -p $output_xmls
 
@@ -196,29 +205,61 @@ echo "DONE!"
 echo "Creating MD5 hashes for analysis files and updating .XMLs..."
 
 # create md5s:
-for i in "$input_files"/*.bam;
-    do md5sum $i > ${i/.bam/.md5};
-done
+if [[ "$OSTYPE" == "linux"* ]]; then
+    for i in "$input_files"/*.bam;
+        do md5sum $i | cut -f1 -d ' ' > ${i/.bam/.md5};
+    done
 
-for i in "$input_files"/*.fq.gz;
-    do md5sum $i > ${i/.fq.gz/.md5};
-done
+    for i in "$input_files"/*.fq.gz;
+        do md5sum $i | cut -f1 -d ' ' > ${i/.fq.gz/.md5};
+    done
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    for i in "$input_files"/*.bam;
+        do md5 $i | cut -f4 -d ' ' > ${i/.bam/.md5};
+    done
+
+    for i in "$input_files"/*.fq.gz;
+        do md5 $i | cut -f4 -d ' ' > ${i/.fq.gz/.md5};
+    done
+
+else
+    echo "Operating system not supported!"
+    exit 1
+fi
 
 
 # replace placeholder variables in XMLs with actual md5 hashes:
-for i in "$input_files"/*.bam;
-    do xml="$output_xmls/$(basename "$i".xml)"
-       hash1=$(cut -f1 -d ' ' ${i/.bam/.md5})
-       sed -i "s/PLACEHOLDER1/$hash1/g" $xml;
-done
+if [[ "$OSTYPE" == "linux"* ]]; then
+    for i in "$input_files"/*.bam;
+        do xml="$output_xmls/$(basename "$i".xml)"
+        hash1=$(${i/.bam/.md5})
+        sed -i "s/PLACEHOLDER1/$hash1/g" $xml;
+    done
 
-for i in "$input_files"/*_1.fq.gz;
-    do xml="$output_xmls/$(basename "$i".xml)"
-       hash1=$(cut -f1 -d ' ' ${i/.fq.gz/.md5})
-       hash2=$(cut -f1 -d ' ' ${i/_1.fq.gz/_2.md5})
-       sed -i "s/PLACEHOLDER1/$hash1/g" $xml
-       sed -i "s/PLACEHOLDER2/$hash2/g" $xml;
-done
+    for i in "$input_files"/*_1.fq.gz;
+        do xml="$output_xmls/$(basename "$i".xml)"
+        hash1=$(${i/.fq.gz/.md5})
+        hash2=$(${i/_1.fq.gz/_2.md5})
+        sed -i "s/PLACEHOLDER1/$hash1/g" $xml
+        sed -i "s/PLACEHOLDER2/$hash2/g" $xml;
+    done
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    for i in "$input_files"/*.bam;
+        do xml="$output_xmls/$(basename "$i".xml)"
+        hash1=$(cat ${i/.bam/.md5})
+        sed -i '' "s/PLACEHOLDER1/$hash1/g" $xml;
+    done
+
+    for i in "$input_files"/*_1.fq.gz;
+        do xml="$output_xmls/$(basename "$i".xml)"
+        hash1=$(cat ${i/.fq.gz/.md5})
+        hash2=$(cat ${i/_1.fq.gz/_2.md5})
+        sed -i '' "s/PLACEHOLDER1/$hash1/g" $xml
+        sed -i '' "s/PLACEHOLDER2/$hash2/g" $xml;
+    done
+fi
 
 echo "DONE!"
 
@@ -237,9 +278,9 @@ echo "</SUBMISSION>" >> submission.xml
 # Loop over each analysis XML, submitting them to the ENA and saving the receipt
 echo "Submitting XML files to the ENA..."
 
-for i in $output_xmls/*.xml;
-    do curl -u "$username":"$password" -F "SUBMISSION=@submission.xml" -F "ANALYSIS=@$i" "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/submit/";
-done > $output_xmls/${i/.xml/_RECEIPT.xml}
+# for i in $output_xmls/*.xml;
+#     do curl -u "$username":"$pass" -F "SUBMISSION=@submission.xml" -F "ANALYSIS=@$i" "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/submit/";
+# done > $output_xmls/${i/.xml/_RECEIPT.xml}
 
 
 echo "DONE! Have a good day :-)"
