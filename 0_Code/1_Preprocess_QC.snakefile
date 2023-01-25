@@ -175,6 +175,7 @@ rule nonpareil:
         npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
     params:
         sample = "3_Outputs/1_QC/3_nonpareil/{sample}",
+        bases = "{sample}_M_bp.txt",
         badsample_r1 = "2_Reads/5_Poor_samples/{sample}_M_1.fq.gz",
         badsample_r2 = "2_Reads/5_Poor_samples/{sample}_M_2.fq.gz"
     conda:
@@ -209,6 +210,9 @@ rule nonpareil:
         #Create dummy file for snakemake to proceed
         touch {output.npo}
         fi
+
+        #Count number of metagenomic bases at this stage prior to compression:
+        readlength.sh in={input.non_host_r1} in2={input.non_host_r2} | grep '#Bases' | cut -f2 > {bases}
 
         #Compress reads
         pigz -p {threads} {input.non_host_r1}
@@ -266,7 +270,8 @@ rule coverM:
 rule report:
     input:
         coverm = expand("3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
-        fastp = expand("2_Reads/3_fastp_results/{sample}.json", sample=SAMPLE)
+        fastp = expand("2_Reads/3_fastp_results/{sample}.json", sample=SAMPLE),
+        bases = expand("{sample}_M_bp.txt", sample=SAMPLE)
     output:
         report = "3_Outputs/1_QC/preprocessing_report.tsv",
         npar_metadata = "3_Outputs/1_QC/nonpareil_metadata.tsv"
@@ -305,9 +310,10 @@ rule report:
         for i in {input.fastp}; do grep '"total_bases"' $i | sed -n 2p | cut -f2 --delimiter=: | tr -d ','; done >> {params.tmpdir}/bases_post_filt.tsv
         for i in {input.fastp}; do grep 'adapter_trimmed_reads' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_reads.tsv
         for i in {input.fastp}; do grep 'adapter_trimmed_bases' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_bases.tsv
+        for i in {input.bases}; do cat $i >> {params.tmpdir}/metagenomic_bases.tsv
 
-        paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv > {params.tmpdir}/preprocessing_stats.tsv
-        echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads" > {params.tmpdir}/headers.tsv
+        paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/metagenomic_bases.tsv > {params.tmpdir}/preprocessing_stats.tsv
+        echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tmetagenomic_bases" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
         rm -r {params.tmpdir}
         """

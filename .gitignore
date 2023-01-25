@@ -3,6 +3,7 @@
 3_Outputs/*
 2_Reads/4_Host_removed/
 2_Reads/4_Host_removed/*
+ENA/
 .snakemake/*
 temp/*
 PR_Preprocessing_input.csv
