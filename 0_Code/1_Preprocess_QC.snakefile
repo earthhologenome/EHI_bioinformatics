@@ -212,7 +212,7 @@ rule nonpareil:
         fi
 
         #Count number of metagenomic bases at this stage prior to compression:
-        readlength.sh in={input.non_host_r1} in2={input.non_host_r2} | grep '#Bases' | cut -f2 > {bases}
+        readlength.sh in={input.non_host_r1} in2={input.non_host_r2} | grep '#Bases' | cut -f2 > {output.bases}
 
         #Compress reads
         pigz -p {threads} {input.non_host_r1}
