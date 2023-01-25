@@ -441,7 +441,10 @@ rule generate_summary:
         paste {params.group}_sample_ids.tsv {params.group}_temp_report.tsv > {params.group}_temp2_report.tsv
 
         #Add in the # of bins
-        cat {params.group}_bins.tsv > {params.group}_number_bins.tsv
+        for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
+            do cat {params.group}_bins.tsv >> {params.group}_number_bins.tsv;
+        done
+        
         paste {params.group}_temp2_report.tsv {params.group}_number_bins.tsv > {params.group}_temp3_report.tsv
 
         ls -l 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam | wc -l > {params.group}_n_samples.tsv
