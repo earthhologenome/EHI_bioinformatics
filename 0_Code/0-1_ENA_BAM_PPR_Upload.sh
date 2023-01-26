@@ -55,9 +55,7 @@ if [ -z "$metadata" ] || [ -z "$input_files" ] || [ -z "$output_xmls" ] || [ -z 
 fi
 
 # AirTable outputs .csv files, so change format to TSV
-tr ',' '\t' < $metadata > metadata.tsv
-
-metadata=metadata.tsv
+# tr ',' '\t' < $metadata > metadata.tsv
 
 # Upload the analysis files (.bams & .fqs) to the ENA holding zone:
 echo "Uploading analysis files to the ENA data holding zone, please wait..."
@@ -87,7 +85,8 @@ fi
 
 mkdir -p $output_xmls
 
-while IFS=$'\t' read -r PR_code alias_bam alias_fastq study_ref sample_ref experiment_ref run_ref analysis_code reference_genome project analysis_center analysis_date file_name_bam file_name_fastq1 file_name_fastq2 analysis_protocol ; do
+# while IFS=$'\t' read -r PR_code alias_bam alias_fastq study_ref sample_ref experiment_ref run_ref analysis_code reference_genome project analysis_center analysis_date file_name_bam file_name_fastq1 file_name_fastq2 analysis_protocol ; do
+while IFS=$',' read -r PR_code alias_bam alias_fastq study_ref sample_ref experiment_ref run_ref analysis_code reference_genome project analysis_center analysis_date file_name_bam file_name_fastq1 file_name_fastq2 analysis_protocol ; do
 
 file_name_fastq=(${file_name_fastq1/_1.fq.gz})
 
