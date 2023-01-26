@@ -26,7 +26,7 @@ help() {
     echo " "
     echo "Usage: $0 [-m metadata] [-i input_files] [-o output_xmls] [-u username] [-p pass] [-t type]"
     echo " "
-    echo " -m metadata = your metadata file, e.g. path/to/metadata.tsv"
+    echo " -m metadata = your metadata file, e.g. path/to/metadata.csv from AirTable"
     echo " -i input_files = path to your analysis files, e.g. path/to/files/"
     echo " -o ouput_xmls = path to where you wish to save .xmls and recipts, e.g. path/to/output/"
     echo " -u username = your ENA username, e.g. Webin-13337"
