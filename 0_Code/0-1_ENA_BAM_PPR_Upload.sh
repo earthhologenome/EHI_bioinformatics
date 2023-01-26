@@ -54,6 +54,10 @@ if [ -z "$metadata" ] || [ -z "$input_files" ] || [ -z "$output_xmls" ] || [ -z 
     exit 1
 fi
 
+# AirTable outputs .csv files, so change format to TSV
+tr ',' '\t' < $metadata > metadata.tsv
+
+metadata=metadata.tsv
 
 # Upload the analysis files (.bams & .fqs) to the ENA holding zone:
 echo "Uploading analysis files to the ENA data holding zone, please wait..."
