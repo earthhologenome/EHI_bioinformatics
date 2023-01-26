@@ -84,7 +84,7 @@ fi
 
 mkdir -p $output_xmls
 
-while IFS=$'\t' read -r alias_bam alias_fastq analysis_type study_ref sample_ref experiment_ref run_ref analysis_code reference_genome project analysis_center analysis_date file_name_bam file_name_fastq1 file_name_fastq2 checksum_method checksum_bam checksum_r1 checksum_r2 assay_type analysis_protocol ; do
+while IFS=$'\t' read -r PR_code alias_bam alias_fastq study_ref sample_ref experiment_ref run_ref analysis_code reference_genome project analysis_center analysis_date file_name_bam file_name_fastq1 file_name_fastq2 analysis_protocol ; do
 
 file_name_fastq=(${file_name_fastq1/_1.fq.gz})
 
@@ -106,7 +106,7 @@ then
   echo "        </ANALYSIS_TYPE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "        <FILES>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "            <FILE filename="\"$file_name_bam\"" filetype="\"bam\""" >> "$output_xmls"/"${file_name_bam}.xml"
-  echo "                checksum_method="\"$checksum_method\"" checksum="\"CHECKSUM1\""/>" >> "$output_xmls"/"${file_name_bam}.xml"
+  echo "                checksum_method="\"MD5\"" checksum="\"CHECKSUM1\""/>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "        </FILES>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "        <ANALYSIS_ATTRIBUTES>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_bam}.xml"
@@ -115,7 +115,7 @@ then
   echo "            </ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "                <TAG>Assay Type</TAG>" >> "$output_xmls"/"${file_name_bam}.xml"
-  echo "                <VALUE>$assay_type</VALUE>" >> "$output_xmls"/"${file_name_bam}.xml"
+  echo "                <VALUE>high throughput sequencing</VALUE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "            </ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "                <TAG>Analysis protocol</TAG>" >> "$output_xmls"/"${file_name_bam}.xml"
@@ -193,9 +193,9 @@ then
   echo "        </ANALYSIS_TYPE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "        <FILES>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            <FILE filename="\"$file_name_fastq1\"" filetype="\"fastq\""" >> "$output_xmls"/"${file_name_fastq}.xml"
-  echo "                checksum_method="\"$checksum_method\"" checksum="\"CHECKSUM2\""/>" >> "$output_xmls"/"${file_name_fastq}.xml"
+  echo "                checksum_method="\"MD5\"" checksum="\"CHECKSUM2\""/>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            <FILE filename="\"$file_name_fastq2\"" filetype="\"fastq\""" >> "$output_xmls"/"${file_name_fastq}.xml"
-  echo "                checksum_method="\"$checksum_method\"" checksum="\"CHECKSUM3\""/>" >> "$output_xmls"/"${file_name_fastq}.xml"
+  echo "                checksum_method="\"MD5\"" checksum="\"CHECKSUM3\""/>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "        </FILES>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "        <ANALYSIS_ATTRIBUTES>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_fastq}.xml"
@@ -204,7 +204,7 @@ then
   echo "            </ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "                <TAG>Assay Type</TAG>" >> "$output_xmls"/"${file_name_fastq}.xml"
-  echo "                <VALUE>$assay_type</VALUE>" >> "$output_xmls"/"${file_name_fastq}.xml"
+  echo "                <VALUE>high throughput sequencing</VALUE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            </ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "                <TAG>Analysis protocol</TAG>" >> "$output_xmls"/"${file_name_fastq}.xml"
@@ -288,7 +288,7 @@ then
   echo "        </ANALYSIS_TYPE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "        <FILES>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "            <FILE filename="\"$file_name_bam\"" filetype="\"bam\""" >> "$output_xmls"/"${file_name_bam}.xml"
-  echo "                checksum_method="\"$checksum_method\"" checksum="\"CHECKSUM1\""/>" >> "$output_xmls"/"${file_name_bam}.xml"
+  echo "                checksum_method="\"MD5\"" checksum="\"CHECKSUM1\""/>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "        </FILES>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "        <ANALYSIS_ATTRIBUTES>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_bam}.xml"
@@ -297,7 +297,7 @@ then
   echo "            </ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "                <TAG>Assay Type</TAG>" >> "$output_xmls"/"${file_name_bam}.xml"
-  echo "                <VALUE>$assay_type</VALUE>" >> "$output_xmls"/"${file_name_bam}.xml"
+  echo "                <VALUE>high throughput sequencing</VALUE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "            </ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_bam}.xml"
   echo "                <TAG>Analysis protocol</TAG>" >> "$output_xmls"/"${file_name_bam}.xml"
@@ -338,9 +338,9 @@ then
   echo "        </ANALYSIS_TYPE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "        <FILES>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            <FILE filename="\"$file_name_fastq1\"" filetype="\"fastq\""" >> "$output_xmls"/"${file_name_fastq}.xml"
-  echo "                checksum_method="\"$checksum_method\"" checksum="\"CHECKSUM2\""/>" >> "$output_xmls"/"${file_name_fastq}.xml"
+  echo "                checksum_method="\"MD5\"" checksum="\"CHECKSUM2\""/>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            <FILE filename="\"$file_name_fastq2\"" filetype="\"fastq\""" >> "$output_xmls"/"${file_name_fastq}.xml"
-  echo "                checksum_method="\"$checksum_method\"" checksum="\"CHECKSUM3\""/>" >> "$output_xmls"/"${file_name_fastq}.xml"
+  echo "                checksum_method="\"MD5\"" checksum="\"CHECKSUM3\""/>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "        </FILES>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "        <ANALYSIS_ATTRIBUTES>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_fastq}.xml"
@@ -349,7 +349,7 @@ then
   echo "            </ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "                <TAG>Assay Type</TAG>" >> "$output_xmls"/"${file_name_fastq}.xml"
-  echo "                <VALUE>$assay_type</VALUE>" >> "$output_xmls"/"${file_name_fastq}.xml"
+  echo "                <VALUE>high throughput sequencing</VALUE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            </ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "            <ANALYSIS_ATTRIBUTE>" >> "$output_xmls"/"${file_name_fastq}.xml"
   echo "                <TAG>Analysis protocol</TAG>" >> "$output_xmls"/"${file_name_fastq}.xml"
