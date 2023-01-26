@@ -71,7 +71,7 @@ echo "Creating analysis XML files..."
 # remove header of metadata, as it isn't required
 
 if [[ "$OSTYPE" == "linux"* ]]; then
-    sed -i'' '1d' $metadata
+    sed -i'' '1d' $metadata > temp.tsv
     echo " " > eof.txt && cat temp.tsv eof.txt > $metadata
     rm temp.tsv && rm eof.txt
 
