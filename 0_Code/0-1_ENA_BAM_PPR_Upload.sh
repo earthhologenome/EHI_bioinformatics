@@ -61,7 +61,7 @@ echo "Uploading analysis files to the ENA data holding zone, please wait..."
 export ASPERA_SCP_PASS=$pass
 
 # n.b. ' | tee aspera_log.txt' saves stdout to file for troubleshooting, while still printing it to stdout for user feedback.
-ascp -QT -l300M -L- `pwd`"$input_files"/* "$username":@webin.ebi.ac.uk: |& tee aspera_log.txt
+ascp -QT -l300M -L- `pwd`/"$input_files"/* "$username"@webin.ebi.ac.uk:. |& tee aspera_log.txt
 
 echo "DONE!"
 
@@ -449,14 +449,50 @@ echo "</SUBMISSION>" >> submission.xml
 echo "Submitting XML files to the ENA..."
 
 for i in $output_xmls/*.xml;
-    do curl -u "$username":"$pass" -F "SUBMISSION=@submission.xml" -F "ANALYSIS=@$i" "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/submit/";
-done > $output_xmls/${i/.xml/_RECEIPT.xml}
+    do curl -u "$username":"$pass" -F "SUBMISSION=@submission.xml" -F "ANALYSIS=@$i" -o $output_xmls/$(basename ${i/.xml/_RECEIPT.xml}) "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/submit/";
+done
 
 
-for i in 
+# Parse through the receipts and merge them into a single data frame for troubleshooting submission issues
+for i in $output_xmls/*_RECEIPT.xml;
+    do  grep 'success=' $i | cut -f6 -d '"' >> success.tsv;
+        grep 'ANALYSIS accession' $i | cut -f2 -d '"' >> analysis_accession.tsv
+        grep 'ANALYSIS accession' $i | cut -f4 -d '"' >> alias.tsv
+        echo $(basename ${i/_RECEIPT.xml/}) >> file_names.tsv;
+done
+
+echo -e "alias\tfile_name\tanalysis_accession\tsuccess" > log_header.tsv
+paste alias.tsv file_names.tsv analysis_accession.tsv success.tsv > temp.tsv
+cat log_header.tsv temp.tsv > XML_log.tsv
+rm alias.tsv file_names.tsv analysis_accession.tsv success.tsv log_header.tsv temp.tsv
+
+while read alias file_name accession success ; do
+    if [ $success == "false" ]
+        then echo "$alias $file_name FAILED!"
+    fi
+done < XML_log.tsv
 
 
-success="false"
+# Parse through the receipts and merge them into a dataframe that is compatible with the EHI AirTable
+#BAMs first
+for i in $output_xmls/*bam_RECEIPT.xml;
+    do  grep 'ANALYSIS accession' $i | cut -f2 -d '"' >> BAM_analysis_accession.tsv
+        grep 'ANALYSIS accession' $i | cut -f4 -d '"' >> BAM_alias.tsv
+        echo $(basename ${i/_RECEIPT.xml/}) >> BAM_file_names.tsv;
+done
+
+#FQs first
+for i in $output_xmls/*_M_RECEIPT.xml;
+    do  grep 'ANALYSIS accession' $i | cut -f2 -d '"' >> FQ_analysis_accession.tsv
+        grep 'ANALYSIS accession' $i | cut -f4 -d '"' >> FQ_alias.tsv
+        echo $(basename ${i/_RECEIPT.xml/}) >> FQ_file_names.tsv;
+done
+
+echo -e "BAM_alias\tBAM_file_name\tFASTQ_alias\tFASTQ_file_name\BAM_analysis_accession\tFASTQ_analysis_accession" > headers.tsv
+paste BAM_alias.tsv BAM_file_names.tsv FQ_alias.tsv FQ_file_names.tsv BAM_analysis_accession.tsv FQ_analysis_accession.tsv > temp.tsv
+cat headers.tsv temp.tsv > ENA_analysis_accessions.tsv
+rm BAM_alias.tsv BAM_file_names.tsv FQ_alias.tsv FQ_file_names.tsv BAM_analysis_accession.tsv FQ_analysis_accession.tsv temp.tsv headers.tsv
+
 
 echo "DONE! Have a good day :-)"
 echo " "
