@@ -61,7 +61,7 @@ echo "Uploading analysis files to the ENA data holding zone, please wait..."
 export ASPERA_SCP_PASS=$pass
 
 # n.b. ' | tee aspera_log.txt' saves stdout to file for troubleshooting, while still printing it to stdout for user feedback.
-#ascp -QT -l300M -L- `pwd`"$input_files"/* "$username":@webin.ebi.ac.uk: |& tee aspera_log.txt
+ascp -QT -l300M -L- `pwd`"$input_files"/* "$username":@webin.ebi.ac.uk: |& tee aspera_log.txt
 
 echo "DONE!"
 
@@ -448,10 +448,15 @@ echo "</SUBMISSION>" >> submission.xml
 # Loop over each analysis XML, submitting them to the ENA and saving the receipt
 echo "Submitting XML files to the ENA..."
 
-# for i in $output_xmls/*.xml;
-#     do curl -u "$username":"$pass" -F "SUBMISSION=@submission.xml" -F "ANALYSIS=@$i" "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/submit/";
-# done > $output_xmls/${i/.xml/_RECEIPT.xml}
+for i in $output_xmls/*.xml;
+    do curl -u "$username":"$pass" -F "SUBMISSION=@submission.xml" -F "ANALYSIS=@$i" "https://wwwdev.ebi.ac.uk/ena/submit/drop-box/submit/";
+done > $output_xmls/${i/.xml/_RECEIPT.xml}
 
+
+for i in 
+
+
+success="false"
 
 echo "DONE! Have a good day :-)"
 echo " "
