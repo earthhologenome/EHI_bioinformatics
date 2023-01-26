@@ -73,8 +73,7 @@ echo "DONE!"
 # loop through each line of the metadata
 echo "Creating analysis XML files..."
 
-# create a hidden backup metadata table, remove header of metadata, as it isn't required
-cp $metadata ${metadata/.tsv/_BACKUP.tsv}
+# remove header of metadata, as it isn't required
 
 if [[ "$OSTYPE" == "linux"* ]]; then
     sed -i'' '1d' $metadata
