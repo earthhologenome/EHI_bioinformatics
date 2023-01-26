@@ -74,7 +74,7 @@ echo "DONE!"
 echo "Creating analysis XML files..."
 
 # create a hidden backup metadata table, remove header of metadata, as it isn't required
-cp $metadata ".$metadata_BACKUP"
+cp $metadata ${metadata/.tsv/_BACKUP.tsv}
 
 if [[ "$OSTYPE" == "linux"* ]]; then
     sed -i'' '1d' $metadata
