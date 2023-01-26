@@ -438,7 +438,7 @@ then
 
 fi
 
-done < "$metadata"
+done < $metadata
 
 echo "DONE!"
 
