@@ -473,11 +473,11 @@ for i in $output_xmls/*_RECEIPT.xml;
 done
 
 echo -e "alias\tfile_name\tanalysis_accession\tsuccess" > log_header.tsv
-paste alias.tsv file_names.tsv analysis_accession.tsv success.tsv > temp.tsv
+paste success.tsv file_names.tsv alias.tsv analysis_accession.tsv > temp.tsv
 cat log_header.tsv temp.tsv > XML_log.tsv
 rm alias.tsv file_names.tsv analysis_accession.tsv success.tsv log_header.tsv temp.tsv
 
-while read alias file_name accession success ; do
+while read success file_name alias accession  ; do
     if [ $success == "false" ]
         then echo "$alias $file_name FAILED!"
     fi
