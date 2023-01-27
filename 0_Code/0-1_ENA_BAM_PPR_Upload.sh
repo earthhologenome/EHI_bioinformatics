@@ -68,11 +68,23 @@ echo "DONE!"
 # loop through each line of the metadata
 echo "Creating analysis XML files..."
 
-# remove header of metadata, as it isn't required
-sed '1d' $metadata > temp.tsv
+# remove header of metadata, as it isn't required and fix ^M carriage returns and EOF issues!
+cp $metadata metadata_backup.csv
     # stupid EOF issues!
-    echo " " > eof.txt && cat temp.tsv eof.txt > $metadata
-    rm temp.tsv && rm eof.txt
+if [[ "$OSTYPE" == "linux"* ]]; then
+    dos2unix temp.csv 
+    mac2unix temp.csv
+    sed '1d' temp.csv > $metadata
+    printf '\n' >> $metadata
+    rm temp.csv
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    tr '\r' '\n' < $metadata > temp.csv
+    sed '1d' temp.csv > $metadata    
+    printf '\n' >> $metadata
+    rm temp.csv
+fi
+
 
 mkdir -p $output_xmls
 
