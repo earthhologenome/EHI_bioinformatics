@@ -441,7 +441,7 @@ rule generate_summary:
         paste {params.group}_sample_ids.tsv {params.group}_temp_report.tsv > {params.group}_temp2_report.tsv
 
         #Print the number of MAGs to a file for combining with the assembly report          
-        ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {params.group}_bins.tsv;
+        ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {params.group}_bins.tsv
 
         #Add in the # of bins
         for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
