@@ -401,8 +401,6 @@ rule coverM_assembly:
         # Create directory for dereplication groups:
         mkdir -p 3_Outputs/5_Refined_Bins/dRep_groups
 
-        #Print the number of MAGs to a file for combining with the assembly report
-        ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {params.group}_bins.tsv;
         """
 ################################################################################
 ### Generate output summary table
@@ -414,7 +412,8 @@ rule generate_summary:
     conda:
         "conda_envs/2_Assembly_Binning.yaml"
     params:
-        group = "{group}"
+        group = "{group}",
+        refinement_files = "3_Outputs/5_Refined_Bins/{group}",
     threads:
         1
     resources:
@@ -440,6 +439,9 @@ rule generate_summary:
         done
 
         paste {params.group}_sample_ids.tsv {params.group}_temp_report.tsv > {params.group}_temp2_report.tsv
+
+        #Print the number of MAGs to a file for combining with the assembly report
+        ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {params.group}_bins.tsv;
 
         #Add in the # of bins
         for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
