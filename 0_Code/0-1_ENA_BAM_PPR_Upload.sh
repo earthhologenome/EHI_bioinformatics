@@ -72,11 +72,10 @@ echo "Creating analysis XML files..."
 cp $metadata metadata_backup.csv
     # stupid EOF issues!
 if [[ "$OSTYPE" == "linux"* ]]; then
-    dos2unix temp.csv 
-    mac2unix temp.csv
-    sed '1d' temp.csv > $metadata
+    dos2unix $metadata 
+    mac2unix $metadata
+    sed -i '1d' $metadata
     printf '\n' >> $metadata
-    rm temp.csv
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     tr '\r' '\n' < $metadata > temp.csv
