@@ -127,14 +127,24 @@ rule fetch_host_genome:
             then
             echo "Genome is ready to go!"
 
-            else
-        #Another if statement for whether the index exists on ERDA
-                if sftp erda:/
+            elif
+            echo "Checking if genome is already indexed on ERDA:"
+            remote_file="<file_name>"
+            server="<server_name>"
+
+                # Check if file exists on the remote server using SFTP
+                if sftp -q $server <<< "ls $remote_file" | grep -q "$remote_file"; then
+                echo "File exists on the remote server."
+                else
+                echo "File does not exist on the remote server."
+                fi
+                if sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz
                     then
                     sftp
 
-                    else
-                    wget
+            else
+            echo "Downloading and indexing reference genome"
+                    wget HG_URL
 
                     # Add '_' separator for CoverM
                     rename.sh in={input} \
@@ -148,7 +158,6 @@ rule fetch_host_genome:
                         --threads {threads} \
                         {output.rn_catted_ref} {output.rn_catted_ref} \
                         &> {log}
-                fi
         fi
 
 
