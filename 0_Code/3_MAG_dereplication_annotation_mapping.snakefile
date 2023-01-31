@@ -111,11 +111,14 @@ rule gtdbtk:
         # Specify path to reference data:
         export GTDBTK_DATA_PATH={params.GTDB_data}
 
+        mkdir {params.outdir}/tmp
+
         # Run GTDB-tk:
         gtdbtk classify_wf \
         --genome_dir {params.bins} \
         --extension "gz" \
         --out_dir {params.outdir} \
+        --tmpdir {params.outdir}/tmp \
         --cpus {threads}
 
         # Create a merged summary output for DRAM:
