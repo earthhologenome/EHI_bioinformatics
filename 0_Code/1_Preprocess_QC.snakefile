@@ -2,7 +2,7 @@
 ################################################################################
 ################################################################################
 # EHI snakefile for preprocessing raw reads (trimming/mapping to host)
-# Raphael Eisenhofer 4/2022
+# Raphael Eisenhofer 02/2023
 #         .----------------.  .----------------.  .----------------.
 #        | .--------------. || .--------------. || .--------------. |
 #        | |  _________   | || |  ____  ____  | || |     _____    | |
@@ -18,14 +18,12 @@
 ################################################################################
 ################################################################################
 
-configfile: "0_Code/configs/1_Preprocess_QC_config.yaml"
+configfile: "RUN/configs/PRBATCH_config.yaml"
 
 ### Setup sample inputs
-import os
-from glob import glob
+import pandas as pd
 
-SAMPLE = [os.path.basename(fn).replace("_1.fq.gz", "")
-            for fn in glob(f"2_Reads/1_Untrimmed/*_1.fq.gz")]
+SAMPLE = pd.read_csv('PRBATCH_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
 
 print("Detected the following samples:")
 print(SAMPLE)
@@ -34,19 +32,41 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-        "3_Outputs/1_QC/preprocessing_report.tsv",
-        "3_Outputs/1_QC/nonpareil_metadata.tsv"
+        "PPR/PRBATCH/0_REPORTS/PRBATCH_preprocessing_report.tsv",
+        "PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
+################################################################################
+### Fetch raw data from ERDA
+rule fetch_raw_reads:
+    output:
+        r1o = temp("PPR/PRBATCH/{sample}_1.fq.gz"),
+        r2o = temp("PPR/PRBATCH/{sample}_2.fq.gz"),
+    params:
+    conda:
+        "conda_envs/1_Preprocess_QC.yaml"
+    threads:
+        1
+    resources:
+        mem_gb=8,
+        time='00:15:00'
+    message:
+        "Fetching {wildcards.sample} from ERDA"
+    shell:
+        """
+        sftp erda:/EarthHologenomeInitiative/Data/RAW/SEBATCH/{sample}*.fq.gz RAW/SEBATCH/
+        mv {sample}*_1.fq.gz {output.r1o}
+        mv {sample}*_2.fq.gz {output.r2o}
+        """
 ################################################################################
 ### Preprocess the reads using fastp
 rule fastp:
     input:
-        r1i = "2_Reads/1_Untrimmed/{sample}_1.fq.gz",
-        r2i = "2_Reads/1_Untrimmed/{sample}_2.fq.gz"
+        r1i = "RAW/SEBATCH/{sample}_1.fq.gz",
+        r2i = "RAW/SEBATCH/{sample}_2.fq.gz"
     output:
-        r1o = temp("2_Reads/2_Trimmed/{sample}_trimmed_1.fq.gz"),
-        r2o = temp("2_Reads/2_Trimmed/{sample}_trimmed_2.fq.gz"),
-        fastp_html = "2_Reads/3_fastp_results/{sample}.html",
-        fastp_json = "2_Reads/3_fastp_results/{sample}.json"
+        r1o = temp("PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz"),
+        r2o = temp("PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz"),
+        fastp_html = "PPR/PRBATCH/fastp_stats/{sample}.html",
+        fastp_json = "PPR/PRBATCH/fastp_stats/{sample}.json"
     params:
         adapter1 = expand("{adapter1}", adapter1=config['adapter1']),
         adapter2 = expand("{adapter2}", adapter2=config['adapter2'])
@@ -58,9 +78,9 @@ rule fastp:
         mem_gb=24,
         time='00:30:00'
     benchmark:
-        "3_Outputs/0_Logs/{sample}_fastp.benchmark.tsv"
+        "RUN/PRBATCH/logs/{sample}_fastp.benchmark.tsv"
     log:
-        "3_Outputs/0_Logs/{sample}_fastp.log"
+        "RUN/PRBATCH/logs/{sample}_fastp.log"
     message:
         "Using FASTP to trim adapters and low quality sequences for {wildcards.sample}"
     shell:
@@ -82,57 +102,71 @@ rule fastp:
         &> {log}
         """
 ################################################################################
-## Index host genomes:
-rule index_ref:
-    input:
-        "1_References"
+## Fetch host genome from ERDA, if not there already, download and index it.
+rule fetch_host_genome:
+    # input:
+    #     "GEN/HOST_GENOME/*.fna.gz"
     output:
-        bt2_index = "1_References/CattedRefs_renamed.fna.gz.rev.2.bt2l",
-        rn_catted_ref = "1_References/CattedRefs_renamed.fna.gz"
-    params:
-        catted_ref = temp("1_References/CattedRefs.fna.gz")
+        bt2_index = "GEN/HOST_GENOME/HOST_GENOME.fna.gz.rev.2.bt2l",
+        rn_catted_ref = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
         24
     resources:
         mem_gb=96,
-        time='02:00:00'
+        time='03:00:00'
     log:
-        "3_Outputs/0_Logs/host_genome_indexing.log"
+        "RUN/PRBATCH/logs/host_genome_indexing.log"
     message:
-        "Concatenating and indexing host genomes with Bowtie2"
+        "Fetching host genome"
     shell:
         """
-        # Concatenate input reference genomes
-        cat {input}/*.gz > {params.catted_ref}
+        # IF statement for if file exists on Mjolnir
+        if [ -f {output.rn_catted_ref} ]
+            then
+            echo "Genome is ready to go!"
 
-        # Add '_' separator for CoverM
-        rename.sh in={params.catted_ref} \
-        out={output.rn_catted_ref} \
-        prefix=$(basename {input}) \
-        -Xmx{resources.mem_gb}G
+            else
+        #Another if statement for whether the index exists on ERDA
+                if sftp erda:/
+                    then
+                    sftp
 
-        # Index catted genomes
-        bowtie2-build \
-            --large-index \
-            --threads {threads} \
-            {output.rn_catted_ref} {output.rn_catted_ref} \
-        &> {log}
+                    else
+                    wget
+
+                    # Add '_' separator for CoverM
+                    rename.sh in={input} \
+                    out={output.rn_catted_ref} \
+                    prefix=$(basename {input}) \
+                    -Xmx{resources.mem_gb}G 
+
+                    # Index catted genomes
+                    bowtie2-build \
+                        --large-index \
+                        --threads {threads} \
+                        {output.rn_catted_ref} {output.rn_catted_ref} \
+                        &> {log}
+                fi
+        fi
+
+
+        # tmp file for if another person is using the same genome? so it doesn't get deleted?
         """
 ################################################################################
 ### Map samples to host genomes, then split BAMs:
 rule map_to_ref:
     input:
-        r1i = "2_Reads/2_Trimmed/{sample}_trimmed_1.fq.gz",
-        r2i = "2_Reads/2_Trimmed/{sample}_trimmed_2.fq.gz",
-        catted_ref = "1_References/CattedRefs_renamed.fna.gz",
-        bt2_index = "1_References/CattedRefs_renamed.fna.gz.rev.2.bt2l"
+        r1i = "PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz",
+        r2i = "PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz",
+        catted_ref = "GEN/HOST_GENOME_RN.fna.gz",
+        bt2_index = "GEN/HOST_GENOME.fna.gz.rev.2.bt2l"
     output:
-        all_bam = temp("3_Outputs/1_QC/1_BAMs/{sample}.bam"),
-        host_bam = "3_Outputs/1_QC/1_Host_BAMs/{sample}_G.bam",
-        non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fq",
-        non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fq",
+        all_bam = temp("PPR/PRBATCH/tmp/{sample}.bam"),
+        host_bam = "PPR/PRBATCH/{sample}_G.bam",
+        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq",
+        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -141,9 +175,9 @@ rule map_to_ref:
         mem_gb=90,
         time='02:00:00'
     benchmark:
-        "3_Outputs/0_Logs/{sample}_mapping.benchmark.tsv"
+        "RUN/PRBATCH/logs/{sample}_mapping.benchmark.tsv"
     log:
-        "3_Outputs/0_Logs/{sample}_mapping.log"
+        "RUN/PRBATCH/logs/{sample}_mapping.log"
     message:
         "Mapping {wildcards.sample} reads to host genomes"
     shell:
@@ -169,15 +203,15 @@ rule map_to_ref:
 ### Estimate diversity and required sequencing effort using nonpareil
 rule nonpareil:
     input:
-        non_host_r1 = "2_Reads/4_Host_removed/{sample}_M_1.fq",
-        non_host_r2 = "2_Reads/4_Host_removed/{sample}_M_2.fq",
+        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq",
+        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
     output:
-        npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo",
-        bases = "{sample}_M_bp.txt",
+        npo = temp("PPR/PRBATCH/tmp/np/{sample}.npo"),
+        bases = "PPR/PRBATCH/tmp/{sample}_M_bp.txt",
     params:
-        sample = "3_Outputs/1_QC/3_nonpareil/{sample}",
-        badsample_r1 = "2_Reads/5_Poor_samples/{sample}_M_1.fq.gz",
-        badsample_r2 = "2_Reads/5_Poor_samples/{sample}_M_2.fq.gz"
+        sample = "PPR/PRBATCH/tmp/{sample}",
+        badsample_r1 = "PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
+        badsample_r2 = "PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz"
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -186,13 +220,12 @@ rule nonpareil:
         mem_gb=45,
         time='02:00:00'
     benchmark:
-        "3_Outputs/0_Logs/{sample}_nonpareil.benchmark.tsv"
+        "RUN/PRBATCH/logs/{sample}_nonpareil.benchmark.tsv"
     message:
         "Estimating microbial diversity using nonpareil"
     shell:
         """
-        mkdir -p 3_Outputs/1_QC/3_nonpareil
-        mkdir -p 2_Reads/5_Poor_samples
+        mkdir -p PPR/PRBATCH/poor_samples
 
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
@@ -229,12 +262,12 @@ rule nonpareil:
 ### Calculate % of each sample's reads mapping to host genome/s
 rule coverM:
     input:
-        bam = "3_Outputs/1_QC/1_BAMs/{sample}.bam",
-        npo = "3_Outputs/1_QC/3_nonpareil/{sample}.npo"
+        bam = "PPR/PRBATCH/{sample}.bam",
+        npo = "PPR/PRBATCH/tmp/np/{sample}.npo"
     output:
-        "3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv"
+        "PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv"
     params:
-        assembly = "1_References/CattedRefs_renamed.fna.gz"
+        assembly = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -243,9 +276,9 @@ rule coverM:
         mem_gb=45,
         time='00:30:00'
     benchmark:
-        "3_Outputs/0_Logs/{sample}_coverM.benchmark.tsv"
+        "RUN/PRBATCH/logs/{sample}_coverM.benchmark.tsv"
     log:
-        "3_Outputs/0_Logs/{sample}_coverM.log"
+        "RUN/PRBATCH/logs/{sample}_coverM.log"
     message:
         "Calculating percentage of reads mapped to host genome/s using coverM"
     shell:
@@ -269,15 +302,15 @@ rule coverM:
 ### Create summary table from outputs
 rule report:
     input:
-        coverm = expand("3_Outputs/1_QC/2_CoverM/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
-        fastp = expand("2_Reads/3_fastp_results/{sample}.json", sample=SAMPLE),
-        bases = expand("{sample}_M_bp.txt", sample=SAMPLE)
+        coverm = expand("PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
+        fastp = expand("PPR/PRBATCH/tmp/{sample}.json", sample=SAMPLE),
+        bases = expand("PPR/PRBATCH/tmp/{sample}_M_bp.txt", sample=SAMPLE)
     output:
-        report = "3_Outputs/1_QC/preprocessing_report.tsv",
-        npar_metadata = "3_Outputs/1_QC/nonpareil_metadata.tsv"
+        report = "PPR/PRBATCH/0_REPORTS/PRBATCH_preprocessing_report.tsv",
+        npar_metadata = "PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
     params:
-        tmpdir = "3_Outputs/1_QC/temp",
-        npar = expand("3_Outputs/1_QC/3_nonpareil/{sample}.npo", sample=SAMPLE)
+        tmpdir = "PPR/PRBATCH/tmp/",
+        npar = expand("PPR/PRBATCH/tmp/np/{sample}.npo", sample=SAMPLE)
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -317,6 +350,9 @@ rule report:
         paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/metagenomic_bases.tsv > {params.tmpdir}/preprocessing_stats.tsv
         echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tmetagenomic_bases" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
+
+        tar -czf PRBATCH.tar.gz {params.tmpdir}/*.json {params.tmpdir}/np/*
+
         rm -r {params.tmpdir}
         """
 ################################################################################
