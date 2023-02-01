@@ -23,7 +23,7 @@ configfile: "RUN/configs/PRBATCH_config.yaml"
 ### Setup sample inputs
 import pandas as pd
 
-SAMPLE = pd.read_csv('PRBATCH_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
+SAMPLE = pd.read_csv('RUN/PRBATCH_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
 
 print("Detected the following samples:")
 print(SAMPLE)
@@ -37,9 +37,11 @@ rule all:
 ################################################################################
 ### Fetch raw data from ERDA
 rule fetch_raw_reads:
+    input:
+        "RUN/PR0001_input.tsv"
     output:
-        r1o = temp("PPR/PRBATCH/{sample}_1.fq.gz"),
-        r2o = temp("PPR/PRBATCH/{sample}_2.fq.gz"),
+        r1o = temp("RAW/SEBATCH/{sample}_1.fq.gz"),
+        r2o = temp("RAW/SEBATCH/{sample}_2.fq.gz"),
     params:
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
@@ -52,9 +54,9 @@ rule fetch_raw_reads:
         "Fetching {wildcards.sample} from ERDA"
     shell:
         """
-        sftp erda:/EarthHologenomeInitiative/Data/RAW/SEBATCH/{sample}*.fq.gz RAW/SEBATCH/
-        mv {sample}*_1.fq.gz {output.r1o}
-        mv {sample}*_2.fq.gz {output.r2o}
+        sftp erda:/EarthHologenomeInitiative/Data/RAW/SEBATCH/{wildcards.sample}*.fq.gz RAW/SEBATCH/
+        mv RAW/SEBATCH/{wildcards.sample}*_1.fq.gz {output.r1o}
+        mv RAW/SEBATCH/{wildcards.sample}*_2.fq.gz {output.r2o}
         """
 ################################################################################
 ### Preprocess the reads using fastp
@@ -65,8 +67,8 @@ rule fastp:
     output:
         r1o = temp("PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz"),
         r2o = temp("PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz"),
-        fastp_html = "PPR/PRBATCH/fastp_stats/{sample}.html",
-        fastp_json = "PPR/PRBATCH/fastp_stats/{sample}.json"
+        fastp_html = "PPR/PRBATCH/tmp/{sample}.html",
+        fastp_json = "PPR/PRBATCH/tmp/{sample}.json"
     params:
         adapter1 = expand("{adapter1}", adapter1=config['adapter1']),
         adapter2 = expand("{adapter2}", adapter2=config['adapter2'])
@@ -127,22 +129,28 @@ rule fetch_host_genome:
             then
             echo "Genome is ready to go!"
 
-            elif sftp -q erda <<< "ls /EarthHologenomeInitiative/Data/GEN/HOST_GENOME/ | grep -q "/EarthHologenomeInitiative/Data/GEN/HOST_GENOME/"
+            elif 
+            exists="HOST_GENOME.tar.gz"
+            sftp_check=$(sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME/ 2>&1)
+            echo "$sftp_check" | grep -q "$exists"
                 then
-                echo "Indexed genome exists on erda, downloading."
-                sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME/ GEN/HOST_GENOME/
-                tar -xvzf GEN/HOST_GENOME/HOST_GENOME.tar.gz
+                    echo "Indexed genome exists on erda, downloading."
+                    sftp -r erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME/ GEN/HOST_GENOME/
+                    tar -xvzf GEN/HOST_GENOME/HOST_GENOME.tar.gz -C GEN/HOST_GENOME/
 
             else
             echo "Downloading and indexing reference genome"
-                wget HG_URL
+                mkdir -p GEN/HOST_GENOME/
+                wget HG_URL -q -O GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Add '_' separator for CoverM
                 rename.sh 
-                    in=GEN/HOST_GENOME/ \
+                    in=GEN/HOST_GENOME/HOST_GENOME.fna.gz \
                     out={output.rn_catted_ref} \
-                    prefix=$(basename HOST_GENOME) \
+                    prefix=HOST_GENOME \
                     -Xmx{resources.mem_gb}G 
+                
+                rm GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Index catted genomes
                 bowtie2-build \
@@ -270,7 +278,7 @@ rule nonpareil:
 ### Calculate % of each sample's reads mapping to host genome/s
 rule coverM:
     input:
-        bam = "PPR/PRBATCH/{sample}.bam",
+        bam = "PPR/PRBATCH/{sample}_G.bam",
         npo = "PPR/PRBATCH/tmp/np/{sample}.npo"
     output:
         "PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv"
