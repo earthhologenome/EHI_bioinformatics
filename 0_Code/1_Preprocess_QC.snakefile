@@ -168,8 +168,8 @@ rule map_to_ref:
     input:
         r1i = "PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz",
         r2i = "PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz",
-        catted_ref = "GEN/HOST_GENOME_RN.fna.gz",
-        bt2_index = "GEN/HOST_GENOME.fna.gz.rev.2.bt2l"
+        catted_ref = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
+        bt2_index = "GEN/HOST_GENOME/HOST_GENOME.fna.gz.rev.2.bt2l"
     output:
         all_bam = temp("PPR/PRBATCH/tmp/{sample}.bam"),
         host_bam = "PPR/PRBATCH/{sample}_G.bam",
