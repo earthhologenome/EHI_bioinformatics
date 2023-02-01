@@ -127,39 +127,38 @@ rule fetch_host_genome:
             then
             echo "Genome is ready to go!"
 
-            elif
-            echo "Checking if genome is already indexed on ERDA:"
-            remote_file="<file_name>"
-            server="<server_name>"
-
-                # Check if file exists on the remote server using SFTP
-                if sftp -q $server <<< "ls $remote_file" | grep -q "$remote_file"; then
-                echo "File exists on the remote server."
-                else
-                echo "File does not exist on the remote server."
-                fi
-                if sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz
-                    then
-                    sftp
+            elif sftp -q erda <<< "ls /EarthHologenomeInitiative/Data/GEN/HOST_GENOME/ | grep -q "/EarthHologenomeInitiative/Data/GEN/HOST_GENOME/"
+                then
+                echo "Indexed genome exists on erda, downloading."
+                sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME/ GEN/HOST_GENOME/
+                tar -xvzf GEN/HOST_GENOME/HOST_GENOME.tar.gz
 
             else
             echo "Downloading and indexing reference genome"
-                    wget HG_URL
+                wget HG_URL
 
-                    # Add '_' separator for CoverM
-                    rename.sh in={input} \
+                # Add '_' separator for CoverM
+                rename.sh 
+                    in=GEN/HOST_GENOME/ \
                     out={output.rn_catted_ref} \
-                    prefix=$(basename {input}) \
+                    prefix=$(basename HOST_GENOME) \
                     -Xmx{resources.mem_gb}G 
 
-                    # Index catted genomes
-                    bowtie2-build \
-                        --large-index \
-                        --threads {threads} \
-                        {output.rn_catted_ref} {output.rn_catted_ref} \
-                        &> {log}
-        fi
+                # Index catted genomes
+                bowtie2-build \
+                    --large-index \
+                    --threads {threads} \
+                    {output.rn_catted_ref} {output.rn_catted_ref} \
+                    &> {log}
 
+                # Compress and upload to ERDA for future use
+                tar -cvzf GEN/HOST_GENOME/HOST_GENOME.tar.gz GEN/HOST_GENOME/
+                sftp GEN/HOST_GENOME/HOST_GENOME.tar.gz erda:/EarthHologenomeInitiative/Data/GEN/
+                rm GEN/HOST_GENOME/HOST_GENOME.tar.gz
+
+                # Create a warning that a new genome has been indexed and needs to be logged in AirTable
+                echo "HOST_GENOME has been indexed and needs to be logged in AirTable" > NEW_HOST_GENOME.txt
+        fi
 
         # tmp file for if another person is using the same genome? so it doesn't get deleted?
         """
