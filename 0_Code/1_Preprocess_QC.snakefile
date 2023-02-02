@@ -18,7 +18,7 @@
 ################################################################################
 ################################################################################
 
-configfile: "RUN/configs/PRBATCH_config.yaml"
+configfile: "0_Code/configs/1_Preprocess_QC_config.yaml"
 
 ### Setup sample inputs
 import pandas as pd
@@ -40,8 +40,8 @@ rule fetch_raw_reads:
     input:
         "RUN/PR0001_input.tsv"
     output:
-        r1o = temp("RAW/SEBATCH/{sample}_1.fq.gz"),
-        r2o = temp("RAW/SEBATCH/{sample}_2.fq.gz"),
+        r1o = temp("RAW/PRBATCH/{sample}_1.fq.gz"),
+        r2o = temp("RAW/PRBATCH/{sample}_2.fq.gz"),
     params:
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
@@ -54,16 +54,16 @@ rule fetch_raw_reads:
         "Fetching {wildcards.sample} from ERDA"
     shell:
         """
-        sftp erda:/EarthHologenomeInitiative/Data/RAW/SEBATCH/{wildcards.sample}*.fq.gz RAW/SEBATCH/
-        mv RAW/SEBATCH/{wildcards.sample}*_1.fq.gz {output.r1o}
-        mv RAW/SEBATCH/{wildcards.sample}*_2.fq.gz {output.r2o}
+        sftp erda:/EarthHologenomeInitiative/Data/RAW/*/{wildcards.sample}*.fq.gz RAW/PRBATCH/
+        mv RAW/PRBATCH/{wildcards.sample}*_1.fq.gz {output.r1o}
+        mv RAW/PRBATCH/{wildcards.sample}*_2.fq.gz {output.r2o}
         """
 ################################################################################
 ### Preprocess the reads using fastp
 rule fastp:
     input:
-        r1i = "RAW/SEBATCH/{sample}_1.fq.gz",
-        r2i = "RAW/SEBATCH/{sample}_2.fq.gz"
+        r1i = "RAW/PRBATCH/{sample}_1.fq.gz",
+        r2i = "RAW/PRBATCH/{sample}_2.fq.gz"
     output:
         r1o = temp("PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz"),
         r2o = temp("PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz"),
@@ -109,7 +109,7 @@ rule fetch_host_genome:
     # input:
     #     "GEN/HOST_GENOME/*.fna.gz"
     output:
-        bt2_index = "GEN/HOST_GENOME/HOST_GENOME.fna.gz.rev.2.bt2l",
+        bt2_index = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
         rn_catted_ref = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
@@ -144,7 +144,7 @@ rule fetch_host_genome:
                 wget HG_URL -q -O GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Add '_' separator for CoverM
-                rename.sh 
+                rename.sh \
                     in=GEN/HOST_GENOME/HOST_GENOME.fna.gz \
                     out={output.rn_catted_ref} \
                     prefix=HOST_GENOME \
@@ -160,13 +160,16 @@ rule fetch_host_genome:
                     &> {log}
 
                 # Compress and upload to ERDA for future use
-                tar -cvzf GEN/HOST_GENOME/HOST_GENOME.tar.gz GEN/HOST_GENOME/
-                sftp GEN/HOST_GENOME/HOST_GENOME.tar.gz erda:/EarthHologenomeInitiative/Data/GEN/
+                tar -I pigz -cvf GEN/HOST_GENOME/HOST_GENOME.tar.gz GEN/HOST_GENOME/*
+                sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put GEN/HOST_GENOME/HOST_GENOME.tar.gz'
                 rm GEN/HOST_GENOME/HOST_GENOME.tar.gz
 
                 # Create a warning that a new genome has been indexed and needs to be logged in AirTable
                 echo "HOST_GENOME has been indexed and needs to be logged in AirTable" > NEW_HOST_GENOME.txt
         fi
+
+        # Create PRBATCH folder on ERDA for uploading processed reads and BAMs
+        sftp erda:/EarthHologenomeInitiative/Data/PPR <<< $'mkdir PRBATCH'
 
         # tmp file for if another person is using the same genome? so it doesn't get deleted?
         """
@@ -177,7 +180,7 @@ rule map_to_ref:
         r1i = "PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz",
         r2i = "PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz",
         catted_ref = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
-        bt2_index = "GEN/HOST_GENOME/HOST_GENOME.fna.gz.rev.2.bt2l"
+        bt2_index = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l"
     output:
         all_bam = temp("PPR/PRBATCH/tmp/{sample}.bam"),
         host_bam = "PPR/PRBATCH/{sample}_G.bam",
@@ -186,10 +189,10 @@ rule map_to_ref:
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
-        24
+        8
     resources:
-        mem_gb=90,
-        time='02:00:00'
+        mem_gb=48,
+        time='03:00:00'
     benchmark:
         "RUN/PRBATCH/logs/{sample}_mapping.benchmark.tsv"
     log:
@@ -225,13 +228,13 @@ rule nonpareil:
         npo = temp("PPR/PRBATCH/tmp/np/{sample}.npo"),
         bases = "PPR/PRBATCH/tmp/{sample}_M_bp.txt",
     params:
-        sample = "PPR/PRBATCH/tmp/{sample}",
+        sample = "PPR/PRBATCH/tmp/np/{sample}",
         badsample_r1 = "PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
         badsample_r2 = "PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz"
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
-        16
+        8
     resources:
         mem_gb=45,
         time='02:00:00'
@@ -242,6 +245,7 @@ rule nonpareil:
     shell:
         """
         mkdir -p PPR/PRBATCH/poor_samples
+        mkdir -p PPR/PRBATCH/tmp/np
 
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
@@ -275,22 +279,25 @@ rule nonpareil:
         fi
         """
 ################################################################################
-### Calculate % of each sample's reads mapping to host genome/s
-rule coverM:
+### Calculate % of each sample's reads mapping to host genome/s (also upload PPR reads to ERDA)
+rule coverM_and_upload_to_ERDA:
     input:
         bam = "PPR/PRBATCH/{sample}_G.bam",
         npo = "PPR/PRBATCH/tmp/np/{sample}.npo"
     output:
         "PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv"
     params:
-        assembly = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
+        assembly = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
+        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq.gz",
+        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq.gz",
+        host_bam = "PPR/PRBATCH/{sample}_G.bam"
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
-        16
+        2
     resources:
-        mem_gb=45,
-        time='00:30:00'
+        mem_gb=16,
+        time='01:00:00'
     benchmark:
         "RUN/PRBATCH/logs/{sample}_coverM.benchmark.tsv"
     log:
@@ -313,6 +320,11 @@ rule coverM:
         then
         rm {input.npo}
         fi
+
+        #Upload preprocessed reads to ERDA for storage
+        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {params.non_host_r1}'
+        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {params.non_host_r2}'
+        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {params.host_bam}'
         """
 ################################################################################
 ### Create summary table from outputs
@@ -346,7 +358,6 @@ rule report:
         echo -e "File\tName\tColour" > {params.tmpdir}/headers.txt
         paste {params.tmpdir}/files.txt {params.tmpdir}/names.txt {params.tmpdir}/colours.txt > {params.tmpdir}/merged.tsv
         cat {params.tmpdir}/headers.txt {params.tmpdir}/merged.tsv > {output.npar_metadata}
-        rm -r {params.tmpdir}
 
         #Create preprocessing report
         mkdir -p {params.tmpdir}
@@ -361,13 +372,12 @@ rule report:
         for i in {input.fastp}; do grep 'adapter_trimmed_bases' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_bases.tsv
 
         cat {input.bases} >> {params.tmpdir}/metagenomic_bases.tsv
-        mv {input.bases} {params.tmpdir}
 
         paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/metagenomic_bases.tsv > {params.tmpdir}/preprocessing_stats.tsv
         echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tmetagenomic_bases" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
 
-        tar -czf PRBATCH.tar.gz {params.tmpdir}/*.json {params.tmpdir}/np/*
+        tar -czf PRBATCH.tar.gz {params.tmpdir}/*.json {params.tmpdir}/*.html {params.tmpdir}/np/*
 
         rm -r {params.tmpdir}
         """
