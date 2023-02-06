@@ -38,13 +38,13 @@ rule all:
 ### Fetch raw data from ERDA
 rule fetch_raw_reads:
     input:
-        "RUN/PR0001_input.tsv"
+        "RUN/PRBATCH_input.tsv"
     output:
         r1o = temp("RAW/PRBATCH/{sample}_1.fq.gz"),
         r2o = temp("RAW/PRBATCH/{sample}_2.fq.gz"),
     params:
     conda:
-        "conda_envs/1_Preprocess_QC.yaml"
+        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         1
     resources:
@@ -73,7 +73,7 @@ rule fastp:
         adapter1 = expand("{adapter1}", adapter1=config['adapter1']),
         adapter2 = expand("{adapter2}", adapter2=config['adapter2'])
     conda:
-        "conda_envs/1_Preprocess_QC.yaml"
+        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         8
     resources:
@@ -112,7 +112,7 @@ rule fetch_host_genome:
         bt2_index = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
         rn_catted_ref = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
-        "conda_envs/1_Preprocess_QC.yaml"
+        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         24
     resources:
@@ -187,7 +187,7 @@ rule map_to_ref:
         non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq",
         non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
     conda:
-        "conda_envs/1_Preprocess_QC.yaml"
+        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         8
     resources:
@@ -232,7 +232,7 @@ rule nonpareil:
         badsample_r1 = "PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
         badsample_r2 = "PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz"
     conda:
-        "conda_envs/1_Preprocess_QC.yaml"
+        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         8
     resources:
@@ -292,7 +292,7 @@ rule coverM_and_upload_to_ERDA:
         non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq.gz",
         host_bam = "PPR/PRBATCH/{sample}_G.bam"
     conda:
-        "conda_envs/1_Preprocess_QC.yaml"
+        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         2
     resources:
@@ -340,7 +340,7 @@ rule report:
         tmpdir = "PPR/PRBATCH/tmp/",
         npar = expand("PPR/PRBATCH/tmp/np/{sample}.npo", sample=SAMPLE)
     conda:
-        "conda_envs/1_Preprocess_QC.yaml"
+        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         1
     resources:
