@@ -58,49 +58,45 @@ rule DRAM:
             --min_contig_size 1500 
 
         #If statements for rrnas/trnas -- sometimes these won't be created
-        if test -f {params.outdir}/trnas.tsv && test -f {params.outdir}/rrnas.tsv
-        then
-        DRAM.py distill \
-            -i {params.outdir}/annotations.tsv \
-            --rrna_path {params.outdir}/rrnas.tsv \
-            --trna_path {params.outdir}/trnas.tsv \
-            -o {output.distillate}
-        mv {params.outdir}/rrnas.tsv {params.rrnas}
-        mv {params.outdir}/trnas.tsv {params.trnas}
-        else
-        echo "trnas AND rrnas are both not present"
-        fi
-
-        if test -f {params.outdir}/trnas.tsv && test ! -f {params.outdir}/rrnas.tsv
-        then
-        DRAM.py distill \
-            -i {params.outdir}/annotations.tsv \
-            --trna_path {params.outdir}/trnas.tsv \
-            -o {output.distillate}
-        mv {params.outdir}/trnas.tsv {params.trnas}
-        else
-        echo "only trnas found"
-        fi
-
-        if test ! -f {params.outdir}/trnas.tsv && test -f {params.outdir}/rrnas.tsv
-        then
-        DRAM.py distill \
-            -i {params.outdir}/annotations.tsv \
-            --rrna_path {params.outdir}/rrnas.tsv \
-            -o {output.distillate}
-        mv {params.outdir}/rrnas.tsv {params.rrnas}
-        else
-        echo "only rrnas found"
-        fi
 
         if test ! -f {params.outdir}/trnas.tsv && test ! -f {params.outdir}/rrnas.tsv
         then
+        echo "neither trnas nor rrnas found"
         DRAM.py distill \
             -i {params.outdir}/annotations.tsv \
             -o {output.distillate}
-        else
-        echo "neither trnas nor rrnas found"
-        fi        
+
+        elif test -f {params.outdir}/trnas.tsv && test -f {params.outdir}/rrnas.tsv
+        then
+        echo "both trnas and rrnas are available"
+        DRAM.py distill \
+            -i {params.outdir}/annotations.tsv \
+            --rrna_path {params.outdir}/rrnas.tsv \
+            --trna_path {params.outdir}/trnas.tsv \
+            -o {output.distillate}
+        mv {params.outdir}/rrnas.tsv {params.rrnas}
+        mv {params.outdir}/trnas.tsv {params.trnas}
+
+        elif test -f {params.outdir}/trnas.tsv && test ! -f {params.outdir}/rrnas.tsv
+        then
+        echo "only trnas found"
+        DRAM.py distill \
+            -i {params.outdir}/annotations.tsv \
+            --trna_path {params.outdir}/trnas.tsv \
+            -o {output.distillate}
+        mv {params.outdir}/trnas.tsv {params.trnas}
+
+        elif test ! -f {params.outdir}/trnas.tsv && test -f {params.outdir}/rrnas.tsv
+        then
+        echo "only rrnas found"
+        DRAM.py distill \
+            -i {params.outdir}/annotations.tsv \
+            --rrna_path {params.outdir}/rrnas.tsv \
+            -o {output.distillate}
+        mv {params.outdir}/rrnas.tsv {params.rrnas}
+
+        fi    
+
 
         pigz -p {threads} {params.outdir}/*.tsv
         pigz -p {threads} {params.outdir}/*.fna
