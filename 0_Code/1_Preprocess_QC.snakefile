@@ -18,7 +18,7 @@
 ################################################################################
 ################################################################################
 
-configfile: "0_Code/configs/1_Preprocess_QC_config.yaml"
+configfile: "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/configs/1_Preprocess_QC_config.yaml"
 
 ### Setup sample inputs
 import pandas as pd
