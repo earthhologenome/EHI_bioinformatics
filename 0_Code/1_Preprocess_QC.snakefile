@@ -44,7 +44,7 @@ rule fetch_raw_reads:
         r2o = temp("RAW/PRBATCH/{sample}_2.fq.gz"),
     params:
     conda:
-        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         1
     resources:
@@ -73,7 +73,7 @@ rule fastp:
         adapter1 = expand("{adapter1}", adapter1=config['adapter1']),
         adapter2 = expand("{adapter2}", adapter2=config['adapter2'])
     conda:
-        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         8
     resources:
@@ -112,7 +112,7 @@ rule fetch_host_genome:
         bt2_index = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
         rn_catted_ref = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
-        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         24
     resources:
@@ -187,7 +187,7 @@ rule map_to_ref:
         non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq",
         non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
     conda:
-        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         8
     resources:
@@ -225,14 +225,14 @@ rule nonpareil:
         non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq",
         non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
     output:
-        npo = temp("PPR/PRBATCH/tmp/np/{sample}.npo"),
+        npo = "PPR/PRBATCH/misc/{sample}.npo",
         bases = "PPR/PRBATCH/tmp/{sample}_M_bp.txt",
     params:
         sample = "PPR/PRBATCH/tmp/np/{sample}",
         badsample_r1 = "PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
         badsample_r2 = "PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz"
     conda:
-        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         8
     resources:
@@ -279,20 +279,77 @@ rule nonpareil:
         fi
         """
 ################################################################################
+### Estimate the fraction of bacterial and archaeal DNA using SingleM read fraction
+rule singlem:
+    input:
+        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq",
+        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
+    output:
+        pipe = "PPR/PRBATCH/misc/{sample}_pipe.tsv.gz",
+        condense = "PPR/PRBATCH/misc/{sample}_condense.tsv",
+        read_fraction = "PPR/PRBATCH/misc/{sample}_readfraction.tsv",
+    params:
+        pipe_uncompressed = "PPR/PRBATCH/misc/{sample}_pipe.tsv",
+        read_fraction_taxa = "PPR/PRBATCH/misc/{sample}_readfraction_per_taxa.tsv"
+    conda:
+        "/projects/ehi/data/0_Environments/conda/singlem_21_03_2023"
+    threads:
+        8
+    resources:
+        mem_gb=45,
+        time='02:00:00'
+    benchmark:
+        "RUN/PRBATCH/logs/{sample}_singlem.benchmark.tsv"
+    message:
+        "Estimating microbial fraction using singlem"
+    shell:
+        """
+        #Run singlem pipe
+        singlem pipe \
+            -1 {input.non_host_r1} \
+            -2 {input.non_host_r2} \
+            --otu-table {params.pipe_uncompressed} \
+            --taxonomic-profile {output.condense} \
+            --threads {threads}
+
+        #Compress pipe file
+        gzip {params.pipe_uncompressed}
+
+        #IF statement for files without data
+        if [ $(( $(stat -c '%s' {output.condense}) -eq 25 ]
+        then
+        echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\nNA\tNA\tNA\tNA" > {output.read_fraction}
+        
+        else        
+        #Run singlem read_fraction
+        singlem read_fraction \
+            -1 {input.non_host_r1} \
+            -2 {input.non_host_r2} \
+            --input-profile {output.condense} \
+            --output-tsv {output.read_fraction} \
+            --output-per-taxon-read-fractions {params.read_fraction_taxa}
+        fi
+        
+        #Compress read_fraction_per_taxa file
+        gzip {params.read_fraction_taxa}
+                    
+        """
+################################################################################
 ### Calculate % of each sample's reads mapping to host genome/s (also upload PPR reads to ERDA)
 rule coverM_and_upload_to_ERDA:
     input:
         bam = "PPR/PRBATCH/{sample}_G.bam",
-        npo = "PPR/PRBATCH/tmp/np/{sample}.npo"
+        npo = "PPR/PRBATCH/misc/{sample}.npo",
+        pipe = "PPR/PRBATCH/misc/{sample}_pipe.tsv"
     output:
         "PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv"
     params:
         assembly = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
         non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq.gz",
         non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq.gz",
-        host_bam = "PPR/PRBATCH/{sample}_G.bam"
+        host_bam = "PPR/PRBATCH/{sample}_G.bam",
     conda:
-        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         2
     resources:
@@ -332,15 +389,17 @@ rule report:
     input:
         coverm = expand("PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
         fastp = expand("PPR/PRBATCH/tmp/{sample}.json", sample=SAMPLE),
-        bases = expand("PPR/PRBATCH/tmp/{sample}_M_bp.txt", sample=SAMPLE)
+        bases = expand("PPR/PRBATCH/tmp/{sample}_M_bp.txt", sample=SAMPLE),
+        read_fraction = expand("PPR/PRBATCH/misc/{sample}_readfraction.tsv")
     output:
         report = "PPR/PRBATCH/0_REPORTS/PRBATCH_preprocessing_report.tsv",
         npar_metadata = "PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
     params:
         tmpdir = "PPR/PRBATCH/tmp/",
-        npar = expand("PPR/PRBATCH/tmp/np/{sample}.npo", sample=SAMPLE)
+        npar = expand("PPR/PRBATCH/tmp/np/{sample}.npo", sample=SAMPLE),
+        misc_dir = "PPR/PRBATCH/misc/"
     conda:
-        "../0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         1
     resources:
@@ -373,13 +432,20 @@ rule report:
 
         cat {input.bases} >> {params.tmpdir}/metagenomic_bases.tsv
 
-        paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/metagenomic_bases.tsv > {params.tmpdir}/preprocessing_stats.tsv
-        echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tmetagenomic_bases" > {params.tmpdir}/headers.tsv
+        #parse singlem estimates
+        for i in {intput.read_fraction}; do sed '1d;' $i | -f2,4 >> {params.tmpdir}/singlem.tsv; done
+
+        paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/metagenomic_bases.tsv {params.tmpdir}/singlem.tsv > {params.tmpdir}/preprocessing_stats.tsv
+        echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tmetagenomic_bases\tbacterial_archaeal_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
 
         tar -czf PRBATCH.tar.gz {params.tmpdir}/*.json {params.tmpdir}/*.html {params.tmpdir}/np/*
 
         rm -r {params.tmpdir}
+
+        #Upload misc to ERDA for storage
+        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put -r {params.misc_dir}'
+
         """
 ################################################################################
 # onsuccess:
