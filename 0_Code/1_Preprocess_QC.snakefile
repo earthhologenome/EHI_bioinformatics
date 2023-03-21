@@ -390,7 +390,7 @@ rule report:
         coverm = expand("PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
         fastp = expand("PPR/PRBATCH/tmp/{sample}.json", sample=SAMPLE),
         bases = expand("PPR/PRBATCH/tmp/{sample}_M_bp.txt", sample=SAMPLE),
-        read_fraction = expand("PPR/PRBATCH/misc/{sample}_readfraction.tsv")
+        read_fraction = expand("PPR/PRBATCH/misc/{sample}_readfraction.tsv", sample=SAMPLE)
     output:
         report = "PPR/PRBATCH/0_REPORTS/PRBATCH_preprocessing_report.tsv",
         npar_metadata = "PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
