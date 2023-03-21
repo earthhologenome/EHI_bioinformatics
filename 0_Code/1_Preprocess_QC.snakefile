@@ -340,7 +340,7 @@ rule coverM_and_upload_to_ERDA:
     input:
         bam = "PPR/PRBATCH/{sample}_G.bam",
         npo = "PPR/PRBATCH/misc/{sample}.npo",
-        pipe = "PPR/PRBATCH/misc/{sample}_pipe.tsv"
+        pipe = "PPR/PRBATCH/misc/{sample}_pipe.tsv.gz"
     output:
         "PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv"
     params:
