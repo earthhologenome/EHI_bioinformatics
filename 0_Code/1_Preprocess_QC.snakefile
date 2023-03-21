@@ -114,7 +114,7 @@ rule fetch_host_genome:
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
-        24
+        16
     resources:
         mem_gb=96,
         time='03:00:00'
@@ -131,7 +131,7 @@ rule fetch_host_genome:
 
             elif 
             exists="HOST_GENOME.tar.gz"
-            sftp_check=$(sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME/ 2>&1)
+            sftp_check=$(sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME.tar.gz 2>&1)
             echo "$sftp_check" | grep -q "$exists"
                 then
                     echo "Indexed genome exists on erda, downloading."
