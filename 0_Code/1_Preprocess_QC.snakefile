@@ -225,7 +225,6 @@ rule nonpareil:
         non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
     output:
         npo = "PPR/PRBATCH/misc/{sample}.npo",
-        bases = "PPR/PRBATCH/tmp/{sample}_M_bp.txt",
     params:
         sample = "PPR/PRBATCH/tmp/np/{sample}",
         badsample_r1 = "PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
@@ -262,9 +261,6 @@ rule nonpareil:
         #Create dummy file for snakemake to proceed
         touch {output.npo}
         fi
-
-        #Count number of metagenomic bases at this stage prior to compression:
-        readlength.sh in={input.non_host_r1} in2={input.non_host_r2} | grep '#Bases' | cut -f2 > {output.bases}
 
         #Compress reads
         pigz -p {threads} {input.non_host_r1}
@@ -388,7 +384,6 @@ rule report:
     input:
         coverm = expand("PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
         fastp = expand("PPR/PRBATCH/tmp/{sample}.json", sample=SAMPLE),
-        bases = expand("PPR/PRBATCH/tmp/{sample}_M_bp.txt", sample=SAMPLE),
         read_fraction = expand("PPR/PRBATCH/misc/{sample}_readfraction.tsv", sample=SAMPLE)
     output:
         report = "PPR/PRBATCH/0_REPORTS/PRBATCH_preprocessing_report.tsv",
@@ -429,13 +424,11 @@ rule report:
         for i in {input.fastp}; do grep 'adapter_trimmed_reads' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_reads.tsv
         for i in {input.fastp}; do grep 'adapter_trimmed_bases' $i | cut -f2 --delimiter=: | tr -d ',' | tr -d ' '; done >> {params.tmpdir}/adapter_trimmed_bases.tsv
 
-        cat {input.bases} >> {params.tmpdir}/metagenomic_bases.tsv
-
         #parse singlem estimates
-        for i in {input.read_fraction}; do sed '1d;' $i | -f2,4 >> {params.tmpdir}/singlem.tsv; done
+        for i in {input.read_fraction}; do sed '1d;' $i | -f2,3,4 >> {params.tmpdir}/singlem.tsv; done
 
-        paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/metagenomic_bases.tsv {params.tmpdir}/singlem.tsv > {params.tmpdir}/preprocessing_stats.tsv
-        echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tmetagenomic_bases\tbacterial_archaeal_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
+        paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/singlem.tsv > {params.tmpdir}/preprocessing_stats.tsv
+        echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
 
         tar -czf PRBATCH.tar.gz {params.tmpdir}/*.json {params.tmpdir}/*.html {params.tmpdir}/np/*
