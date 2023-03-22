@@ -114,7 +114,7 @@ rule fetch_host_genome:
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
-        16
+        1
     resources:
         mem_gb=96,
         time='03:00:00'
