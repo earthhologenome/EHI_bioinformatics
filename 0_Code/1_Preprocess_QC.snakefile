@@ -225,6 +225,8 @@ rule nonpareil:
         non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
     output:
         npo = "PPR/PRBATCH/misc/{sample}.npo",
+        non_host_r1c = "PPR/PRBATCH/{sample}_M_1.fq.gz",
+        non_host_r2c = "PPR/PRBATCH/{sample}_M_2.fq.gz",
     params:
         sample = "PPR/PRBATCH/tmp/np/{sample}",
         badsample_r1 = "PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
@@ -277,8 +279,8 @@ rule nonpareil:
 ### Estimate the fraction of bacterial and archaeal DNA using SingleM read fraction
 rule singlem:
     input:
-        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq",
-        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
+        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq.gz",
+        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq.gz",
     output:
         pipe = "PPR/PRBATCH/misc/{sample}_pipe.tsv.gz",
         condense = "PPR/PRBATCH/misc/{sample}_condense.tsv",
@@ -439,8 +441,4 @@ rule report:
         sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put -r {params.misc_dir}'
 
         """
-################################################################################
-# onsuccess:
-#     shell("""
-#             mail -s "workflow completed" raph.eisenhofer@gmail.com < {log}
-#           """)
+
