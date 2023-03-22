@@ -311,7 +311,7 @@ rule singlem:
         gzip {params.pipe_uncompressed}
 
         #IF statement for files without data
-        if [ $(( $(stat -c '%s' {output.condense}) -eq 25 ]
+        if [ $(( $(stat -c '%s' {output.condense}) )) -eq 25 ]
         then
         echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\nNA\tNA\tNA\tNA" > {output.read_fraction}
         
