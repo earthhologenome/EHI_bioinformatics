@@ -231,7 +231,7 @@ rule nonpareil:
         badsample_r1 = "PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
         badsample_r2 = "PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz"
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/nonpareil.yaml"
     threads:
         8
     resources:
@@ -348,7 +348,7 @@ rule coverM_and_upload_to_ERDA:
         non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq.gz",
         host_bam = "PPR/PRBATCH/{sample}_G.bam",
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/coverm.yaml"
     threads:
         2
     resources:
