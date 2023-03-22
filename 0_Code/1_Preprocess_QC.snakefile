@@ -301,9 +301,9 @@ rule singlem:
         "Estimating microbial fraction using singlem"
     shell:
         """
-        #Activate environment
-        source activate /projects/ehi/data/0_Environments/conda/singlem_21_03_2023
-        export PATH='/projects/ehi/data/0_Environments/github_repos/singlem/bin':$PATH
+        # #Activate environment
+        # source activate /projects/ehi/data/0_Environments/conda/singlem_21_03_2023
+        # export PATH='/projects/ehi/data/0_Environments/github_repos/singlem/bin':$PATH
         
         #Run singlem pipe
         singlem pipe \
@@ -341,7 +341,6 @@ rule singlem:
         echo "no microbes in sample"
         fi
         
-        source deactivate
         """
 ################################################################################
 ### Calculate % of each sample's reads mapping to host genome/s (also upload PPR reads to ERDA)
