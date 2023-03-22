@@ -67,8 +67,8 @@ rule fastp:
     output:
         r1o = temp("PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz"),
         r2o = temp("PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz"),
-        fastp_html = "PPR/PRBATCH/tmp/{sample}.html",
-        fastp_json = "PPR/PRBATCH/tmp/{sample}.json"
+        fastp_html = "PPR/PRBATCH/misc/{sample}.html",
+        fastp_json = "PPR/PRBATCH/misc/{sample}.json"
     params:
         adapter1 = expand("{adapter1}", adapter1=config['adapter1']),
         adapter2 = expand("{adapter2}", adapter2=config['adapter2'])
@@ -349,7 +349,7 @@ rule coverM_and_upload_to_ERDA:
         npo = "PPR/PRBATCH/misc/{sample}.npo",
         pipe = "PPR/PRBATCH/misc/{sample}_pipe.tsv.gz"
     output:
-        "PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv"
+        "PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv"
     params:
         assembly = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
         non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq.gz",
@@ -394,15 +394,15 @@ rule coverM_and_upload_to_ERDA:
 ### Create summary table from outputs
 rule report:
     input:
-        coverm = expand("PPR/PRBATCH/tmp/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
-        fastp = expand("PPR/PRBATCH/tmp/{sample}.json", sample=SAMPLE),
+        coverm = expand("PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
+        fastp = expand("PPR/PRBATCH/misc/{sample}.json", sample=SAMPLE),
         read_fraction = expand("PPR/PRBATCH/misc/{sample}_readfraction.tsv", sample=SAMPLE)
     output:
         report = "PPR/PRBATCH/0_REPORTS/PRBATCH_preprocessing_report.tsv",
         npar_metadata = "PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
     params:
         tmpdir = "PPR/PRBATCH/tmp/",
-        npar = expand("PPR/PRBATCH/tmp/np/{sample}.npo", sample=SAMPLE),
+        npar = expand("PPR/PRBATCH/misc/{sample}.npo", sample=SAMPLE),
         misc_dir = "PPR/PRBATCH/misc/"
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
@@ -443,12 +443,14 @@ rule report:
         echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
 
-        tar -czf PRBATCH.tar.gz {params.tmpdir}/*.json {params.tmpdir}/*.html
+        tar -czf PRBATCH_stats.tar.gz {params.misc_dir}
 
         rm -r {params.tmpdir}
 
         #Upload misc to ERDA for storage
-        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put -r {params.misc_dir}'
+        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put PRBATCH_stats.tar.gz'
+
+        rm PRBATCH_stats.tar.gz
 
         """
 
