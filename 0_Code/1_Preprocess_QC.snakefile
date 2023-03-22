@@ -287,8 +287,9 @@ rule singlem:
     params:
         pipe_uncompressed = "PPR/PRBATCH/misc/{sample}_pipe.tsv",
         read_fraction_taxa = "PPR/PRBATCH/misc/{sample}_readfraction_per_taxa.tsv"
-    conda:
-        "/projects/ehi/data/0_Environments/conda/singlem_21_03_2023"
+# Current issue with snakemake and pre-built conda environments: https://github.com/snakemake/snakemake/pull/1708
+    # conda:
+    #     "/projects/ehi/data/0_Environments/conda/singlem_21_03_2023"
     threads:
         8
     resources:
@@ -300,6 +301,9 @@ rule singlem:
         "Estimating microbial fraction using singlem"
     shell:
         """
+        #Activate environment
+        source activate /projects/ehi/data/0_Environments/conda/singlem_21_03_2023
+        
         #Run singlem pipe
         singlem pipe \
             -1 {input.non_host_r1} \
