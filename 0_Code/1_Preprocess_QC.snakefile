@@ -301,9 +301,8 @@ rule singlem:
         "Estimating microbial fraction using singlem"
     shell:
         """
-        # #Activate environment
-        # source activate /projects/ehi/data/0_Environments/conda/singlem_21_03_2023
-        # export PATH='/projects/ehi/data/0_Environments/github_repos/singlem/bin':$PATH
+        #Temp fix until snakemake is fixed or singlem conda recipe is updated
+        export PATH='/projects/ehi/data/0_Environments/github_repos/singlem/bin':$PATH
         
         #Run singlem pipe
         singlem pipe \
