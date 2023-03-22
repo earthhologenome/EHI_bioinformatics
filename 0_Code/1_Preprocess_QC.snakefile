@@ -228,7 +228,7 @@ rule nonpareil:
         non_host_r1c = "PPR/PRBATCH/{sample}_M_1.fq.gz",
         non_host_r2c = "PPR/PRBATCH/{sample}_M_2.fq.gz",
     params:
-        sample = "PPR/PRBATCH/tmp/np/{sample}",
+        sample = "PPR/PRBATCH/misc/{sample}",
         badsample_r1 = "PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
         badsample_r2 = "PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz"
     conda:
@@ -245,7 +245,6 @@ rule nonpareil:
     shell:
         """
         mkdir -p PPR/PRBATCH/poor_samples
-        mkdir -p PPR/PRBATCH/tmp/np
 
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
