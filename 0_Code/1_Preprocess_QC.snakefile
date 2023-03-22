@@ -135,9 +135,9 @@ rule fetch_host_genome:
             echo "$sftp_check" | grep -q "$exists"
                 then
                     echo "Indexed genome exists on erda, downloading."
-                    mkdir GEN/HOST_GENOME/
-                    sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME.tar.gz GEN/HOST_GENOME/
+                    sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME.tar.gz .
                     tar -xvzf GEN/HOST_GENOME/HOST_GENOME.tar.gz -C GEN/HOST_GENOME/
+                    rm HOST_GENOME.tar.gz
 
             else
             echo "Downloading and indexing reference genome"
