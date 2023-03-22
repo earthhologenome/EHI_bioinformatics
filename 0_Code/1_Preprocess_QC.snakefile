@@ -288,8 +288,8 @@ rule singlem:
         pipe_uncompressed = "PPR/PRBATCH/misc/{sample}_pipe.tsv",
         read_fraction_taxa = "PPR/PRBATCH/misc/{sample}_readfraction_per_taxa.tsv"
 # Current issue with snakemake and pre-built conda environments: https://github.com/snakemake/snakemake/pull/1708
-    # conda:
-    #     "/projects/ehi/data/0_Environments/conda/singlem_21_03_2023"
+    conda:
+        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/singlem.yaml"
     threads:
         8
     resources:
