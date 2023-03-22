@@ -7,5 +7,5 @@
     - fastp=0.23.1
     - pigz=2.6
     - bbmap=38.93  
-    - samtools=1.15.1
+    - samtools=1.13
     - bowtie2=2.4.4 
