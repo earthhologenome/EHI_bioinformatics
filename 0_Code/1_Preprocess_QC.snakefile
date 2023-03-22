@@ -326,8 +326,15 @@ rule singlem:
             --output-per-taxon-read-fractions {params.read_fraction_taxa}
         fi
         
+        #If statement for cases when singlem does not produce a condense output
+        if [ -f {params.read_fraction_taxa} ]
+        then
         #Compress read_fraction_per_taxa file
         gzip {params.read_fraction_taxa}
+
+        else
+        echo "no microbes in sample"
+        fi
                     
         """
 ################################################################################
