@@ -106,15 +106,13 @@ rule fastp:
 ################################################################################
 ## Fetch host genome from ERDA, if not there already, download and index it.
 rule fetch_host_genome:
-    # input:
-    #     "GEN/HOST_GENOME/*.fna.gz"
     output:
         bt2_index = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
         rn_catted_ref = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
-        1
+        16
     resources:
         mem_gb=96,
         time='03:00:00'
@@ -136,7 +134,7 @@ rule fetch_host_genome:
                 then
                     echo "Indexed genome exists on erda, downloading."
                     sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME.tar.gz .
-                    tar -xvzf HOST_GENOME.tar.gz -C GEN/HOST_GENOME/
+                    tar -xvzf HOST_GENOME.tar.gz
                     rm HOST_GENOME.tar.gz
 
             else
