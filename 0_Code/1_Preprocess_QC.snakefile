@@ -18,6 +18,8 @@
 ################################################################################
 ################################################################################
 
+configfile: "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/configs/1_Preprocess_QC_config.yaml
+
 ### Setup sample inputs
 import pandas as pd
 
@@ -42,7 +44,7 @@ rule fetch_raw_reads:
         r2o = temp("RAW/PRBATCH/{sample}_2.fq.gz"),
     params:
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         1
     resources:
@@ -71,7 +73,7 @@ rule fastp:
         adapter1 = expand("{adapter1}", adapter1=config['adapter1']),
         adapter2 = expand("{adapter2}", adapter2=config['adapter2'])
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         8
     resources:
@@ -108,7 +110,7 @@ rule fetch_host_genome:
         bt2_index = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
         rn_catted_ref = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         16
     resources:
@@ -184,7 +186,7 @@ rule map_to_ref:
         non_host_r1 = temp("PPR/PRBATCH/{sample}_M_1.fq"),
         non_host_r2 = temp("PPR/PRBATCH/{sample}_M_2.fq"),
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         8
     resources:
@@ -230,7 +232,7 @@ rule nonpareil:
         badsample_r1 = "PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
         badsample_r2 = "PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz"
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/nonpareil.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/nonpareil.yaml"
     threads:
         8
     resources:
@@ -287,7 +289,7 @@ rule singlem:
         read_fraction_taxa = "PPR/PRBATCH/misc/{sample}_readfraction_per_taxa.tsv"
 # Current issue with snakemake and pre-built conda environments: https://github.com/snakemake/snakemake/pull/1708
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/singlem.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/singlem.yaml"
     threads:
         8
     resources:
@@ -354,7 +356,7 @@ rule coverM_and_upload_to_ERDA:
     params:
         assembly = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/coverm.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/coverm.yaml"
     threads:
         2
     resources:
@@ -403,7 +405,7 @@ rule report:
         npar = expand("PPR/PRBATCH/misc/{sample}.npo", sample=SAMPLE),
         misc_dir = "PPR/PRBATCH/misc/"
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
         1
     resources:
