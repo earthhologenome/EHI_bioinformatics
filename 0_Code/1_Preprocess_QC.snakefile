@@ -18,8 +18,6 @@
 ################################################################################
 ################################################################################
 
-configfile: "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/configs/1_Preprocess_QC_config.yaml"
-
 ### Setup sample inputs
 import pandas as pd
 
@@ -182,9 +180,9 @@ rule map_to_ref:
         bt2_index = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l"
     output:
         all_bam = temp("PPR/PRBATCH/tmp/{sample}.bam"),
-        host_bam = "PPR/PRBATCH/{sample}_G.bam",
-        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq",
-        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
+        host_bam = temp("PPR/PRBATCH/{sample}_G.bam"),
+        non_host_r1 = temp("PPR/PRBATCH/{sample}_M_1.fq"),
+        non_host_r2 = temp("PPR/PRBATCH/{sample}_M_2.fq"),
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -347,14 +345,14 @@ rule coverM_and_upload_to_ERDA:
     input:
         bam = "PPR/PRBATCH/{sample}_G.bam",
         npo = "PPR/PRBATCH/misc/{sample}.npo",
-        pipe = "PPR/PRBATCH/misc/{sample}_pipe.tsv.gz"
+        pipe = "PPR/PRBATCH/misc/{sample}_pipe.tsv.gz",
+        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq.gz",
+        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq.gz",
+        host_bam = "PPR/PRBATCH/{sample}_G.bam",
     output:
         "PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv"
     params:
         assembly = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
-        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq.gz",
-        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq.gz",
-        host_bam = "PPR/PRBATCH/{sample}_G.bam",
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics/0_Code/conda_envs/coverm.yaml"
     threads:
@@ -386,9 +384,9 @@ rule coverM_and_upload_to_ERDA:
         fi
 
         #Upload preprocessed reads to ERDA for storage
-        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {params.non_host_r1}'
-        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {params.non_host_r2}'
-        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {params.host_bam}'
+        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {input.non_host_r1}'
+        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {input.non_host_r2}'
+        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {input.host_bam}'
         """
 ################################################################################
 ### Create summary table from outputs
@@ -398,7 +396,7 @@ rule report:
         fastp = expand("PPR/PRBATCH/misc/{sample}.json", sample=SAMPLE),
         read_fraction = expand("PPR/PRBATCH/misc/{sample}_readfraction.tsv", sample=SAMPLE)
     output:
-        report = "PPR/PRBATCH/0_REPORTS/PRBATCH_preprocessing_report.tsv",
+        report = "REP/PRBATCH.tsv",
         npar_metadata = "PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
     params:
         tmpdir = "PPR/PRBATCH/tmp/",
@@ -443,14 +441,18 @@ rule report:
         echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
 
+        cp {output.report} {params.misc_dir}
+        cp {output.npar_metadata} {params.misc_dir}
         tar -czf PRBATCH_stats.tar.gz {params.misc_dir}
 
         rm -r {params.tmpdir}
 
-        #Upload misc to ERDA for storage
+        #Upload stats and report to ERDA for storage
         sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put PRBATCH_stats.tar.gz'
+        sftp erda:/EarthHologenomeInitiative/Data/RUN/ <<< $'put {output.report}'
 
+        #Clean up the files/directories
         rm PRBATCH_stats.tar.gz
+        rm -r GEN/HOST_GENOME/
 
         """
-
