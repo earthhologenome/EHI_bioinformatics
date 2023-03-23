@@ -30,7 +30,7 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-        "PPR/PRBATCH/0_REPORTS/PRBATCH_preprocessing_report.tsv",
+        "REP/PRBATCH.tsv",
         "PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
 ################################################################################
 ### Fetch raw data from ERDA
@@ -440,6 +440,8 @@ rule report:
         paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/singlem.tsv > {params.tmpdir}/preprocessing_stats.tsv
         echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
+
+        mv slurm*
 
         cp {output.report} {params.misc_dir}
         cp {output.npar_metadata} {params.misc_dir}
