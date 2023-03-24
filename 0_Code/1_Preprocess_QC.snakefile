@@ -23,7 +23,7 @@ configfile: "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/con
 ### Setup sample inputs
 import pandas as pd
 
-SAMPLE = pd.read_csv('$workdir/RUN/PRBATCH_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
+SAMPLE = pd.read_csv('$workdir/RUN/PRBATCH/PRBATCH_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
 
 print("Detected the following samples:")
 print(SAMPLE)
