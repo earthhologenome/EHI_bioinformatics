@@ -119,7 +119,7 @@ rule fetch_host_genome:
         mem_gb=96,
         time='03:00:00'
     log:
-        "/projects/ehi/data/PRBATCH/logs/host_genome_indexing.log"
+        "/projects/ehi/data/RUN/PRBATCH/logs/host_genome_indexing.log"
     message:
         "Fetching host genome"
     shell:
@@ -414,8 +414,8 @@ rule report:
     threads:
         1
     resources:
-        mem_gb=45,
-        time='00:05:00'
+        mem_gb=24,
+        time='00:10:00'
     message:
         "Creating a final preprocessing report"
     shell:
