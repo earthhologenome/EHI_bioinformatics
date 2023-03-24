@@ -42,6 +42,7 @@ rule fetch_raw_reads:
         r1o = temp("$workdir/RAW/PRBATCH/{sample}_1.fq.gz"),
         r2o = temp("$workdir/RAW/PRBATCH/{sample}_2.fq.gz"),
     params:
+        workdir = config["workdir"]
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -53,9 +54,9 @@ rule fetch_raw_reads:
         "Fetching {wildcards.sample} from ERDA"
     shell:
         """
-        sftp erda:/EarthHologenomeInitiative/Data/RAW/*/{wildcards.sample}*.fq.gz $workdir/RAW/PRBATCH/
-        mv $workdir/RAW/PRBATCH/{wildcards.sample}*_1.fq.gz {output.r1o}
-        mv $workdir/RAW/PRBATCH/{wildcards.sample}*_2.fq.gz {output.r2o}
+        sftp erda:/EarthHologenomeInitiative/Data/RAW/*/{wildcards.sample}*.fq.gz {params.workdir}/RAW/PRBATCH/
+        mv {params.workdir}/RAW/PRBATCH/{wildcards.sample}*_1.fq.gz {output.r1o}
+        mv {params.workdir}/RAW/PRBATCH/{wildcards.sample}*_2.fq.gz {output.r2o}
         """
 ################################################################################
 ### Preprocess the reads using fastp
@@ -110,6 +111,8 @@ rule fetch_host_genome:
         rn_catted_ref = "$workdir/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
+    params:
+        workdir = config["workdir"]
     threads:
         16
     resources:
@@ -132,17 +135,17 @@ rule fetch_host_genome:
 
             then
                 echo "Downloading and indexing reference genome"
-                mkdir -p $workdir/GEN/HOST_GENOME/
-                wget HG_URL -q -O $workdir/GEN/HOST_GENOME/HOST_GENOME.fna.gz
+                mkdir -p {params.workdir}/GEN/HOST_GENOME/
+                wget HG_URL -q -O {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Add '_' separator for CoverM
                 rename.sh \
-                    in=$workdir/GEN/HOST_GENOME/HOST_GENOME.fna.gz \
+                    in={params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz \
                     out={output.rn_catted_ref} \
                     prefix=HOST_GENOME \
                     -Xmx{resources.mem_gb}G 
                 
-                rm $workdir/GEN/HOST_GENOME/HOST_GENOME.fna.gz
+                rm {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Index catted genomes
                 bowtie2-build \
@@ -152,18 +155,18 @@ rule fetch_host_genome:
                     &> {log}
 
                 # Compress and upload to ERDA for future use
-                tar -I pigz -cvf $workdir/GEN/HOST_GENOME/HOST_GENOME.tar.gz $workdir/GEN/HOST_GENOME/*
-                sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put $workdir/GEN/HOST_GENOME/HOST_GENOME.tar.gz'
-                rm $workdir/GEN/HOST_GENOME/HOST_GENOME.tar.gz
+                tar -I pigz -cvf {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz {params.workdir}/GEN/HOST_GENOME/*
+                sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz'
+                rm {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz
 
                 # Create a warning that a new genome has been indexed and needs to be logged in AirTable
-                echo "HOST_GENOME has been indexed and needs to be logged in AirTable" > $workdir/NEW_HOST_GENOME.txt
+                echo "HOST_GENOME has been indexed and needs to be logged in AirTable" > {params.workdir}/NEW_HOST_GENOME.txt
                 
             else 
                 echo "Indexed genome exists on erda, unpacking."
-                mv HOST_GENOME.tar.gz $workdir/
-                tar -xvzf $workdir/HOST_GENOME.tar.gz
-                rm $workdir/HOST_GENOME.tar.gz
+                mv HOST_GENOME.tar.gz {params.workdir}/
+                tar -xvzf {params.workdir}/HOST_GENOME.tar.gz
+                rm {params.workdir}/HOST_GENOME.tar.gz
 
         fi
 
@@ -230,7 +233,8 @@ rule nonpareil:
     params:
         sample = "$workdir/PPR/PRBATCH/misc/{sample}",
         badsample_r1 = "$workdir/PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
-        badsample_r2 = "$workdir/PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz"
+        badsample_r2 = "$workdir/PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz",
+        workdir = config["workdir"]
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/nonpareil.yaml"
     threads:
@@ -244,7 +248,7 @@ rule nonpareil:
         "Estimating microbial diversity using nonpareil"
     shell:
         """
-        mkdir -p $workdir/PPR/PRBATCH/poor_samples
+        mkdir -p {params.workdir}/PPR/PRBATCH/poor_samples
 
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
@@ -403,7 +407,8 @@ rule report:
     params:
         tmpdir = "$workdir/PPR/PRBATCH/tmp/",
         npar = expand("$workdir/PPR/PRBATCH/misc/{sample}.npo", sample=SAMPLE),
-        misc_dir = "$workdir/PPR/PRBATCH/misc/"
+        misc_dir = "$workdir/PPR/PRBATCH/misc/",
+        workdir = config["workdir"]
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -457,6 +462,6 @@ rule report:
 
         #Clean up the files/directories
         rm PRBATCH_stats.tar.gz
-        rm -r $workdir/GEN/HOST_GENOME/
+        rm -r {params.workdir}/GEN/HOST_GENOME/
 
         """
