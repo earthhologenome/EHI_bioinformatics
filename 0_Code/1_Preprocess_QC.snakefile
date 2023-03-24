@@ -125,20 +125,14 @@ rule fetch_host_genome:
         # IF statement for if file exists on Mjolnir
         if [ -f {output.rn_catted_ref} ]
             then
-            echo "Genome is ready to go!"
+                echo "Genome is ready to go!"
 
             elif 
-            exists="HOST_GENOME.tar.gz"
-            sftp_check=$(sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME.tar.gz 2>&1)
-            echo "$sftp_check" | grep -q "$exists"
-                then
-                    echo "Indexed genome exists on erda, downloading."
-                    sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME.tar.gz .
-                    tar -xvzf HOST_GENOME.tar.gz
-                    rm HOST_GENOME.tar.gz
+                sftp_check=$(sftp erda:/EarthHologenomeInitiative/Data/GEN/HOST_GENOME.tar.gz 2>&1)
+                echo "$sftp_check" | grep -q "not found"
 
-            else
-            echo "Downloading and indexing reference genome"
+            then
+                echo "Downloading and indexing reference genome"
                 mkdir -p GEN/HOST_GENOME/
                 wget HG_URL -q -O GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
@@ -165,6 +159,12 @@ rule fetch_host_genome:
 
                 # Create a warning that a new genome has been indexed and needs to be logged in AirTable
                 echo "HOST_GENOME has been indexed and needs to be logged in AirTable" > NEW_HOST_GENOME.txt
+                
+            else 
+                echo "Indexed genome exists on erda, unpacking."
+                tar -xvzf HOST_GENOME.tar.gz
+                rm HOST_GENOME.tar.gz
+
         fi
 
         # Create PRBATCH folder on ERDA for uploading processed reads and BAMs
