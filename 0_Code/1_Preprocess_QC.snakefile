@@ -34,7 +34,6 @@ rule all:
     input:
         "/projects/ehi/data/REP/PRBATCH.tsv",
         "/projects/ehi/data/PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv",
-        "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l"
 ################################################################################
 ### Fetch raw data from ERDA
 rule fetch_raw_reads:
