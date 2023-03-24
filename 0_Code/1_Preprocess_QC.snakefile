@@ -231,8 +231,6 @@ rule nonpareil:
         non_host_r2c = "/projects/ehi/data/PPR/PRBATCH/{sample}_M_2.fq.gz",
     params:
         sample = "/projects/ehi/data/PPR/PRBATCH/misc/{sample}",
-        # badsample_r1 = "/projects/ehi/data/PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
-        # badsample_r2 = "/projects/ehi/data/PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz",
         workdir = config["workdir"]
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/nonpareil.yaml"
@@ -270,12 +268,6 @@ rule nonpareil:
         pigz -p {threads} {input.non_host_r1}
         pigz -p {threads} {input.non_host_r2}
 
-        # #Move samples that don't have enough reads for assembly to a new folder
-        # #This saves time, and prevents errors in the next pipeline!
-        # if [ $(( $(stat -c '%s' {input.non_host_r1}.gz) / 1024 / 1024 )) -lt 200 ]
-        # then
-        # mv {input.non_host_r1}.gz {params.badsample_r1} && mv {input.non_host_r2}.gz {params.badsample_r2}
-        # fi
         """
 ################################################################################
 ### Estimate the fraction of bacterial and archaeal DNA using SingleM read fraction
