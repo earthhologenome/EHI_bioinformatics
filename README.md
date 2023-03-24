@@ -52,4 +52,14 @@ sftp erda
 
 It may prompt you to allow the connection, if so, press enter.
 
-Great, you can now launch the preprocessing pipeline via the 'PR_script' column in the 'PR BATCH' tab on AirTable!
+Great, you can now launch the preprocessing pipeline via the 'PR_script' column in the 'PR BATCH' tab on AirTable (**Launch view**)!
+
+Once the run is complete, you'll recieve an email. To input the preprocessing stats into AirTable, first download the file from here:
+```
+/projects/ehi/data/REP/PRBXXXX.tsv
+```
+Where XXXX is your PRB code.
+
+You can then copy/paste the rows (not the header) into AirTable ('PR_Preprocessing' tab; 'Output' view). Remember to fiter by PRB, and double check to make sure the right data is going to the right rows.
+
+Voila!
