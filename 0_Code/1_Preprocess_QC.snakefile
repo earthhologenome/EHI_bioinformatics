@@ -448,8 +448,6 @@ rule report:
         echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
 
-        mv slurm*
-
         cp {output.report} {params.misc_dir}
         cp {output.npar_metadata} {params.misc_dir}
         tar -czf PRBATCH_stats.tar.gz {params.misc_dir}
