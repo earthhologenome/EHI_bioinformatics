@@ -20,10 +20,18 @@
 
 configfile: "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/configs/1_Preprocess_QC_config.yaml"
 
-### Setup sample inputs
+### Setup sample inputs, config, and working directory
 import pandas as pd
+import yaml
 
-SAMPLE = pd.read_csv('$workdir/RUN/PRBATCH/PRBATCH_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
+with open("/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/configs/1_Preprocess_QC_config.yaml", "r") as f:
+    config = yaml.safe_load(f)
+
+workdir = config["workdir"]
+
+input_file = "{}/RUN/PRBATCH/PRBATCH_input.tsv".format(workdir)
+
+SAMPLE = pd.read_csv(input_file, sep='\t', header=None).loc[:, 0].tolist()
 
 print("Detected the following samples:")
 print(SAMPLE)
