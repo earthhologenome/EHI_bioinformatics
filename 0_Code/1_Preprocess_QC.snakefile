@@ -456,7 +456,7 @@ rule report:
 
         #Upload stats and report to ERDA for storage
         sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put PRBATCH_stats.tar.gz'
-        sftp erda:/EarthHologenomeInitiative/Data/RUN/ <<< $'put {output.report}'
+        sftp erda:/EarthHologenomeInitiative/Data/REP/ <<< $'put {output.report}'
 
         #Clean up the files/directories
         rm PRBATCH_stats.tar.gz
