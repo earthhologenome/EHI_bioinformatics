@@ -182,10 +182,10 @@ rule map_to_ref:
         catted_ref = "$workdir/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
         bt2_index = "$workdir/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l"
     output:
-        all_bam = temp("PPR/PRBATCH/tmp/{sample}.bam"),
-        host_bam = temp("PPR/PRBATCH/{sample}_G.bam"),
-        non_host_r1 = temp("PPR/PRBATCH/{sample}_M_1.fq"),
-        non_host_r2 = temp("PPR/PRBATCH/{sample}_M_2.fq"),
+        all_bam = temp("$workdir/PPR/PRBATCH/tmp/{sample}.bam"),
+        host_bam = temp("$workdir/PPR/PRBATCH/{sample}_G.bam"),
+        non_host_r1 = temp("$workdir/PPR/PRBATCH/{sample}_M_1.fq"),
+        non_host_r2 = temp("$workdir/PPR/PRBATCH/{sample}_M_2.fq"),
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
