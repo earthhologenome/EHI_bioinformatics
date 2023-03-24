@@ -23,7 +23,7 @@ configfile: "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/con
 ### Setup sample inputs
 import pandas as pd
 
-SAMPLE = pd.read_csv('RUN/PRBATCH_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
+SAMPLE = pd.read_csv('$workdir/RUN/PRBATCH_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
 
 print("Detected the following samples:")
 print(SAMPLE)
@@ -32,16 +32,16 @@ print(SAMPLE)
 ### Setup the desired outputs
 rule all:
     input:
-        "REP/PRBATCH.tsv",
-        "PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
+        "$workdir/REP/PRBATCH.tsv",
+        "$workdir/PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
 ################################################################################
 ### Fetch raw data from ERDA
 rule fetch_raw_reads:
     input:
-        "RUN/PRBATCH_input.tsv"
+        "$workdir/RUN/PRBATCH_input.tsv"
     output:
-        r1o = temp("RAW/PRBATCH/{sample}_1.fq.gz"),
-        r2o = temp("RAW/PRBATCH/{sample}_2.fq.gz"),
+        r1o = temp("$workdir/RAW/PRBATCH/{sample}_1.fq.gz"),
+        r2o = temp("$workdir/RAW/PRBATCH/{sample}_2.fq.gz"),
     params:
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
@@ -54,21 +54,21 @@ rule fetch_raw_reads:
         "Fetching {wildcards.sample} from ERDA"
     shell:
         """
-        sftp erda:/EarthHologenomeInitiative/Data/RAW/*/{wildcards.sample}*.fq.gz RAW/PRBATCH/
-        mv RAW/PRBATCH/{wildcards.sample}*_1.fq.gz {output.r1o}
-        mv RAW/PRBATCH/{wildcards.sample}*_2.fq.gz {output.r2o}
+        sftp erda:/EarthHologenomeInitiative/Data/RAW/*/{wildcards.sample}*.fq.gz $workdir/RAW/PRBATCH/
+        mv $workdir/RAW/PRBATCH/{wildcards.sample}*_1.fq.gz {output.r1o}
+        mv $workdir/RAW/PRBATCH/{wildcards.sample}*_2.fq.gz {output.r2o}
         """
 ################################################################################
 ### Preprocess the reads using fastp
 rule fastp:
     input:
-        r1i = "RAW/PRBATCH/{sample}_1.fq.gz",
-        r2i = "RAW/PRBATCH/{sample}_2.fq.gz"
+        r1i = "$workdir/RAW/PRBATCH/{sample}_1.fq.gz",
+        r2i = "$workdir/RAW/PRBATCH/{sample}_2.fq.gz"
     output:
-        r1o = temp("PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz"),
-        r2o = temp("PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz"),
-        fastp_html = "PPR/PRBATCH/misc/{sample}.html",
-        fastp_json = "PPR/PRBATCH/misc/{sample}.json"
+        r1o = temp("$workdir/PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz"),
+        r2o = temp("$workdir/PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz"),
+        fastp_html = "$workdir/PPR/PRBATCH/misc/{sample}.html",
+        fastp_json = "$workdir/PPR/PRBATCH/misc/{sample}.json"
     params:
         adapter1 = expand("{adapter1}", adapter1=config['adapter1']),
         adapter2 = expand("{adapter2}", adapter2=config['adapter2'])
@@ -80,9 +80,9 @@ rule fastp:
         mem_gb=24,
         time='00:30:00'
     benchmark:
-        "RUN/PRBATCH/logs/{sample}_fastp.benchmark.tsv"
+        "$workdir/RUN/PRBATCH/logs/{sample}_fastp.benchmark.tsv"
     log:
-        "RUN/PRBATCH/logs/{sample}_fastp.log"
+        "$workdir/RUN/PRBATCH/logs/{sample}_fastp.log"
     message:
         "Using FASTP to trim adapters and low quality sequences for {wildcards.sample}"
     shell:
@@ -107,8 +107,8 @@ rule fastp:
 ## Fetch host genome from ERDA, if not there already, download and index it.
 rule fetch_host_genome:
     output:
-        bt2_index = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
-        rn_catted_ref = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
+        bt2_index = "$workdir/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
+        rn_catted_ref = "$workdir/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -117,7 +117,7 @@ rule fetch_host_genome:
         mem_gb=96,
         time='03:00:00'
     log:
-        "RUN/PRBATCH/logs/host_genome_indexing.log"
+        "$workdir/PRBATCH/logs/host_genome_indexing.log"
     message:
         "Fetching host genome"
     shell:
@@ -133,17 +133,17 @@ rule fetch_host_genome:
 
             then
                 echo "Downloading and indexing reference genome"
-                mkdir -p GEN/HOST_GENOME/
-                wget HG_URL -q -O GEN/HOST_GENOME/HOST_GENOME.fna.gz
+                mkdir -p $workdir/GEN/HOST_GENOME/
+                wget HG_URL -q -O $workdir/GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Add '_' separator for CoverM
                 rename.sh \
-                    in=GEN/HOST_GENOME/HOST_GENOME.fna.gz \
+                    in=$workdir/GEN/HOST_GENOME/HOST_GENOME.fna.gz \
                     out={output.rn_catted_ref} \
                     prefix=HOST_GENOME \
                     -Xmx{resources.mem_gb}G 
                 
-                rm GEN/HOST_GENOME/HOST_GENOME.fna.gz
+                rm $workdir/GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Index catted genomes
                 bowtie2-build \
@@ -153,17 +153,18 @@ rule fetch_host_genome:
                     &> {log}
 
                 # Compress and upload to ERDA for future use
-                tar -I pigz -cvf GEN/HOST_GENOME/HOST_GENOME.tar.gz GEN/HOST_GENOME/*
-                sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put GEN/HOST_GENOME/HOST_GENOME.tar.gz'
-                rm GEN/HOST_GENOME/HOST_GENOME.tar.gz
+                tar -I pigz -cvf $workdir/GEN/HOST_GENOME/HOST_GENOME.tar.gz $workdir/GEN/HOST_GENOME/*
+                sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put $workdir/GEN/HOST_GENOME/HOST_GENOME.tar.gz'
+                rm $workdir/GEN/HOST_GENOME/HOST_GENOME.tar.gz
 
                 # Create a warning that a new genome has been indexed and needs to be logged in AirTable
-                echo "HOST_GENOME has been indexed and needs to be logged in AirTable" > NEW_HOST_GENOME.txt
+                echo "HOST_GENOME has been indexed and needs to be logged in AirTable" > $workdir/NEW_HOST_GENOME.txt
                 
             else 
                 echo "Indexed genome exists on erda, unpacking."
-                tar -xvzf HOST_GENOME.tar.gz
-                rm HOST_GENOME.tar.gz
+                mv HOST_GENOME.tar.gz $workdir/
+                tar -xvzf $workdir/HOST_GENOME.tar.gz
+                rm $workdir/HOST_GENOME.tar.gz
 
         fi
 
@@ -176,10 +177,10 @@ rule fetch_host_genome:
 ### Map samples to host genomes, then split BAMs:
 rule map_to_ref:
     input:
-        r1i = "PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz",
-        r2i = "PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz",
-        catted_ref = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
-        bt2_index = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l"
+        r1i = "$workdir/PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz",
+        r2i = "$workdir/PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz",
+        catted_ref = "$workdir/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
+        bt2_index = "$workdir/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l"
     output:
         all_bam = temp("PPR/PRBATCH/tmp/{sample}.bam"),
         host_bam = temp("PPR/PRBATCH/{sample}_G.bam"),
@@ -193,9 +194,9 @@ rule map_to_ref:
         mem_gb=48,
         time='03:00:00'
     benchmark:
-        "RUN/PRBATCH/logs/{sample}_mapping.benchmark.tsv"
+        "$workdir/RUN/PRBATCH/logs/{sample}_mapping.benchmark.tsv"
     log:
-        "RUN/PRBATCH/logs/{sample}_mapping.log"
+        "$workdir/RUN/PRBATCH/logs/{sample}_mapping.log"
     message:
         "Mapping {wildcards.sample} reads to host genomes"
     shell:
@@ -221,16 +222,16 @@ rule map_to_ref:
 ### Estimate diversity and required sequencing effort using nonpareil
 rule nonpareil:
     input:
-        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq",
-        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq",
+        non_host_r1 = "$workdir/PPR/PRBATCH/{sample}_M_1.fq",
+        non_host_r2 = "$workdir/PPR/PRBATCH/{sample}_M_2.fq",
     output:
-        npo = "PPR/PRBATCH/misc/{sample}.npo",
-        non_host_r1c = "PPR/PRBATCH/{sample}_M_1.fq.gz",
-        non_host_r2c = "PPR/PRBATCH/{sample}_M_2.fq.gz",
+        npo = "$workdir/PPR/PRBATCH/misc/{sample}.npo",
+        non_host_r1c = "$workdir/PPR/PRBATCH/{sample}_M_1.fq.gz",
+        non_host_r2c = "$workdir/PPR/PRBATCH/{sample}_M_2.fq.gz",
     params:
-        sample = "PPR/PRBATCH/misc/{sample}",
-        badsample_r1 = "PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
-        badsample_r2 = "PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz"
+        sample = "$workdir/PPR/PRBATCH/misc/{sample}",
+        badsample_r1 = "$workdir/PPR/PRBATCH/poor_samples/{sample}_M_1.fq.gz",
+        badsample_r2 = "$workdir/PPR/PRBATCH/poor_samples/{sample}_M_2.fq.gz"
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/nonpareil.yaml"
     threads:
@@ -239,12 +240,12 @@ rule nonpareil:
         mem_gb=45,
         time='02:00:00'
     benchmark:
-        "RUN/PRBATCH/logs/{sample}_nonpareil.benchmark.tsv"
+        "$workdir/RUN/PRBATCH/logs/{sample}_nonpareil.benchmark.tsv"
     message:
         "Estimating microbial diversity using nonpareil"
     shell:
         """
-        mkdir -p PPR/PRBATCH/poor_samples
+        mkdir -p $workdir/PPR/PRBATCH/poor_samples
 
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
@@ -278,15 +279,15 @@ rule nonpareil:
 ### Estimate the fraction of bacterial and archaeal DNA using SingleM read fraction
 rule singlem:
     input:
-        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq.gz",
-        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq.gz",
+        non_host_r1 = "$workdir/PPR/PRBATCH/{sample}_M_1.fq.gz",
+        non_host_r2 = "$workdir/PPR/PRBATCH/{sample}_M_2.fq.gz",
     output:
-        pipe = "PPR/PRBATCH/misc/{sample}_pipe.tsv.gz",
-        condense = "PPR/PRBATCH/misc/{sample}_condense.tsv",
-        read_fraction = "PPR/PRBATCH/misc/{sample}_readfraction.tsv",
+        pipe = "$workdir/PPR/PRBATCH/misc/{sample}_pipe.tsv.gz",
+        condense = "$workdir/PPR/PRBATCH/misc/{sample}_condense.tsv",
+        read_fraction = "$workdir/PPR/PRBATCH/misc/{sample}_readfraction.tsv",
     params:
-        pipe_uncompressed = "PPR/PRBATCH/misc/{sample}_pipe.tsv",
-        read_fraction_taxa = "PPR/PRBATCH/misc/{sample}_readfraction_per_taxa.tsv"
+        pipe_uncompressed = "$workdir/PPR/PRBATCH/misc/{sample}_pipe.tsv",
+        read_fraction_taxa = "$workdir/PPR/PRBATCH/misc/{sample}_readfraction_per_taxa.tsv"
 # Current issue with snakemake and pre-built conda environments: https://github.com/snakemake/snakemake/pull/1708
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/singlem.yaml"
@@ -296,7 +297,7 @@ rule singlem:
         mem_gb=45,
         time='02:00:00'
     benchmark:
-        "RUN/PRBATCH/logs/{sample}_singlem.benchmark.tsv"
+        "$workdir/RUN/PRBATCH/logs/{sample}_singlem.benchmark.tsv"
     message:
         "Estimating microbial fraction using singlem"
     shell:
@@ -345,16 +346,16 @@ rule singlem:
 ### Calculate % of each sample's reads mapping to host genome/s (also upload PPR reads to ERDA)
 rule coverM_and_upload_to_ERDA:
     input:
-        bam = "PPR/PRBATCH/{sample}_G.bam",
-        npo = "PPR/PRBATCH/misc/{sample}.npo",
-        pipe = "PPR/PRBATCH/misc/{sample}_pipe.tsv.gz",
-        non_host_r1 = "PPR/PRBATCH/{sample}_M_1.fq.gz",
-        non_host_r2 = "PPR/PRBATCH/{sample}_M_2.fq.gz",
-        host_bam = "PPR/PRBATCH/{sample}_G.bam",
+        bam = "$workdir/PPR/PRBATCH/{sample}_G.bam",
+        npo = "$workdir/PPR/PRBATCH/misc/{sample}.npo",
+        pipe = "$workdir/PPR/PRBATCH/misc/{sample}_pipe.tsv.gz",
+        non_host_r1 = "$workdir/PPR/PRBATCH/{sample}_M_1.fq.gz",
+        non_host_r2 = "$workdir/PPR/PRBATCH/{sample}_M_2.fq.gz",
+        host_bam = "$workdir/PPR/PRBATCH/{sample}_G.bam",
     output:
-        "PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv"
+        "$workdir/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv"
     params:
-        assembly = "GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
+        assembly = "$workdir/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/coverm.yaml"
     threads:
@@ -363,9 +364,9 @@ rule coverM_and_upload_to_ERDA:
         mem_gb=16,
         time='01:00:00'
     benchmark:
-        "RUN/PRBATCH/logs/{sample}_coverM.benchmark.tsv"
+        "$workdir/RUN/PRBATCH/logs/{sample}_coverM.benchmark.tsv"
     log:
-        "RUN/PRBATCH/logs/{sample}_coverM.log"
+        "$workdir/RUN/PRBATCH/logs/{sample}_coverM.log"
     message:
         "Calculating percentage of reads mapped to host genome/s using coverM"
     shell:
@@ -394,16 +395,16 @@ rule coverM_and_upload_to_ERDA:
 ### Create summary table from outputs
 rule report:
     input:
-        coverm = expand("PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
-        fastp = expand("PPR/PRBATCH/misc/{sample}.json", sample=SAMPLE),
-        read_fraction = expand("PPR/PRBATCH/misc/{sample}_readfraction.tsv", sample=SAMPLE)
+        coverm = expand("$workdir/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
+        fastp = expand("$workdir/PPR/PRBATCH/misc/{sample}.json", sample=SAMPLE),
+        read_fraction = expand("$workdir/PPR/PRBATCH/misc/{sample}_readfraction.tsv", sample=SAMPLE)
     output:
-        report = "REP/PRBATCH.tsv",
-        npar_metadata = "PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
+        report = "$workdir/REP/PRBATCH.tsv",
+        npar_metadata = "$workdir/PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
     params:
-        tmpdir = "PPR/PRBATCH/tmp/",
-        npar = expand("PPR/PRBATCH/misc/{sample}.npo", sample=SAMPLE),
-        misc_dir = "PPR/PRBATCH/misc/"
+        tmpdir = "$workdir/PPR/PRBATCH/tmp/",
+        npar = expand("$workdir/PPR/PRBATCH/misc/{sample}.npo", sample=SAMPLE),
+        misc_dir = "$workdir/PPR/PRBATCH/misc/"
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     threads:
@@ -457,6 +458,6 @@ rule report:
 
         #Clean up the files/directories
         rm PRBATCH_stats.tar.gz
-        rm -r GEN/HOST_GENOME/
+        rm -r $workdir/GEN/HOST_GENOME/
 
         """

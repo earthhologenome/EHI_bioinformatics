@@ -1,6 +1,8 @@
 ### Config file for preprocessing pipeline
 ### RE 11/10/2022
 
+workdir: /projects/ehi/data
+
 hostgenome: HOST_GENOME
 
 adapter1: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
