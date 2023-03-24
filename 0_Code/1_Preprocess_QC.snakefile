@@ -38,8 +38,6 @@ rule all:
 ################################################################################
 ### Fetch raw data from ERDA
 rule fetch_raw_reads:
-    input:
-        "$workdir/RUN/PRBATCH/PRBATCH_input.tsv"
     output:
         r1o = temp("$workdir/RAW/PRBATCH/{sample}_1.fq.gz"),
         r2o = temp("$workdir/RAW/PRBATCH/{sample}_2.fq.gz"),
