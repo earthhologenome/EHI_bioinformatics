@@ -52,7 +52,7 @@ sftp erda
 
 It may prompt you to allow the connection, if so, press enter.
 
-Great, you can now launch the preprocessing pipeline via the 'PR_script' column in the 'PR BATCH' tab on AirTable (**Launch view**)!
+Great, you can now launch the preprocessing pipeline via the 'PR_script' column in the 'PR BATCH' tab on AirTable (**Launch view**)! Note that you should select your email address in the 'Email' column to get alerted upon completion. 
 
 Once the run is complete, you'll recieve an email. To input the preprocessing stats into AirTable, first download the file from here:
 ```
