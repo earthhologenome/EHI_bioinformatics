@@ -106,12 +106,12 @@ rule fastp:
 ## Fetch host genome from ERDA, if not there already, download and index it.
 rule fetch_host_genome:
     output:
-        bt2_index = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
-        rn_catted_ref = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
+        bt2_index = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l"
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     params:
-        workdir = config["workdir"]
+        workdir = config["workdir"],
+        rn_catted_ref = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     threads:
         16
     resources:
@@ -124,7 +124,7 @@ rule fetch_host_genome:
     shell:
         """
         # IF statement for if file exists on Mjolnir
-        if [ -f {output.rn_catted_ref} ]
+        if [ -f {output.bt2_index} ]
             then
                 echo "Genome is ready to go!"
 
@@ -140,7 +140,7 @@ rule fetch_host_genome:
                 # Add '_' separator for CoverM
                 rename.sh \
                     in={params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz \
-                    out={output.rn_catted_ref} \
+                    out={params.rn_catted_ref} \
                     prefix=HOST_GENOME \
                     -Xmx{resources.mem_gb}G 
                 
@@ -150,7 +150,7 @@ rule fetch_host_genome:
                 bowtie2-build \
                     --large-index \
                     --threads {threads} \
-                    {output.rn_catted_ref} {output.rn_catted_ref} \
+                    {params.rn_catted_ref} {params.rn_catted_ref} \
                     &> {log}
 
                 # Compress and upload to ERDA for future use
