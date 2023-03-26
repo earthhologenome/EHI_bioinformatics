@@ -245,8 +245,6 @@ rule nonpareil:
         "Estimating microbial diversity using nonpareil"
     shell:
         """
-        mkdir -p {params.workdir}/PPR/PRBATCH/poor_samples
-
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
         #In this case, if R1 has > 100 Mbytes, run, else, skip:
