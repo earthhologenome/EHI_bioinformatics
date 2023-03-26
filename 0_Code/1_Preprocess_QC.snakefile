@@ -227,8 +227,8 @@ rule nonpareil:
         non_host_r2 = "/projects/ehi/data/PPR/PRBATCH/{sample}_M_2.fq",
     output:
         npo = "/projects/ehi/data/PPR/PRBATCH/misc/{sample}.npo",
-        non_host_r1c = "/projects/ehi/data/PPR/PRBATCH/{sample}_M_1.fq.gz",
-        non_host_r2c = "/projects/ehi/data/PPR/PRBATCH/{sample}_M_2.fq.gz",
+        non_host_r1c = temp("/projects/ehi/data/PPR/PRBATCH/{sample}_M_1.fq.gz"),
+        non_host_r2c = temp("/projects/ehi/data/PPR/PRBATCH/{sample}_M_2.fq.gz"),
     params:
         sample = "/projects/ehi/data/PPR/PRBATCH/misc/{sample}",
         workdir = config["workdir"]
