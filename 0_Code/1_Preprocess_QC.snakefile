@@ -154,18 +154,19 @@ rule fetch_host_genome:
                     &> {log}
 
                 # Compress and upload to ERDA for future use
+                cd {params.workdir}/GEN/HOST_GENOME/
                 tar -I pigz -cvf HOST_GENOME.tar.gz {params.workdir}/GEN/HOST_GENOME/*
                 sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put HOST_GENOME.tar.gz'
                 rm HOST_GENOME.tar.gz
+                cd ../../RUN/PRBATCH
 
                 # Create a warning that a new genome has been indexed and needs to be logged in AirTable
                 echo "HOST_GENOME has been indexed and needs to be logged in AirTable" > {params.workdir}/NEW_HOST_GENOME.txt
                 
             else 
                 echo "Indexed genome exists on erda, unpacking."
-                mv HOST_GENOME.tar.gz {params.workdir}/GEN/HOST_GENOME/
-                tar -xvzf {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz
-                rm {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz
+                tar -xvzf {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz --directory {params.workdir}/GEN/HOST_GENOME/
+                rm HOST_GENOME.tar.gz
 
         fi
 
