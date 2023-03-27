@@ -134,17 +134,17 @@ rule fetch_host_genome:
 
             then
                 echo "Downloading and indexing reference genome"
-                mkdir -p GEN/HOST_GENOME/
-                wget HG_URL -q -O GEN/HOST_GENOME/HOST_GENOME.fna.gz
+                mkdir -p {params.workdir}/GEN/HOST_GENOME/
+                wget HG_URL -q -O {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Add '_' separator for CoverM
                 rename.sh \
-                    in=GEN/HOST_GENOME/HOST_GENOME.fna.gz \
+                    in={params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz \
                     out={output.rn_catted_ref} \
                     prefix=HOST_GENOME \
                     -Xmx{resources.mem_gb}G 
                 
-                rm GEN/HOST_GENOME/HOST_GENOME.fna.gz
+                rm {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Index catted genomes
                 bowtie2-build \
@@ -154,8 +154,8 @@ rule fetch_host_genome:
                     &> {log}
 
                 # Compress and upload to ERDA for future use
-                tar -I pigz -cvf GEN/HOST_GENOME/HOST_GENOME.tar.gz GEN/HOST_GENOME/*
-                sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put GEN/HOST_GENOME/HOST_GENOME.tar.gz'
+                tar -I pigz -cvf HOST_GENOME.tar.gz {params.workdir}/GEN/HOST_GENOME/*
+                sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz'
                 rm GEN/HOST_GENOME/HOST_GENOME.tar.gz
 
                 # Create a warning that a new genome has been indexed and needs to be logged in AirTable
@@ -163,8 +163,8 @@ rule fetch_host_genome:
                 
             else 
                 echo "Indexed genome exists on erda, unpacking."
-                tar -xvzf HOST_GENOME.tar.gz
-                rm HOST_GENOME.tar.gz
+                tar -xvzf {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz
+                rm {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz
 
         fi
 
