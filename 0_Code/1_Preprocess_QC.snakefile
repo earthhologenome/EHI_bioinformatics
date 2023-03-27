@@ -343,7 +343,7 @@ rule singlem:
         """
 ################################################################################
 ### Calculate % of each sample's reads mapping to host genome/s (also upload PPR reads to ERDA)
-rule coverM_and_upload_to_ERDA:
+rule coverM:
     input:
         bam = "/projects/ehi/data/PPR/PRBATCH/{sample}_G.bam",
         npo = "/projects/ehi/data/PPR/PRBATCH/misc/{sample}.npo",
@@ -360,7 +360,7 @@ rule coverM_and_upload_to_ERDA:
     threads:
         2
     resources:
-        load=8,
+        load=1,
         mem_gb=16,
         time='01:00:00'
     benchmark:
@@ -386,10 +386,36 @@ rule coverM_and_upload_to_ERDA:
         rm {input.npo}
         fi
 
+        """
+################################################################################
+### Calculate % of each sample's reads mapping to host genome/s (also upload PPR reads to ERDA)
+rule upload_to_ERDA:
+    input:
+        "/projects/ehi/data/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv"
+    output:
+        "/projects/ehi/data/PPR/PRBATCH/misc/{sample}_uploaded"
+    conda:
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/coverm.yaml"
+    threads:
+        1
+    resources:
+        load=8,
+        mem_gb=16,
+        time='01:00:00'
+    log:
+        "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_upload.log"
+    message:
+        "Uploading reads and BAM to ERDA"
+    shell:
+        """
         #Upload preprocessed reads to ERDA for storage
         sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {input.non_host_r1}'
+        sleep 30
         sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {input.non_host_r2}'
+        sleep 30
         sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {input.host_bam}'
+        sleep 15
+        touch {output}
         """
 ################################################################################
 ### Create summary table from outputs
@@ -397,7 +423,8 @@ rule report:
     input:
         coverm = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
         fastp = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}.json", sample=SAMPLE),
-        read_fraction = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_readfraction.tsv", sample=SAMPLE)
+        read_fraction = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_readfraction.tsv", sample=SAMPLE),
+        uploaded = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_uploaded", sample=SAMPLE)
     output:
         report = "/projects/ehi/data/REP/PRBATCH.tsv",
         npar_metadata = "/projects/ehi/data/PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
