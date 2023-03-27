@@ -47,6 +47,7 @@ rule fetch_raw_reads:
     threads:
         1
     resources:
+        load=8,
         mem_gb=8,
         time='00:15:00'
     message:
@@ -76,6 +77,7 @@ rule fastp:
     threads:
         8
     resources:
+        load=1,
         mem_gb=24,
         time='00:30:00'
     benchmark:
@@ -115,6 +117,7 @@ rule fetch_host_genome:
     threads:
         16
     resources:
+        load=1,
         mem_gb=96,
         time='03:00:00'
     log:
@@ -193,6 +196,7 @@ rule map_to_ref:
     threads:
         8
     resources:
+        load=1,
         mem_gb=48,
         time='03:00:00'
     benchmark:
@@ -238,6 +242,7 @@ rule nonpareil:
     threads:
         8
     resources:
+        load=1,
         mem_gb=45,
         time='02:00:00'
     benchmark:
@@ -287,6 +292,7 @@ rule singlem:
     threads:
         8
     resources:
+        load=1,
         mem_gb=45,
         time='02:00:00'
     benchmark:
@@ -354,6 +360,7 @@ rule coverM_and_upload_to_ERDA:
     threads:
         2
     resources:
+        load=8,
         mem_gb=16,
         time='01:00:00'
     benchmark:
@@ -404,6 +411,7 @@ rule report:
     threads:
         1
     resources:
+        load=1,
         mem_gb=24,
         time='00:10:00'
     message:
