@@ -106,12 +106,12 @@ rule fastp:
 ## Fetch host genome from ERDA, if not there already, download and index it.
 rule fetch_host_genome:
     output:
-        bt2_index = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l"
+        bt2_index = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
+        rn_catted_ref = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     params:
-        workdir = config["workdir"],
-        rn_catted_ref = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
+        workdir = config["workdir"]
     threads:
         16
     resources:
@@ -139,18 +139,18 @@ rule fetch_host_genome:
 
                 # Add '_' separator for CoverM
                 rename.sh \
-                    in={params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz \
-                    out={params.rn_catted_ref} \
+                    in=GEN/HOST_GENOME/HOST_GENOME.fna.gz \
+                    out={output.rn_catted_ref} \
                     prefix=HOST_GENOME \
                     -Xmx{resources.mem_gb}G 
                 
-                rm {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz
+                rm GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Index catted genomes
                 bowtie2-build \
                     --large-index \
                     --threads {threads} \
-                    {params.rn_catted_ref} {params.rn_catted_ref} \
+                    {output.rn_catted_ref} {output.rn_catted_ref} \
                     &> {log}
 
                 # Compress and upload to ERDA for future use
@@ -163,7 +163,6 @@ rule fetch_host_genome:
                 
             else 
                 echo "Indexed genome exists on erda, unpacking."
-                mv HOST_GENOME.tar.gz {params.workdir}/
                 tar -xvzf HOST_GENOME.tar.gz
                 rm HOST_GENOME.tar.gz
 
