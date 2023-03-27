@@ -391,7 +391,10 @@ rule coverM:
 ### Calculate % of each sample's reads mapping to host genome/s (also upload PPR reads to ERDA)
 rule upload_to_ERDA:
     input:
-        "/projects/ehi/data/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv"
+        non_host_r1 = "/projects/ehi/data/PPR/PRBATCH/{sample}_M_1.fq.gz",
+        non_host_r2 = "/projects/ehi/data/PPR/PRBATCH/{sample}_M_2.fq.gz",
+        host_bam = "/projects/ehi/data/PPR/PRBATCH/{sample}_G.bam",
+        coverm = "/projects/ehi/data/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv"
     output:
         "/projects/ehi/data/PPR/PRBATCH/misc/{sample}_uploaded"
     conda:
