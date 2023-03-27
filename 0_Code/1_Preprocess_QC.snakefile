@@ -134,8 +134,8 @@ rule fetch_host_genome:
 
             then
                 echo "Downloading and indexing reference genome"
-                mkdir -p {params.workdir}/GEN/HOST_GENOME/
-                wget HG_URL -q -O {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz
+                mkdir -p GEN/HOST_GENOME/
+                wget HG_URL -q -O GEN/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Add '_' separator for CoverM
                 rename.sh \
@@ -154,9 +154,9 @@ rule fetch_host_genome:
                     &> {log}
 
                 # Compress and upload to ERDA for future use
-                tar -I pigz -cvf {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz {params.workdir}/GEN/HOST_GENOME/*
-                sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz'
-                rm {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz
+                tar -I pigz -cvf GEN/HOST_GENOME/HOST_GENOME.tar.gz GEN/HOST_GENOME/*
+                sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put GEN/HOST_GENOME/HOST_GENOME.tar.gz'
+                rm GEN/HOST_GENOME/HOST_GENOME.tar.gz
 
                 # Create a warning that a new genome has been indexed and needs to be logged in AirTable
                 echo "HOST_GENOME has been indexed and needs to be logged in AirTable" > {params.workdir}/NEW_HOST_GENOME.txt
@@ -164,8 +164,8 @@ rule fetch_host_genome:
             else 
                 echo "Indexed genome exists on erda, unpacking."
                 mv HOST_GENOME.tar.gz {params.workdir}/
-                tar -xvzf {params.workdir}/HOST_GENOME.tar.gz
-                rm {params.workdir}/HOST_GENOME.tar.gz
+                tar -xvzf HOST_GENOME.tar.gz
+                rm HOST_GENOME.tar.gz
 
         fi
 
