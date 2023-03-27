@@ -155,7 +155,7 @@ rule fetch_host_genome:
 
                 # Compress and upload to ERDA for future use
                 cd {params.workdir}/GEN/HOST_GENOME/
-                tar -I pigz -cvf HOST_GENOME.tar.gz {params.workdir}/GEN/HOST_GENOME/*
+                tar -I pigz -cvf HOST_GENOME.tar.gz *
                 sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put HOST_GENOME.tar.gz'
                 rm HOST_GENOME.tar.gz
                 cd ../../RUN/PRBATCH
@@ -165,7 +165,7 @@ rule fetch_host_genome:
                 
             else 
                 echo "Indexed genome exists on erda, unpacking."
-                tar -xvzf {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.tar.gz --directory {params.workdir}/GEN/HOST_GENOME/
+                tar -xvzf HOST_GENOME.tar.gz --directory {params.workdir}/GEN/HOST_GENOME/
                 rm HOST_GENOME.tar.gz
 
         fi
