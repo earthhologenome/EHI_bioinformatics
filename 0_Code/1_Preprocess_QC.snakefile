@@ -35,8 +35,34 @@ rule all:
         "/projects/ehi/data/REP/PRBATCH.tsv",
         "/projects/ehi/data/PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv",
 ################################################################################
+### Create PRB folder on ERDA
+rule create_PRB_folder:
+    output:
+        "/projects/ehi/data/PPR/PRBATCH/ERDA_folder_created"
+    conda:
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/lftp.yaml"
+    threads:
+        1
+    resources:
+        load=1,
+        mem_gb=8,
+        time='00:15:00'
+    message:
+        "Creating PRB folder on ERDA"
+    shell:
+        """
+        lftp sftp://erda -e "mkdir EarthHologenomeInitiative/Data/PPR/PRBATCH ; bye"
+        touch {output}
+
+        #Also, log the AirTable that the PRB is running!
+        python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/log_prb_start_airtable.py --code=PRBATCH
+
+        """
+################################################################################
 ### Fetch raw data from ERDA
 rule download_from_ERDA:
+    input:
+        "/projects/ehi/data/PPR/PRBATCH/ERDA_folder_created"
     output:
         r1o = temp("/projects/ehi/data/RAW/PRBATCH/{sample}_1.fq.gz"),
         r2o = temp("/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz"),
@@ -108,8 +134,8 @@ rule fastp:
 ## Fetch host genome from ERDA, if not there already, download and index it.
 rule fetch_host_genome:
     output:
-        bt2_index = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
-        rn_catted_ref = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz"
+        bt2_index = "/projects/ehi/data/RUN/PRBATCH/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
+        rn_catted_ref = "/projects/ehi/data/RUN/PRBATCH/HOST_GENOME/HOST_GENOME_RN.fna.gz"
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
     params:
@@ -137,17 +163,17 @@ rule fetch_host_genome:
 
             then
                 echo "Downloading and indexing reference genome"
-                mkdir -p {params.workdir}/GEN/HOST_GENOME/
-                wget HG_URL -q -O {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz
+                mkdir -p {params.workdir}/RUN/PRBATCH/HOST_GENOME/
+                wget HG_URL -q -O {params.workdir}/RUN/PRBATCH/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Add '_' separator for CoverM
                 rename.sh \
-                    in={params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz \
+                    in={params.workdir}/RUN/PRBATCH/HOST_GENOME/HOST_GENOME.fna.gz \
                     out={output.rn_catted_ref} \
                     prefix=HOST_GENOME \
                     -Xmx{resources.mem_gb}G 
                 
-                rm {params.workdir}/GEN/HOST_GENOME/HOST_GENOME.fna.gz
+                rm {params.workdir}/RUN/PRBATCH/HOST_GENOME/HOST_GENOME.fna.gz
 
                 # Index catted genomes
                 bowtie2-build \
@@ -157,26 +183,22 @@ rule fetch_host_genome:
                     &> {log}
 
                 # Compress and upload to ERDA for future use
-                cd {params.workdir}/GEN/HOST_GENOME/
+                cd {params.workdir}/RUN/PRBATCH/HOST_GENOME/
                 tar -I pigz -cvf HOST_GENOME.tar.gz *
                 sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put HOST_GENOME.tar.gz'
                 rm HOST_GENOME.tar.gz
-                cd ../../RUN/PRBATCH
+                cd {params.workdir}/RUN/PRBATCH
 
-                # Create a warning that a new genome has been indexed and needs to be logged in AirTable
-                echo "HOST_GENOME has been indexed and needs to be logged in AirTable" > {params.workdir}/NEW_HOST_GENOME.txt
-                
+                # Log AirTable that a new genome has been indexed and uploaded to ERDA
+                python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/log_genome_airtable.py --code=HOST_GENOME
+
             else 
                 echo "Indexed genome exists on erda, unpacking."
-                tar -xvzf HOST_GENOME.tar.gz --directory {params.workdir}/GEN/HOST_GENOME/
+                tar -xvzf HOST_GENOME.tar.gz --directory {params.workdir}/RUN/PRBATCH/HOST_GENOME/
                 rm HOST_GENOME.tar.gz
 
         fi
 
-        # Create PRBATCH folder on ERDA for uploading processed reads and BAMs
-        sftp erda:/EarthHologenomeInitiative/Data/PPR <<< $'mkdir PRBATCH'
-
-        # tmp file for if another person is using the same genome? so it doesn't get deleted?
         """
 ################################################################################
 ### Map samples to host genomes, then split BAMs:
@@ -184,8 +206,8 @@ rule map_to_ref:
     input:
         r1i = "/projects/ehi/data/PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz",
         r2i = "/projects/ehi/data/PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz",
-        catted_ref = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
-        bt2_index = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l"
+        catted_ref = "/projects/ehi/data/RUN/PRBATCH/HOST_GENOME/HOST_GENOME_RN.fna.gz",
+        bt2_index = "/projects/ehi/data/RUN/PRBATCH/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l"
     output:
         all_bam = temp("/projects/ehi/data/PPR/PRBATCH/tmp/{sample}.bam"),
         host_bam = temp("/projects/ehi/data/PPR/PRBATCH/{sample}_G.bam"),
@@ -355,7 +377,7 @@ rule coverM:
     output:
         "/projects/ehi/data/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv"
     params:
-        assembly = "/projects/ehi/data/GEN/HOST_GENOME/HOST_GENOME_RN.fna.gz",
+        assembly = "/projects/ehi/data/RUN/PRBATCH/HOST_GENOME/HOST_GENOME_RN.fna.gz",
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/coverm.yaml"
     threads:
@@ -473,7 +495,7 @@ rule report:
         for i in {input.read_fraction}; do sed '1d;' $i | cut -f2,3,4 >> {params.tmpdir}/singlem.tsv; done
 
         paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/singlem.tsv > {params.tmpdir}/preprocessing_stats.tsv
-        echo -e "sample\treads_pre_fastp\treads_post_fastp\tbases_pre_fastp\tbases_post_fastp\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
+        echo -e "EHI_number\treads_pre_fastp\treads_post_fastp\tbases_pre_fastp\tbases_post_fastp\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
 
         cp {output.report} {params.misc_dir}
@@ -489,6 +511,12 @@ rule report:
 
         #Clean up the files/directories
         rm PRBATCH_stats.tar.gz
-        rm -r {params.workdir}/GEN/HOST_GENOME/
+        rm -r {params.workdir}/RUN/PRBATCH/HOST_GENOME/
+
+        #Automatically update the AirTable with the preprocessing stats
+        python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/add_prb_stats_airtable.py --report={output.report}   
+
+        #Indicate that the PRB is done in AirTable
+        python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/log_prb_done_airtable.py --code=PRBATCH
 
         """
