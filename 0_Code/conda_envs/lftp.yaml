@@ -5,3 +5,4 @@
     - defaults
  dependencies:
     - lftp=4.9.2
+    - pandas
