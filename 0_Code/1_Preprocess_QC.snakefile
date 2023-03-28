@@ -341,7 +341,7 @@ rule singlem:
         #IF statement for files without data
         if [ $(( $(stat -c '%s' {output.condense}) )) -eq 25 ]
         then
-        echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\nNA\tNA\tNA\tNA" > {output.read_fraction}
+        echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\nNA\t0\t0\t0.00%" > {output.read_fraction}
         
         else        
         #Run singlem read_fraction
