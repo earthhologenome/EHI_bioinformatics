@@ -437,7 +437,7 @@ rule report:
         misc_dir = "/projects/ehi/data/PPR/PRBATCH/misc/",
         workdir = config["workdir"]
     conda:
-        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/1_Preprocess_QC.yaml"
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/lftp.yaml"
     threads:
         1
     resources:
