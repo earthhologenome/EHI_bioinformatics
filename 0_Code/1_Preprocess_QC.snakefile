@@ -303,7 +303,8 @@ rule singlem:
         """
         #Temp fix until snakemake is fixed or singlem conda recipe is updated
         export PATH='/projects/ehi/data/0_Environments/github_repos/singlem/bin':$PATH
-        
+        export SINGLEM_METAPACKAGE_PATH='/projects/ehi/data/0_Environments/databases/S3.1.0.metapackage_20221209.smpkg.zb/
+
         #Run singlem pipe
         singlem pipe \
             -1 {input.non_host_r1} \
