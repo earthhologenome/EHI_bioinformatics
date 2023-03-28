@@ -303,7 +303,7 @@ rule singlem:
         """
         #Temp fix until snakemake is fixed or singlem conda recipe is updated
         export PATH='/projects/ehi/data/0_Environments/github_repos/singlem/bin':$PATH
-        export SINGLEM_METAPACKAGE_PATH='/projects/ehi/data/0_Environments/databases/S3.1.0.metapackage_20221209.smpkg.zb/
+        export SINGLEM_METAPACKAGE_PATH='/projects/ehi/data/0_Environments/databases/S3.1.0.metapackage_20221209.smpkg.zb/'
 
         #Run singlem pipe
         singlem pipe \
@@ -473,7 +473,7 @@ rule report:
         for i in {input.read_fraction}; do sed '1d;' $i | cut -f2,3,4 >> {params.tmpdir}/singlem.tsv; done
 
         paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/singlem.tsv > {params.tmpdir}/preprocessing_stats.tsv
-        echo -e "sample\treads_pre_filt\treads_post_filt\tbases_pre_filt\tbases_post_filt\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
+        echo -e "sample\treads_pre_fastp\treads_post_fastp\tbases_pre_fastp\tbases_post_fastp\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
 
         cp {output.report} {params.misc_dir}
