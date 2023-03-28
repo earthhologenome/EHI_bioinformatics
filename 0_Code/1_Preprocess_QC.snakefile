@@ -36,7 +36,7 @@ rule all:
         "/projects/ehi/data/PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv",
 ################################################################################
 ### Fetch raw data from ERDA
-rule fetch_raw_reads:
+rule download_from_ERDA:
     output:
         r1o = temp("/projects/ehi/data/RAW/PRBATCH/{sample}_1.fq.gz"),
         r2o = temp("/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz"),
@@ -54,9 +54,9 @@ rule fetch_raw_reads:
         "Fetching {wildcards.sample} from ERDA"
     shell:
         """
-        sftp erda:/EarthHologenomeInitiative/Data/RAW/*/{wildcards.sample}*.fq.gz {params.workdir}/RAW/PRBATCH/
-        mv {params.workdir}/RAW/PRBATCH/{wildcards.sample}*_1.fq.gz {output.r1o}
-        mv {params.workdir}/RAW/PRBATCH/{wildcards.sample}*_2.fq.gz {output.r2o}
+        lftp sftp://erda -e "mirror --include-glob='{wildcards.sample}*.fq.gz' /EarthHologenomeInitiative/Data/RAW/ {params.workdir}/RAW/PRBATCH/; bye"
+        mv {params.workdir}/RAW/PRBATCH/*/{wildcards.sample}*_1.fq.gz {output.r1o}
+        mv {params.workdir}/RAW/PRBATCH/*/{wildcards.sample}*_2.fq.gz {output.r2o}
         """
 ################################################################################
 ### Preprocess the reads using fastp
@@ -412,12 +412,11 @@ rule upload_to_ERDA:
     shell:
         """
         #Upload preprocessed reads to ERDA for storage
-        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {input.non_host_r1}'
-        sleep 30
-        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {input.non_host_r2}'
-        sleep 30
-        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put {input.host_bam}'
-        sleep 15
+        lftp sftp://erda -e "put {input.non_host_r1} -o /EarthHologenomeInitiative/Data/PPR/PRBATCH/; bye"
+        sleep 10
+        lftp sftp://erda -e "put {input.non_host_r2} -o /EarthHologenomeInitiative/Data/PPR/PRBATCH/; bye"
+        sleep 10
+        lftp sftp://erda -e "put {input.host_bam} -o /EarthHologenomeInitiative/Data/PPR/PRBATCH/; bye"
         touch {output}
         """
 ################################################################################
