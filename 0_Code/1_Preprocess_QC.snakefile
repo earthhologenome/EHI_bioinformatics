@@ -483,8 +483,9 @@ rule report:
         rm -r {params.tmpdir}
 
         #Upload stats and report to ERDA for storage
-        sftp erda:/EarthHologenomeInitiative/Data/PPR/PRBATCH/ <<< $'put PRBATCH_stats.tar.gz'
-        sftp erda:/EarthHologenomeInitiative/Data/REP/ <<< $'put {output.report}'
+        lftp sftp://erda -e "put PRBATCH_stats.tar.gz -o /EarthHologenomeInitiative/Data/PPR/PRBATCH/; bye"
+        sleep 10
+        lftp sftp://erda -e "put {output.report} -o /EarthHologenomeInitiative/Data/REP/; bye"
 
         #Clean up the files/directories
         rm PRBATCH_stats.tar.gz
