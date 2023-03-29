@@ -2,7 +2,7 @@
 # 🐨->💩->🦠->🧬->🖥️->😏
 Bioinformatics pipeline to process EHI data.
 
-*updated 24/03/2023, Raphael Eisenhofer*
+*updated 29/03/2023, Raphael Eisenhofer*
 
 #### General information:
 This pipeline uses [![Snakemake](https://img.shields.io/badge/snakemake-≥5.6.0-brightgreen.svg?style=flat)](https://snakemake.readthedocs.io), and manages dependencies using conda (or mamba) for reproducibility and deployability. The 0_Code directory contains the snakefiles, scripts, and conda environment yamls. 
@@ -57,12 +57,6 @@ Great, you can now launch the preprocessing pipeline via the 'PR_script' column 
 ## WARNING
 ### ERDA only allows 16 concurrent sessions per user, so for now, please only launch a maximum of 2 preprocessing batches at any given time.
 
-Once the run is complete, you'll recieve an email. To input the preprocessing stats into AirTable, first download the file from here:
-```
-/projects/ehi/data/REP/PRBXXXX.tsv
-```
-Where XXXX is your PRB code.
-
-You can then copy/paste the rows (not the header) into AirTable ('PR_Preprocessing' tab; 'Output' view). Remember to fiter by PRB, and double check to make sure the right data is going to the right rows.
+The pipeline has been written such that the output stats are automatically inserted into the EHI AirTable through the magical powers of API, so sit back and relax.
 
 Voila!
