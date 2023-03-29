@@ -373,7 +373,7 @@ rule singlem:
         if [ -f {params.read_fraction_taxa} ]
         then
         #Compress read_fraction_per_taxa file
-        gzip {params.read_fraction_taxa}
+        gzip -f {params.read_fraction_taxa}
 
         else
         echo "no microbes in sample"
