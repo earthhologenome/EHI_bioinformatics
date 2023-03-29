@@ -6,6 +6,7 @@ import json
 #Load in CSV file
 parser = argparse.ArgumentParser()
 parser.add_argument('--report', required=True, help='Path to report file')
+parser.add_argument('--prb', required=True, help='PR batch number')
 args = parser.parse_args()
 
 #Read the API key from config file
@@ -25,9 +26,9 @@ df = pd.read_csv(args.report, sep='\t')
 
 # Loop through each row in the dataframe
 for i, row in df.iterrows():
-    # Get the record ID for the row based on the value in the 'sample' column
+    # Get the record ID for the row based on the value in the 'ehi_number' column and 'pr_batch'
     params = {
-        'filterByFormula': f"{{EHI_number}} = '{row['EHI_number']}'",
+        'filterByFormula': f"AND({{EHI_number}} = '{row['EHI_number']}', {{PR_Batch}} = '{args.prb}')",        
         'maxRecords': 1
     }
     response = requests.get(url, headers=headers, params=params)

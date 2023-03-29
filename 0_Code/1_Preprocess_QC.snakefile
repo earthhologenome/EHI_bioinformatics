@@ -275,8 +275,8 @@ rule nonpareil:
         """
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
-        #In this case, if R1 has > 100 Mbytes, run, else, skip:
-        if [ $(( $(stat -c '%s' {input.non_host_r1}) / 1024 / 1024 )) -gt 100 ]
+        #In this case, if R1 has > 150 Mbytes, run, else, skip:
+        if [ $(( $(stat -c '%s' {input.non_host_r1}) / 1024 / 1024 )) -gt 150 ]
         then
         #Run nonpareil
         nonpareil \
@@ -327,6 +327,13 @@ rule singlem:
         export PATH='/projects/ehi/data/0_Environments/github_repos/singlem/bin':$PATH
         export SINGLEM_METAPACKAGE_PATH='/projects/ehi/data/0_Environments/databases/S3.1.0.metapackage_20221209.smpkg.zb/'
 
+        #IF statement to account for situations where there are not enough
+        #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
+        #In this case, if R1 has > 150 Mbytes, run, else, skip:
+
+        if [ $(( $(stat -c '%s' {input.non_host_r1}) / 1024 / 1024 )) -gt 150 ]
+        then
+
         #Run singlem pipe
         singlem pipe \
             -1 {input.non_host_r1} \
@@ -338,21 +345,27 @@ rule singlem:
         #Compress pipe file
         gzip {params.pipe_uncompressed}
 
-        #IF statement for files without data
-        if [ $(( $(stat -c '%s' {output.condense}) )) -eq 25 ]
-        then
-        echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\nNA\t0\t0\t0.00%" > {output.read_fraction}
-        
-        else        
-        #Run singlem read_fraction
-        singlem read_fraction \
-            -1 {input.non_host_r1} \
-            -2 {input.non_host_r2} \
-            --input-profile {output.condense} \
-            --output-tsv {output.read_fraction} \
-            --output-per-taxon-read-fractions {params.read_fraction_taxa}
+            #IF statement for files without data
+            if [ $(( $(stat -c '%s' {output.condense}) )) -eq 25 ]
+            then
+            echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\nNA\tNA\tNA\tNA" > {output.read_fraction}
+            
+            else        
+            #Run singlem read_fraction
+            singlem read_fraction \
+                -1 {input.non_host_r1} \
+                -2 {input.non_host_r2} \
+                --input-profile {output.condense} \
+                --output-tsv {output.read_fraction} \
+                --output-per-taxon-read-fractions {params.read_fraction_taxa}
+            fi
+
+        #Otheriwse, don't run singlem
+        else
+        echo "SingleM analysis not performed"
+
         fi
-        
+
         #If statement for cases when singlem does not produce a condense output
         if [ -f {params.read_fraction_taxa} ]
         then
@@ -514,7 +527,7 @@ rule report:
         rm -r {params.workdir}/RUN/PRBATCH/HOST_GENOME/
 
         #Automatically update the AirTable with the preprocessing stats
-        python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/add_prb_stats_airtable.py --report={output.report}   
+        python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/add_prb_stats_airtable.py --report={output.report} --prb=PRBATCH 
 
         #Indicate that the PRB is done in AirTable
         python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/log_prb_done_airtable.py --code=PRBATCH
