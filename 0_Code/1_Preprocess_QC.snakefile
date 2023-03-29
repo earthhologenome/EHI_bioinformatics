@@ -363,7 +363,10 @@ rule singlem:
         #Otheriwse, don't run singlem
         else
         echo "SingleM analysis not performed"
-
+        touch {output.condense}
+        touch {output.pipe}
+        touch {output.read_fraction}
+        
         fi
 
         #If statement for cases when singlem does not produce a condense output
