@@ -518,8 +518,6 @@ rule report:
         cp {output.npar_metadata} {params.misc_dir}
         tar -czf PRBATCH_stats.tar.gz {params.misc_dir}
 
-        rm -r {params.tmpdir}
-
         #Upload stats and report to ERDA for storage
         lftp sftp://erda -e "put PRBATCH_stats.tar.gz -o /EarthHologenomeInitiative/Data/PPR/PRBATCH/; bye"
         sleep 10
@@ -528,6 +526,8 @@ rule report:
         #Clean up the files/directories
         rm PRBATCH_stats.tar.gz
         rm -r {params.workdir}/RUN/PRBATCH/HOST_GENOME/
+        rm -r {params.misc_dir}
+        rm -r {params.tmpdir}
 
         #Automatically update the AirTable with the preprocessing stats
         python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/add_prb_stats_airtable.py --report={output.report} --prb=PRBATCH 
