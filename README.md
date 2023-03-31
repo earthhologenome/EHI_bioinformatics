@@ -23,7 +23,7 @@ Enter file in which to save the key (/home/ncl550/.ssh/id_rsa):
 
 Press enter.
 
-Next, we need to setup your ssh config file. If this doesn't exist already, create it here:
+Next, we need to setup your ssh config file. If this doesn't exist already, create it here (**using your own user name, of course!**):
 ```
 /home/ncl550/.ssh/config
 ```
