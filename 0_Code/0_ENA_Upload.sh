@@ -142,55 +142,6 @@ while read EHI group filename;
 done < EHIno_group_filename.tsv
 
 
-##Setup a snakefile per species
-mkdir -p temp_snakefiles
-
-for group in `pwd`/1_References/*;
-  do cp `pwd`/0_Code/1_Preprocess_QC.snakefile temp_snakefiles/$(basename $group)_1_Preprocess_QC.snakefile;
-done
-
-# Edit sample group paths for read input
-for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@1_Untrimmed/\*_1.fastq.gz@1_Untrimmed/$(basename ${group/_1_Preprocess_QC.snakefile/})/*_1.fastq.gz@" $group;
-done
-
-for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@1_Untrimmed/{sample}_1.fastq.gz@1_Untrimmed/$(basename ${group/_1_Preprocess_QC.snakefile/})/{sample}_1.fastq.gz@" $group;
-done
-
-for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@1_Untrimmed/{sample}_2.fastq.gz@1_Untrimmed/$(basename ${group/_1_Preprocess_QC.snakefile/})/{sample}_2.fastq.gz@" $group;
-done
-
-
-# Edit target reference genome path for input/output in rule 'index_ref' and input in rule 'map_to_ref'
-for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@\"1_References@\"1_References/$(basename ${group/_1_Preprocess_QC.snakefile/})@" $group;
-done
-
-# Edit snakefile to create a 'log' and 'benchmark' folder per group
-for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@0_Logs@0_Logs/$(basename ${group/_1_Preprocess_QC.snakefile/})@" $group;
-done
-
-# Edit snakefile to have group name in final report
-for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@_report.tsv@$(basename ${group/_1_Preprocess_QC.snakefile/})_report.tsv@g" $group;
-done
-
-# Edit snakefile to have group name in nonpareil metadata
-for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@_nonpareil_metadata@$(basename ${group/_1_Preprocess_QC.snakefile/})_nonpareil_metadata@g" $group;
-done
-
-# Edit snakefile to output non-host reads into group-specific folders
-for group in temp_snakefiles/*.snakefile;
-  do sed -i'' "s@2_Reads/4_Host_removed/@2_Reads/4_Host_removed/$(basename ${group/_1_Preprocess_QC.snakefile/})/@g" $group;
-done
-
-
-
-
 ##Create the ENA run template file:
 #Create header
 echo -e "alias\texperiment_alias\tfile_name\tfile_type\tfile_checksum" > run_headers.tsv

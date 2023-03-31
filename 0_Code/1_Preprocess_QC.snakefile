@@ -55,7 +55,7 @@ rule create_PRB_folder:
         touch {output}
 
         #Also, log the AirTable that the PRB is running!
-        python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/log_prb_start_airtable.py --code=PRBATCH
+        python /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/airtable/log_prb_start_airtable.py --code=PRBATCH
 
         """
 ################################################################################
@@ -190,7 +190,7 @@ rule fetch_host_genome:
                 cd {params.workdir}/RUN/PRBATCH
 
                 # Log AirTable that a new genome has been indexed and uploaded to ERDA
-                python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/log_genome_airtable.py --code=HOST_GENOME
+                python /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/airtable/log_genome_airtable.py --code=HOST_GENOME
 
             else 
                 echo "Indexed genome exists on erda, unpacking."
@@ -530,9 +530,9 @@ rule report:
         rm -r {params.workdir}/RUN/PRBATCH/HOST_GENOME/
 
         #Automatically update the AirTable with the preprocessing stats
-        python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/add_prb_stats_airtable.py --report={output.report} --prb=PRBATCH 
+        python /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/airtable/add_prb_stats_airtable.py --report={output.report} --prb=PRBATCH 
 
         #Indicate that the PRB is done in AirTable
-        python /projects/ehi/data/0_Code/EHI_bioinformatics_1/0_Code/airtable/log_prb_done_airtable.py --code=PRBATCH
+        python /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/airtable/log_prb_done_airtable.py --code=PRBATCH
 
         """
