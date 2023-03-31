@@ -23,6 +23,20 @@ Enter file in which to save the key (/home/ncl550/.ssh/id_rsa):
 
 Press enter.
 
+Next, we need to setup your ssh config file. If this doesn't exist already, create it here (**using your own user name, of course!**):
+```
+/home/ncl550/.ssh/config
+```
+
+And within this file, add your erda alias like so (**use your email address**):
+```
+Host erda ucph-erda
+ Hostname io.erda.dk
+ VerifyHostKeyDNS yes
+ User raphael.eisenhofer@sund.ku.dk
+ Port 22
+```
+
 Now copy your public key (you'll need to change your path to match your user number):
 ```
 more /home/ncl550/.ssh/id_rsa.pub

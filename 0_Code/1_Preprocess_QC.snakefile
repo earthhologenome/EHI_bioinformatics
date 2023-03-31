@@ -348,7 +348,7 @@ rule singlem:
             #IF statement for files without data
             if [ $(( $(stat -c '%s' {output.condense}) )) -eq 25 ]
             then
-            echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\nNA\tNA\tNA\tNA" > {output.read_fraction}
+            echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\n0\t0\t0\t0" > {output.read_fraction}
             
             else        
             #Run singlem read_fraction
@@ -365,7 +365,7 @@ rule singlem:
         echo "SingleM analysis not performed"
         touch {output.condense}
         touch {output.pipe}
-        touch {output.read_fraction}
+        echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\n0\t0\t0\t0" > {output.read_fraction}
         
         fi
 
@@ -373,7 +373,7 @@ rule singlem:
         if [ -f {params.read_fraction_taxa} ]
         then
         #Compress read_fraction_per_taxa file
-        gzip {params.read_fraction_taxa}
+        gzip -f {params.read_fraction_taxa}
 
         else
         echo "no microbes in sample"
@@ -518,8 +518,6 @@ rule report:
         cp {output.npar_metadata} {params.misc_dir}
         tar -czf PRBATCH_stats.tar.gz {params.misc_dir}
 
-        rm -r {params.tmpdir}
-
         #Upload stats and report to ERDA for storage
         lftp sftp://erda -e "put PRBATCH_stats.tar.gz -o /EarthHologenomeInitiative/Data/PPR/PRBATCH/; bye"
         sleep 10
@@ -528,6 +526,8 @@ rule report:
         #Clean up the files/directories
         rm PRBATCH_stats.tar.gz
         rm -r {params.workdir}/RUN/PRBATCH/HOST_GENOME/
+        rm -r {params.misc_dir}
+        rm -r {params.tmpdir}
 
         #Automatically update the AirTable with the preprocessing stats
         python /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/airtable/add_prb_stats_airtable.py --report={output.report} --prb=PRBATCH 
