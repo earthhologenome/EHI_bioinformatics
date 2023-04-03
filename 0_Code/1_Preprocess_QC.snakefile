@@ -118,30 +118,6 @@ def estimate_time_fastp(wildcards):
     estimate_time_fastp = ((input_size_gb * 2 ) + 6) / 2
     return int(estimate_time_fastp)
 
-def estimate_time_singlem(wildcards):
-    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
-    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
-    input_files = [r1_path, r2_path]
-    input_size = sum(os.path.getsize(f) for f in input_files)
-    # convert from bytes to gigabytes
-    input_size_gb = input_size / (1024 * 1024 * 1024)
-    # add 1 to input size (in GB) and multiply 5 to get time. 
-    estimate_time_singlem = ((input_size_gb * 2 ) + 1) * 5
-    return int(estimate_time_singlem)
-
-
-def estimate_time_nonpareil(wildcards):
-    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
-    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
-    input_files = [r1_path, r2_path]
-    input_size = sum(os.path.getsize(f) for f in input_files)
-    # convert from bytes to gigabytes
-    input_size_gb = input_size / (1024 * 1024 * 1024)
-    # add 1 to input size (in GB) and multiply 5 to get time. 
-    estimate_time_nonpareil = ((input_size_gb * 2 ) + 2) * 2.2
-    return int(estimate_time_nonpareil)
-
-
 ################################################################################
 ### Preprocess the reads using fastp
 rule fastp:
@@ -319,6 +295,31 @@ rule map_to_ref:
         samtools view -b -F12 -@ {threads} {output.all_bam} \
         | samtools sort -@ {threads} -o {output.host_bam} -
         """
+
+def estimate_time_singlem(wildcards):
+    r1_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_1.fq"
+    r2_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_2.fq"
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    # add 1 to input size (in GB) and multiply 5 to get time. 
+    estimate_time_singlem = ((input_size_gb * 2 ) + 1) * 5
+    return int(estimate_time_singlem)
+
+
+def estimate_time_nonpareil(wildcards):
+    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
+    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    # add 1 to input size (in GB) and multiply 5 to get time. 
+    estimate_time_nonpareil = ((input_size_gb * 2 ) + 2) * 2.2
+    return int(estimate_time_nonpareil)
+
+
 ################################################################################
 ### Estimate diversity and required sequencing effort using nonpareil
 rule nonpareil:
