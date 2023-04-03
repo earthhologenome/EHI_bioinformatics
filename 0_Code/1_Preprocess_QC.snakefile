@@ -28,6 +28,55 @@ SAMPLE = pd.read_csv('PRBATCH_input.tsv', sep='\t', header=None).loc[:, 0].tolis
 print("Detected the following samples:")
 print(SAMPLE)
 
+
+### Code to scale time needed by raw read file sizes
+### Scaling is based on benchmark data for ~280 jobs 3/4/2023 RE
+import os
+
+def estimate_time_fastp(wildcards):
+    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
+    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    # Add scaling (* 2 is for the Gbp to .gz compressed filesize scaling -- e.g. 3 Gbp sample ~ 1.5 GBytes) 
+    estimate_time_fastp = ((input_size_gb * 2 ) + 6) / 2
+    return int(estimate_time_fastp)
+
+def estimate_time_mapping(wildcards):
+    r1_path = f"/projects/ehi/data/PPR/PRBATCH/tmp/{wildcards.sample}_trimmed_1.fq.gz"
+    r2_path = f"/projects/ehi/data/PPR/PRBATCH/tmp/{wildcards.sample}_trimmed_2.fq.gz"
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    estimate_time_mapping = ((input_size_gb * 2 ) + 2) * 14
+    return int(estimate_time_mapping)
+
+def estimate_time_nonpareil(wildcards):
+    r1_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_1.fq"
+    r2_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_2.fq"
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    # N.b. for estimate_time_nonpareil and estimate_time_singlem, we estimate from uncompressed fq,
+    # so add *4.5 for compression factor
+    estimate_time_nonpareil = ((input_size_gb * 6.5 ) + 2) * 2.2
+    return int(estimate_time_nonpareil)
+
+
+def estimate_time_singlem(wildcards):
+    r1_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_1.fq"
+    r2_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_2.fq"
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    estimate_time_singlem = ((input_size_gb * 6.5 ) + 1) * 5
+    return int(estimate_time_singlem)
+
 ################################################################################
 ### Setup the desired outputs
 rule all:
@@ -102,21 +151,6 @@ rule erda_checkpoint:
         """
         touch {output}
         """
-
-### Code to scale time needed by raw read file sizes
-### Scaling is based on benchmark data for ~280 jobs 3/4/2023 RE
-import os
-
-def estimate_time_fastp(wildcards):
-    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
-    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
-    input_files = [r1_path, r2_path]
-    input_size = sum(os.path.getsize(f) for f in input_files)
-    # convert from bytes to gigabytes
-    input_size_gb = input_size / (1024 * 1024 * 1024)
-    # Add scaling (* 2 is for the Gbp to Gbyte scaling -- e.g. 3 Gbp sample ~ 1.5 GBytes) 
-    estimate_time_fastp = ((input_size_gb * 2 ) + 6) / 2
-    return int(estimate_time_fastp)
 
 ################################################################################
 ### Preprocess the reads using fastp
@@ -238,17 +272,6 @@ rule fetch_host_genome:
 
         """
 
-def estimate_time_mapping(wildcards):
-    r1_path = f"/projects/ehi/data/PPR/PRBATCH/tmp/{wildcards.sample}_trimmed_1.fq.gz"
-    r2_path = f"/projects/ehi/data/PPR/PRBATCH/tmp/{wildcards.sample}_trimmed_2.fq.gz"
-    input_files = [r1_path, r2_path]
-    input_size = sum(os.path.getsize(f) for f in input_files)
-    # convert from bytes to gigabytes
-    input_size_gb = input_size / (1024 * 1024 * 1024)
-    # add 1 to input size (in GB) and multiply 2 to get time. 
-    estimate_time_mapping = ((input_size_gb * 2 ) + 2) * 14
-    return int(estimate_time_mapping)
-
 ################################################################################
 ### Map samples to host genomes, then split BAMs:
 rule map_to_ref:
@@ -296,28 +319,7 @@ rule map_to_ref:
         | samtools sort -@ {threads} -o {output.host_bam} -
         """
 
-def estimate_time_singlem(wildcards):
-    r1_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_1.fq"
-    r2_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_2.fq"
-    input_files = [r1_path, r2_path]
-    input_size = sum(os.path.getsize(f) for f in input_files)
-    # convert from bytes to gigabytes
-    input_size_gb = input_size / (1024 * 1024 * 1024)
-    # add 1 to input size (in GB) and multiply 5 to get time. 
-    estimate_time_singlem = ((input_size_gb * 2 ) + 1) * 5
-    return int(estimate_time_singlem)
 
-
-def estimate_time_nonpareil(wildcards):
-    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
-    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
-    input_files = [r1_path, r2_path]
-    input_size = sum(os.path.getsize(f) for f in input_files)
-    # convert from bytes to gigabytes
-    input_size_gb = input_size / (1024 * 1024 * 1024)
-    # add 1 to input size (in GB) and multiply 5 to get time. 
-    estimate_time_nonpareil = ((input_size_gb * 2 ) + 2) * 2.2
-    return int(estimate_time_nonpareil)
 
 
 ################################################################################
@@ -539,7 +541,13 @@ rule report:
         coverm = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
         fastp = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}.json", sample=SAMPLE),
         read_fraction = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_readfraction.tsv", sample=SAMPLE),
-        uploaded = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_uploaded", sample=SAMPLE)
+        uploaded = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_uploaded", sample=SAMPLE),
+        raw1 = expand("/projects/ehi/data/RAW/PRBATCH/{sample}_1.fq.gz", sample=SAMPLE),
+        raw2 = expand("/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz", sample=SAMPLE),
+        trimmed1 = expand("/projects/ehi/data/PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz", sample=SAMPLE),
+        trimmed2 = expand("/projects/ehi/data/PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz", sample=SAMPLE),
+        non_host_r1 = expand("/projects/ehi/data/PPR/PRBATCH/{sample}_M_1.fq.gz", sample=SAMPLE),
+        non_host_r2 = expand("/projects/ehi/data/PPR/PRBATCH/{sample}_M_2.fq.gz", sample=SAMPLE),
     output:
         report = "/projects/ehi/data/REP/PRBATCH.tsv",
         npar_metadata = "/projects/ehi/data/PPR/PRBATCH/0_REPORTS/PRBATCH_nonpareil_metadata.tsv"
