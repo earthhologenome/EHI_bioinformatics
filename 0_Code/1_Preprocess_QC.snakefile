@@ -85,11 +85,81 @@ rule download_from_ERDA:
         mv {params.workdir}/RAW/PRBATCH/*/{wildcards.sample}*_2.fq.gz {output.r2o}
         """
 ################################################################################
+### Checkpoint for download of raw reads
+rule erda_checkpoint:
+    input:
+        r1o = expand("/projects/ehi/data/RAW/PRBATCH/{sample}_1.fq.gz", sample=SAMPLE),
+        r2o = expand("/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz", sample=SAMPLE),
+    output:
+        "/projects/ehi/data/RAW/PRBATCH/ERDA_download_checkpoint"
+    threads:
+        1
+    resources:
+        load=1,
+        mem_gb=24,
+        time='00:02:00'
+    shell:
+        """
+        touch {output}
+        """
+
+### Code to scale time needed by raw read file sizes
+### Scaling is based on benchmark data for ~280 jobs 3/4/2023 RE
+import os
+
+def estimate_time_fastp(wildcards):
+    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
+    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    # add 5 to input size (in GB; for scaling purposes) and divide by 2 to get time. 
+    estimated_time_fastp = (input_size_gb + 6) / 2
+    return int(estimated_time_fastp)
+
+def estimate_time_mapping(wildcards):
+    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
+    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    # add 1 to input size (in GB) and multiply 2 to get time. 
+    estimated_time_mapping = (input_size_gb + 2) * 14
+    return int(estimated_time_mapping)
+
+def estimate_time_singlem(wildcards):
+    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
+    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    # add 1 to input size (in GB) and multiply 5 to get time. 
+    estimated_time_singlem = (input_size_gb + 1) * 5
+    return int(estimated_time_singlem)
+
+
+def estimate_time_nonpareil(wildcards):
+    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
+    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    # add 1 to input size (in GB) and multiply 5 to get time. 
+    estimated_time_nonpareil = (input_size_gb + 2) * 2.2
+    return int(estimated_time_nonpareil)
+
+
+################################################################################
 ### Preprocess the reads using fastp
 rule fastp:
     input:
         r1i = "/projects/ehi/data/RAW/PRBATCH/{sample}_1.fq.gz",
-        r2i = "/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz"
+        r2i = "/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz",
+        start = "projects/ehi/data/RAW/PRBATCH/ERDA_download_checkpoint"
     output:
         r1o = temp("/projects/ehi/data/PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz"),
         r2o = temp("/projects/ehi/data/PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz"),
@@ -105,7 +175,7 @@ rule fastp:
     resources:
         load=1,
         mem_gb=24,
-        time='00:30:00'
+        time=estimated_time_fastp
     benchmark:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_fastp.benchmark.tsv"
     log:
@@ -133,6 +203,8 @@ rule fastp:
 ################################################################################
 ## Fetch host genome from ERDA, if not there already, download and index it.
 rule fetch_host_genome:
+    input:
+        "/projects/ehi/data/PPR/PRBATCH/ERDA_folder_created"
     output:
         bt2_index = "/projects/ehi/data/RUN/PRBATCH/HOST_GENOME/HOST_GENOME_RN.fna.gz.rev.2.bt2l",
         rn_catted_ref = "/projects/ehi/data/RUN/PRBATCH/HOST_GENOME/HOST_GENOME_RN.fna.gz"
@@ -219,8 +291,8 @@ rule map_to_ref:
         8
     resources:
         load=1,
-        mem_gb=48,
-        time='03:00:00'
+        mem_gb=24,
+        time=estimate_time_mapping
     benchmark:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_mapping.benchmark.tsv"
     log:
@@ -266,7 +338,7 @@ rule nonpareil:
     resources:
         load=1,
         mem_gb=45,
-        time='02:00:00'
+        time=estimate_time_nonpareil
     benchmark:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_nonpareil.benchmark.tsv"
     message:
@@ -312,11 +384,11 @@ rule singlem:
     conda:
         "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/singlem.yaml"
     threads:
-        8
+        3
     resources:
         load=1,
-        mem_gb=45,
-        time='02:00:00'
+        mem_gb=36,
+        time=estimate_time_singlem
     benchmark:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_singlem.benchmark.tsv"
     message:
@@ -401,7 +473,7 @@ rule coverM:
     resources:
         load=1,
         mem_gb=16,
-        time='01:00:00'
+        time='00:10:00'
     benchmark:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_coverM.benchmark.tsv"
     log:
@@ -443,7 +515,7 @@ rule upload_to_ERDA:
     resources:
         load=8,
         mem_gb=16,
-        time='01:00:00'
+        time='00:15:00'
     log:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_upload.log"
     message:
@@ -452,9 +524,9 @@ rule upload_to_ERDA:
         """
         #Upload preprocessed reads to ERDA for storage
         lftp sftp://erda -e "put {input.non_host_r1} -o /EarthHologenomeInitiative/Data/PPR/PRBATCH/; bye"
-        sleep 10
+        sleep 5
         lftp sftp://erda -e "put {input.non_host_r2} -o /EarthHologenomeInitiative/Data/PPR/PRBATCH/; bye"
-        sleep 10
+        sleep 5
         lftp sftp://erda -e "put {input.host_bam} -o /EarthHologenomeInitiative/Data/PPR/PRBATCH/; bye"
         touch {output}
         """
@@ -481,7 +553,7 @@ rule report:
     resources:
         load=1,
         mem_gb=24,
-        time='00:10:00'
+        time='00:05:00'
     message:
         "Creating a final preprocessing report"
     shell:
