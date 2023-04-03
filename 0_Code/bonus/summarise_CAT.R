@@ -1,5 +1,6 @@
 # R script to parse CAT files and CoverM contig coverage outputs and summarise them at a high level.
 # Author: Raphael Eisenhofer 18/12/2022
+# Bug fixes by Garazi and Amalia 3/4/2023
 
 library(tidyverse)
 library(janitor)
@@ -10,11 +11,12 @@ args = commandArgs(trailingOnly=TRUE)
 
 
 # Import data
-cat_official <- read_delim(args[3], delim = "\t") %>%
-  clean_names() %>%
+cat_official <- read_delim(args[3], delim = "\t", escape_double = FALSE, trim_ws = TRUE) 
+colnames(cat_official) <- c("number_contig", "classification", "reason", "lineage", "lineage_scores", "superkingdom", "phylum", "class", "order", "family", "genus", "species")
+clean_names(cat_official) %>%
   select(-c("lineage_scores", "lineage", "classification")) %>%
   mutate(number_contig = str_replace_all(number_contig, "-.*", ""),
-         across(cols = c(3, 4, 5, 6, 7, 8, 9), .fns = ~ str_replace_all(., ":.*", "")))
+         across(c(3, 4, 5, 6, 7, 8, 9), .fns = ~ str_replace_all(., ":.*", "")))
 
 cat_unofficial <- read_delim(args[4], delim = "\t") %>%
   clean_names() %>%
@@ -24,8 +26,8 @@ cat_unofficial <- read_delim(args[4], delim = "\t") %>%
          kingdom = case_when(str_detect(full_lineage_names, "Fungi \\(kingdom\\)") ~ "fungi",
                              str_detect(full_lineage_names, "Metazoa \\(kingdom\\)") ~ "metazoa",
                              str_detect(full_lineage_names, "Viridiplantae \\(kingdom\\)") ~ "plants",
-                             )
          )
+  )
 
 
 coverm_official <- read_delim(args[2]) %>%
@@ -89,8 +91,7 @@ phylum_summary <- coverm_official %>%
   summarise(relative_abundance = sum(relative_abundance, na.rm = TRUE)) %>%
   filter(relative_abundance > 0.2) %>%
   pivot_wider(names_from = !c("sample", "relative_abundance"), values_from = relative_abundance)
-  
-write_tsv(phylum_summary, paste0("3_Outputs/non_bacterial/", args[1], "_phylum_summary.tsv"))
 
+write_tsv(phylum_summary, paste0("3_Outputs/non_bacterial/", args[1], "_phylum_summary.tsv"))
 
 
