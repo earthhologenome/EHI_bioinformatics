@@ -61,20 +61,20 @@ def estimate_time_nonpareil(wildcards):
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
-    # N.b. for estimate_time_nonpareil and estimate_time_singlem, we estimate from uncompressed fq,
+    # N.b. for estimate_time_nonpareil we estimate from uncompressed fq,
     # so add *4.5 for compression factor
     estimate_time_nonpareil = ((input_size_gb * 6.5 ) + 2) * 2.2
     return int(estimate_time_nonpareil)
 
 
 def estimate_time_singlem(wildcards):
-    r1_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_1.fq"
-    r2_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_2.fq"
+    r1_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_1.fq.gz"
+    r2_path = f"/projects/ehi/data/PPR/PRBATCH/{wildcards.sample}_M_2.fq.gz"
     input_files = [r1_path, r2_path]
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
-    estimate_time_singlem = ((input_size_gb * 6.5 ) + 1) * 5
+    estimate_time_singlem = ((input_size_gb * 2 ) + 1) * 5
     return int(estimate_time_singlem)
 
 ################################################################################
@@ -355,6 +355,7 @@ rule nonpareil:
 ### Estimate the fraction of bacterial and archaeal DNA using SingleM read fraction
 rule singlem:
     input:
+        npo = "/projects/ehi/data/PPR/PRBATCH/misc/{sample}.npo",
         non_host_r1 = "/projects/ehi/data/PPR/PRBATCH/{sample}_M_1.fq.gz",
         non_host_r2 = "/projects/ehi/data/PPR/PRBATCH/{sample}_M_2.fq.gz",
     output:
