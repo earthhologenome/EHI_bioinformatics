@@ -118,17 +118,6 @@ def estimate_time_fastp(wildcards):
     estimate_time_fastp = ((input_size_gb * 2 ) + 6) / 2
     return int(estimate_time_fastp)
 
-def estimate_time_mapping(wildcards):
-    r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
-    r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
-    input_files = [r1_path, r2_path]
-    input_size = sum(os.path.getsize(f) for f in input_files)
-    # convert from bytes to gigabytes
-    input_size_gb = input_size / (1024 * 1024 * 1024)
-    # add 1 to input size (in GB) and multiply 2 to get time. 
-    estimate_time_mapping = ((input_size_gb * 2 ) + 2) * 14
-    return int(estimate_time_mapping)
-
 def estimate_time_singlem(wildcards):
     r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
     r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
@@ -272,6 +261,18 @@ rule fetch_host_genome:
         fi
 
         """
+
+def estimate_time_mapping(wildcards):
+    r1_path = f"/projects/ehi/data/PPR/PRBATCH/tmp/{wildcards.sample}_trimmed_1.fq.gz""
+    r2_path = f"/projects/ehi/data/PPR/PRBATCH/tmp/{wildcards.sample}_trimmed_2.fq.gz""
+    input_files = [r1_path, r2_path]
+    input_size = sum(os.path.getsize(f) for f in input_files)
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    # add 1 to input size (in GB) and multiply 2 to get time. 
+    estimate_time_mapping = ((input_size_gb * 2 ) + 2) * 14
+    return int(estimate_time_mapping)
+
 ################################################################################
 ### Map samples to host genomes, then split BAMs:
 rule map_to_ref:
