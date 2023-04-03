@@ -134,31 +134,11 @@ rule download_from_ERDA:
         mv {params.workdir}/RAW/PRBATCH/*/{wildcards.sample}*_2.fq.gz {output.r2o}
         """
 ################################################################################
-### Checkpoint for download of raw reads
-rule erda_checkpoint:
-    input:
-        r1o = expand("/projects/ehi/data/RAW/PRBATCH/{sample}_1.fq.gz", sample=SAMPLE),
-        r2o = expand("/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz", sample=SAMPLE),
-    output:
-        "/projects/ehi/data/RAW/PRBATCH/ERDA_download_checkpoint"
-    threads:
-        1
-    resources:
-        load=1,
-        mem_gb=24,
-        time='00:02:00'
-    shell:
-        """
-        touch {output}
-        """
-
-################################################################################
 ### Preprocess the reads using fastp
 rule fastp:
     input:
         r1i = "/projects/ehi/data/RAW/PRBATCH/{sample}_1.fq.gz",
         r2i = "/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz",
-        start = "/projects/ehi/data/RAW/PRBATCH/ERDA_download_checkpoint"
     output:
         r1o = temp("/projects/ehi/data/PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz"),
         r2o = temp("/projects/ehi/data/PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz"),
