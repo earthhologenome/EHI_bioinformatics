@@ -114,8 +114,8 @@ def estimate_time_fastp(wildcards):
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
-    # add 5 to input size (in GB; for scaling purposes) and divide by 2 to get time. 
-    estimated_time_fastp = (input_size_gb + 6) / 2
+    # Add scaling (* 2 is for the Gbp to Gbyte scaling -- e.g. 3 Gbp sample ~ 1.5 GBytes) 
+    estimated_time_fastp = ((input_size_gb * 2 ) + 6) / 2
     return int(estimated_time_fastp)
 
 def estimate_time_mapping(wildcards):
@@ -126,7 +126,7 @@ def estimate_time_mapping(wildcards):
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
     # add 1 to input size (in GB) and multiply 2 to get time. 
-    estimated_time_mapping = (input_size_gb + 2) * 14
+    estimated_time_mapping = ((input_size_gb * 2 ) + 2) * 14
     return int(estimated_time_mapping)
 
 def estimate_time_singlem(wildcards):
@@ -137,7 +137,7 @@ def estimate_time_singlem(wildcards):
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
     # add 1 to input size (in GB) and multiply 5 to get time. 
-    estimated_time_singlem = (input_size_gb + 1) * 5
+    estimated_time_singlem = ((input_size_gb * 2 ) + 1) * 5
     return int(estimated_time_singlem)
 
 
@@ -149,7 +149,7 @@ def estimate_time_nonpareil(wildcards):
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
     # add 1 to input size (in GB) and multiply 5 to get time. 
-    estimated_time_nonpareil = (input_size_gb + 2) * 2.2
+    estimated_time_nonpareil = ((input_size_gb * 2 ) + 2) * 2.2
     return int(estimated_time_nonpareil)
 
 
