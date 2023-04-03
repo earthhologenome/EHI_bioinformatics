@@ -263,8 +263,8 @@ rule fetch_host_genome:
         """
 
 def estimate_time_mapping(wildcards):
-    r1_path = f"/projects/ehi/data/PPR/PRBATCH/tmp/{wildcards.sample}_trimmed_1.fq.gz""
-    r2_path = f"/projects/ehi/data/PPR/PRBATCH/tmp/{wildcards.sample}_trimmed_2.fq.gz""
+    r1_path = f"/projects/ehi/data/PPR/PRBATCH/tmp/{wildcards.sample}_trimmed_1.fq.gz"
+    r2_path = f"/projects/ehi/data/PPR/PRBATCH/tmp/{wildcards.sample}_trimmed_2.fq.gz"
     input_files = [r1_path, r2_path]
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
