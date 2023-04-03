@@ -159,7 +159,7 @@ rule fastp:
     input:
         r1i = "/projects/ehi/data/RAW/PRBATCH/{sample}_1.fq.gz",
         r2i = "/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz",
-        start = "projects/ehi/data/RAW/PRBATCH/ERDA_download_checkpoint"
+        start = "/projects/ehi/data/RAW/PRBATCH/ERDA_download_checkpoint"
     output:
         r1o = temp("/projects/ehi/data/PPR/PRBATCH/tmp/{sample}_trimmed_1.fq.gz"),
         r2o = temp("/projects/ehi/data/PPR/PRBATCH/tmp/{sample}_trimmed_2.fq.gz"),
