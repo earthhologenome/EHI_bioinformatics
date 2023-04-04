@@ -33,6 +33,16 @@ print(SAMPLE)
 ### Scaling is based on benchmark data for ~280 jobs 3/4/2023 RE
 import os
 
+def estimate_time_download(wildcards):
+    fs_sample = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_filesize.txt"
+    with open(fs_sample, 'r') as f:
+        input_size = int(f.read().strip())
+    # convert from bytes to gigabytes
+    input_size_gb = input_size / (1024 * 1024 * 1024)
+    # Multiply by 2, and set time based on 30 MB/s download speed.
+    estimate_time_download = (input_size_gb * 2.1 ) / 0.025
+    return int(estimate_time_download)
+
 def estimate_time_fastp(wildcards):
     r1_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_1.fq.gz"
     r2_path = f"/projects/ehi/data/RAW/PRBATCH/{wildcards.sample}_2.fq.gz"
@@ -108,10 +118,35 @@ rule create_PRB_folder:
 
         """
 ################################################################################
+### Get file sizes from ERDA
+rule filesize_from_ERDA:
+    input:
+        "/projects/ehi/data/PPR/PRBATCH/ERDA_folder_created"
+    output:
+        temp("/projects/ehi/data/RAW/PRBATCH/{sample}_filesize.txt"),
+    params:
+        workdir = config["workdir"]
+    conda:
+        "/projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/conda_envs/lftp.yaml"
+    threads:
+        1
+    resources:
+        load=8,
+        mem_gb=8,
+        time='00:00:30'
+    message:
+        "Fetching filesize for {wildcards.sample} from ERDA"
+    shell:
+        """
+        echo 'ls -l /EarthHologenomeInitiative/Data/RAW/*/{sample}*_1.fq.gz' | sftp erda | sed '1d;' | awk '{print $5}' > {output}
+
+        """
+################################################################################
 ### Fetch raw data from ERDA
 rule download_from_ERDA:
     input:
-        "/projects/ehi/data/PPR/PRBATCH/ERDA_folder_created"
+        ready = "/projects/ehi/data/PPR/PRBATCH/ERDA_folder_created",
+        filesize = "/projects/ehi/data/RAW/PRBATCH/{sample}_filesize.txt"
     output:
         r1o = temp("/projects/ehi/data/RAW/PRBATCH/{sample}_1.fq.gz"),
         r2o = temp("/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz"),
@@ -124,7 +159,7 @@ rule download_from_ERDA:
     resources:
         load=8,
         mem_gb=8,
-        time='00:15:00'
+        time=estimate_time_download
     message:
         "Fetching {wildcards.sample} from ERDA"
     shell:
