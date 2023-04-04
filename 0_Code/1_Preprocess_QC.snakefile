@@ -40,7 +40,7 @@ def estimate_time_download(wildcards):
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
     # Multiply by 2, and set time based on 30 MB/s download speed.
-    estimate_time_download = (input_size_gb * 2.1 ) / 0.025
+    estimate_time_download = (input_size_gb * 2.1 ) / 1.5
     return int(estimate_time_download)
 
 def estimate_time_fastp(wildcards):
