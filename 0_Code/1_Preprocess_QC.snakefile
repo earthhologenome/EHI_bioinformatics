@@ -71,9 +71,8 @@ def estimate_time_nonpareil(wildcards):
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
-    # N.b. for estimate_time_nonpareil we estimate from uncompressed fq,
-    # so add *4.5 for compression factor
-    estimate_time_nonpareil = ((input_size_gb * 6.5 ) + 2) * 2.2
+    # N.b. for estimate_time_nonpareil we estimate from uncompressed fq
+    estimate_time_nonpareil = (input_size_gb + 2) * 2
     return int(estimate_time_nonpareil)
 
 
@@ -84,7 +83,7 @@ def estimate_time_singlem(wildcards):
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
-    estimate_time_singlem = ((input_size_gb * 2 ) + 1) * 5
+    estimate_time_singlem = ((input_size_gb) + 4) * 5
     return int(estimate_time_singlem)
 
 ################################################################################
