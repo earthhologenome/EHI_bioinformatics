@@ -138,7 +138,7 @@ rule filesize_from_ERDA:
         "Fetching filesize for {wildcards.sample} from ERDA"
     shell:
         """
-        echo 'ls -l /EarthHologenomeInitiative/Data/RAW/*/{sample}*_1.fq.gz' | sftp erda | sed '1d;' | awk '{print $5}' > {output}
+        echo 'ls -l /EarthHologenomeInitiative/Data/RAW/*/{wildcards.sample}*_1.fq.gz' | sftp erda | sed '1d;' | awk '{print $5}' > {output}
 
         """
 ################################################################################
