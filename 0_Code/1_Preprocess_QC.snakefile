@@ -40,8 +40,8 @@ def estimate_time_fastp(wildcards):
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
-    # Add scaling (* 2 is for the Gbp to .gz compressed filesize scaling -- e.g. 3 Gbp sample ~ 1.5 GBytes) 
-    estimate_time_fastp = ((input_size_gb * 2 ) + 6) / 2
+    # Add scaling (* 2.5 is for the Gbp to .gz compressed filesize scaling -- e.g. 3 Gbp sample ~ 1.5 GBytes) 
+    estimate_time_fastp = ((input_size_gb * 2.5 ) + 6) / 2
     return int(estimate_time_fastp)
 
 def estimate_time_mapping(wildcards):
