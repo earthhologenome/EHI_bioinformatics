@@ -24,31 +24,23 @@
 configfile: "2_Assembly_Binning_config.yaml"
 
 import pandas as pd
-from itertools import product
 
 ## The input will be automatically generated prior to the snakefile being launched-
 ## using the 'XXXXX.py' script, which pulls the information from AirTable and saves-
-## it as 'Assembly_input.tsv'.
+## it as 'abb_input.tsv'.
 
-#Sample = the EHI number
 samples = pd.read_csv('abb_input.tsv', sep='\t')
-SAMPLE = samples['EHI_number'].tolist()
-PRBATCH = samples['PR_batch'].tolist()
-EHA = samples['ID'].tolist()
-
-print("Detected the following EHI samples:")
-print(SAMPLE)
-
-print("Detected the following assemblies:")
-print(EHA)
+valid_combinations = [(row['ID'], row['EHI_number']) for _, row in samples.iterrows()]
 
 ################################################################################
 ### Setup the desired outputs
 rule all:
+    params:
+        eha_samples = valid_combinations
     input:
         expand(f"{config['workdir']}/{eha}/{sample}_1.fq.gz", 
-               eha=EHA, 
-               sample=SAMPLE)
+               sample=valid_combinations[i][1], eha=valid_combinations[i][0], 
+               i=range(len(valid_combinations)))
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
