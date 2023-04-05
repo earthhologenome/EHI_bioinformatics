@@ -83,7 +83,7 @@ def estimate_time_singlem(wildcards):
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
-    estimate_time_singlem = ((input_size_gb) + 4) * 5
+    estimate_time_singlem = ((input_size_gb) + 7) * 5
     return int(estimate_time_singlem)
 
 ################################################################################
