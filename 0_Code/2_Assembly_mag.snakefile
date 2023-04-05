@@ -45,15 +45,15 @@ print(EHA)
 ### Setup the desired outputs
 rule all:
     input:
-        expand("{config['workdir'}/{eha}/{sample}_1.fq.gz", sample=SAMPLE, workdir=WORKDIR, eha=EHA)
+        expand("{config['workdir']}/{eha}/{sample}_1.fq.gz", sample=SAMPLE, eha=EHA)
 #        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUPS.keys()),
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        "{config['workdir'}/{config['abb'}/ERDA_folder_created"
+        "{config['workdir']}/{config['abb']}/ERDA_folder_created"
     conda:
-        "{config['codedir'}/conda_envs/lftp.yaml"
+        "{config['codedir']}/conda_envs/lftp.yaml"
     threads:
         1
     resources:
@@ -64,25 +64,25 @@ rule create_ASB_folder:
         "Creating assembly batch folder on ERDA"
     shell:
         """
-        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{config['abb'} ; bye"
+        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{config['abb']} ; bye"
         touch {output}
 
         #Also, log the AirTable that the ASB is running!
-        python {config['codedir']}/airtable/log_asb_start_airtable.py --code={config['abb'}
+        python {config['codedir']}/airtable/log_asb_start_airtable.py --code={config['abb']}
 
         """
 ################################################################################
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     input:
-        "{config['workdir'}/{config['abb'}/ERDA_folder_created"
+        "{config['workdir']}/{config['abb']}/ERDA_folder_created"
     output:
-        r1 = "{config['workdir'}/{eha}/{sample}_1.fq.gz",
-        r2 = "{config['workdir'}/{eha}/{sample}_2.fq.gz",
+        r1 = "{config['workdir']}/{eha}/{sample}_1.fq.gz",
+        r2 = "{config['workdir']}/{eha}/{sample}_2.fq.gz",
     params:
-        eha_folder = "{config['workdir'}/{eha}"
+        eha_folder = "{config['workdir']}/{eha}"
     conda:
-        "{config['codedir'}/conda_envs/lftp.yaml"
+        "{config['codedir']}/conda_envs/lftp.yaml"
     threads:
         1
     resources:
