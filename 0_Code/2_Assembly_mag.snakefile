@@ -31,20 +31,25 @@ import pandas as pd
 
 samples = pd.read_csv('abb_input.tsv', sep='\t')
 
-def input_function(wildcards):
-    sample_row = samples[(samples['ID'] == wildcards.ID) & (samples['EHI_number'] == wildcards.EHI_number)]
-    pr_batch = sample_row.iloc[0]['PR_batch']
-    r1_input = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_1.fq.gz"
-    r2_input = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_2.fq.gz"
-    return [r1_input, r2_input]
+ehas = set()
+ehis = set()
+pr_batches = set()
+with open(samples) as f:
+    for line in f:
+        if line.startswith("ID"):
+            continue
+        eha, pr_batch, ehi = line.strip().split("\t")
+        ehas.add(eha)
+        ehis.add(ehi)
+        pr_batches.add(pr_batch)
+
+combinations = [(eha, pr_batch, ehi) for eha in ehas for pr_batch in pr_batches for ehi in ehis]
 
 ################################################################################
 ### Setup the desired outputs
 rule all:
     input:
-        [f"{config['workdir']}/{ID}/{EHI_number}_1.fq.gz",
-         f"{config['workdir']}/{ID}/{EHI_number}_2.fq.gz"]
-         for ID, _, EHI_number in samples[['ID', 'PR_batch', 'EHI_number']].values
+        expand("f{config['workdir']}/{eha}/{pr_batch}/{ehi}_M_1.fq.gz", eha=[c[0] for c in combinations], ehi=[c[1] for c in combinations])
 
 ################################################################################
 ### Create EHA folder on ERDA
@@ -74,16 +79,12 @@ rule create_ASB_folder:
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     input:
-        r1i = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_1.fq.gz",
-        r2i = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_2.fq.gz",
         folder_ready = f"{config['workdir']}/{config['abb']}/ERDA_folder_created"
     output:
-        r1 = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_1.fq.gz",
-        r2 = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_2.fq.gz"
+        r1 = f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_1.fq.gz",
+        r2 = f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_2.fq.gz"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
-    params:
-        ID=wildcards.ID
     threads:
         1
     resources:
@@ -91,12 +92,12 @@ rule download_from_ERDA:
         mem_gb=8,
         time='00:15:00'
     message:
-        "Fetching {wildcards.ID}/{wildcards.EHI_number} from ERDA"
+        "Fetching metagenomics reads for {wildcards.ehi} from ERDA"
     shell:
         """
-        mkdir -p {params.eha}
+        mkdir -p {config['workdir']}/{eha}
 
-        lftp sftp://erda -e "mirror --include-glob='{wildcards.prbatch}/{wildcards.EHI_number}*.fq.gz' /EarthHologenomeInitiative/Data/RAW/ {params.eha_folder}; bye"
+        lftp sftp://erda -e "mirror --include-glob='{pr_batch}/{ehi}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {config['workdir']}/{eha}; bye"
         """
 
 

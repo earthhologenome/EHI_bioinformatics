@@ -1,3 +1,6 @@
+# Define input and output files
+input_file = "abb_input.tsv"
+
 # Read in input file and create a list of unique combinations of ID and EHI_number
 ids = set()
 ehis = set()
@@ -8,8 +11,8 @@ with open(input_file) as f:
         id, batch, ehi = line.strip().split("\t")
         ids.add(id)
         ehis.add(ehi)
-        
-combinations = [(id, ehi) for id in ids for ehi in ehis if ehi[0] == id]
+
+combinations = [(id, ehi) for id in ids for ehi in ehis]
 
 # Define the rule for running the pipeline for each combination
 rule all:
