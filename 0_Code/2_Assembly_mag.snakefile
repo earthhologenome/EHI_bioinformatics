@@ -44,9 +44,8 @@ print(EHA)
 ################################################################################
 ### Setup the desired outputs
 rule all:
-    # params:
-    #     workdir = config["workdir"],
-    #     eha = EHA
+    params:
+        eha = EHA
     input:
         expand(f"{config['workdir']}/{eha}/{sample}_1.fq.gz", sample=SAMPLE, eha=EHA)
 ################################################################################
@@ -56,9 +55,6 @@ rule create_ASB_folder:
         f"{config['workdir']}/{config['abb']}/ERDA_folder_created"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
-    params:
-        workdir = config["workdir"],
-        eha = EHA
     threads:
         1
     resources:
@@ -82,11 +78,8 @@ rule download_from_ERDA:
     input:
         f"{config['workdir']}/{config['abb']}/ERDA_folder_created"
     output:
-        r1 = f"{config['workdir']}/{eha}/{sample}_1.fq.gz",
-        r2 = f"{config['workdir']}/{eha}/{sample}_2.fq.gz",
-    params:
-        eha_folder = "{config['workdir']}/{eha}",
-        workdir = config["workdir"],
+        r1 = f"{config['workdir']}/{wildcards.eha}/{wildcards.sample}_1.fq.gz",
+        r2 = f"{config['workdir']}/{wildcards.eha}/{wildcards.sample}_2.fq.gz",
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
