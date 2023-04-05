@@ -1,7 +1,7 @@
 ### Config file for assembly/binning pipeline
 ### RE 04/2023
 
-asb: ASBATCH
+abb: ASBATCH
 codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code
 workdir: /projects/ehi/data/ASB
 # #assembler you want to use (megahit or metaspades)

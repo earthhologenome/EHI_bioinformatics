@@ -23,7 +23,7 @@
 
 configfile: "2_Assembly_Binning_config.yaml"
 
-asb = config["asb"]
+abb = config["abb"]
 codedir = config["codedir"]
 workdir = config["workdir"]
 
@@ -34,7 +34,7 @@ import pandas as pd
 ## it as 'Assembly_input.tsv'.
 
 #Sample = the EHI number
-samples = pd.read_csv('asb_input.tsv', sep='\t')
+samples = pd.read_csv('abb_input.tsv', sep='\t')
 SAMPLE = samples['EHI_number'].tolist()
 PRBATCH = samples['PR_batch'].tolist()
 EHA = samples['ID'].tolist()
@@ -55,7 +55,7 @@ rule all:
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        "{workdir}/{asb}/ERDA_folder_created"
+        "{workdir}/{abb}/ERDA_folder_created"
     conda:
         "{codedir}/conda_envs/lftp.yaml"
     threads:
@@ -68,18 +68,18 @@ rule create_ASB_folder:
         "Creating assembly batch folder on ERDA"
     shell:
         """
-        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{asb} ; bye"
+        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{abb} ; bye"
         touch {output}
 
         #Also, log the AirTable that the ASB is running!
-        python {config['codedir']}/airtable/log_asb_start_airtable.py --code={asb}
+        python {config['codedir']}/airtable/log_asb_start_airtable.py --code={abb}
 
         """
 ################################################################################
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     input:
-        "{workdir}/{asb}/ERDA_folder_created"
+        "{workdir}/{abb}/ERDA_folder_created"
     output:
         r1 = "{workdir}/{eha}/{sample}_1.fq.gz",
         r2 = "{workdir}/{eha}/{sample}_2.fq.gz",
