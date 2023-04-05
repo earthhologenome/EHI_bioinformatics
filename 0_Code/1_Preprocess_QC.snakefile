@@ -534,7 +534,7 @@ rule upload_to_ERDA:
     resources:
         load=8,
         mem_gb=16,
-        time='00:15:00'
+        time=estimate_time_download
     log:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_upload.log"
     message:
