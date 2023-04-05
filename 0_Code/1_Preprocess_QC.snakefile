@@ -580,7 +580,7 @@ rule report:
     resources:
         load=1,
         mem_gb=24,
-        time='00:05:00'
+        time='00:20:00'
     message:
         "Creating a final preprocessing report"
     shell:
