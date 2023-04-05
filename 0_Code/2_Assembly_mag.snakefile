@@ -24,6 +24,7 @@
 configfile: "2_Assembly_Binning_config.yaml"
 
 import pandas as pd
+from itertools import product
 
 ## The input will be automatically generated prior to the snakefile being launched-
 ## using the 'XXXXX.py' script, which pulls the information from AirTable and saves-
@@ -44,11 +45,10 @@ print(EHA)
 ################################################################################
 ### Setup the desired outputs
 rule all:
-    params:
-        eha = EHA,
-        sample = SAMPLE,
     input:
-        expand(f"{config['workdir']}/{wildcard_eha}/{wildcard_sample}_1.fq.gz", sample=SAMPLE, eha=EHA)
+        expand(f"{config['workdir']}/{eha}/{sample}_1.fq.gz", 
+               eha=EHA, 
+               sample=SAMPLE)
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
@@ -79,8 +79,8 @@ rule download_from_ERDA:
     input:
         f"{config['workdir']}/{config['abb']}/ERDA_folder_created"
     output:
-        r1 = f"{config['workdir']}/{wildcards.eha}/{wildcards.sample}_1.fq.gz",
-        r2 = f"{config['workdir']}/{wildcards.eha}/{wildcards.sample}_2.fq.gz",
+        r1 = f"{config['workdir']}/{eha}/{sample}_1.fq.gz",
+        r2 = f"{config['workdir']}/{eha}/{sample}_2.fq.gz",
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
