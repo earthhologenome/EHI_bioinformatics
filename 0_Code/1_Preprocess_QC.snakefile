@@ -622,16 +622,16 @@ rule report:
         sleep 10
         lftp sftp://erda -e "put {output.report} -o /EarthHologenomeInitiative/Data/REP/; bye"
 
-        #Clean up the files/directories
-        rm PRBATCH_stats.tar.gz
-        rm -r {params.workdir}/RUN/PRBATCH/HOST_GENOME/
-        rm -r {params.misc_dir}
-        rm -r {params.tmpdir}
-
         #Automatically update the AirTable with the preprocessing stats
         python /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/airtable/add_prb_stats_airtable.py --report={output.report} --prb=PRBATCH 
 
         #Indicate that the PRB is done in AirTable
         python /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code/airtable/log_prb_done_airtable.py --code=PRBATCH
+       
+        #Clean up the files/directories
+        rm PRBATCH_stats.tar.gz
+        rm -r {params.workdir}/RUN/PRBATCH/HOST_GENOME/
+        rm -r {params.misc_dir}
+        rm -r {params.tmpdir}
 
         """
