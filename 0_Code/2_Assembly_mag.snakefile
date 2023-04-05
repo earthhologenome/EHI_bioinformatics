@@ -43,8 +43,8 @@ def input_function(wildcards):
 rule all:
     input:
         [f"{config['workdir']}/{ID}/{EHI_number}_1.fq.gz",
-         f"{config['workdir']}/{ID}/{EHI_number}_2.fq.gz"
-         for ID, _, EHI_number in samples[['ID', 'PR_batch', 'EHI_number']].values]
+         f"{config['workdir']}/{ID}/{EHI_number}_2.fq.gz"]
+         for ID, _, EHI_number in samples[['ID', 'PR_batch', 'EHI_number']].values
 
 ################################################################################
 ### Create EHA folder on ERDA
@@ -74,8 +74,8 @@ rule create_ASB_folder:
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     input:
-        r1i = f"remote/{wildcards.ID}/{wildcards.EHI_number}_1.fq.gz",
-        r2i = f"remote/{wildcards.ID}/{wildcards.EHI_number}_2.fq.gz",
+        r1i = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_1.fq.gz",
+        r2i = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_2.fq.gz",
         folder_ready = f"{config['workdir']}/{config['abb']}/ERDA_folder_created"
     output:
         r1 = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_1.fq.gz",
