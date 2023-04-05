@@ -29,27 +29,20 @@ import pandas as pd
 ## using the 'XXXXX.py' script, which pulls the information from AirTable and saves-
 ## it as 'abb_input.tsv'.
 
-samples = "abb_input.tsv"
+df = pd.read_csv('abb_input.tsv', sep='\t')
 
-ehas = set()
-ehis = set()
-pr_batches = set()
-with open(samples) as f:
-    for line in f:
-        if line.startswith("ID"):
-            continue
-        eha, pr_batch, ehi = line.strip().split("\t")
-        ehas.add(eha)
-        ehis.add(ehi)
-        pr_batches.add(pr_batch)
+# Extract the unique combinations of columns as a list of tuples
+unique_combinations = list(set(zip(df['ID'], df['PR_batch'], df['EHI_number'])))
 
-combinations = [(eha, pr_batch, ehi) for eha in ehas for pr_batch in pr_batches for ehi in ehis]
+# Unpack the tuples into separate variables
+ID, PR_batch, EHI_number = zip(*unique_combinations)
+
 
 ################################################################################
 ### Setup the desired outputs
 rule all:
     input:
-        expand(f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_M_1.fq.gz", eha=[c[0] for c in combinations], pr_batch=[c[1] for c in combinations], ehi=[c[2] for c in combinations])
+        [f"{config['workdir']}/{ID[i]}/{PR_batch[i]}/{EHI_number[i]}_M_1.fq.gz" for i in range(len(ID))]
 
 ################################################################################
 ### Create EHA folder on ERDA
@@ -92,7 +85,7 @@ rule download_from_ERDA:
         mem_gb=8,
         time='00:15:00'
     message:
-        "Fetching metagenomics reads for {wildcards.ehi} from ERDA"
+        "Fetching metagenomics reads for {ehi} from ERDA"
     shell:
         """
         mkdir -p {{config['workdir']}}/{eha}
