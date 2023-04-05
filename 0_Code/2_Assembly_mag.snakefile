@@ -74,12 +74,16 @@ rule create_ASB_folder:
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     input:
-        input_function
+        r1i = f"remote/{wildcards.ID}/{wildcards.EHI_number}_1.fq.gz",
+        r2i = f"remote/{wildcards.ID}/{wildcards.EHI_number}_2.fq.gz",
+        folder_ready = f"{config['workdir']}/{config['abb']}/ERDA_folder_created"
     output:
-        r1 = f"{config['workdir']}/{ID}/{EHI_number}_1.fq.gz",
-        r2 = f"{config['workdir']}/{ID}/{EHI_number}_2.fq.gz",
+        r1 = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_1.fq.gz",
+        r2 = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_2.fq.gz"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
+    params:
+        ID=wildcards.ID
     threads:
         1
     resources:
@@ -87,14 +91,14 @@ rule download_from_ERDA:
         mem_gb=8,
         time='00:15:00'
     message:
-        "Fetching {wildcards.sample} from ERDA"
+        "Fetching {wildcards.ID}/{wildcards.EHI_number} from ERDA"
     shell:
         """
         mkdir -p {params.eha}
-        
-        lftp sftp://erda -e "mirror --include-glob='{wildcards.prbatch}/{wildcards.EHI_number}*.fq.gz' /EarthHologenomeInitiative/Data/RAW/ .; bye"
 
+        lftp sftp://erda -e "mirror --include-glob='{wildcards.prbatch}/{wildcards.EHI_number}*.fq.gz' /EarthHologenomeInitiative/Data/RAW/ {params.eha_folder}; bye"
         """
+
 
 
 
