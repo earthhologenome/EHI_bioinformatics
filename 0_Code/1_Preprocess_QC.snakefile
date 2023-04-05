@@ -104,7 +104,7 @@ rule create_PRB_folder:
     resources:
         load=1,
         mem_gb=8,
-        time='00:15:00'
+        time='00:03:00'
     message:
         "Creating PRB folder on ERDA"
     shell:
