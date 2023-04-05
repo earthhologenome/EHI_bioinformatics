@@ -45,9 +45,10 @@ print(EHA)
 ### Setup the desired outputs
 rule all:
     params:
-        eha = EHA
+        eha = EHA,
+        sample = SAMPLE,
     input:
-        expand(f"{config['workdir']}/{eha}/{sample}_1.fq.gz", sample=SAMPLE, eha=EHA)
+        expand(f"{config['workdir']}/{wildcard_eha}/{wildcard_sample}_1.fq.gz", sample=SAMPLE, eha=EHA)
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
