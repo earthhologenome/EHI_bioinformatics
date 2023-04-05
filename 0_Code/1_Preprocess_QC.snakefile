@@ -524,7 +524,8 @@ rule upload_to_ERDA:
         non_host_r1 = "/projects/ehi/data/PPR/PRBATCH/{sample}_M_1.fq.gz",
         non_host_r2 = "/projects/ehi/data/PPR/PRBATCH/{sample}_M_2.fq.gz",
         host_bam = "/projects/ehi/data/PPR/PRBATCH/{sample}_G.bam",
-        coverm = "/projects/ehi/data/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv"
+        coverm = "/projects/ehi/data/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv",
+        fiel_size = "/projects/ehi/data/RAW/PRBATCH/{sample}_filesize.txt",
     output:
         "/projects/ehi/data/PPR/PRBATCH/misc/{sample}_uploaded"
     conda:
