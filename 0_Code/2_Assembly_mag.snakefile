@@ -30,19 +30,22 @@ import pandas as pd
 ## it as 'abb_input.tsv'.
 
 samples = pd.read_csv('abb_input.tsv', sep='\t')
-valid_combinations = [(row['ID'], row['EHI_number']) for _, row in samples.iterrows()]
+
+def input_function(wildcards):
+    sample_row = samples[(samples['ID'] == wildcards.ID) & (samples['EHI_number'] == wildcards.EHI_number)]
+    pr_batch = sample_row.iloc[0]['PR_batch']
+    r1_input = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_1.fq.gz"
+    r2_input = f"{config['workdir']}/{wildcards.ID}/{wildcards.EHI_number}_2.fq.gz"
+    return [r1_input, r2_input]
 
 ################################################################################
 ### Setup the desired outputs
 rule all:
-    params:
-        eha_samples = valid_combinations
     input:
-        expand(
-            "{config[workdir]}/{eha}/{sample}_1.fq.gz",
-            eha=[combo[0] for combo in valid_combinations],
-            sample=[combo[1] for combo in valid_combinations],
-        )
+        [f"{config['workdir']}/{ID}/{EHI_number}_1.fq.gz",
+         f"{config['workdir']}/{ID}/{EHI_number}_2.fq.gz"
+         for ID, _, EHI_number in samples[['ID', 'PR_batch', 'EHI_number']].values]
+
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
@@ -71,10 +74,10 @@ rule create_ASB_folder:
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     input:
-        f"{config['workdir']}/{config['abb']}/ERDA_folder_created"
+        input_function
     output:
-        r1 = f"{config['workdir']}/{eha}/{sample}_1.fq.gz",
-        r2 = f"{config['workdir']}/{eha}/{sample}_2.fq.gz",
+        r1 = f"{config['workdir']}/{ID}/{EHI_number}_1.fq.gz",
+        r2 = f"{config['workdir']}/{ID}/{EHI_number}_2.fq.gz",
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -89,7 +92,7 @@ rule download_from_ERDA:
         """
         mkdir -p {params.eha}
         
-        lftp sftp://erda -e "mirror --include-glob='{wildcards.prbatch}/{sample}*.fq.gz' /EarthHologenomeInitiative/Data/RAW/ {params.eha_folder}; bye"
+        lftp sftp://erda -e "mirror --include-glob='{wildcards.prbatch}/{wildcards.EHI_number}*.fq.gz' /EarthHologenomeInitiative/Data/RAW/ .; bye"
 
         """
 
