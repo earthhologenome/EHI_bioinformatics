@@ -29,7 +29,7 @@ import pandas as pd
 ## using the 'XXXXX.py' script, which pulls the information from AirTable and saves-
 ## it as 'abb_input.tsv'.
 
-samples = pd.read_csv('abb_input.tsv', sep='\t')
+samples = "abb_input.tsv"
 
 ehas = set()
 ehis = set()
@@ -49,13 +49,13 @@ combinations = [(eha, pr_batch, ehi) for eha in ehas for pr_batch in pr_batches 
 ### Setup the desired outputs
 rule all:
     input:
-        expand("f{config['workdir']}/{eha}/{pr_batch}/{ehi}_M_1.fq.gz", eha=[c[0] for c in combinations], ehi=[c[1] for c in combinations])
+        expand(f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_M_1.fq.gz", eha=[c[0] for c in combinations], ehi=[c[1] for c in combinations])
 
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        f"{config['workdir']}/{config['abb']}/ERDA_folder_created"
+        f"{config['workdir']}/ERDA_folder_created"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -79,10 +79,10 @@ rule create_ASB_folder:
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     input:
-        folder_ready = f"{config['workdir']}/{config['abb']}/ERDA_folder_created"
+        folder_ready = f"{config['workdir']}/ERDA_folder_created"
     output:
-        r1 = f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_1.fq.gz",
-        r2 = f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_2.fq.gz"
+        r1 = f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_M_1.fq.gz",
+        r2 = f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_M_2.fq.gz"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
