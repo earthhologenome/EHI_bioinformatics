@@ -1,6 +1,3 @@
-# Define input and output files
-input_file = "abb_input.tsv"
-
 # Read in input file and create a list of unique combinations of ID and EHI_number
 ids = set()
 ehis = set()
@@ -10,7 +7,7 @@ with open(input_file) as f:
             continue
         id, batch, ehi = line.strip().split("\t")
         ids.add(id)
-        ehis.add((id, ehi))
+        ehis.add(ehi)
         
 combinations = [(id, ehi) for id in ids for ehi in ehis if ehi[0] == id]
 
