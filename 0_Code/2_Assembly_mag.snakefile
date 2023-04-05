@@ -44,9 +44,11 @@ print(EHA)
 ################################################################################
 ### Setup the desired outputs
 rule all:
+    params:
+        workdir = config["workdir"],
+        eha = EHA
     input:
-        expand("{config['workdir']}/{eha}/{sample}_1.fq.gz", sample=SAMPLE, eha=EHA)
-#        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUPS.keys()),
+        expand("{workdir}/{eha}/{sample}_1.fq.gz", sample=SAMPLE, eha=EHA)
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
@@ -54,6 +56,9 @@ rule create_ASB_folder:
         "{config['workdir']}/{config['abb']}/ERDA_folder_created"
     conda:
         "{config['codedir']}/conda_envs/lftp.yaml"
+    params:
+        workdir = config["workdir"],
+        eha = EHA
     threads:
         1
     resources:
@@ -81,6 +86,7 @@ rule download_from_ERDA:
         r2 = "{config['workdir']}/{eha}/{sample}_2.fq.gz",
     params:
         eha_folder = "{config['workdir']}/{eha}"
+        workdir = config["workdir"],
     conda:
         "{config['codedir']}/conda_envs/lftp.yaml"
     threads:
