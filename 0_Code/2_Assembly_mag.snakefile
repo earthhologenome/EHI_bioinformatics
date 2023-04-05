@@ -49,7 +49,7 @@ combinations = [(eha, pr_batch, ehi) for eha in ehas for pr_batch in pr_batches 
 ### Setup the desired outputs
 rule all:
     input:
-        expand(f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_M_1.fq.gz", eha=[c[0] for c in combinations], ehi=[c[1] for c in combinations])
+        expand(f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_M_1.fq.gz", eha=[c[0] for c in combinations], pr_batch=[c[1] for c in combinations], ehi=[c[2] for c in combinations])
 
 ################################################################################
 ### Create EHA folder on ERDA
@@ -68,11 +68,11 @@ rule create_ASB_folder:
         "Creating assembly batch folder on ERDA"
     shell:
         """
-        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{config['abb']} ; bye"
+        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{{config['abb']}} ; bye"
         touch {output}
 
         #Also, log the AirTable that the ASB is running!
-        python {config['codedir']}/airtable/log_asb_start_airtable.py --code={config['abb']}
+        python {{config['codedir']}}/airtable/log_asb_start_airtable.py --code={{config['abb']}}
 
         """
 ################################################################################
@@ -95,9 +95,9 @@ rule download_from_ERDA:
         "Fetching metagenomics reads for {wildcards.ehi} from ERDA"
     shell:
         """
-        mkdir -p {config['workdir']}/{eha}
+        mkdir -p {{config['workdir']}}/{eha}
 
-        lftp sftp://erda -e "mirror --include-glob='{pr_batch}/{ehi}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {config['workdir']}/{eha}; bye"
+        lftp sftp://erda -e "mirror --include-glob='{pr_batch}/{ehi}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {{config['workdir']}}/{eha}; bye"
         """
 
 
