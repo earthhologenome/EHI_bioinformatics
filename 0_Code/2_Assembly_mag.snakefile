@@ -38,9 +38,11 @@ rule all:
     params:
         eha_samples = valid_combinations
     input:
-        expand(f"{config['workdir']}/{eha}/{sample}_1.fq.gz", 
-               sample=valid_combinations[i][1], eha=valid_combinations[i][0], 
-               i=range(len(valid_combinations)))
+        expand(
+            "{config[workdir]}/{eha}/{sample}_1.fq.gz",
+            eha=[combo[0] for combo in valid_combinations],
+            sample=[combo[1] for combo in valid_combinations],
+        )
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
