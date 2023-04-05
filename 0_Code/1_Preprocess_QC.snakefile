@@ -556,6 +556,7 @@ rule report:
         coverm = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_coverM_mapped_host.tsv", sample=SAMPLE),
         fastp = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}.json", sample=SAMPLE),
         read_fraction = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_readfraction.tsv", sample=SAMPLE),
+        file_size = expand("/projects/ehi/data/RAW/PRBATCH/{sample}_filesize.txt", sample=SAMPLE),
         uploaded = expand("/projects/ehi/data/PPR/PRBATCH/misc/{sample}_uploaded", sample=SAMPLE),
         raw1 = expand("/projects/ehi/data/RAW/PRBATCH/{sample}_1.fq.gz", sample=SAMPLE),
         raw2 = expand("/projects/ehi/data/RAW/PRBATCH/{sample}_2.fq.gz", sample=SAMPLE),
