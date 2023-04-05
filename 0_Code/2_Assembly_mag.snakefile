@@ -18,9 +18,15 @@
 ################################################################################
 ################################################################################
 
-configfile: "2_Assembly_Binning_config.yaml"
 
 ### Setup sample inputs, config, and working directory
+
+configfile: "2_Assembly_Binning_config.yaml"
+
+asb = config["asb"]
+codedir = config["codedir"]
+workdir = config["workdir"]
+
 import pandas as pd
 
 ## The input will be automatically generated prior to the snakefile being launched-
@@ -28,9 +34,10 @@ import pandas as pd
 ## it as 'Assembly_input.tsv'.
 
 #Sample = the EHI number
-SAMPLE = pd.read_csv('Assembly_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
-PRBATCH = pd.read_csv('Assembly_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
-ASSEMBLY = pd.read_csv('Assembly_input.tsv', sep='\t', header=None).loc[:, 0].tolist()
+samples = pd.read_csv('asb_input.tsv', sep='\t')
+SAMPLE = samples['EHI_number'].tolist()
+PRBATCH = samples['PR_batch'].tolist()
+EHA = samples['ID'].tolist()
 
 print("Detected the following EHI samples:")
 print(SAMPLE)
@@ -42,44 +49,44 @@ print(ASSEMBLY)
 ### Setup the desired outputs
 rule all:
     input:
-        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUPS.keys()),
-        "3_Outputs/pipeline_complete.txt"
+        expand("{workdir}/{eha}/{sample}_1.fq.gz", sample=SAMPLE)
+#        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUPS.keys()),
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        "{config['workdir']}/{config['asb']}/ERDA_folder_created"
+        "{workdir}/{asb}/ERDA_folder_created"
     conda:
-        "{config['codedir']}/conda_envs/lftp.yaml"
+        "{codedir}/conda_envs/lftp.yaml"
     threads:
         1
     resources:
         load=8,
         mem_gb=8,
-        time='00:02:00'
+        time='00:05:00'
     message:
         "Creating assembly batch folder on ERDA"
     shell:
         """
-        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{config['asb']} ; bye"
+        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{asb} ; bye"
         touch {output}
 
         #Also, log the AirTable that the ASB is running!
-        python {config['codedir']}/airtable/log_asb_start_airtable.py --code={config['asb']}
+        python {config['codedir']}/airtable/log_asb_start_airtable.py --code={asb}
 
         """
 ################################################################################
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     input:
-        "{config['workdir']}/{config['asb']}/ERDA_folder_created"
+        "{workdir}/{asb}/ERDA_folder_created"
     output:
-        r1 = "{config['workdir']}/{eha}/{sample}_1.fq.gz",
-        r2 = "{config['workdir']}/{eha}/{sample}_2.fq.gz",
+        r1 = "{workdir}/{eha}/{sample}_1.fq.gz",
+        r2 = "{workdir}/{eha}/{sample}_2.fq.gz",
     params:
-        eha_folder = "{config['workdir']}/{eha}"
+        eha_folder = "{workdir}/{eha}"
     conda:
-        "{config['codedir']}/conda_envs/lftp.yaml"
+        "{codedir}/conda_envs/lftp.yaml"
     threads:
         1
     resources:
@@ -90,11 +97,9 @@ rule download_from_ERDA:
         "Fetching {wildcards.sample} from ERDA"
     shell:
         """
-        mkdir {params.eha}
+        mkdir -p {params.eha}
         
-        lftp sftp://erda -e "mirror --include-glob='{wildcards.sample}*.fq.gz' /EarthHologenomeInitiative/Data/RAW/ /projects/ehi/data/RAW/PRBATCH/; bye"
-        mv {params.workdir}/RAW/PRBATCH/*/{wildcards.sample}*_1.fq.gz {output.r1o}
-        mv {params.workdir}/RAW/PRBATCH/*/{wildcards.sample}*_2.fq.gz {output.r2o}
+        lftp sftp://erda -e "mirror --include-glob='{wildcards.prbatch}/{sample}*.fq.gz' /EarthHologenomeInitiative/Data/RAW/ {params.eha_folder}; bye"
 
         """
 
