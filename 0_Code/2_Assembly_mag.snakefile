@@ -85,7 +85,7 @@ rule download_from_ERDA:
         r1 = "{config['workdir']}/{eha}/{sample}_1.fq.gz",
         r2 = "{config['workdir']}/{eha}/{sample}_2.fq.gz",
     params:
-        eha_folder = "{config['workdir']}/{eha}"
+        eha_folder = "{config['workdir']}/{eha}",
         workdir = config["workdir"],
     conda:
         "{config['codedir']}/conda_envs/lftp.yaml"
