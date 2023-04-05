@@ -23,10 +23,6 @@
 
 configfile: "2_Assembly_Binning_config.yaml"
 
-abb = config["abb"]
-codedir = config["codedir"]
-workdir = config["workdir"]
-
 import pandas as pd
 
 ## The input will be automatically generated prior to the snakefile being launched-
@@ -42,22 +38,22 @@ EHA = samples['ID'].tolist()
 print("Detected the following EHI samples:")
 print(SAMPLE)
 
-print("Detected the following EHI assemblies:")
-print(ASSEMBLY)
+print("Detected the following assemblies:")
+print(EHA)
 
 ################################################################################
 ### Setup the desired outputs
 rule all:
     input:
-        expand("{workdir}/{eha}/{sample}_1.fq.gz", sample=SAMPLE)
+        expand("{config['workdir'}/{eha}/{sample}_1.fq.gz", sample=SAMPLE, workdir=WORKDIR, eha=EHA)
 #        expand("3_Outputs/{group}_coassembly_summary.tsv", group=GROUPS.keys()),
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        "{workdir}/{abb}/ERDA_folder_created"
+        "{config['workdir'}/{config['abb'}/ERDA_folder_created"
     conda:
-        "{codedir}/conda_envs/lftp.yaml"
+        "{config['codedir'}/conda_envs/lftp.yaml"
     threads:
         1
     resources:
@@ -68,25 +64,25 @@ rule create_ASB_folder:
         "Creating assembly batch folder on ERDA"
     shell:
         """
-        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{abb} ; bye"
+        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{config['abb'} ; bye"
         touch {output}
 
         #Also, log the AirTable that the ASB is running!
-        python {config['codedir']}/airtable/log_asb_start_airtable.py --code={abb}
+        python {config['codedir']}/airtable/log_asb_start_airtable.py --code={config['abb'}
 
         """
 ################################################################################
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     input:
-        "{workdir}/{abb}/ERDA_folder_created"
+        "{config['workdir'}/{config['abb'}/ERDA_folder_created"
     output:
-        r1 = "{workdir}/{eha}/{sample}_1.fq.gz",
-        r2 = "{workdir}/{eha}/{sample}_2.fq.gz",
+        r1 = "{config['workdir'}/{eha}/{sample}_1.fq.gz",
+        r2 = "{config['workdir'}/{eha}/{sample}_2.fq.gz",
     params:
-        eha_folder = "{workdir}/{eha}"
+        eha_folder = "{config['workdir'}/{eha}"
     conda:
-        "{codedir}/conda_envs/lftp.yaml"
+        "{config['codedir'}/conda_envs/lftp.yaml"
     threads:
         1
     resources:
