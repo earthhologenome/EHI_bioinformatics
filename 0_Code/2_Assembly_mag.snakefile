@@ -157,11 +157,11 @@ rule assembly:
                 --min-contig-len 1500 \
                 -1 {input.r1} -2 {input.r2} \
                 -f \
-                -o {{config['workdir']}}/{PRB}/{EHI}
+                -o {{config['workdir']}}/{wildcards.PRB}/{wildcards.EHI}
                 2> {log}
 
         # Move the Coassembly to final destination
-            mv {{config['workdir']}}/{PRB}/{EHI}/final.contigs.fa {output}
+            mv {{config['workdir']}}/{wildcards.PRB}/{wildcards.EHI}/final.contigs.fa {output}
 
         # Reformat headers
             sed -i 's/ /-/g' {output}
