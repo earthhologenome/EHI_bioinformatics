@@ -4,8 +4,9 @@
 abb: ASBATCH
 codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code
 workdir: /projects/ehi/data/ASB/ASBATCH
-# #assembler you want to use (megahit or metaspades)
-# assembler: megahit
+logdir: /projects/ehi/data/RUN/ASBATCH/logs
+#assembler you want to use (megahit or metaspades)
+assembler: megahit
 #path to checkmdb
 checkmdb: /projects/mjolnir1/people/ncl550/0_software/checkm_2015
 #min contig length for binning

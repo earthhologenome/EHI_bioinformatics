@@ -63,7 +63,6 @@ rule create_ASB_folder:
 
         #Also, log the AirTable that the ASB is running!
         python {{config['codedir']}}/airtable/log_asb_start_airtable.py --code={{config['abb']}}
-
         """
 ################################################################################
 ### Fetch preprocessed reads from ERDA
@@ -95,26 +94,24 @@ rule assembly:
         r1 = f"{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
         r2 = f"{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz"
     output:
-        f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
+        f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     params:
         assembler = expand("{assembler}", assembler=config['assembler']),
-        assembly = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
-        24
+        16
     resources:
-        mem_gb=196,
+        mem_gb=128,
         time='36:00:00'
     benchmark:
-        "3_Outputs/0_Logs/{group}_coassembly.benchmark.tsv"
+        f"{config['logdir']}/assembly_benchmark_{EHA}.tsv"
     log:
-        "3_Outputs/0_Logs/{group}_coassembly.log"
+        f"{config['logdir']}/assembly_log_{EHA}.log"
     message:
         "Assembling {wildcards.EHI} using {params.assembler}"
     shell:
         """
-        # Set up input reads variable for megahit
         # Run megahit
             megahit \
                 -t {threads} \
@@ -126,242 +123,229 @@ rule assembly:
                 2> {log}
 
         # Move the Coassembly to final destination
-            mv {{config['workdir']}}/{PRB}/{EHI}/final.contigs.fa {params.assembly}
+            mv {{config['workdir']}}/{PRB}/{EHI}/final.contigs.fa {output}
 
-        # Reformat headers and compress
-            sed -i 's/ /-/g' {params.assembly}
-            pigz -p {threads} {params.assembly}
-
+        # Reformat headers
+            sed -i 's/ /-/g' {output}
         """
-# ################################################################################
-# ### Create QUAST reports of coassemblies
-# rule QUAST:
-#     input:
-#         Coassembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta"
-#     output:
-#         report = directory("3_Outputs/2_Coassemblies/{group}_QUAST"),
-#     conda:
-#         "conda_envs/2_Assembly_Binning.yaml"
-#     threads:
-#         8
-#     resources:
-#         mem_gb=48,
-#         time='01:00:00'
-#     message:
-#         "Running -QUAST on {wildcards.group} coassembly"
-#     shell:
-#         """
-#         # Run QUAST
-#         quast \
-#             -o {output.report} \
-#             --threads {threads} \
-#             {input.Coassembly}
+################################################################################
+### Create QUAST reports of coassemblies
+rule QUAST:
+    input:
+        f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+    output:
+        directory(f"{config['workdir']}/{PRB}/{EHI}/{EHA}_QUAST"),
+    conda:
+        f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+    threads:
+        4
+    resources:
+        mem_gb=32,
+        time='00:30:00'
+    message:
+        "Running -QUAST on {wildcards.EHA} coassembly"
+    shell:
+        """
+        # Run QUAST
+        quast \
+            -o {output} \
+            --threads {threads} \
+            {input}
+      
+        # Parse select metrics for final report
+        grep N50 {output}/report.tsv | cut -f2 > {output}/n50.tsv
+        grep L50 {output}/report.tsv | cut -f2 > {output}/l50.tsv
+        grep "# contigs (>= 0 bp)" {output}/report.tsv | cut -f2 > {output}/ncontigs.tsv
+        grep "Largest contig" {output}/report.tsv | cut -f2 > {output}/largestcontig.tsv
+        grep "Total length (>= 0 bp)" {output}/report.tsv | cut -f2 > {output}/totallength.tsv
 
-#         # # Rename QUAST files
-#         # for i in {output.report}/*;
-#         #     do mv $i {output.report}/{wildcards.group}_$(basename $i);
-#         #         done
+        # paste into a single table
+        paste {output}/n50.tsv \
+              {output}/l50.tsv \
+              {output}/ncontigs.tsv \
+              {output}/largestcontig.tsv \
+              {output}/totallength.tsv > {output}/{wildcards.group}_assembly_report.tsv
+        """
+################################################################################
+### Index assemblies
+rule assembly_index:
+    input:
+        directory(f"{config['workdir']}/{PRB}/{EHI}/{EHA}_QUAST")
+    output:
+        f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.rev.2.bt2l"
+    params:
+        contigs = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+    conda:
+        f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+    threads:
+        16
+    resources:
+        mem_gb=96,
+        time='02:00:00'
+    benchmark:
+        f"{config['logdir']}/index_assembly_benchmark_{EHA}.tsv"
+    log:
+        f"{config['logdir']}/index_assembly_log_{EHA}.log"
+    message:
+        "Indexing {wildcards.EHA} assembly using Bowtie2"
+    shell:
+        """
+        # Index the coassembly
+        bowtie2-build \
+            --large-index \
+            --threads {threads} \
+            {params.contigs} {params.contigs} \
+        &> {log}
+        """
+################################################################################
+### Map reads to assemblies
+rule assembly_mapping:
+    input:
+        f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.rev.2.bt2l",
+        r1 = f"{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
+        r2 = f"{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz",
+        contigs = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+    output:
+        f"{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam"
+    conda:
+        f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+    threads:
+        16
+    resources:
+        mem_gb=48,
+        time='05:00:00'
+    benchmark:
+        f"{config['logdir']}/assembly_mapping_benchmark_{EHA}.tsv"
+    log:
+        f"{config['logdir']}/assembly_mapping_log_{EHA}.log"
+    message:
+        "Mapping {wildcards.EHI} to {wildcards.EHA} assembly using Bowtie2"
+    shell:
+        """
+        # Map reads to assembly using Bowtie2
+        bowtie2 \
+            --time \
+            --threads {threads} \
+            -x {input.assembly} \
+            -1 {input.r1} \
+            -2 {input.r2} \
+        | samtools sort -@ {threads} -o {output}
+        """
+################################################################################
+### Bin contigs using metaWRAP's binning module
+rule metaWRAP_binning:
+    input:
+        bam = f"{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
+        contigs = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+    output:
+        f"{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/binning_complete"
+    params:
+        outdir = directory(f"{config['workdir']}/{PRB}/{EHI}/{EHA}_binning")
+    conda:
+        f"{config['codedir']}/conda_envs/2_MetaWRAP.yaml"
+    threads:
+        16
+    resources:
+        mem_gb=96,
+        time='06:00:00'
+    benchmark:
+        f"{config['logdir']}/binning_benchmark_{EHA}.tsv"
+    log:
+        f"{config['logdir']}/binning_log_{EHA}.log"
+    message:
+        "Binning {wildcards.EHA} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
+    shell:
+        """
+        # Create dummy fq/assembly files to trick metaWRAP into running without mapping
+        mkdir -p {params.outdir}
+        mkdir -p {params.outdir}/work_files
+
+        touch {params.outdir}/work_files/assembly.fa.bwt
+
+        for bam in {input.bam}; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_1.fastq}}); done
+        for bam in {input.bam}; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_2.fastq}}); done
+
+        #Symlink BAMs for metaWRAP
+        for bam in {input.bam}; do ln -sf $bam {params.outdir}/work_files/$(basename $bam); done
+
+        # Run metaWRAP binning
+        metawrap binning -o {params.outdir} \
+            -t {threads} \
+            -m {resources.mem_gb} \
+            -a {input.contigs} \
+            -l 1500 \
+            --metabat2 \
+            --maxbin2 \
+            --concoct \
+        {params.outdir}/work_files/*_1.fastq {params.outdir}/work_files/*_2.fastq
+
+        # Create output for the next rule
+        touch {output}
+        """
+################################################################################
+### Automatically refine bins using metaWRAP's refinement module
+rule metaWRAP_refinement:
+    input:
+        f"{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/binning_complete"
+    output:
+        stats = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
+        contigmap = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.contigs"
+    params:
+        concoct = "3_Outputs/4_Binning/{group}/concoct_bins",
+        maxbin2 = "3_Outputs/4_Binning/{group}/maxbin2_bins",
+        metabat2 = "3_Outputs/4_Binning/{group}/metabat2_bins",
+        binning_wfs = "3_Outputs/4_Binning/{group}/work_files",
+        refinement_wfs = "3_Outputs/5_Refined_Bins/{group}/work_files",
+        outdir = "3_Outputs/5_Refined_Bins/{group}",
+        memory = "256",
+        group = "{group}"
+    conda:
+        "conda_envs/2_MetaWRAP.yaml"
+    threads:
+        32
+    resources:
+        mem_gb=256,
+        time='36:00:00'
+    benchmark:
+        "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
+    log:
+        "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.log"
+    message:
+        "Refining {wildcards.group} bins with MetaWRAP's bin refinement module"
+    shell:
+        """
+        # Setup checkM path
+        export checkmdb={config[checkmdb]}
+        printf $checkmdb | checkm data setRoot
         
-#         # Parse select metrics for final report
-#         grep N50 {output.report}/report.tsv | cut -f2 > {output.report}/n50.tsv
-#         grep L50 {output.report}/report.tsv | cut -f2 > {output.report}/l50.tsv
-#         grep "# contigs (>= 0 bp)" {output.report}/report.tsv | cut -f2 > {output.report}/ncontigs.tsv
-#         grep "Largest contig" {output.report}/report.tsv | cut -f2 > {output.report}/largestcontig.tsv
-#         grep "Total length (>= 0 bp)" {output.report}/report.tsv | cut -f2 > {output.report}/totallength.tsv
+        metawrap bin_refinement \
+            -m {params.memory} \
+            -t {threads} \
+            -o {params.outdir} \
+            -A {params.concoct} \
+            -B {params.maxbin2} \
+            -C {params.metabat2} \
+            -c 70 \
+            -x 10
 
-#         # paste into a single table
-#         paste {output.report}/n50.tsv \
-#               {output.report}/l50.tsv \
-#               {output.report}/ncontigs.tsv \
-#               {output.report}/largestcontig.tsv \
-#               {output.report}/totallength.tsv > {output.report}/{wildcards.group}_assembly_report.tsv
-#         """
-# ################################################################################
-# ### Map reads to the coassemblies
-# rule Coassembly_index:
-#     input:
-#         report = "3_Outputs/2_Coassemblies/{group}_QUAST/"
-#     output:
-#         bt2_index = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta.rev.2.bt2l",
-#     params:
-#         Coassembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta"
-#     conda:
-#         "conda_envs/2_Assembly_Binning.yaml"
-#     threads:
-#         24
-#     resources:
-#         mem_gb=128,
-#         time='04:00:00'
-#     benchmark:
-#         "3_Outputs/0_Logs/{group}_coassembly_indexing.benchmark.tsv"
-#     log:
-#         "3_Outputs/0_Logs/{group}_coassembly_indexing.log"
-#     message:
-#         "Indexing {wildcards.group} coassembly using Bowtie2"
-#     shell:
-#         """
-#         # Index the coassembly
-#         bowtie2-build \
-#             --large-index \
-#             --threads {threads} \
-#             {params.Coassembly} {params.Coassembly} \
-#         &> {log}
-#         """
-# ################################################################################
-# ### Map reads to the coassemblies
-# rule Coassembly_mapping:
-#     input:
-#         bt2_index = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta.rev.2.bt2l"
-#     output:
-#         bam = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}/{sample}.bam"  
-#     params:
-#         r1 = "2_Reads/4_Host_removed/{group}/{sample}_M_1.fq.gz",
-#         r2 = "2_Reads/4_Host_removed/{group}/{sample}_M_2.fq.gz",
-#         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
-#     conda:
-#         "conda_envs/2_Assembly_Binning.yaml"
-#     threads:
-#         8
-#     resources:
-#         mem_gb=40,
-#         time='08:00:00'
-#     benchmark:
-#         "3_Outputs/0_Logs/{group}_{sample}_coassembly_mapping.benchmark.tsv"
-#     log:
-#         "3_Outputs/0_Logs/{group}_{sample}_coassembly_mapping.log"
-#     message:
-#         "Mapping {wildcards.sample} to {wildcards.group} coassembly using Bowtie2"
-#     shell:
-#         """
-#         # Map reads to catted reference using Bowtie2
-#         bowtie2 \
-#             --time \
-#             --threads {threads} \
-#             -x {params.assembly} \
-#             -1 {params.r1} \
-#             -2 {params.r2} \
-#         | samtools sort -@ {threads} -o {output.bam}
-#         """
-# ################################################################################
-# ### Bin contigs using metaWRAP's binning module
-# rule metaWRAP_binning:
-#     input:
-#         bams = lambda wildcards: ["3_Outputs/3_Coassembly_Mapping/BAMs/{}/{}.bam/".format(wildcards.group, sample) for sample in GROUPS[wildcards.group]]
-#     output:
-#         "3_Outputs/4_Binning/{group}/Done.txt"
-#     params:
-#         concoct = "3_Outputs/4_Binning/{group}/concoct_bins",
-#         maxbin2 = "3_Outputs/4_Binning/{group}/maxbin2_bins",
-#         metabat2 = "3_Outputs/4_Binning/{group}/metabat2_bins",
-#         outdir = "3_Outputs/4_Binning/{group}",
-#         bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
-#         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
-#         memory = "180"
-#     conda:
-#         "conda_envs/2_MetaWRAP.yaml"
-#     threads:
-#         32
-#     resources:
-#         mem_gb=256,
-#         time='96:00:00'
-#     benchmark:
-#         "3_Outputs/0_Logs/{group}_coassembly_binning.benchmark.tsv"
-#     log:
-#         "3_Outputs/0_Logs/{group}_coassembly_binning.log"
-#     message:
-#         "Binning {wildcards.group} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
-#     shell:
-#         """
-#         # Create dummy fq/assembly files to trick metaWRAP into running without mapping
-#         mkdir -p {params.outdir}/work_files
+        # Rename metawrap bins to match coassembly group:
+        mv {params.outdir}/metawrap_70_10_bins.stats {output.stats}
+        mv {params.outdir}/metawrap_70_10_bins.contigs {output.contigmap}
+        sed -i'' '2,$s/bin/{params.group}_bin/g' {output.stats}
+        sed -i'' 's/bin/{params.group}_bin/g' {output.contigmap}
+        for bin in {params.outdir}/metawrap_70_10_bins/*.fa;
+            do mv $bin ${{bin/bin./{params.group}_bin.}};
+                done
 
-#         touch {params.outdir}/work_files/assembly.fa.bwt
+        # Compress output bins
+        pigz -p {threads} {params.outdir}/*bins/*.fa
 
-#         for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_1.fastq}}); done
-#         for bam in {params.bams}/*.bam; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_2.fastq}}); done
-
-
-#         #Symlink BAMs for metaWRAP
-#         for bam in {params.bams}/*.bam; do ln -sf `pwd`/$bam {params.outdir}/work_files/$(basename $bam); done
-
-#         # Run metaWRAP binning
-#         metawrap binning -o {params.outdir} \
-#             -t {threads} \
-#             -m {params.memory} \
-#             -a {params.assembly} \
-#             -l 1500 \
-#             --metabat2 \
-#             --maxbin2 \
-#             --concoct \
-#         {params.outdir}/work_files/*_1.fastq {params.outdir}/work_files/*_2.fastq
-
-#         # Create dummy file for refinement input
-#         echo "Binning complete" > {output}
-#         """
-# ################################################################################
-# ### Automatically refine bins using metaWRAP's refinement module
-# rule metaWRAP_refinement:
-#     input:
-#         "3_Outputs/4_Binning/{group}/Done.txt"
-#     output:
-#         stats = "3_Outputs/5_Refined_Bins/{group}/{group}_metawrap_70_10_bins.stats",
-#         contigmap = "3_Outputs/5_Refined_Bins/{group}/{group}_metawrap_70_10_bins.contigs"
-#     params:
-#         concoct = "3_Outputs/4_Binning/{group}/concoct_bins",
-#         maxbin2 = "3_Outputs/4_Binning/{group}/maxbin2_bins",
-#         metabat2 = "3_Outputs/4_Binning/{group}/metabat2_bins",
-#         binning_wfs = "3_Outputs/4_Binning/{group}/work_files",
-#         refinement_wfs = "3_Outputs/5_Refined_Bins/{group}/work_files",
-#         outdir = "3_Outputs/5_Refined_Bins/{group}",
-#         memory = "256",
-#         group = "{group}"
-#     conda:
-#         "conda_envs/2_MetaWRAP.yaml"
-#     threads:
-#         32
-#     resources:
-#         mem_gb=256,
-#         time='36:00:00'
-#     benchmark:
-#         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
-#     log:
-#         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.log"
-#     message:
-#         "Refining {wildcards.group} bins with MetaWRAP's bin refinement module"
-#     shell:
-#         """
-#         # Setup checkM path
-#         export checkmdb={config[checkmdb]}
-#         printf $checkmdb | checkm data setRoot
-        
-#         metawrap bin_refinement \
-#             -m {params.memory} \
-#             -t {threads} \
-#             -o {params.outdir} \
-#             -A {params.concoct} \
-#             -B {params.maxbin2} \
-#             -C {params.metabat2} \
-#             -c 70 \
-#             -x 10
-
-#         # Rename metawrap bins to match coassembly group:
-#         mv {params.outdir}/metawrap_70_10_bins.stats {output.stats}
-#         mv {params.outdir}/metawrap_70_10_bins.contigs {output.contigmap}
-#         sed -i'' '2,$s/bin/{params.group}_bin/g' {output.stats}
-#         sed -i'' 's/bin/{params.group}_bin/g' {output.contigmap}
-#         for bin in {params.outdir}/metawrap_70_10_bins/*.fa;
-#             do mv $bin ${{bin/bin./{params.group}_bin.}};
-#                 done
-
-#         # Compress output bins
-#         pigz -p {threads} {params.outdir}/*bins/*.fa
-
-#         rm -r {params.binning_wfs}
-#         rm -r {params.refinement_wfs}
-#         rm {params.concoct}/*.fa
-#         rm {params.maxbin2}/*.fa
-#         rm {params.metabat2}/*.fa
-#         """
+        rm -r {params.binning_wfs}
+        rm -r {params.refinement_wfs}
+        rm {params.concoct}/*.fa
+        rm {params.maxbin2}/*.fa
+        rm {params.metabat2}/*.fa
+        """
 # ################################################################################
 # ### Calculate the number of reads that mapped to coassemblies
 # rule coverM_assembly:
