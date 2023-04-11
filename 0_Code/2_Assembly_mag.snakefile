@@ -21,7 +21,9 @@
 
 ### Setup sample inputs, config, and working directory
 
+
 configfile: "2_Assembly_Binning_config.yaml"
+
 
 import pandas as pd
 
@@ -29,36 +31,68 @@ import pandas as pd
 ## using the 'XXXXX.py' script, which pulls the information from AirTable and saves-
 ## it as 'abb_input.tsv'.
 
-df = pd.read_csv('asb_input.tsv', sep='\t')
+df = pd.read_csv("asb_input.tsv", sep="\t")
 
 # Use set to create a list of valid combinations of wildcards. Note that 'ID' = EHA number.
-valid_combinations = set((row['PR_batch'], row['EHI_number'], row['ID']) for _, row in df.iterrows())
+valid_combinations = set(
+    (row["PR_batch"], row["EHI_number"], row["ID"]) for _, row in df.iterrows()
+)
 
 
 ################################################################################
 ### Setup the desired outputs
 rule all:
     input:
-        expand(os.path.join(config["workdir"], "{abb}_ERDA_folder_created"), abb=config['abb']),
-        expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_1.fq.gz"), combo=valid_combinations),
-        expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_2.fq.gz"), combo=valid_combinations),
-        expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_QUAST"), combo=valid_combinations),
-        expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_contigs.fasta.gz"), combo=valid_combinations),
-        expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_assembly_coverM.txt"), combo=valid_combinations),
+        expand(
+            os.path.join(config["workdir"], "{abb}_ERDA_folder_created"),
+            abb=config["abb"],
+        ),
+        expand(
+            os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_1.fq.gz"),
+            combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_2.fq.gz"),
+            combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(
+                config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_QUAST"
+            ),
+            combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(
+                config["workdir"],
+                "{combo[0]}",
+                "{combo[1]}",
+                "{combo[2]}_contigs.fasta.gz",
+            ),
+            combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(
+                config["workdir"],
+                "{combo[0]}",
+                "{combo[1]}",
+                "{combo[2]}_assembly_coverM.txt",
+            ),
+            combo=valid_combinations,
+        ),
+
 
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        os.path.join(config["workdir"], "{abb}_ERDA_folder_created")
+        os.path.join(config["workdir"], "{abb}_ERDA_folder_created"),
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
-    threads:
-        1
+    threads: 1
     resources:
         load=8,
         mem_gb=8,
-        time='00:05:00'
+        time="00:05:00",
     message:
         "Creating assembly batch folder on ERDA"
     shell:
@@ -69,20 +103,21 @@ rule create_ASB_folder:
         #Also, log the AirTable that the ASB is running!
         python {{config['codedir']}}/airtable/log_asb_start_airtable.py --code={{config['abb']}}
         """
+
+
 ################################################################################
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     output:
-        r1 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
-        r2 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz")
+        r1=os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
+        r2=os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz"),
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
-    threads:
-        1
+    threads: 1
     resources:
         load=8,
         mem_gb=8,
-        time='00:15:00'
+        time="00:15:00",
     message:
         "Fetching metagenomics reads for {wildcards.EHI} from ERDA"
     shell:
@@ -90,27 +125,27 @@ rule download_from_ERDA:
         lftp sftp://erda -e "mirror --include-glob='{wildcards.PRB}/{wildcards.EHI}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {config['workdir']}/; bye"
         """
 
+
 ################################################################################
 ### Perform individual assembly on each sample
 rule assembly:
     input:
-        r1 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
-        r2 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz")
+        r1=os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
+        r2=os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz"),
     output:
-        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
+        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
     params:
-        assembler = expand("{assembler}", assembler=config['assembler']),
+        assembler=expand("{assembler}", assembler=config["assembler"]),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
-    threads:
-        16
+    threads: 16
     resources:
         mem_gb=128,
-        time='36:00:00'
+        time="36:00:00",
     benchmark:
         "{{config['logdir']}}/assembly_benchmark_{PRB}_{EHI}_{EHA}.tsv"
     log:
-        "{{config['logdir']}}/assembly_log_{PRB}_{EHI}_{EHA}.log"
+        "{{config['logdir']}}/assembly_log_{PRB}_{EHI}_{EHA}.log",
     message:
         "Assembling {wildcards.EHA} using {params.assembler}"
     shell:
@@ -131,20 +166,21 @@ rule assembly:
         # Reformat headers
             sed -i 's/ /-/g' {output}
         """
+
+
 ################################################################################
 ### Create QUAST reports of coassemblies
 rule QUAST:
     input:
-        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
+        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
     output:
         directory(os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_QUAST")),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
-    threads:
-        4
+    threads: 4
     resources:
         mem_gb=32,
-        time='00:30:00'
+        time="00:30:00",
     message:
         "Running -QUAST on {wildcards.EHA} coassembly"
     shell:
@@ -169,26 +205,27 @@ rule QUAST:
               {output}/largestcontig.tsv \
               {output}/totallength.tsv > {output}/{wildcards.group}_assembly_report.tsv
         """
+
+
 ################################################################################
 ### Index assemblies
 rule assembly_index:
     input:
-        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
+        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
     output:
-        os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l")
-    params:
-        # contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        os.path.join(
+            config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l"
+        ),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
-    threads:
-        16
+    threads: 16
     resources:
         mem_gb=96,
-        time='02:00:00'
+        time="02:00:00",
     benchmark:
         "{{config['logdir']}}/index_assembly_benchmark_{PRB}_{EHI}_{EHA}.tsv"
     log:
-        "{{config['logdir']}}/index_assembly_log_{PRB}_{EHI}_{EHA}.log"
+        "{{config['logdir']}}/index_assembly_log_{PRB}_{EHI}_{EHA}.log",
     message:
         "Indexing {wildcards.EHA} assembly using Bowtie2"
     shell:
@@ -200,27 +237,30 @@ rule assembly_index:
             {input} {input} \
         &> {log}
         """
+
+
 ################################################################################
 ### Map reads to assemblies
 rule assembly_mapping:
     input:
-        index = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l"),
-        r1 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
-        r2 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz"),
-        contigs = os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
+        index=os.path.join(
+            config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l"
+        ),
+        r1=os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
+        r2=os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz"),
+        contigs=os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
     output:
-        os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam")
+        os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam"),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
-    threads:
-        16
+    threads: 16
     resources:
         mem_gb=48,
-        time='05:00:00'
+        time="05:00:00",
     benchmark:
         "{{config['logdir']}}/assembly_mapping_benchmark_{PRB}_{EHI}_{EHA}.tsv"
     log:
-        "{{config['logdir']}}/assembly_mapping_log_{PRB}_{EHI}_{EHA}.log"
+        "{{config['logdir']}}/assembly_mapping_log_{PRB}_{EHI}_{EHA}.log",
     message:
         "Mapping {wildcards.EHI} to {wildcards.EHA} assembly using Bowtie2"
     shell:
@@ -234,27 +274,30 @@ rule assembly_mapping:
             -2 {input.r2} \
         | samtools sort -@ {threads} -o {output}
         """
+
+
 ################################################################################
 ### Bin contigs using metaWRAP's binning module
 rule metaWRAP_binning:
     input:
-        bam = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam"),
-        contigs = os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
+        bam=os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam"),
+        contigs=os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
     output:
-        os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_binning/binning_complete")
+        os.path.join(
+            config["workdir"], "{PRB}", "{EHI}", "{EHA}_binning/binning_complete"
+        ),
     params:
-        outdir = directory("{config['workdir']}/{PRB}/{EHI}/{EHA}_binning")
+        outdir=directory("{config['workdir']}/{PRB}/{EHI}/{EHA}_binning"),
     conda:
         f"{config['codedir']}/conda_envs/2_MetaWRAP.yaml"
-    threads:
-        16
+    threads: 16
     resources:
         mem_gb=96,
-        time='06:00:00'
+        time="06:00:00",
     benchmark:
         "{{config['logdir']}}/binning_benchmark_{PRB}_{EHI}_{EHA}.tsv"
     log:
-        "{{config['logdir']}}/binning_log_{PRB}_{EHI}_{EHA}.log"
+        "{{config['logdir']}}/binning_log_{PRB}_{EHI}_{EHA}.log",
     message:
         "Binning {wildcards.EHA} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
     shell:
@@ -285,32 +328,47 @@ rule metaWRAP_binning:
         # Create output for the next rule
         touch {output}
         """
+
+
 ################################################################################
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
     input:
-        os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_binning/binning_complete")
+        os.path.join(
+            config["workdir"], "{PRB}", "{EHI}", "{EHA}_binning/binning_complete"
+        ),
     output:
-        stats = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.stats"),
-        contigmap = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.contigs")
+        stats=os.path.join(
+            config["workdir"],
+            "{PRB}",
+            "{EHI}",
+            "{EHA}_refinement",
+            "{EHA}_metawrap_70_10_bins.stats",
+        ),
+        contigmap=os.path.join(
+            config["workdir"],
+            "{PRB}",
+            "{EHI}",
+            "{EHA}_refinement",
+            "{EHA}_metawrap_70_10_bins.contigs",
+        ),
     params:
-        concoct = "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/concoct_bins",
-        maxbin2 = "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/maxbin2_bins",
-        metabat2 = "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/metabat2_bins",
-        binning_wfs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/work_files",
-        refinement_wfs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/work_files",
-        outdir = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",
+        concoct="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/concoct_bins",
+        maxbin2="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/maxbin2_bins",
+        metabat2="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/metabat2_bins",
+        binning_wfs="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/work_files",
+        refinement_wfs="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/work_files",
+        outdir="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",
     conda:
         f"{config['codedir']}/conda_envs/2_MetaWRAP.yaml"
-    threads:
-        16
+    threads: 16
     resources:
         mem_gb=128,
-        time='06:00:00'
+        time="06:00:00",
     benchmark:
         "{{config['logdir']}}/binning_benchmark_{PRB}_{EHI}_{EHA}.tsv"
     log:
-        "{{config['logdir']}}/binning_log_{PRB}_{EHI}_{EHA}.log"
+        "{{config['logdir']}}/binning_log_{PRB}_{EHI}_{EHA}.log",
     message:
         "Refining {wildcards.EHA} bins with MetaWRAP's bin refinement module"
     shell:
@@ -347,31 +405,50 @@ rule metaWRAP_refinement:
         rm {params.maxbin2}/*.fa
         rm {params.metabat2}/*.fa
         """
+
+
 ################################################################################
 ### Calculate the number of reads that mapped to coassemblies
 rule coverM_assembly:
     input:
-        stats = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.stats"),
-        contigmap = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.contigs"),
-        bam = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam"),
-        contigs = os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
+        stats=os.path.join(
+            config["workdir"],
+            "{PRB}",
+            "{EHI}",
+            "{EHA}_refinement",
+            "{EHA}_metawrap_70_10_bins.stats",
+        ),
+        contigmap=os.path.join(
+            config["workdir"],
+            "{PRB}",
+            "{EHI}",
+            "{EHA}_refinement",
+            "{EHA}_metawrap_70_10_bins.contigs",
+        ),
+        bam=os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam"),
+        contigs=os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
     output:
-        coverm = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_assembly_coverM.txt"),
-        euk = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_eukaryotic_coverM.tsv"),
-        contigs_gz = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.gz")
+        coverm=os.path.join(
+            config["workdir"], "{PRB}", "{EHI}", "{EHA}_assembly_coverM.txt"
+        ),
+        euk=os.path.join(
+            config["workdir"], "{PRB}", "{EHI}", "{EHA}_eukaryotic_coverM.tsv"
+        ),
+        contigs_gz=os.path.join(
+            config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.gz"
+        ),
     params:
-        refinement_files = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/"
+        refinement_files="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
-    threads:
-        8
+    threads: 8
     resources:
         mem_gb=64,
-        time='00:30:00'
+        time="00:30:00",
     benchmark:
         "{{config['logdir']}}/coverm_benchmark_{PRB}_{EHI}_{EHA}.tsv"
     log:
-        "{{config['logdir']}}/coverm_log_{PRB}_{EHI}_{EHA}.log"
+        "{{config['logdir']}}/coverm_log_{PRB}_{EHI}_{EHA}.log",
     message:
         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
     shell:
@@ -399,6 +476,8 @@ rule coverM_assembly:
         #Print the number of MAGs to a file for combining with the assembly report
         ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {wildcards.EHA}_bins.tsv;
         """
+
+
 # ################################################################################
 # ### Run GTDB-tk on refined bins
 # rule gtdbtk:
@@ -525,7 +604,7 @@ rule coverM_assembly:
 #         #parse QUAST outputs for assembly stats
 #         echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\tassembly_mapping_percent" > headers.tsv
 
-     
+
 #         for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
 #             do cat 3_Outputs/2_Coassemblies/{params.group}_QUAST/{params.group}_assembly_report.tsv >> {params.group}_temp_report.tsv;
 #         done
@@ -555,7 +634,6 @@ rule coverM_assembly:
 #         done
 
 #         paste {params.group}_temp3_report.tsv {params.group}_relabun.tsv > {params.group}_temp4_report.tsv
-
 #         #Combine them into the final assembly report
 #         cat headers.tsv {params.group}_temp4_report.tsv > {output}
 #         """
