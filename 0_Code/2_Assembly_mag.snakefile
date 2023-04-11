@@ -49,7 +49,7 @@ rule all:
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        "{{config['workdir']}}/{abb}_ERDA_folder_created"
+        "{config['workdir']}/{abb}_ERDA_folder_created"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -72,8 +72,8 @@ rule create_ASB_folder:
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     output:
-        r1 = "{{config['workdir']}}/{PRB}/{EHI}_M_1.fq.gz",
-        r2 = "{{config['workdir']}}/{PRB}/{EHI}_M_2.fq.gz"
+        r1 = "{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
+        r2 = "{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -86,17 +86,17 @@ rule download_from_ERDA:
         "Fetching metagenomics reads for {wildcards.EHI} from ERDA"
     shell:
         """
-        lftp sftp://erda -e "mirror --include-glob='{wildcards.PRB}/{wildcards.EHI}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {{config['workdir']}}/; bye"
+        lftp sftp://erda -e "mirror --include-glob='{wildcards.PRB}/{wildcards.EHI}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {config['workdir']}/; bye"
         """
 
 ################################################################################
 ### Perform individual assembly on each sample
 rule assembly:
     input:
-        r1 = "{{config['workdir']}}/{PRB}/{EHI}_M_1.fq.gz",
-        r2 = "{{config['workdir']}}/{PRB}/{EHI}_M_2.fq.gz"
+        r1 = "{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
+        r2 = "{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz"
     output:
-        "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     params:
         assembler = expand("{assembler}", assembler=config['assembler']),
     conda:
@@ -121,11 +121,11 @@ rule assembly:
                 --min-contig-len 1500 \
                 -1 {input.r1} -2 {input.r2} \
                 -f \
-                -o {{config['workdir']}}/{PRB}/{EHI}
+                -o {config['workdir']}/{PRB}/{EHI}
                 2> {log}
 
         # Move the Coassembly to final destination
-            mv {{config['workdir']}}/{PRB}/{EHI}/final.contigs.fa {output}
+            mv {config['workdir']}/{PRB}/{EHI}/final.contigs.fa {output}
 
         # Reformat headers
             sed -i 's/ /-/g' {output}
@@ -134,9 +134,9 @@ rule assembly:
 ### Create QUAST reports of coassemblies
 rule QUAST:
     input:
-        "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     output:
-        directory("{{config['workdir']}}/{PRB}/{EHI}/{EHA}_QUAST"),
+        directory("{config['workdir']}/{PRB}/{EHI}/{EHA}_QUAST"),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
@@ -172,11 +172,11 @@ rule QUAST:
 ### Index assemblies
 rule assembly_index:
     input:
-        directory("{{config['workdir']}}/{PRB}/{EHI}/{EHA}_QUAST")
+        directory("{config['workdir']}/{PRB}/{EHI}/{EHA}_QUAST")
     output:
-        "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta.rev.2.bt2l"
+        "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.rev.2.bt2l"
     params:
-        contigs = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
@@ -203,12 +203,12 @@ rule assembly_index:
 ### Map reads to assemblies
 rule assembly_mapping:
     input:
-        "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta.rev.2.bt2l",
-        r1 = "{{config['workdir']}}/{PRB}/{EHI}_M_1.fq.gz",
-        r2 = "{{config['workdir']}}/{PRB}/{EHI}_M_2.fq.gz",
-        contigs = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.rev.2.bt2l",
+        r1 = "{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
+        r2 = "{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz",
+        contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     output:
-        "{{config['workdir']}}/{PRB}/{EHI}/{EHI}_{EHA}.bam"
+        "{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam"
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
@@ -237,12 +237,12 @@ rule assembly_mapping:
 ### Bin contigs using metaWRAP's binning module
 rule metaWRAP_binning:
     input:
-        bam = "{{config['workdir']}}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
-        contigs = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        bam = "{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
+        contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     output:
-        "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_binning/binning_complete"
+        "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/binning_complete"
     params:
-        outdir = directory("{{config['workdir']}}/{PRB}/{EHI}/{EHA}_binning")
+        outdir = directory("{config['workdir']}/{PRB}/{EHI}/{EHA}_binning")
     conda:
         f"{config['codedir']}/conda_envs/2_MetaWRAP.yaml"
     threads:
@@ -288,17 +288,17 @@ rule metaWRAP_binning:
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
     input:
-        "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_binning/binning_complete"
+        "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/binning_complete"
     output:
-        stats = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
-        contigmap = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.contigs"
+        stats = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
+        contigmap = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.contigs"
     params:
-        concoct = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_binning/concoct_bins",
-        maxbin2 = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_binning/maxbin2_bins",
-        metabat2 = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_binning/metabat2_bins",
-        binning_wfs = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_binning/work_files",
-        refinement_wfs = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_refinement/work_files",
-        outdir = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_refinement/",
+        concoct = "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/concoct_bins",
+        maxbin2 = "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/maxbin2_bins",
+        metabat2 = "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/metabat2_bins",
+        binning_wfs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/work_files",
+        refinement_wfs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/work_files",
+        outdir = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",
     conda:
         f"{config['codedir']}/conda_envs/2_MetaWRAP.yaml"
     threads:
@@ -350,15 +350,15 @@ rule metaWRAP_refinement:
 ### Calculate the number of reads that mapped to coassemblies
 rule coverM_assembly:
     input:
-        stats = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
-        bam = "{{config['workdir']}}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
-        contigs = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta",
+        stats = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
+        bam = "{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
+        contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta",
     output:
-        coverm = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
-        euk = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
-        contigs_gz = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
+        coverm = "{config['workdir']}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
+        euk = "{config['workdir']}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
+        contigs_gz = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
     params:
-        refinement_files = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_refinement/"
+        refinement_files = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/"
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
@@ -401,15 +401,15 @@ rule coverM_assembly:
 # ### Run GTDB-tk on refined bins
 # rule gtdbtk:
 #     input:
-#         stats = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
-#         bam = "{{config['workdir']}}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
-#         contigs = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta",
+#         stats = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
+#         bam = "{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
+#         contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta",
 #     output:
-#         coverm = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
-#         euk = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
-#         contigs_gz = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
+#         coverm = "{config['workdir']}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
+#         euk = "{config['workdir']}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
+#         contigs_gz = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
 #     params:
-#         refinement_files = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_refinement/"
+#         refinement_files = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/"
 #     conda:
 #         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
 #     threads:
@@ -452,15 +452,15 @@ rule coverM_assembly:
 # ### Run DRAM on refined bins
 # rule DRAM:
 #     input:
-#         stats = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
-#         bam = "{{config['workdir']}}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
-#         contigs = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta",
+#         stats = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
+#         bam = "{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
+#         contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta",
 #     output:
-#         coverm = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
-#         euk = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
-#         contigs_gz = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
+#         coverm = "{config['workdir']}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
+#         euk = "{config['workdir']}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
+#         contigs_gz = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
 #     params:
-#         refinement_files = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_refinement/"
+#         refinement_files = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/"
 #     conda:
 #         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
 #     threads:
@@ -503,7 +503,7 @@ rule coverM_assembly:
 ### Generate output summary table
 # rule generate_summary:
 #     input:
-#         coverm = "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
+#         coverm = "{config['workdir']}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
 #     output:
 #         "3_Outputs/{group}_coassembly_summary.tsv"
 #     conda:
