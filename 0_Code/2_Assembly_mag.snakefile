@@ -39,17 +39,17 @@ valid_combinations = set((row['PR_batch'], row['EHI_number'], row['ID']) for _, 
 ### Setup the desired outputs
 rule all:
     input:
-        expand("{{config['workdir']}}/{abb}_ERDA_folder_created", abb=config['abb']),
-        expand("{{config['workdir']}}/{combo[0]}/{combo[1]}_M_1.fq.gz", combo=valid_combinations),
-        expand("{{config['workdir']}}/{combo[0]}/{combo[1]}_M_2.fq.gz", combo=valid_combinations),
-        expand("{{config['workdir']}}/{combo[0]}/{combo[1]}/{combo[2]}_contigs.fasta.gz", combo=valid_combinations),
-        expand("{{config['workdir']}}/{combo[0]}/{combo[1]}/{combo[2]}_assembly_coverM.txt", combo=valid_combinations),
+        expand("{workdir}/{abb}_ERDA_folder_created", abb=config['abb'], workdir=config["workdir"]),
+        expand("{workdir}/{combo[0]}/{combo[1]}_M_1.fq.gz", combo=valid_combinations, workdir=config["workdir"]),
+        expand("{workdir}/{combo[0]}/{combo[1]}_M_2.fq.gz", combo=valid_combinations, workdir=config["workdir"]),
+        expand("{workdir}/{combo[0]}/{combo[1]}/{combo[2]}_contigs.fasta.gz", combo=valid_combinations, workdir=config["workdir"]),
+        expand("{workdir}/{combo[0]}/{combo[1]}/{combo[2]}_assembly_coverM.txt", combo=valid_combinations, workdir=config["workdir"]),
 
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        "{config['workdir']}/{abb}_ERDA_folder_created"
+        "{workdir}/{abb}_ERDA_folder_created"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -72,8 +72,8 @@ rule create_ASB_folder:
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     output:
-        r1 = "{{config['workdir']}}/{PRB}/{EHI}_M_1.fq.gz",
-        r2 = "{{config['workdir']}}/{PRB}/{EHI}_M_2.fq.gz"
+        r1 = "{workdir}/{PRB}/{EHI}_M_1.fq.gz",
+        r2 = "{workdir}/{PRB}/{EHI}_M_2.fq.gz"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -98,7 +98,7 @@ rule assembly:
     output:
         "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     params:
-        assembler = expand("{assembler}", assembler=config['assembler']),
+        assembler = expand("{assembler}", assembler=config['assembler'], workdir=config["workdir"]),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
@@ -136,7 +136,7 @@ rule QUAST:
     input:
         "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     output:
-        directory("{{config['workdir']}}/{PRB}/{EHI}/{EHA}_QUAST"),
+        directory("{{config['workdir']}}/{PRB}/{EHI}/{EHA}_QUAST", workdir=config["workdir"]),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
