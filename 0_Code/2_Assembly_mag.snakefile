@@ -269,7 +269,7 @@ rule assembly_mapping:
         bowtie2 \
             --time \
             --threads {threads} \
-            -x {input.assembly} \
+            -x {input.contigs} \
             -1 {input.r1} \
             -2 {input.r2} \
         | samtools sort -@ {threads} -o {output}
