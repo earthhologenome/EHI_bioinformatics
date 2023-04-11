@@ -203,7 +203,7 @@ rule QUAST:
               {output}/l50.tsv \
               {output}/ncontigs.tsv \
               {output}/largestcontig.tsv \
-              {output}/totallength.tsv > {output}/{wildcards.group}_assembly_report.tsv
+              {output}/totallength.tsv > {output}/{wildcards.EHA}_assembly_report.tsv
         """
 
 
