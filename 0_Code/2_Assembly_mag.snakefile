@@ -80,15 +80,15 @@ rule all:
         ),
 
 
-include: os.path.join(config["workdir"], "rules/create_ASB_folder.smk")
-include: os.path.join(config["workdir"], "rules/download_preprocessed.smk")
-include: os.path.join(config["workdir"], "rules/individual_assembly.smk")
-include: os.path.join(config["workdir"], "rules/QUAST.smk")
-include: os.path.join(config["workdir"], "rules/index_assembly.smk")
-include: os.path.join(config["workdir"], "rules/assembly_mapping.smk")
-include: os.path.join(config["workdir"], "rules/metawrap_binning.smk")
-include: os.path.join(config["workdir"], "rules/metawrap_refinement.smk")
-include: os.path.join(config["workdir"], "rules/coverm_assembly.smk")
+include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
+include: os.path.join(config["codedir"], "rules/download_preprocessed.smk")
+include: os.path.join(config["codedir"], "rules/individual_assembly.smk")
+include: os.path.join(config["codedir"], "rules/QUAST.smk")
+include: os.path.join(config["codedir"], "rules/index_assembly.smk")
+include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
+include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
+include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
+include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
 
 
 # ################################################################################
