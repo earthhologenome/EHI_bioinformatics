@@ -49,7 +49,7 @@ rule all:
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        "{workdir}/{abb}_ERDA_folder_created"
+        "{{config['workdir']}}/{abb}_ERDA_folder_created"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -72,8 +72,8 @@ rule create_ASB_folder:
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     output:
-        r1 = "{workdir}/{PRB}/{EHI}_M_1.fq.gz",
-        r2 = "{workdir}/{PRB}/{EHI}_M_2.fq.gz"
+        r1 = "{{config['workdir']}}/{PRB}/{EHI}_M_1.fq.gz",
+        r2 = "{{config['workdir']}}/{PRB}/{EHI}_M_2.fq.gz"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -93,8 +93,8 @@ rule download_from_ERDA:
 ### Perform individual assembly on each sample
 rule assembly:
     input:
-        r1 = "{workdir}/{PRB}/{EHI}_M_1.fq.gz",
-        r2 = "{workdir}/{PRB}/{EHI}_M_2.fq.gz"
+        r1 = "{{config['workdir']}}/{PRB}/{EHI}_M_1.fq.gz",
+        r2 = "{{config['workdir']}}/{PRB}/{EHI}_M_2.fq.gz"
     output:
         "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     params:
@@ -134,9 +134,9 @@ rule assembly:
 ### Create QUAST reports of coassemblies
 rule QUAST:
     input:
-        "{workdir}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     output:
-        directory("{workdir}/{PRB}/{EHI}/{EHA}_QUAST"),
+        directory("{{config['workdir']}}/{PRB}/{EHI}/{EHA}_QUAST"),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
