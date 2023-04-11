@@ -39,7 +39,8 @@ valid_combinations = set((row['PR_batch'], row['EHI_number'], row['ID']) for _, 
 ### Setup the desired outputs
 rule all:
     input:
-        expand("downloaded_data/{combo[0]}/{combo[1]}/{combo[2]}_contigs.fasta.gz", combo=valid_combinations)
+        expand(f"{config['workdir']}/{combo[0]}/{combo[1]}/{combo[2]}_contigs.fasta.gz", combo=valid_combinations),
+        expand(f"{config['workdir']}/{combo[0]}/{combo[1]}/{combo[2]}_assembly_coverM.txt", combo=valid_combinations),
 
 ################################################################################
 ### Create EHA folder on ERDA
@@ -291,27 +292,25 @@ rule metaWRAP_refinement:
         stats = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
         contigmap = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.contigs"
     params:
-        concoct = "3_Outputs/4_Binning/{group}/concoct_bins",
-        maxbin2 = "3_Outputs/4_Binning/{group}/maxbin2_bins",
-        metabat2 = "3_Outputs/4_Binning/{group}/metabat2_bins",
-        binning_wfs = "3_Outputs/4_Binning/{group}/work_files",
-        refinement_wfs = "3_Outputs/5_Refined_Bins/{group}/work_files",
-        outdir = "3_Outputs/5_Refined_Bins/{group}",
-        memory = "256",
-        group = "{group}"
+        concoct = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/concoct_bins",
+        maxbin2 = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/maxbin2_bins",
+        metabat2 = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/metabat2_bins",
+        binning_wfs = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/work_files",
+        refinement_wfs = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/work_files",
+        outdir = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",
     conda:
-        "conda_envs/2_MetaWRAP.yaml"
+        f"{config['codedir']}/conda_envs/2_MetaWRAP.yaml"
     threads:
-        32
+        16
     resources:
-        mem_gb=256,
-        time='36:00:00'
+        mem_gb=128,
+        time='06:00:00'
     benchmark:
-        "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
+        f"{config['logdir']}/binning_benchmark_{EHA}.tsv"
     log:
-        "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.log"
+        f"{config['logdir']}/binning_log_{EHA}.log"
     message:
-        "Refining {wildcards.group} bins with MetaWRAP's bin refinement module"
+        "Refining {wildcards.EHA} bins with MetaWRAP's bin refinement module"
     shell:
         """
         # Setup checkM path
@@ -319,7 +318,7 @@ rule metaWRAP_refinement:
         printf $checkmdb | checkm data setRoot
         
         metawrap bin_refinement \
-            -m {params.memory} \
+            -m {resources.mem_gb} \
             -t {threads} \
             -o {params.outdir} \
             -A {params.concoct} \
@@ -331,10 +330,10 @@ rule metaWRAP_refinement:
         # Rename metawrap bins to match coassembly group:
         mv {params.outdir}/metawrap_70_10_bins.stats {output.stats}
         mv {params.outdir}/metawrap_70_10_bins.contigs {output.contigmap}
-        sed -i'' '2,$s/bin/{params.group}_bin/g' {output.stats}
-        sed -i'' 's/bin/{params.group}_bin/g' {output.contigmap}
+        sed -i'' '2,$s/bin/{wildcards.EHA}_bin/g' {output.stats}
+        sed -i'' 's/bin/{wildcards.EHA}_bin/g' {output.contigmap}
         for bin in {params.outdir}/metawrap_70_10_bins/*.fa;
-            do mv $bin ${{bin/bin./{params.group}_bin.}};
+            do mv $bin ${{bin/bin./{wildcards.EHA}_bin.}};
                 done
 
         # Compress output bins
@@ -346,38 +345,88 @@ rule metaWRAP_refinement:
         rm {params.maxbin2}/*.fa
         rm {params.metabat2}/*.fa
         """
+################################################################################
+### Calculate the number of reads that mapped to coassemblies
+rule coverM_assembly:
+    input:
+        stats = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
+        bam = f"{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
+        contigs = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta",
+    output:
+        coverm = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
+        euk = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
+        contigs_gz = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
+    params:
+        refinement_files = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/"
+    conda:
+        f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+    threads:
+        8
+    resources:
+        mem_gb=64,
+        time='00:30:00'
+    benchmark:
+        f"{config['logdir']}/coverm_benchmark_{EHA}.tsv"
+    log:
+        f"{config['logdir']}/coverm_log_{EHA}.log"
+    message:
+        "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
+    shell:
+        """
+        coverm genome \
+            -b {input.bam} \
+            --genome-fasta-files {input.contigs} \
+            -m relative_abundance \
+            -t {threads} \
+            --min-covered-fraction 0 \
+            > {output.coverm}
+
+        #Run coverm for the eukaryotic assessment pipeline
+        coverm genome \
+            -s - \
+            -b {input.bam} \
+            -m relative_abundance count mean covered_fraction \
+            -t {threads} \
+            --min-covered-fraction 0 \
+            > {output.euk}
+
+        # Compress the contigs
+        pigz -p {threads} {input.contigs}
+
+        #Print the number of MAGs to a file for combining with the assembly report
+        ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {wildcards.EHA}_bins.tsv;
+        """
 # ################################################################################
-# ### Calculate the number of reads that mapped to coassemblies
-# rule coverM_assembly:
+# ### Run GTDB-tk on refined bins
+# rule gtdbtk:
 #     input:
-#         "3_Outputs/5_Refined_Bins/{group}/{group}_metawrap_70_10_bins.stats"
+#         stats = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
+#         bam = f"{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
+#         contigs = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta",
 #     output:
-#         coverm = "3_Outputs/6_Coassembly_CoverM/{group}_assembly_coverM.txt",
-#         euk = "3_Outputs/6_Coassembly_CoverM/{group}_eukaryotic_coverM.tsv"
+#         coverm = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
+#         euk = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
+#         contigs_gz = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
 #     params:
-#         mapped_bams = "3_Outputs/3_Coassembly_Mapping/BAMs/{group}",
-#         assembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
-#         binning_files = "3_Outputs/4_Binning/{group}",
-#         refinement_files = "3_Outputs/5_Refined_Bins/{group}",
-#         group = "{group}"
+#         refinement_files = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/"
 #     conda:
-#         "conda_envs/2_Assembly_Binning.yaml"
+#         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
 #     threads:
-#         24
+#         8
 #     resources:
-#         mem_gb=128,
-#         time='06:00:00'
+#         mem_gb=64,
+#         time='00:30:00'
 #     benchmark:
-#         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.benchmark.tsv"
+#         f"{config['logdir']}/coverm_benchmark_{EHA}.tsv"
 #     log:
-#         "3_Outputs/0_Logs/{group}_coassembly_bin_refinement.log"
+#         f"{config['logdir']}/coverm_log_{EHA}.log"
 #     message:
-#         "Calculating coassembly mapping rate for {wildcards.group} with CoverM"
+#         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
 #     shell:
 #         """
 #         coverm genome \
-#             -b {params.mapped_bams}/*.bam \
-#             --genome-fasta-files {params.assembly} \
+#             -b {input.bam} \
+#             --genome-fasta-files {input.contigs} \
 #             -m relative_abundance \
 #             -t {threads} \
 #             --min-covered-fraction 0 \
@@ -386,23 +435,74 @@ rule metaWRAP_refinement:
 #         #Run coverm for the eukaryotic assessment pipeline
 #         coverm genome \
 #             -s - \
-#             -b {params.mapped_bams}/*.bam \
+#             -b {input.bam} \
 #             -m relative_abundance count mean covered_fraction \
 #             -t {threads} \
 #             --min-covered-fraction 0 \
 #             > {output.euk}
 
-#         # Create directory for dereplication groups:
-#         mkdir -p 3_Outputs/5_Refined_Bins/dRep_groups
+#         # Compress the contigs
+#         pigz -p {threads} {input.contigs}
 
 #         #Print the number of MAGs to a file for combining with the assembly report
-#         ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {params.group}_bins.tsv;
+#         ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {wildcards.EHA}_bins.tsv;
 #         """
 # ################################################################################
-# ### Generate output summary table
+# ### Run DRAM on refined bins
+# rule DRAM:
+#     input:
+#         stats = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
+#         bam = f"{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
+#         contigs = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta",
+#     output:
+#         coverm = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
+#         euk = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
+#         contigs_gz = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
+#     params:
+#         refinement_files = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/"
+#     conda:
+#         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+#     threads:
+#         8
+#     resources:
+#         mem_gb=64,
+#         time='00:30:00'
+#     benchmark:
+#         f"{config['logdir']}/coverm_benchmark_{EHA}.tsv"
+#     log:
+#         f"{config['logdir']}/coverm_log_{EHA}.log"
+#     message:
+#         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
+#     shell:
+#         """
+#         coverm genome \
+#             -b {input.bam} \
+#             --genome-fasta-files {input.contigs} \
+#             -m relative_abundance \
+#             -t {threads} \
+#             --min-covered-fraction 0 \
+#             > {output.coverm}
+
+#         #Run coverm for the eukaryotic assessment pipeline
+#         coverm genome \
+#             -s - \
+#             -b {input.bam} \
+#             -m relative_abundance count mean covered_fraction \
+#             -t {threads} \
+#             --min-covered-fraction 0 \
+#             > {output.euk}
+
+#         # Compress the contigs
+#         pigz -p {threads} {input.contigs}
+
+#         #Print the number of MAGs to a file for combining with the assembly report
+#         ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {wildcards.EHA}_bins.tsv;
+#         """
+################################################################################
+### Generate output summary table
 # rule generate_summary:
 #     input:
-#         "3_Outputs/6_Coassembly_CoverM/{group}_assembly_coverM.txt"
+#         coverm = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
 #     output:
 #         "3_Outputs/{group}_coassembly_summary.tsv"
 #     conda:
