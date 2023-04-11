@@ -42,7 +42,7 @@ rule all:
         expand(os.path.join(config["workdir"], "{abb}_ERDA_folder_created"), abb=config['abb']),
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_1.fq.gz"), combo=valid_combinations),
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_2.fq.gz"), combo=valid_combinations),
-        expand(directory(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_QUAST")), combo=valid_combinations),
+        expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_QUAST"), combo=valid_combinations),
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_contigs.fasta.gz"), combo=valid_combinations),
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_assembly_coverM.txt"), combo=valid_combinations),
 
@@ -101,7 +101,7 @@ rule assembly:
     params:
         assembler = expand("{assembler}", assembler=config['assembler']),
     conda:
-        f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+        f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
     threads:
         16
     resources:
@@ -139,7 +139,7 @@ rule QUAST:
     output:
         directory(os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_QUAST")),
     conda:
-        f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+        f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
     threads:
         4
     resources:
@@ -179,7 +179,7 @@ rule assembly_index:
     params:
         # contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     conda:
-        f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+        f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
     threads:
         16
     resources:
@@ -211,7 +211,7 @@ rule assembly_mapping:
     output:
         os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam")
     conda:
-        f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+        f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
     threads:
         16
     resources:
@@ -362,7 +362,7 @@ rule coverM_assembly:
     params:
         refinement_files = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/"
     conda:
-        f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+        f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
     threads:
         8
     resources:
