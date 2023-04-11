@@ -96,7 +96,7 @@ rule assembly:
         r1 = "{workdir}/{PRB}/{EHI}_M_1.fq.gz",
         r2 = "{workdir}/{PRB}/{EHI}_M_2.fq.gz"
     output:
-        "{workdir}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     params:
         assembler = expand("{assembler}", assembler=config['assembler']),
     conda:
