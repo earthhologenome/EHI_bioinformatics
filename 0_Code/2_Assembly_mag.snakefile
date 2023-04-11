@@ -122,7 +122,7 @@ rule download_from_ERDA:
         "Fetching metagenomics reads for {wildcards.EHI} from ERDA"
     shell:
         """
-        lftp sftp://erda -e "mirror --include-glob='{wildcards.PRB}/{wildcards.EHI}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {config['workdir']}/; bye"
+        lftp sftp://erda -e "mirror --include-glob='{wildcards.PRB}/{wildcards.EHI}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {{config['workdir']}}/; bye"
         """
 
 
@@ -157,11 +157,11 @@ rule assembly:
                 --min-contig-len 1500 \
                 -1 {input.r1} -2 {input.r2} \
                 -f \
-                -o {config['workdir']}/{PRB}/{EHI}
+                -o {{config['workdir']}}/{PRB}/{EHI}
                 2> {log}
 
         # Move the Coassembly to final destination
-            mv {config['workdir']}/{PRB}/{EHI}/final.contigs.fa {output}
+            mv {{config['workdir']}}/{PRB}/{EHI}/final.contigs.fa {output}
 
         # Reformat headers
             sed -i 's/ /-/g' {output}
