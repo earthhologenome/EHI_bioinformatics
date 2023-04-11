@@ -107,9 +107,9 @@ rule assembly:
         mem_gb=128,
         time='36:00:00'
     benchmark:
-        f"{config['logdir']}/assembly_benchmark_{EHA}.tsv"
+        "{{config['logdir']}}/assembly_benchmark_{EHA}.tsv"
     log:
-        f"{config['logdir']}/assembly_log_{EHA}.log"
+        "{{config['logdir']}}/assembly_log_{EHA}.log"
     message:
         "Assembling {wildcards.EHI} using {params.assembler}"
     shell:
@@ -185,9 +185,9 @@ rule assembly_index:
         mem_gb=96,
         time='02:00:00'
     benchmark:
-        f"{config['logdir']}/index_assembly_benchmark_{EHA}.tsv"
+        "{{config['logdir']}}/index_assembly_benchmark_{EHA}.tsv"
     log:
-        f"{config['logdir']}/index_assembly_log_{EHA}.log"
+        "{{config['logdir']}}/index_assembly_log_{EHA}.log"
     message:
         "Indexing {wildcards.EHA} assembly using Bowtie2"
     shell:
@@ -217,9 +217,9 @@ rule assembly_mapping:
         mem_gb=48,
         time='05:00:00'
     benchmark:
-        f"{config['logdir']}/assembly_mapping_benchmark_{EHA}.tsv"
+        "{{config['logdir']}}/assembly_mapping_benchmark_{EHA}.tsv"
     log:
-        f"{config['logdir']}/assembly_mapping_log_{EHA}.log"
+        "{{config['logdir']}}/assembly_mapping_log_{EHA}.log"
     message:
         "Mapping {wildcards.EHI} to {wildcards.EHA} assembly using Bowtie2"
     shell:
@@ -251,9 +251,9 @@ rule metaWRAP_binning:
         mem_gb=96,
         time='06:00:00'
     benchmark:
-        f"{config['logdir']}/binning_benchmark_{EHA}.tsv"
+        "{{config['logdir']}}/binning_benchmark_{EHA}.tsv"
     log:
-        f"{config['logdir']}/binning_log_{EHA}.log"
+        "{{config['logdir']}}/binning_log_{EHA}.log"
     message:
         "Binning {wildcards.EHA} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
     shell:
@@ -307,9 +307,9 @@ rule metaWRAP_refinement:
         mem_gb=128,
         time='06:00:00'
     benchmark:
-        f"{config['logdir']}/binning_benchmark_{EHA}.tsv"
+        "{{config['logdir']}}/binning_benchmark_{EHA}.tsv"
     log:
-        f"{config['logdir']}/binning_log_{EHA}.log"
+        "{{config['logdir']}}/binning_log_{EHA}.log"
     message:
         "Refining {wildcards.EHA} bins with MetaWRAP's bin refinement module"
     shell:
@@ -367,9 +367,9 @@ rule coverM_assembly:
         mem_gb=64,
         time='00:30:00'
     benchmark:
-        f"{config['logdir']}/coverm_benchmark_{EHA}.tsv"
+        "{{config['logdir']}}/coverm_benchmark_{EHA}.tsv"
     log:
-        f"{config['logdir']}/coverm_log_{EHA}.log"
+        "{{config['logdir']}}/coverm_log_{EHA}.log"
     message:
         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
     shell:
@@ -418,9 +418,9 @@ rule coverM_assembly:
 #         mem_gb=64,
 #         time='00:30:00'
 #     benchmark:
-#         f"{config['logdir']}/coverm_benchmark_{EHA}.tsv"
+#         "{{config['logdir']}}/coverm_benchmark_{EHA}.tsv"
 #     log:
-#         f"{config['logdir']}/coverm_log_{EHA}.log"
+#         "{{config['logdir']}}/coverm_log_{EHA}.log"
 #     message:
 #         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
 #     shell:
@@ -469,9 +469,9 @@ rule coverM_assembly:
 #         mem_gb=64,
 #         time='00:30:00'
 #     benchmark:
-#         f"{config['logdir']}/coverm_benchmark_{EHA}.tsv"
+#         "{{config['logdir']}}/coverm_benchmark_{EHA}.tsv"
 #     log:
-#         f"{config['logdir']}/coverm_log_{EHA}.log"
+#         "{{config['logdir']}}/coverm_log_{EHA}.log"
 #     message:
 #         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
 #     shell:
