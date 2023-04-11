@@ -107,11 +107,11 @@ rule assembly:
         mem_gb=128,
         time='36:00:00'
     benchmark:
-        "{{config['logdir']}}/assembly_benchmark_{EHA}.tsv"
+        "{{config['logdir']}}/assembly_benchmark_{PRB}_{EHA}.tsv"
     log:
-        "{{config['logdir']}}/assembly_log_{EHA}.log"
+        "{{config['logdir']}}/assembly_log_{PRB}_{EHA}.log"
     message:
-        "Assembling {wildcards.EHI} using {params.assembler}"
+        "Assembling {wildcards.EHA} using {params.assembler}"
     shell:
         """
         # Run megahit
