@@ -31,18 +31,15 @@ import pandas as pd
 
 df = pd.read_csv('abb_input.tsv', sep='\t')
 
-# Extract the unique combinations of columns as a list of tuples
-unique_combinations = list(set(zip(df['ID'], df['PR_batch'], df['EHI_number'])))
-
-# Unpack the tuples into separate variables
-ID, PR_batch, EHI_number = zip(*unique_combinations)
+# Use set to create a list of valid combinations of wildcards. Note that 'ID' = EHA number.
+valid_combinations = set((row['PR_batch'], row['EHI_number'], row['ID']) for _, row in df.iterrows())
 
 
 ################################################################################
 ### Setup the desired outputs
 rule all:
     input:
-        [f"{config['workdir']}/{ID[i]}/{PR_batch[i]}/{EHI_number[i]}_M_1.fq.gz" for i in range(len(ID))]
+        expand("downloaded_data/{combo[0]}/{combo[1]}/{combo[2]}_contigs.fasta.gz", combo=valid_combinations)
 
 ################################################################################
 ### Create EHA folder on ERDA
@@ -72,10 +69,10 @@ rule create_ASB_folder:
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     input:
-        folder_ready = f"{config['workdir']}/ERDA_folder_created"
+        f"{config['workdir']}/ERDA_folder_created"
     output:
-        r1 = f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_M_1.fq.gz",
-        r2 = f"{config['workdir']}/{eha}/{pr_batch}/{ehi}_M_2.fq.gz"
+        r1 = f"{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
+        r2 = f"{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -85,65 +82,57 @@ rule download_from_ERDA:
         mem_gb=8,
         time='00:15:00'
     message:
-        "Fetching metagenomics reads for {ehi} from ERDA"
+        "Fetching metagenomics reads for {wildcards.EHI} from ERDA"
     shell:
         """
-        mkdir -p {{config['workdir']}}/{eha}
-
-        lftp sftp://erda -e "mirror --include-glob='{pr_batch}/{ehi}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {{config['workdir']}}/{eha}; bye"
+        lftp sftp://erda -e "mirror --include-glob='{wildcards.PRB}/{wildcards.EHI}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {{config['workdir']}}/; bye"
         """
 
+################################################################################
+### Perform individual assembly on each sample
+rule assembly:
+    input:
+        r1 = f"{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
+        r2 = f"{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz"
+    output:
+        f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
+    params:
+        assembler = expand("{assembler}", assembler=config['assembler']),
+        assembly = f"{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+    conda:
+        f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
+    threads:
+        24
+    resources:
+        mem_gb=196,
+        time='36:00:00'
+    benchmark:
+        "3_Outputs/0_Logs/{group}_coassembly.benchmark.tsv"
+    log:
+        "3_Outputs/0_Logs/{group}_coassembly.log"
+    message:
+        "Assembling {wildcards.EHI} using {params.assembler}"
+    shell:
+        """
+        # Set up input reads variable for megahit
+        # Run megahit
+            megahit \
+                -t {threads} \
+                --verbose \
+                --min-contig-len 1500 \
+                -1 {input.r1} -2 {input.r2} \
+                -f \
+                -o {{config['workdir']}}/{PRB}/{EHI}
+                2> {log}
 
+        # Move the Coassembly to final destination
+            mv {{config['workdir']}}/{PRB}/{EHI}/final.contigs.fa {params.assembly}
 
+        # Reformat headers and compress
+            sed -i 's/ /-/g' {params.assembly}
+            pigz -p {threads} {params.assembly}
 
-# ################################################################################
-# ### Perform Coassemblies on each sample group
-# rule Coassembly:
-#     input:
-#         reads = "2_Reads/4_Host_removed/{group}"
-#     output:
-#         Coassembly = "3_Outputs/2_Coassemblies/{group}/{group}_contigs.fasta",
-#     params:
-#         workdir = "3_Outputs/2_Coassemblies/{group}",
-#         r1_cat = temp("3_Outputs/2_Coassemblies/{group}/{group}_1.fq.gz"),
-#         r2_cat = temp("3_Outputs/2_Coassemblies/{group}/{group}_2.fq.gz"),
-#         assembler = expand("{assembler}", assembler=config['assembler']),
-#     conda:
-#         "conda_envs/2_Assembly_Binning.yaml"
-#     threads:
-#         24
-#     resources:
-#         mem_gb=196,
-#         time='36:00:00'
-#     benchmark:
-#         "3_Outputs/0_Logs/{group}_coassembly.benchmark.tsv"
-#     log:
-#         "3_Outputs/0_Logs/{group}_coassembly.log"
-#     message:
-#         "Coassembling {wildcards.group} using {params.assembler}"
-#     shell:
-#         """
-#         # Set up input reads variable for megahit
-#         R1=$(for i in 2_Reads/4_Host_removed/{wildcards.group}/*_1.fq.gz; do echo $i | tr '\n' ,; done)
-#         R2=$(for i in 2_Reads/4_Host_removed/{wildcards.group}/*_2.fq.gz; do echo $i | tr '\n' ,; done)
-
-#         # Run megahit
-#             megahit \
-#                 -t {threads} \
-#                 --verbose \
-#                 --min-contig-len 1500 \
-#                 -1 $R1 -2 $R2 \
-#                 -f \
-#                 -o {params.workdir}
-#                 2> {log}
-
-#         # Move the Coassembly to final destination
-#             mv {params.workdir}/final.contigs.fa {output.Coassembly}
-
-#         # Reformat headers
-#             sed -i 's/ /-/g' {output.Coassembly}
-
-#         """
+        """
 # ################################################################################
 # ### Create QUAST reports of coassemblies
 # rule QUAST:

@@ -3,7 +3,7 @@
 
 abb: ASBATCH
 codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code
-workdir: /projects/ehi/data/ASB
+workdir: /projects/ehi/data/ASB/ASBATCH
 # #assembler you want to use (megahit or metaspades)
 # assembler: megahit
 #path to checkmdb
