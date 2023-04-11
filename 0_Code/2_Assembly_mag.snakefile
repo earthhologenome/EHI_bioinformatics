@@ -43,7 +43,7 @@ rule all:
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_1.fq.gz"), combo=valid_combinations),
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_2.fq.gz"), combo=valid_combinations),
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_contigs.fasta.gz"), combo=valid_combinations),
-        expand(os.path.join(config["workdir"], "{combo[1]}", "{combo[2]}_assembly_coverM.txt"), combo=valid_combinations),
+        expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_assembly_coverM.txt"), combo=valid_combinations),
 
 ################################################################################
 ### Create EHA folder on ERDA
@@ -203,7 +203,7 @@ rule assembly_index:
 ### Map reads to assemblies
 rule assembly_mapping:
     input:
-        index = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l")
+        index = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l"),
         r1 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
         r2 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz"),
         contigs = os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
@@ -237,7 +237,7 @@ rule assembly_mapping:
 ### Bin contigs using metaWRAP's binning module
 rule metaWRAP_binning:
     input:
-        bam = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam")
+        bam = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam"),
         contigs = os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
     output:
         os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_binning/binning_complete")
@@ -351,8 +351,8 @@ rule metaWRAP_refinement:
 rule coverM_assembly:
     input:
         stats = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.stats"),
-        contigmap = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.contigs")
-        bam = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam")
+        contigmap = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.contigs"),
+        bam = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam"),
         contigs = os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
     output:
         coverm = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_assembly_coverM.txt"),
