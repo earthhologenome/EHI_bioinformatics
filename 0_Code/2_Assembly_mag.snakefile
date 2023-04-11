@@ -29,7 +29,7 @@ import pandas as pd
 ## using the 'XXXXX.py' script, which pulls the information from AirTable and saves-
 ## it as 'abb_input.tsv'.
 
-df = pd.read_csv('abb_input.tsv', sep='\t')
+df = pd.read_csv('asb_input.tsv', sep='\t')
 
 # Use set to create a list of valid combinations of wildcards. Note that 'ID' = EHA number.
 valid_combinations = set((row['PR_batch'], row['EHI_number'], row['ID']) for _, row in df.iterrows())
@@ -39,14 +39,17 @@ valid_combinations = set((row['PR_batch'], row['EHI_number'], row['ID']) for _, 
 ### Setup the desired outputs
 rule all:
     input:
-        expand(f"{config['workdir']}/{combo[0]}/{combo[1]}/{combo[2]}_contigs.fasta.gz", combo=valid_combinations),
-        expand(f"{config['workdir']}/{combo[0]}/{combo[1]}/{combo[2]}_assembly_coverM.txt", combo=valid_combinations),
+        expand("{{config['workdir']}}/{abb}_ERDA_folder_created", abb=config['abb']),
+        expand("{{config['workdir']}}/{combo[0]}/{combo[1]}_M_1.fq.gz", combo=valid_combinations),
+        expand("{{config['workdir']}}/{combo[0]}/{combo[1]}_M_2.fq.gz", combo=valid_combinations),
+        expand("{{config['workdir']}}/{combo[0]}/{combo[1]}/{combo[2]}_contigs.fasta.gz", combo=valid_combinations),
+        expand("{{config['workdir']}}/{combo[0]}/{combo[1]}/{combo[2]}_assembly_coverM.txt", combo=valid_combinations),
 
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        f"{config['workdir']}/ERDA_folder_created"
+        "{config['workdir']}/{abb}_ERDA_folder_created"
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -68,8 +71,6 @@ rule create_ASB_folder:
 ################################################################################
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
-    input:
-        f"{config['workdir']}/ERDA_folder_created"
     output:
         r1 = f"{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
         r2 = f"{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz"
