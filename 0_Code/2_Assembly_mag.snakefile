@@ -39,17 +39,17 @@ valid_combinations = set((row['PR_batch'], row['EHI_number'], row['ID']) for _, 
 ### Setup the desired outputs
 rule all:
     input:
-        expand("{workdir}/{abb}_ERDA_folder_created", abb=config['abb'], workdir=config["workdir"]),
-        expand("{workdir}/{combo[0]}/{combo[1]}_M_1.fq.gz", combo=valid_combinations, workdir=config["workdir"]),
-        expand("{workdir}/{combo[0]}/{combo[1]}_M_2.fq.gz", combo=valid_combinations, workdir=config["workdir"]),
-        expand("{workdir}/{combo[0]}/{combo[1]}/{combo[2]}_contigs.fasta.gz", combo=valid_combinations, workdir=config["workdir"]),
-        expand("{workdir}/{combo[0]}/{combo[1]}/{combo[2]}_assembly_coverM.txt", combo=valid_combinations, workdir=config["workdir"]),
+        expand(os.path.join(config["workdir"], "{abb}_ERDA_folder_created"), abb=config['abb']),
+        expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_1.fq.gz"), combo=valid_combinations),
+        expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_2.fq.gz"), combo=valid_combinations),
+        expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_contigs.fasta.gz"), combo=valid_combinations),
+        expand(os.path.join(config["workdir"], "{combo[1]}", "{combo[2]}_assembly_coverM.txt"), combo=valid_combinations),
 
 ################################################################################
 ### Create EHA folder on ERDA
 rule create_ASB_folder:
     output:
-        "{config['workdir']}/{abb}_ERDA_folder_created"
+        os.path.join(config["workdir"], "{abb}_ERDA_folder_created")
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -72,8 +72,8 @@ rule create_ASB_folder:
 ### Fetch preprocessed reads from ERDA
 rule download_from_ERDA:
     output:
-        r1 = "{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
-        r2 = "{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz"
+        r1 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
+        r2 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz")
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
@@ -93,10 +93,10 @@ rule download_from_ERDA:
 ### Perform individual assembly on each sample
 rule assembly:
     input:
-        r1 = "{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
-        r2 = "{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz"
+        r1 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
+        r2 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz")
     output:
-        "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
     params:
         assembler = expand("{assembler}", assembler=config['assembler']),
     conda:
@@ -134,9 +134,9 @@ rule assembly:
 ### Create QUAST reports of coassemblies
 rule QUAST:
     input:
-        "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
     output:
-        directory("{config['workdir']}/{PRB}/{EHI}/{EHA}_QUAST"),
+        directory(os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_QUAST")),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
@@ -172,9 +172,9 @@ rule QUAST:
 ### Index assemblies
 rule assembly_index:
     input:
-        directory("{config['workdir']}/{PRB}/{EHI}/{EHA}_QUAST")
+        directory(os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_QUAST")),
     output:
-        "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.rev.2.bt2l"
+        os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l")
     params:
         contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     conda:
@@ -203,12 +203,12 @@ rule assembly_index:
 ### Map reads to assemblies
 rule assembly_mapping:
     input:
-        "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.rev.2.bt2l",
-        r1 = "{config['workdir']}/{PRB}/{EHI}_M_1.fq.gz",
-        r2 = "{config['workdir']}/{PRB}/{EHI}_M_2.fq.gz",
-        contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        index = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l")
+        r1 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
+        r2 = os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz"),
+        contigs = os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
     output:
-        "{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam"
+        os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam")
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
@@ -237,10 +237,10 @@ rule assembly_mapping:
 ### Bin contigs using metaWRAP's binning module
 rule metaWRAP_binning:
     input:
-        bam = "{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
-        contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        bam = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam")
+        contigs = os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
     output:
-        "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/binning_complete"
+        os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_binning/binning_complete")
     params:
         outdir = directory("{config['workdir']}/{PRB}/{EHI}/{EHA}_binning")
     conda:
@@ -288,10 +288,10 @@ rule metaWRAP_binning:
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
     input:
-        "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/binning_complete"
+        os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_binning/binning_complete")
     output:
-        stats = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
-        contigmap = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.contigs"
+        stats = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.stats"),
+        contigmap = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.contigs")
     params:
         concoct = "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/concoct_bins",
         maxbin2 = "{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/maxbin2_bins",
@@ -350,13 +350,14 @@ rule metaWRAP_refinement:
 ### Calculate the number of reads that mapped to coassemblies
 rule coverM_assembly:
     input:
-        stats = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
-        bam = "{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
-        contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta",
+        stats = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.stats"),
+        contigmap = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "{EHA}_metawrap_70_10_bins.contigs")
+        bam = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam")
+        contigs = os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
     output:
-        coverm = "{config['workdir']}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
-        euk = "{config['workdir']}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
-        contigs_gz = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
+        coverm = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_assembly_coverM.txt"),
+        euk = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_eukaryotic_coverM.tsv"),
+        contigs_gz = os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.gz")
     params:
         refinement_files = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/"
     conda:
