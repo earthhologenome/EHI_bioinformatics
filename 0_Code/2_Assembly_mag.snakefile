@@ -42,6 +42,7 @@ rule all:
         expand(os.path.join(config["workdir"], "{abb}_ERDA_folder_created"), abb=config['abb']),
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_1.fq.gz"), combo=valid_combinations),
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_2.fq.gz"), combo=valid_combinations),
+        expand(directory(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_QUAST")), combo=valid_combinations),
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_contigs.fasta.gz"), combo=valid_combinations),
         expand(os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_assembly_coverM.txt"), combo=valid_combinations),
 
@@ -172,11 +173,11 @@ rule QUAST:
 ### Index assemblies
 rule assembly_index:
     input:
-        directory(os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_QUAST")),
+        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta")
     output:
         os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l")
     params:
-        contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        # contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
@@ -196,7 +197,7 @@ rule assembly_index:
         bowtie2-build \
             --large-index \
             --threads {threads} \
-            {params.contigs} {params.contigs} \
+            {input} {input} \
         &> {log}
         """
 ################################################################################
