@@ -93,12 +93,12 @@ rule download_from_ERDA:
 ### Perform individual assembly on each sample
 rule assembly:
     input:
-        r1 = "{{config['workdir']}}/{PRB}/{EHI}_M_1.fq.gz",
-        r2 = "{{config['workdir']}}/{PRB}/{EHI}_M_2.fq.gz"
+        r1 = "{workdir}/{PRB}/{EHI}_M_1.fq.gz",
+        r2 = "{workdir}/{PRB}/{EHI}_M_2.fq.gz"
     output:
-        "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        "{workdir}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     params:
-        assembler = expand("{assembler}", assembler=config['assembler'], workdir=config["workdir"]),
+        assembler = expand("{assembler}", assembler=config['assembler']),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
@@ -134,9 +134,9 @@ rule assembly:
 ### Create QUAST reports of coassemblies
 rule QUAST:
     input:
-        "{{config['workdir']}}/{PRB}/{EHI}/{EHA}_contigs.fasta"
+        "{workdir}/{PRB}/{EHI}/{EHA}_contigs.fasta"
     output:
-        directory("{{config['workdir']}}/{PRB}/{EHI}/{EHA}_QUAST", workdir=config["workdir"]),
+        directory("{workdir}/{PRB}/{EHI}/{EHA}_QUAST"),
     conda:
         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
     threads:
