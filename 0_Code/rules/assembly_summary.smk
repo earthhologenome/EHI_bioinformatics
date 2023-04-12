@@ -36,7 +36,7 @@ rule assembly_summary:
         mem_gb=16,
         time='00:05:00'
     message:
-        "Creating final coassembly summary table for {wildcards.EHA}"
+        "Creating final assembly summary table for {wildcards.EHA}"
     shell:
         """
         ### Create the final output summary table
