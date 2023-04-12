@@ -46,14 +46,14 @@ rule all:
             os.path.join(config["workdir"], "{abb}_ERDA_folder_created"),
             abb=config["abb"],
         ),
-        # expand(
-        #     os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_1.fq.gz"),
-        #     combo=valid_combinations,
-        # ),
-        # expand(
-        #     os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_2.fq.gz"),
-        #     combo=valid_combinations,
-        # ),
+        expand(
+            os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_1.fq.gz"),
+            combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}_M_2.fq.gz"),
+            combo=valid_combinations,
+        ),
         expand(
             os.path.join(
                 config["workdir"], "{combo[0]}/" "{combo[1]}/" "{combo[2]}_contigs.fasta"
