@@ -129,13 +129,14 @@ rule compress_dram:
                 PRB=PRB, EHI=EHI, EHA=EHA, MAG=MAG
     )
     output:
-        tar = os.path.join(
+        os.path.join(
                 config["workdir"],
                 "{PRB}",
                 "{EHI}",
                 "{EHA}",
                 "DRAM",
                 "{EHA}_DRAM.tar.gz",
+    )
     params:
         mainout = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/"
     conda:
@@ -149,7 +150,7 @@ rule compress_dram:
         "Tarballing outputs"
     shell:
         """
-        tar -cvf {output.tar} {params.mainout}
+        tar -cvf {output} {params.mainout}
         rmdir {params.mainout}*_annotate/genbank
         rmdir {params.mainout}*_annotate
         """
