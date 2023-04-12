@@ -121,12 +121,12 @@ rule compress_dram:
         expand(
             os.path.join(
                 config["workdir"], 
-                "{PRB}", 
-                "{EHI}", 
-                "{EHA}", 
+                "{combo[0]}",
+                "{combo[1]}",
+                "{combo[2]}",
                 "DRAM", 
                 "{MAG}_annotations.tsv.gz"),
-                PRB=PRB, EHI=EHI, EHA=EHA, MAG=MAG
+                combo=valid_combinations, MAG=MAG
     )
     output:
         os.path.join(
