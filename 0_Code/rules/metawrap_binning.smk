@@ -2,11 +2,11 @@
 ### Bin contigs using metaWRAP's binning module
 rule metaWRAP_binning:
     input:
-        bam=os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}_{EHA}.bam"),
-        contigs=os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
+        bam=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHI}_{EHA}.bam"),
+        contigs=os.path.join(config["workdir"], "{PRB}/" "{EHI}/" "{EHA}_contigs.fasta"),
     output:
         os.path.join(
-            config["workdir"], "{PRB}", "{EHI}", "{EHA}_binning/binning_complete"
+            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_binning/binning_complete"
         ),
     params:
         outdir=directory("{config['workdir']}/{PRB}/{EHI}/{EHA}_binning"),

@@ -2,9 +2,9 @@
 ### Create QUAST reports of coassemblies
 rule QUAST:
     input:
-        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
+        os.path.join(config["workdir"], "{PRB}/" "{EHI}/" "{EHA}_contigs.fasta"),
     output:
-        directory(os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_QUAST")),
+        directory(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_QUAST")),
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 4

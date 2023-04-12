@@ -63,23 +63,23 @@ rule all:
         expand(
             os.path.join(
                 config["workdir"],
-                "{combo[0]}",
-                "{combo[1]}",
+                "{combo[0]}/",
+                "{combo[1]}/",
                 "{combo[1]}_{combo[2]}.bam",
             ),
             combo=valid_combinations,
         ),
         expand(
             os.path.join(
-                config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}_QUAST"
+                config["workdir"], "{combo[0]}/", "{combo[1]}/", "{combo[2]}_QUAST"
             ),
             combo=valid_combinations,
         ),
         expand(
             os.path.join(
                 config["workdir"],
-                "{combo[0]}",
-                "{combo[1]}",
+                "{combo[0]}/",
+                "{combo[1]}/",
                 "{combo[2]}_binning/binning_complete",
             ),
             combo=valid_combinations,
@@ -87,9 +87,9 @@ rule all:
         expand(
             os.path.join(
                 config["workdir"],
-                "{combo[0]}",
-                "{combo[1]}",
-                "{combo[2]}_refinement",
+                "{combo[0]}/",
+                "{combo[1]}/",
+                "{combo[2]}_refinement/",
                 "{combo[2]}_metawrap_70_10_bins.stats",
             ),
             combo=valid_combinations,
@@ -97,8 +97,8 @@ rule all:
         expand(
             os.path.join(
                 config["workdir"],
-                "{combo[0]}",
-                "{combo[1]}",
+                "{combo[0]}/",
+                "{combo[1]}/",
                 "{combo[2]}_assembly_coverM.txt",
             ),
             combo=valid_combinations,
@@ -106,9 +106,9 @@ rule all:
         expand(
             os.path.join(
                 config["workdir"],
-                "{combo[0]}",
-                "{combo[1]}",
-                "{combo[2]}",
+                "{combo[0]}/",
+                "{combo[1]}/",
+                "{combo[2]}/",
                 "gtdbtk/classify/gtdbtk.bac120.summary.tsv",
             ),
             combo=valid_combinations,
@@ -116,10 +116,10 @@ rule all:
         expand(
             os.path.join(
                 config["workdir"],
-                "{combo[0]}",
-                "{combo[1]}",
-                "{combo[2]}",
-                "DRAM",
+                "{combo[0]}/",
+                "{combo[1]}/",
+                "{combo[2]}/",
+                "DRAM/",
                 "{combo[2]}_DRAM.tar.gz",
             ),
             combo=valid_combinations,
@@ -127,8 +127,8 @@ rule all:
         expand(
             os.path.join(
                 config["workdir"],
-                "{combo[0]}",
-                "{combo[1]}",
+                "{combo[0]}/",
+                "{combo[1]}/",
                 "{combo[2]}_final_stats.tsv",
             ),
             combo=valid_combinations,

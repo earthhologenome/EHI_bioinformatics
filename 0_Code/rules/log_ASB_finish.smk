@@ -5,8 +5,8 @@ rule log_finish:
         expand(
             os.path.join(
                 config["workdir"], 
-                "{PRB}", 
-                "{EHI}", 
+                "{PRB}/", 
+                "{EHI}/", 
                 "{EHA}_final_stats.tsv"
             ),
             PRB=[row[0] for row in valid_combinations],

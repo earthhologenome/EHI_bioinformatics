@@ -4,22 +4,22 @@ rule assembly_summary:
     input:
         mw_stats=os.path.join(
             config["workdir"],
-            "{PRB}",
-            "{EHI}",
-            "{EHA}_refinement",
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}_refinement/",
             "{EHA}_metawrap_70_10_bins.stats",
         ),
         coverm=os.path.join(
             config["workdir"], 
-            "{PRB}",
-            "{EHI}",
+            "{PRB}/",
+            "{EHI}/",
             "{EHA}_assembly_coverM.txt"
         ),
     output:
         os.path.join(
             config["workdir"],
-            "{PRB}",
-            "{EHI}",
+            "{PRB}/",
+            "{EHI}/",
             "{EHA}_final_stats.tsv",
         )  
     conda:
@@ -27,8 +27,8 @@ rule assembly_summary:
     params:
         quast=directory(os.path.join(
             config["workdir"], 
-            "{PRB}", 
-            "{EHI}", 
+            "{PRB}/", 
+            "{EHI}/", 
             "{EHA}_QUAST")
         )
     threads: 1

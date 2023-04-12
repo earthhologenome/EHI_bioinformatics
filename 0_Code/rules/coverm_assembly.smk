@@ -4,29 +4,29 @@ rule coverM_assembly:
     input:
         stats=os.path.join(
             config["workdir"],
-            "{PRB}",
-            "{EHI}",
-            "{EHA}_refinement",
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}_refinement/",
             "{EHA}_metawrap_70_10_bins.stats",
         ),
         contigmap=os.path.join(
             config["workdir"],
-            "{PRB}",
-            "{EHI}",
-            "{EHA}_refinement",
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}_refinement/",
             "{EHA}_metawrap_70_10_bins.contigs",
         ),
-        bam=os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}_{EHA}.bam"),
-        contigs=os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
+        bam=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHI}_{EHA}.bam"),
+        contigs=os.path.join(config["workdir"], "{PRB}/" "{EHI}/" "{EHA}_contigs.fasta"),
     output:
         coverm=os.path.join(
-            config["workdir"], "{PRB}", "{EHI}", "{EHA}_assembly_coverM.txt"
+            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_assembly_coverM.txt"
         ),
         euk=os.path.join(
-            config["workdir"], "{PRB}", "{EHI}", "{EHA}_eukaryotic_coverM.tsv"
+            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_eukaryotic_coverM.tsv"
         ),
         contigs_gz=os.path.join(
-            config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.gz"
+            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_contigs.fasta.gz"
         ),
     params:
         refinement_files="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",

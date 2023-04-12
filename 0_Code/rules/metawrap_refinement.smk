@@ -3,21 +3,21 @@
 rule metaWRAP_refinement:
     input:
         os.path.join(
-            config["workdir"], "{PRB}", "{EHI}", "{EHA}_binning/binning_complete"
+            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_binning/binning_complete"
         ),
     output:
         stats=os.path.join(
             config["workdir"],
-            "{PRB}",
-            "{EHI}",
-            "{EHA}_refinement",
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}_refinement/",
             "{EHA}_metawrap_70_10_bins.stats",
         ),
         contigmap=os.path.join(
             config["workdir"],
-            "{PRB}",
-            "{EHI}",
-            "{EHA}_refinement",
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}_refinement/",
             "{EHA}_metawrap_70_10_bins.contigs",
         ),
     params:
