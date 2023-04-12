@@ -124,19 +124,19 @@ rule all:
         #     ),
         #     combo=valid_combinations,
         # ),
-        # expand(
-        #     os.path.join(
-        #         config["workdir"],
-        #         "{combo[0]}/",
-        #         "{combo[1]}/",
-        #         "{combo[2]}_final_stats.tsv",
-        #     ),
-        #     combo=valid_combinations,
-        # ),
-        # expand(
-        #     os.path.join(config["workdir"], "{abb}_pipeline_finished"),
-        #     abb=config["abb"],
-        # ),
+        expand(
+            os.path.join(
+                config["workdir"],
+                "{combo[0]}/",
+                "{combo[1]}/",
+                "{combo[2]}_final_stats.tsv",
+            ),
+            combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(config["workdir"], "{abb}_pipeline_finished"),
+            abb=config["abb"],
+        ),
 
 
 include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
@@ -150,5 +150,5 @@ include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
 include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
 include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
 # include: os.path.join(config["codedir"], "rules/dram.smk")
-# include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
-# include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
+include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
+include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
