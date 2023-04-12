@@ -82,15 +82,15 @@ rule all:
             ),
             combo=valid_combinations,
         ),
-        expand(
-            os.path.join(
-                config["workdir"],
-                "{combo[0]}",
-                "{combo[1]}",
-                "{combo[2]}_final_stats.tsv",
-            ),
-            combo=valid_combinations,
-        )
+        # expand(
+        #     os.path.join(
+        #         config["workdir"],
+        #         "{combo[0]}",
+        #         "{combo[1]}",
+        #         "{combo[2]}_final_stats.tsv",
+        #     ),
+        #     combo=valid_combinations,
+        # )
 
 
 include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
