@@ -27,8 +27,6 @@ rule metaWRAP_refinement:
         binning_wfs="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/work_files",
         refinement_wfs="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/work_files",
         outdir="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",
-    conda:
-        f"{config['codedir']}/conda_envs/metawrap.yaml"
     threads: 16
     resources:
         mem_gb=128,
@@ -41,6 +39,10 @@ rule metaWRAP_refinement:
         "Refining {wildcards.EHA} bins with MetaWRAP's bin refinement module"
     shell:
         """
+        #Installing metawrap via conda is a pain in the arse, so using the module on Mjolnir here.
+        module load metawrap-mg/1.3.2
+
+
         # Setup checkM path
         export checkmdb={config[checkmdb]}
         printf $checkmdb | checkm data setRoot

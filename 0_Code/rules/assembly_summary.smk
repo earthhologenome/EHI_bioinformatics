@@ -39,48 +39,31 @@ rule assembly_summary:
         "Creating final coassembly summary table for {wildcards.EHA}"
     shell:
         """
-        #Create the final output summary table
+        ### Create the final output summary table
+        echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\tassembly_length\tnum_bins\tassembly_mapping_percent" > headers.tsv
+
         #parse QUAST outputs for assembly stats
-        echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\ttotal_length\tnum_bins\tassembly_mapping_percent" > headers.tsv
-
-
-        for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
-            do cat 3_Outputs/2_Coassemblies/{params.group}_QUAST/{params.group}_assembly_report.tsv >> {params.group}_temp_report.tsv;
-        done
-
+        cat {params.quast}/{wildcards.EHA}_assembly_report.tsv >> {wildcards.EHA}_temp_report.tsv
 
         #Add in the % mapping to assembly stats
-        for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
-            do echo $(basename ${{sample/.bam/}}) >> {params.group}_sample_ids.tsv;
-        done
+        echo {wildcards.EHI}_{wildcards.EHA} >> {wildcards.EHA}_sample_ids.tsv
 
-        paste {params.group}_sample_ids.tsv {params.group}_temp_report.tsv > {params.group}_temp2_report.tsv
+        paste {wildcards.EHA}_sample_ids.tsv {wildcards.EHA}_temp_report.tsv > {wildcards.EHA}_temp2_report.tsv
 
         #Add in the # of bins
-        for sample in 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam;
-            do cat {params.group}_bins.tsv >> {params.group}_number_bins.tsv;
-        done
+        cat {wildcards.EHA}_bins.tsv >> {wildcards.EHA}_number_bins.tsv
 
-        paste {params.group}_temp2_report.tsv {params.group}_number_bins.tsv > {params.group}_temp3_report.tsv
+        paste {wildcards.EHA}_temp2_report.tsv {wildcards.EHA}_number_bins.tsv > {wildcards.EHA}_temp3_report.tsv
 
-        ls -l 3_Outputs/3_Coassembly_Mapping/BAMs/{params.group}/*.bam | wc -l > {params.group}_n_samples.tsv
+        #Grab coverm mapping rate. 'cut -f2' pulls the second column, 'sed -n 3p' prints only the third line (% mapping)
+        cut -f2 {input.coverm} | sed -n 3p >> {wildcards.EHA}_relabun.tsv
 
-        nsamples=$( cat {params.group}_n_samples.tsv )
-        nsamples1=$(( nsamples + 1 ))
-        echo $nsamples1
-        for sample in `seq 2 $nsamples1`;
-            do cut -f"$sample" 3_Outputs/6_Coassembly_CoverM/{params.group}_assembly_coverM.txt | sed -n 3p >> {params.group}_relabun.tsv;
-        done
+        paste {wildcards.EHA}_temp3_report.tsv {wildcards.EHA}_relabun.tsv > {wildcards.EHA}_temp4_report.tsv
 
-        paste {params.group}_temp3_report.tsv {params.group}_relabun.tsv > {params.group}_temp4_report.tsv
         #Combine them into the final assembly report
-        cat headers.tsv {params.group}_temp4_report.tsv > {output}
+        cat headers.tsv {wildcards.EHA}_temp4_report.tsv > {output}
 
 
-        # Upload stats to AirTable:
-
-
-        # Log on the AirTable that the pipeline has finished:
-
-
+        ### Upload stats to AirTable:
+        python {{config['codedir']}}/airtable/add_asb_stats_airtable.py --report={output} --code={{config['abb']}}
         """

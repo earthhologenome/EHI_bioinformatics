@@ -2,7 +2,7 @@
 ### Bin contigs using metaWRAP's binning module
 rule metaWRAP_binning:
     input:
-        bam=os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam"),
+        bam=os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}_{EHA}.bam"),
         contigs=os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
     output:
         os.path.join(
@@ -10,8 +10,6 @@ rule metaWRAP_binning:
         ),
     params:
         outdir=directory("{config['workdir']}/{PRB}/{EHI}/{EHA}_binning"),
-    conda:
-        f"{config['codedir']}/conda_envs/metawrap.yaml"
     threads: 16
     resources:
         mem_gb=96,
@@ -24,6 +22,9 @@ rule metaWRAP_binning:
         "Binning {wildcards.EHA} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
     shell:
         """
+        #Installing metawrap via conda is a pain in the arse, so using the module on Mjolnir here.
+        module load metawrap-mg/1.3.2
+
         # Create dummy fq/assembly files to trick metaWRAP into running without mapping
         mkdir -p {params.outdir}
         mkdir -p {params.outdir}/work_files

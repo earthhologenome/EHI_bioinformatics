@@ -16,7 +16,7 @@ rule coverM_assembly:
             "{EHA}_refinement",
             "{EHA}_metawrap_70_10_bins.contigs",
         ),
-        bam=os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}", "{EHA}.bam"),
+        bam=os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHI}_{EHA}.bam"),
         contigs=os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
     output:
         coverm=os.path.join(
