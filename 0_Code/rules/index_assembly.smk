@@ -8,7 +8,7 @@ rule assembly_index:
             config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l"
         ),
     conda:
-        f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
+        f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 16
     resources:
         mem_gb=96,

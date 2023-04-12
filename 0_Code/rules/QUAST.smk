@@ -6,7 +6,7 @@ rule QUAST:
     output:
         directory(os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_QUAST")),
     conda:
-        f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
+        f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 4
     resources:
         mem_gb=32,

@@ -31,7 +31,7 @@ rule coverM_assembly:
     params:
         refinement_files="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",
     conda:
-        f"{config['codedir']}/conda_envs/2_Assembly_Binning.yaml"
+        f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 8
     resources:
         mem_gb=64,
