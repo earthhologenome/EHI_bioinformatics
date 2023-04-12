@@ -28,7 +28,7 @@ rule metaWRAP_refinement:
         refinement_wfs="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/work_files",
         outdir="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",
     conda:
-        f"{config['codedir']}/conda_envs/2_MetaWRAP.yaml"
+        f"{config['codedir']}/conda_envs/metawrap.yaml"
     threads: 16
     resources:
         mem_gb=128,
