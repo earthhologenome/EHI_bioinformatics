@@ -56,7 +56,7 @@ rule all:
         # ),
         expand(
             os.path.join(
-                config["workdir"], "{combo[0]}" "{combo[1]}" "{combo[2]}_contigs.fasta"
+                config["workdir"], "{combo[0]}/" "{combo[1]}/" "{combo[2]}_contigs.fasta"
             ),
             combo=valid_combinations,
         ),
