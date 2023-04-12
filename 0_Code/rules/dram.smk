@@ -125,10 +125,17 @@ rule compress_dram:
                 "{EHI}", 
                 "{EHA}", 
                 "DRAM", 
-                "{MAG}_annotations.tsv.gz")
+                "{MAG}_annotations.tsv.gz"),
+                PRB=PRB, EHI=EHI, EHA=EHA, MAG=MAG
     )
     output:
-        tar = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/DRAM.tar.gz",
+        tar = os.path.join(
+                config["workdir"],
+                "{PRB}",
+                "{EHI}",
+                "{EHA}",
+                "DRAM",
+                "{EHA}_DRAM.tar.gz",
     params:
         mainout = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/"
     conda:

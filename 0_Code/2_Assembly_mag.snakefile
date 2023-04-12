@@ -70,6 +70,17 @@ rule all:
                 "gtdbtk/classify/gtdbtk.bac120.summary.tsv"
             ),
             combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(
+                config["workdir"],
+                "{combo[0]}",
+                "{combo[1]}",
+                "{combo[2]}",
+                "DRAM",
+                "{combo[2]}_DRAM.tar.gz"
+            ),
+            combo=valid_combinations,
         )
 
 
