@@ -9,12 +9,6 @@ rule assembly_summary:
             "{EHA}_refinement",
             "{EHA}_metawrap_70_10_bins.stats",
         ),
-        quast=directory(os.path.join(
-            config["workdir"], 
-            "{PRB}", 
-            "{EHI}", 
-            "{EHA}_QUAST")
-        ),
         coverm=os.path.join(
             config["workdir"], 
             "{PRB}",
@@ -31,12 +25,18 @@ rule assembly_summary:
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     params:
+        quast=directory(os.path.join(
+            config["workdir"], 
+            "{PRB}", 
+            "{EHI}", 
+            "{EHA}_QUAST")
+        )
     threads: 1
     resources:
         mem_gb=16,
         time='00:05:00'
     message:
-        "Creating final coassembly summary table for {EHA}"
+        "Creating final coassembly summary table for {wildcards.EHA}"
     shell:
         """
         #Create the final output summary table
