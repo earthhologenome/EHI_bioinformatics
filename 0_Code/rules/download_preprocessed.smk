@@ -1,6 +1,6 @@
 ################################################################################
 ### Fetch preprocessed reads from ERDA
-rule download_preprocessed_from_ERDA:
+rule download_preprocessed:
     output:
         r1=os.path.join(config["workdir"], "{PRB}", "{EHI}_M_1.fq.gz"),
         r2=os.path.join(config["workdir"], "{PRB}", "{EHI}_M_2.fq.gz"),
