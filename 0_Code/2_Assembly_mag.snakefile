@@ -94,25 +94,25 @@ rule all:
             ),
             combo=valid_combinations,
         ),
-        # expand(
-        #     os.path.join(
-        #         config["workdir"],
-        #         "{combo[0]}/",
-        #         "{combo[1]}/",
-        #         "{combo[2]}_assembly_coverM.txt",
-        #     ),
-        #     combo=valid_combinations,
-        # ),
-        # expand(
-        #     os.path.join(
-        #         config["workdir"],
-        #         "{combo[0]}/",
-        #         "{combo[1]}/",
-        #         "{combo[2]}/",
-        #         "gtdbtk/classify/gtdbtk.bac120.summary.tsv",
-        #     ),
-        #     combo=valid_combinations,
-        # ),
+        expand(
+            os.path.join(
+                config["workdir"],
+                "{combo[0]}/",
+                "{combo[1]}/",
+                "{combo[2]}_assembly_coverM.txt",
+            ),
+            combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(
+                config["workdir"],
+                "{combo[0]}/",
+                "{combo[1]}/",
+                "{combo[2]}/",
+                "gtdbtk/classify/gtdbtk.bac120.summary.tsv",
+            ),
+            combo=valid_combinations,
+        ),
         # expand(
         #     os.path.join(
         #         config["workdir"],
@@ -147,8 +147,8 @@ include: os.path.join(config["codedir"], "rules/index_assembly.smk")
 include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
 include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
 include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
-# include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
-# include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
+include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
+include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
 # include: os.path.join(config["codedir"], "rules/dram.smk")
 # include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
 # include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
