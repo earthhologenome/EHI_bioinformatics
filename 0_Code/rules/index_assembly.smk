@@ -2,7 +2,7 @@
 ### Index assemblies
 rule assembly_index:
     input:
-        os.path.join(config["workdir"], "{PRB}" "{EHI}" "{EHA}_contigs.fasta"),
+        os.path.join(config["workdir"], "{PRB}/" "{EHI}/" "{EHA}_contigs.fasta"),
     output:
         os.path.join(
             config["workdir"], "{PRB}", "{EHI}", "{EHA}_contigs.fasta.rev.2.bt2l"
