@@ -3,13 +3,15 @@
 rule log_finish:
     input:
         expand(
-        os.path.join(
+            os.path.join(
                 config["workdir"], 
-                "{combo[0]}", 
-                "{combo[1]}", 
-                "{combo[2]}_final_stats.tsv", 
-                combo=valid_combinations,
-            )
+                "{PRB}", 
+                "{EHI}", 
+                "{EHA}_final_stats.tsv"
+            ),
+            PRB=[row[0] for row in valid_combinations],
+            EHI=[row[1] for row in valid_combinations],
+            EHA=[row[2] for row in valid_combinations]
         )
     output:
         os.path.join(config["workdir"], "{abb}_pipeline_finished")
