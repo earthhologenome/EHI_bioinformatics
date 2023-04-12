@@ -1,3 +1,7 @@
+wildcard_constraints:
+    MAG='.*'
+
+
 ################################################################################
 ### Run DRAM on refined bins
 ################################################################################
@@ -118,15 +122,20 @@ rule DRAM:
 ## compress/store
 rule compress_dram:
     input:
+    #     expand(
+    #         os.path.join(
+    #             config["workdir"], 
+    #             "{combo[0]}",
+    #             "{combo[1]}",
+    #             "{combo[2]}",
+    #             "DRAM", 
+    #             "{MAG}_annotations.tsv.gz"),
+    #             combo=valid_combinations, MAG=MAG
+    # )
         expand(
-            os.path.join(
-                config["workdir"], 
-                "{combo[0]}",
-                "{combo[1]}",
-                "{combo[2]}",
-                "DRAM", 
-                "{MAG}_annotations.tsv.gz"),
-                combo=valid_combinations, MAG=MAG
+    os.path.join(config["workdir"], "{combo[0]}", "{combo[1]}", "{combo[2]}", "DRAM", "{MAG}_annotations.tsv.gz"),
+    combo=valid_combinations,
+    MAG=glob_wildcards(os.path.join(config["workdir"], "{PRB}", "{EHI}", "{EHA}_refinement", "metawrap_70_10_bins", "{MAG}.fa.gz")).MAG,
     )
     output:
         os.path.join(
