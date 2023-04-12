@@ -83,59 +83,9 @@ include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
 include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
 include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
 include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
+include: os.path.join(config["codedir"], "rules/dram.smk")
 
 
-# ################################################################################
-# ### Run DRAM on refined bins
-# rule DRAM:
-#     input:
-#         stats = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/{EHA}_metawrap_70_10_bins.stats",
-#         bam = "{config['workdir']}/{PRB}/{EHI}/{EHI}_{EHA}.bam",
-#         contigs = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta",
-#     output:
-#         coverm = "{config['workdir']}/{PRB}/{EHI}/{EHA}_assembly_coverM.txt",
-#         euk = "{config['workdir']}/{PRB}/{EHI}/{EHA}_eukaryotic_coverM.tsv",
-#         contigs_gz = "{config['workdir']}/{PRB}/{EHI}/{EHA}_contigs.fasta.gz"
-#     params:
-#         refinement_files = "{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/"
-#     conda:
-#         f"{config['codedir']}/conda_envs/2_Assembly_Binning_config.yaml"
-#     threads:
-#         8
-#     resources:
-#         mem_gb=64,
-#         time='00:30:00'
-#     benchmark:
-#         "{{config['logdir']}}/coverm_benchmark_{EHA}.tsv"
-#     log:
-#         "{{config['logdir']}}/coverm_log_{EHA}.log"
-#     message:
-#         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
-#     shell:
-#         """
-#         coverm genome \
-#             -b {input.bam} \
-#             --genome-fasta-files {input.contigs} \
-#             -m relative_abundance \
-#             -t {threads} \
-#             --min-covered-fraction 0 \
-#             > {output.coverm}
-
-#         #Run coverm for the eukaryotic assessment pipeline
-#         coverm genome \
-#             -s - \
-#             -b {input.bam} \
-#             -m relative_abundance count mean covered_fraction \
-#             -t {threads} \
-#             --min-covered-fraction 0 \
-#             > {output.euk}
-
-#         # Compress the contigs
-#         pigz -p {threads} {input.contigs}
-
-#         #Print the number of MAGs to a file for combining with the assembly report
-#         ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {wildcards.EHA}_bins.tsv;
-#         """
 ################################################################################
 ### Generate output summary table
 # rule generate_summary:
