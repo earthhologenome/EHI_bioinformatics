@@ -21,12 +21,8 @@ rule metaWRAP_refinement:
             "{EHA}_metawrap_50_10_bins.contigs",
         ),
     params:
-        concoct="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/concoct_bins",
-        maxbin2="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/maxbin2_bins",
-        metabat2="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/metabat2_bins",
-        binning_wfs="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/work_files",
-        refinement_wfs="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/work_files",
-        outdir="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",
+        binning=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}_binning"),
+        outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}_refinement")
     threads: 16
     resources:
         mem_gb=128,
@@ -51,9 +47,9 @@ rule metaWRAP_refinement:
             -m {resources.mem_gb} \
             -t {threads} \
             -o {params.outdir} \
-            -A {params.concoct} \
-            -B {params.maxbin2} \
-            -C {params.metabat2} \
+            -A {params.binning}/concoct_bins/ \
+            -B {params.binning}/maxbin2_bins/ \
+            -C {params.binning}/metabat2_bins/ \
             -c 50 \
             -x 10
 
@@ -67,13 +63,16 @@ rule metaWRAP_refinement:
                 done
 
         # Compress output bins
-        pigz -p {threads} {params.outdir}/*bins/*.fa
+        pigz -p {threads} {params.outdir}/metawrap_50_10_bins/*.fa
 
-        rm -r {params.binning_wfs}
-        rm -r {params.refinement_wfs}
-        rm {params.concoct}/*.fa
-        rm {params.maxbin2}/*.fa
-        rm {params.metabat2}/*.fa
+        #Print the number of MAGs to a file for combining with the assembly report
+        ls -l {params.outdir}/metawrap_50_10_bins/*.fa.gz | wc -l > {config[workdir}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_bins.tsv
+
+        rm -r {params.binning}/work_files/
+        rm -r {params.outdir}/work_files/
+        rm {params.binning}/concoct_bins/*.fa
+        rm {params.binning}/maxbin2_bins/*.fa
+        rm {params.binning}/metabat2_bins/*.fa
 
         cp {output.stats} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.stats
         cp {output.contigmap} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.contigs

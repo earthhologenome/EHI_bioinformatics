@@ -28,8 +28,6 @@ rule coverM_assembly:
         contigs_gz=os.path.join(
             config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_contigs.fasta.gz"
         ),
-    params:
-        refinement_files="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/",
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 8
@@ -68,8 +66,4 @@ rule coverM_assembly:
         # Tarball files then upload to ERDA:
         tar -cvzf {wildcards.EHA}_coverm.tar.gz {output.coverm} {output.euk}
         lftp sftp://erda -e "put {wildcards.EHA}_coverm.tar.gz -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
-
-
-        #Print the number of MAGs to a file for combining with the assembly report
-        ls -l {params.refinement_files}/metawrap_50_10_bins/*.fa.gz | wc -l > {wildcards.EHA}_bins.tsv;
         """

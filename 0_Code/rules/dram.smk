@@ -31,10 +31,10 @@ rule DRAM:
         ]
     params:
         MAG="{MAG}",
-        outdir = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_annotate",
-        mainout = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/",
-        trnas = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_trnas.tsv.gz",
-        rrnas = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_rrnas.tsv.gz",
+        outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}" + "/DRAM" + "{MAG}_annotate"),
+        outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}" + "/DRAM"),
+        trnas=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}" + "/DRAM" + "{MAG}_trnas.tsv.gz"),
+        rrnas=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}" + "/DRAM" + "{MAG}_rrnas.tsv.gz"),
     output:
         annotations = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_anno.tsv.gz"),
         genes = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.fna.gz")),
@@ -112,8 +112,8 @@ rule DRAM:
             fi        
 
             #calculate number of contigs and genes for later
-            grep '>' {params.outdir}/scaffolds.fna | wc -l > {input.mags}_ncontigs.txt
-            grep '>' {params.outdir}/genes.fna | wc -l > {input.mags}_ngenes.txt
+            grep '>' {params.outdir}/scaffolds.fna | wc -l > {config[workdir}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/DRAM/{input.mags}_ncontigs.txt
+            grep '>' {params.outdir}/genes.fna | wc -l > {config[workdir}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/DRAM/{input.mags}_ngenes.txt
 
             pigz -p {threads} {params.outdir}/*.tsv
             pigz -p {threads} {params.outdir}/*.fna
