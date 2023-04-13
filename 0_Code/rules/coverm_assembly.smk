@@ -34,7 +34,7 @@ rule coverM_assembly:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 8
     resources:
-        load:8,
+        load=8,
         mem_gb=64,
         time="00:30:00",
     benchmark:
