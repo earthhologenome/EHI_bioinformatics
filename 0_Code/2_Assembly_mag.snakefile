@@ -119,17 +119,18 @@ rule all:
             ),
             combo=valid_combinations,
         ),
-        # expand(
-        #     os.path.join(
-        #         config["workdir"],
-        #         "{combo[0]}/",
-        #         "{combo[1]}/",
-        #         "{combo[2]}/",
-        #         "DRAM/",
-        #         "",
-        #     ),
-        #     combo=valid_combinations,
-        # ),
+        expand(
+            os.path.join(
+                config["workdir"], 
+                "{combo[0]}/", 
+                "{combo[1]}/", 
+                "{combo[2]}/", 
+                "DRAM/", 
+                "{MAG}_anno.tsv.gz"
+            ),
+            combo=valid_combinations,
+            MAG=range(1, 3000)
+        ),
         expand(
             os.path.join(
                 config["workdir"],
