@@ -37,9 +37,9 @@ rule coverM_assembly:
         mem_gb=64,
         time="00:30:00",
     benchmark:
-        os.path.join(config["logdir"] + "coverm_benchmark_{PRB}_{EHI}_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/coverm_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "coverm_log_{PRB}_{EHI}_{EHA}.log")
+        os.path.join(config["logdir"] + "/coverm_log_{PRB}_{EHI}_{EHA}.log")
     message:
         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
     shell:
