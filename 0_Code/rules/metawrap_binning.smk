@@ -27,7 +27,7 @@ rule metaWRAP_binning:
         module load metawrap-mg/1.3.2
 
         # Create dummy fq/assembly files to trick metaWRAP into running without mapping
-        mkdir -p {params.outdir}
+        mkdir -p {expand(params.outdir, **locals())}
         mkdir -p {params.outdir}/work_files
 
         touch {params.outdir}/work_files/assembly.fa.bwt
