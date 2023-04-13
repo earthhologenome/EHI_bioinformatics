@@ -66,4 +66,8 @@ rule assembly_summary:
 
         ### Upload stats to AirTable:
         python {config[codedir]}/airtable/add_asb_stats_airtable.py --report={output} --code={config[abb]}
+
+
+        # clean up empty folders
+        find {config[workdir]}/ -empty -type d -delete
         """
