@@ -66,7 +66,7 @@ rule metaWRAP_refinement:
         pigz -p {threads} {params.outdir}/metawrap_50_10_bins/*.fa
 
         #Print the number of MAGs to a file for combining with the assembly report
-        ls -l {params.outdir}/metawrap_50_10_bins/*.fa.gz | wc -l > {config[workdir}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_bins.tsv
+        ls -l {params.outdir}/metawrap_50_10_bins/*.fa.gz | wc -l > {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_bins.tsv
 
         rm -r {params.binning}/work_files/
         rm -r {params.outdir}/work_files/
