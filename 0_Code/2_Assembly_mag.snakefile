@@ -119,7 +119,7 @@ rule all:
             ),
             combo=valid_combinations,
         ),
-        expand(
+        dynamic(
             os.path.join(
                 config["workdir"], 
                 "{combo[0]}/", 
@@ -127,9 +127,7 @@ rule all:
                 "{combo[2]}/", 
                 "DRAM/", 
                 "{MAG}_anno.tsv.gz"
-            ),
-            combo=valid_combinations,
-            MAG
+            ) for combo in valid_combinations for MAG in range(1, 3000)
         ),
         expand(
             os.path.join(
