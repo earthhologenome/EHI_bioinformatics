@@ -111,6 +111,10 @@ rule DRAM:
             echo "neither trnas nor rrnas found"
             fi        
 
+            #calculate number of contigs and genes for later
+            grep '>' {params.outdir}/scaffolds.fna | wc -l > {input.mags}_ncontigs.txt
+            grep '>' {params.outdir}/genes.fna | wc -l > {input.mags}_ngenes.txt
+
             pigz -p {threads} {params.outdir}/*.tsv
             pigz -p {threads} {params.outdir}/*.fna
             pigz -p {threads} {params.outdir}/*.faa
