@@ -34,6 +34,7 @@ rule coverM_assembly:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 8
     resources:
+        load:8,
         mem_gb=64,
         time="00:30:00",
     benchmark:
@@ -63,6 +64,11 @@ rule coverM_assembly:
 
         # Compress the contigs
         pigz -p {threads} {input.contigs}
+
+        # Tarball files then upload to ERDA:
+        tar -cvzf {wildcards.EHA}_coverm.tar.gz {output.coverm} {output.euk}
+        lftp sftp://erda -e "put {wildcards.EHA}_coverm.tar.gz -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+
 
         #Print the number of MAGs to a file for combining with the assembly report
         ls -l {params.refinement_files}/metawrap_50_10_bins/*.fa.gz | wc -l > {wildcards.EHA}_bins.tsv;

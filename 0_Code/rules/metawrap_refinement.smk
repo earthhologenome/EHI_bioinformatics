@@ -74,4 +74,7 @@ rule metaWRAP_refinement:
         rm {params.concoct}/*.fa
         rm {params.maxbin2}/*.fa
         rm {params.metabat2}/*.fa
+
+        cp {output.stats} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.stats
+        cp {output.contigmap} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.contigs
         """

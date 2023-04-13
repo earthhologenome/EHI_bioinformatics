@@ -15,6 +15,12 @@ rule assembly_summary:
             "{EHI}/",
             "{EHA}_assembly_coverM.txt"
         ),
+        contigs_gz=os.path.join(
+            config["workdir"], 
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}_contigs.fasta.gz"
+        )
     output:
         os.path.join(
             config["workdir"],
@@ -33,6 +39,7 @@ rule assembly_summary:
         )
     threads: 1
     resources:
+        load=8,
         mem_gb=16,
         time='00:05:00'
     message:
@@ -66,8 +73,17 @@ rule assembly_summary:
 
         ### Upload stats to AirTable:
         python {config[codedir]}/airtable/add_asb_stats_airtable.py --report={output} --code={config[abb]}
+        sleep 5
 
+        ### Upload contigs to ERDA
+        lftp sftp://erda -e "put {input.contigs_gz} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
 
-        # clean up empty folders
+        # clean up empty folders, uneccesary files
         find {config[workdir]}/ -empty -type d -delete
+        rm {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/*_contigs.fasta.*
+        rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/intermediate_contigs
+        rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_binning
+        rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_refinement
+        rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/gtdbtk
+
         """

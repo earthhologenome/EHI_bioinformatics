@@ -5,7 +5,7 @@ rule assembly:
         r1=os.path.join(config["workdir"], "{PRB}/", "{EHI}_M_1.fq.gz"),
         r2=os.path.join(config["workdir"], "{PRB}/", "{EHI}_M_2.fq.gz"),
     output:
-        os.path.join(config["workdir"], "{PRB}/" "{EHI}/" "{EHA}_contigs.fasta"),
+        temp(os.path.join(config["workdir"], "{PRB}/" "{EHI}/" "{EHA}_contigs.fasta"))
     params:
         assembler=expand("{assembler}", assembler=config["assembler"]),
     conda:

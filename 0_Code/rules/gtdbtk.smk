@@ -44,11 +44,11 @@ rule gtdbtk:
         if [ -s "{params.outdir}/classify/gtdbtk.ar122.summary.tsv" ]
         then
         sed '1d;' {params.outdir}/classify/gtdbtk.ar122.summary.tsv > {params.outdir}/ar122.tsv
-        cat {output} {params.outdir}/ar122.tsv > {params.outdir}/gtdbtk_combined_summary.tsv
+        cat {output} {params.outdir}/ar122.tsv > {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
         rm {params.outdir}/ar122.tsv
 
         # Otherwise, just use the bacterial summary (if no archaeal bins)
         else
-        cat {output} > {params.outdir}/gtdbtk_combined_summary.tsv
+        cat {output} > {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
         fi
         """
