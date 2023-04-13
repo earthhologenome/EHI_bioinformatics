@@ -129,7 +129,7 @@ rule all:
                 "{MAG}_anno.tsv.gz"
             ),
             combo=valid_combinations,
-            MAG=range(1, 3000)
+            MAG
         ),
         expand(
             os.path.join(
