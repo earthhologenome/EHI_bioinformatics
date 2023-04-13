@@ -15,9 +15,9 @@ rule metaWRAP_binning:
         mem_gb=96,
         time="06:00:00",
     benchmark:
-        "{{config['logdir']}}/binning_benchmark_{PRB}_{EHI}_{EHA}.tsv"
+        os.path.join(config["logdir"] + "binning_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
-        "{{config['logdir']}}/binning_log_{PRB}_{EHI}_{EHA}.log",
+        os.path.join(config["logdir"] + "binning_log_{PRB}_{EHI}_{EHA}.log")
     message:
         "Binning {wildcards.EHA} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
     shell:

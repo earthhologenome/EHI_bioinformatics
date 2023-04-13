@@ -23,9 +23,9 @@ rule gtdbtk:
         mem_gb=96,
         time='02:00:00'
     benchmark:
-        "{{config['logdir']}}/gtdb-tk_benchmark_{PRB}_{EHI}_{EHA}.tsv"
+        os.path.join(config["logdir"] + "gtdb-tk_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
-        "{{config['logdir']}}/gtdb-tk_log_{PRB}_{EHI}_{EHA}.log"
+        os.path.join(config["logdir"] + "gtdb-tk_log_{PRB}_{EHI}_{EHA}.log")
     message:
         "Annotating taxonomy to {wildcards.EHA}'s bins using GTDB-tk"
     shell:

@@ -13,7 +13,7 @@ rule upload_bam_erda:
         mem_gb=16,
         time='00:30:00'
     benchmark:
-        "{{config['logdir']}}/upload_bam_benchmark_{PRB}_{EHI}_{EHA}.tsv"
+        os.path.join(config["logdir"] + "upload_bam_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     message:
         "Uploading {wildcards.EHA} BAM to ERDA"
     shell:

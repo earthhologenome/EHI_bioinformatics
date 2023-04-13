@@ -32,9 +32,9 @@ rule metaWRAP_refinement:
         mem_gb=128,
         time="06:00:00",
     benchmark:
-        "{{config['logdir']}}/binning_benchmark_{PRB}_{EHI}_{EHA}.tsv"
+        os.path.join(config["logdir"] + "binning_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
-        "{{config['logdir']}}/binning_log_{PRB}_{EHI}_{EHA}.log",
+        os.path.join(config["logdir"] + "binning_log_{PRB}_{EHI}_{EHA}.log")
     message:
         "Refining {wildcards.EHA} bins with MetaWRAP's bin refinement module"
     shell:

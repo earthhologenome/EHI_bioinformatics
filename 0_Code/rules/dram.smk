@@ -52,9 +52,9 @@ rule DRAM:
         mem_gb=24,
         time='04:00:00'
     benchmark:
-        "{{config['logdir']}}/DRAM_benchmark_{PRB}_{EHI}_{EHA}_{MAG}.tsv"
+        os.path.join(config["logdir"] + "DRAM_benchmark_{PRB}_{EHI}_{EHA}_{MAG}.tsv")
     log:
-        "{{config['logdir']}}/DRAM_log_{PRB}_{EHI}_{EHA}_{MAG}.log"
+        os.path.join(config["logdir"] + "DRAM_log_{PRB}_{EHI}_{EHA}_{MAG}.log")
     message:
         "Using DRAM to functionally annotate {wildcards.MAG}"
     shell:
