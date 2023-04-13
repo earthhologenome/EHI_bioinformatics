@@ -23,6 +23,7 @@ rule metaWRAP_binning:
     shell:
         """
         #Installing metawrap via conda is a pain in the arse, so using the module on Mjolnir here.
+        #It should be possible to get the conda environment done manually 'mamba create -n X -c ursky metawrap-mg'
         module load metawrap-mg/1.3.2
 
         # Create dummy fq/assembly files to trick metaWRAP into running without mapping

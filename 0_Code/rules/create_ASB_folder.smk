@@ -14,9 +14,9 @@ rule create_ASB_folder:
         "Creating assembly batch folder on ERDA"
     shell:
         """
-        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{{config['abb']}} ; bye"
+        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{config['abb']} ; bye"
         touch {output}
 
         #Also, log the AirTable that the ASB is running!
-        python {{config['codedir']}}/airtable/log_asb_start_airtable.py --code={{config['abb']}}
+        python {config['codedir']}/airtable/log_asb_start_airtable.py --code={config['abb']}
         """
