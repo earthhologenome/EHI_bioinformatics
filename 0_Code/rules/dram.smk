@@ -11,14 +11,24 @@ rule DRAM:
             "{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
         ),
-        bin=os.path.join(
-            config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_refinement/",
-            "metawrap_50_10_bins",
-            "{MAG}.fa.gz"
-        )
+        lambda wildcards: [
+            os.path.join(
+                config["workdir"],
+                "{wildcards.PRB}/",
+                "{wildcards.EHI}/",
+                "{wildcards.EHA}_refinement/",
+                "metawrap_50_10_bins/",
+                f"{MAG}.fa.gz"
+            ) for MAG in range(1, 3000)
+            if os.path.exists(os.path.join(
+                config["workdir"],
+                "{wildcards.PRB}/",
+                "{wildcards.EHI}/",
+                "{wildcards.EHA}_refinement/",
+                "metawrap_50_10_bins/",
+                f"{MAG}.fa.gz"
+            ))
+        ]
     output:
         annotations = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_anno.tsv.gz"),
         genes = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.fna.gz")),
