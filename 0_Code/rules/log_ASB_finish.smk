@@ -25,5 +25,5 @@ rule log_finish:
     shell:
         """
         # Log on the AirTable that the pipeline has finished:
-        python {{config['codedir']}}/airtable/log_asb_done_airtable.py  --code={{config['abb']}}
+        python {config[codedir]}/airtable/log_asb_done_airtable.py  --code={config[abb]}
         """

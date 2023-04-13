@@ -15,5 +15,5 @@ rule download_preprocessed:
         "Fetching metagenomics reads for {wildcards.EHI} from ERDA"
     shell:
         """
-        lftp sftp://erda -e "mirror --include-glob='{wildcards.PRB}/{wildcards.EHI}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {{config['workdir']}}/; bye"
+        lftp sftp://erda -e "mirror --include-glob='{wildcards.PRB}/{wildcards.EHI}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {config[workdir]}/; bye"
         """
