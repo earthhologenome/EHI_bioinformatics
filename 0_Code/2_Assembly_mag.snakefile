@@ -119,17 +119,17 @@ rule all:
             ),
             combo=valid_combinations,
         ),
-        expand(
-            os.path.join(
-                config["workdir"],
-                "{combo[0]}/",
-                "{combo[1]}/",
-                "{combo[2]}/",
-                "DRAM/",
-                "DRAM_complete",
-            ),
-            combo=valid_combinations,
-        ),
+        # expand(
+        #     os.path.join(
+        #         config["workdir"],
+        #         "{combo[0]}/",
+        #         "{combo[1]}/",
+        #         "{combo[2]}/",
+        #         "DRAM/",
+        #         "",
+        #     ),
+        #     combo=valid_combinations,
+        # ),
         expand(
             os.path.join(
                 config["workdir"],

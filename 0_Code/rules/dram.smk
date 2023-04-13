@@ -1,7 +1,3 @@
-wildcard_constraints:
-    MAG='.*'
-
-
 ################################################################################
 ### Run DRAM on refined bins
 ################################################################################
@@ -31,8 +27,7 @@ rule DRAM:
         scaffolds = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_scaffolds.fna.gz")),
         gbk = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}.gbk.gz")),
         distillate = directory(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_distillate")),
-        product = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_dist.tsv.gz"),
-        complete = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "DRAM_complete")
+        product = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_dist.tsv.gz")
     params:
         outdir = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_annotate",
         mainout = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/",
