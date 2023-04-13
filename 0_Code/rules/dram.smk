@@ -57,75 +57,76 @@ rule DRAM:
     message:
         "Using DRAM to functionally annotate {wildcards.MAG}"
     shell:
-        """   
-        DRAM.py annotate \
-            -i {input.bin} \
-            -o {params.outdir} \
-            --threads {threads} \
-#            --use_uniref \
-            --min_contig_size 1500 
+        """
+        for bin in {input.lambda}:
+            DRAM.py annotate \
+                -i {bin} \
+                -o {params.outdir} \
+                --threads {threads} \
+    #            --use_uniref \
+                --min_contig_size 1500 
 
-        #If statements for rrnas/trnas -- sometimes these won't be created
-        if test -f {params.outdir}/trnas.tsv && test -f {params.outdir}/rrnas.tsv
-        then
-        DRAM.py distill \
-            -i {params.outdir}/annotations.tsv \
-            --rrna_path {params.outdir}/rrnas.tsv \
-            --trna_path {params.outdir}/trnas.tsv \
-            -o {output.distillate}
-        mv {params.outdir}/rrnas.tsv {params.rrnas}
-        mv {params.outdir}/trnas.tsv {params.trnas}}
-        else
-        echo "trnas AND rrnas are both not present"
-        fi
+            #If statements for rrnas/trnas -- sometimes these won't be created
+            if test -f {params.outdir}/trnas.tsv && test -f {params.outdir}/rrnas.tsv
+            then
+            DRAM.py distill \
+                -i {params.outdir}/annotations.tsv \
+                --rrna_path {params.outdir}/rrnas.tsv \
+                --trna_path {params.outdir}/trnas.tsv \
+                -o {output.distillate}
+            mv {params.outdir}/rrnas.tsv {params.rrnas}
+            mv {params.outdir}/trnas.tsv {params.trnas}}
+            else
+            echo "trnas AND rrnas are both not present"
+            fi
 
-        if test -f {params.outdir}/trnas.tsv && test ! -f {params.outdir}/rrnas.tsv
-        then
-        DRAM.py distill \
-            -i {params.outdir}/annotations.tsv \
-            --trna_path {params.outdir}/trnas.tsv \
-            -o {output.distillate}
-        mv {params.outdir}/trnas.tsv {params.trnas}}
-        else
-        echo "only trnas found"
-        fi
+            if test -f {params.outdir}/trnas.tsv && test ! -f {params.outdir}/rrnas.tsv
+            then
+            DRAM.py distill \
+                -i {params.outdir}/annotations.tsv \
+                --trna_path {params.outdir}/trnas.tsv \
+                -o {output.distillate}
+            mv {params.outdir}/trnas.tsv {params.trnas}}
+            else
+            echo "only trnas found"
+            fi
 
-        if test ! -f {params.outdir}/trnas.tsv && test -f {params.outdir}/rrnas.tsv
-        then
-        DRAM.py distill \
-            -i {params.outdir}/annotations.tsv \
-            --rrna_path {params.outdir}/rrnas.tsv \
-            -o {output.distillate}
-        mv {params.outdir}/rrnas.tsv {params.rrnas}
-        else
-        echo "only rrnas found"
-        fi
+            if test ! -f {params.outdir}/trnas.tsv && test -f {params.outdir}/rrnas.tsv
+            then
+            DRAM.py distill \
+                -i {params.outdir}/annotations.tsv \
+                --rrna_path {params.outdir}/rrnas.tsv \
+                -o {output.distillate}
+            mv {params.outdir}/rrnas.tsv {params.rrnas}
+            else
+            echo "only rrnas found"
+            fi
 
-        if test ! -f {params.outdir}/trnas.tsv && test ! -f {params.outdir}/rrnas.tsv
-        then
-        DRAM.py distill \
-            -i {params.outdir}/annotations.tsv \
-            -o {output.distillate}
-        else
-        echo "neither trnas nor rrnas found"
-        fi        
+            if test ! -f {params.outdir}/trnas.tsv && test ! -f {params.outdir}/rrnas.tsv
+            then
+            DRAM.py distill \
+                -i {params.outdir}/annotations.tsv \
+                -o {output.distillate}
+            else
+            echo "neither trnas nor rrnas found"
+            fi        
 
-        pigz -p {threads} {params.outdir}/*.tsv
-        pigz -p {threads} {params.outdir}/*.fna
-        pigz -p {threads} {params.outdir}/*.faa
-        pigz -p {threads} {params.outdir}/*.gff
-        pigz -p {threads} {params.outdir}/genbank/*
-        pigz -p {threads} {output.distillate}/*
+            pigz -p {threads} {params.outdir}/*.tsv
+            pigz -p {threads} {params.outdir}/*.fna
+            pigz -p {threads} {params.outdir}/*.faa
+            pigz -p {threads} {params.outdir}/*.gff
+            pigz -p {threads} {params.outdir}/genbank/*
+            pigz -p {threads} {output.distillate}/*
 
-        mv {params.outdir}/annotations.tsv.gz {output.annotations}
-        mv {params.outdir}/scaffolds.fna.gz {output.scaffolds}
-        mv {params.outdir}/genes.fna.gz {output.genes}
-        mv {params.outdir}/*.faa.gz {output.genesfaa}
-        mv {params.outdir}/*.gff.gz {output.genesgff}
-        mv {params.outdir}/genbank/* {output.gbk}
-        mv {output.distillate}/product.tsv.gz {output.product}
+            mv {params.outdir}/annotations.tsv.gz {output.annotations}
+            mv {params.outdir}/scaffolds.fna.gz {output.scaffolds}
+            mv {params.outdir}/genes.fna.gz {output.genes}
+            mv {params.outdir}/*.faa.gz {output.genesfaa}
+            mv {params.outdir}/*.gff.gz {output.genesgff}
+            mv {params.outdir}/genbank/* {output.gbk}
+            mv {output.distillate}/product.tsv.gz {output.product}
 
-        rm {output.distillate}/*
+            rm {output.distillate}/*
 
-        touch {output.complete}
+            touch {output.complete}
         """
