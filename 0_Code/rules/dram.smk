@@ -14,17 +14,17 @@ rule DRAM:
         lambda wildcards: [
             os.path.join(
                 config["workdir"],
-                "{wildcards.PRB}/",
-                "{wildcards.EHI}/",
-                "{wildcards.EHA}_refinement/",
+                wildcards.PRB + "/",
+                wildcards.EHI + "/",
+                wildcards.EHA + "_refinement/",
                 "metawrap_50_10_bins/",
                 f"{MAG}.fa.gz"
             ) for MAG in range(1, 3000)
             if os.path.exists(os.path.join(
                 config["workdir"],
-                "{wildcards.PRB}/",
-                "{wildcards.EHI}/",
-                "{wildcards.EHA}_refinement/",
+                wildcards.PRB + "/",
+                wildcards.EHI + "/",
+                wildcards.EHA + "_refinement/",
                 "metawrap_50_10_bins/",
                 f"{MAG}.fa.gz"
             ))
