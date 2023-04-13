@@ -11,7 +11,7 @@ rule DRAM:
             "{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
         ),
-        lambda wildcards: [
+        mags=lambda wildcards: [
             os.path.join(
                 config["workdir"],
                 wildcards.PRB + "/",
@@ -29,6 +29,12 @@ rule DRAM:
                 f"{MAG}.fa.gz"
             ))
         ]
+    params:
+        MAG="{MAG}",
+        outdir = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_annotate",
+        mainout = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/",
+        trnas = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_trnas.tsv.gz",
+        rrnas = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_rrnas.tsv.gz",
     output:
         annotations = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_anno.tsv.gz"),
         genes = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.fna.gz")),
@@ -38,11 +44,6 @@ rule DRAM:
         gbk = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}.gbk.gz")),
         distillate = directory(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_distillate")),
         product = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_dist.tsv.gz")
-    params:
-        outdir = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_annotate",
-        mainout = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/",
-        trnas = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_trnas.tsv.gz",
-        rrnas = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_rrnas.tsv.gz",
     conda:
         f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
@@ -58,9 +59,8 @@ rule DRAM:
         "Using DRAM to functionally annotate {wildcards.MAG}"
     shell:
         """
-        for bin in {input.lambda}:
             DRAM.py annotate \
-                -i {bin} \
+                -i {input.mags} \
                 -o {params.outdir} \
                 --threads {threads} \
     #            --use_uniref \
