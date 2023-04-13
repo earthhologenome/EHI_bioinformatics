@@ -7,14 +7,14 @@ rule gtdbtk:
             "{PRB}/",
             "{EHI}/",
             "{EHA}_refinement/",
-            "{EHA}_metawrap_70_10_bins.stats",
+            "{EHA}_metawrap_50_10_bins.stats",
         )
     output:
         os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "gtdbtk/classify/gtdbtk.bac120.summary.tsv")
     params:
         GTDB_data=expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir="{config['workdir'']}/{PRB}/{EHI}/{EHA}/gtdbtk",
-        bins="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/metawrap_70_10_bins"
+        bins="{config['workdir']}/{PRB}/{EHI}/{EHA}_refinement/metawrap_50_10_bins"
     conda:
         f"{config['codedir']}/conda_envs/GTDB-tk.yaml"
     threads:

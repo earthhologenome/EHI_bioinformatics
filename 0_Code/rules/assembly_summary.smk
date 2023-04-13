@@ -7,7 +7,7 @@ rule assembly_summary:
             "{PRB}/",
             "{EHI}/",
             "{EHA}_refinement/",
-            "{EHA}_metawrap_70_10_bins.stats",
+            "{EHA}_metawrap_50_10_bins.stats",
         ),
         coverm=os.path.join(
             config["workdir"], 

@@ -11,14 +11,14 @@ rule metaWRAP_refinement:
             "{PRB}/",
             "{EHI}/",
             "{EHA}_refinement/",
-            "{EHA}_metawrap_70_10_bins.stats",
+            "{EHA}_metawrap_50_10_bins.stats",
         ),
         contigmap=os.path.join(
             config["workdir"],
             "{PRB}/",
             "{EHI}/",
             "{EHA}_refinement/",
-            "{EHA}_metawrap_70_10_bins.contigs",
+            "{EHA}_metawrap_50_10_bins.contigs",
         ),
     params:
         concoct="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning/concoct_bins",
@@ -54,15 +54,15 @@ rule metaWRAP_refinement:
             -A {params.concoct} \
             -B {params.maxbin2} \
             -C {params.metabat2} \
-            -c 70 \
+            -c 50 \
             -x 10
 
         # Rename metawrap bins to match coassembly group:
-        mv {params.outdir}/metawrap_70_10_bins.stats {output.stats}
-        mv {params.outdir}/metawrap_70_10_bins.contigs {output.contigmap}
+        mv {params.outdir}/metawrap_50_10_bins.stats {output.stats}
+        mv {params.outdir}/metawrap_50_10_bins.contigs {output.contigmap}
         sed -i'' '2,$s/bin/{wildcards.EHA}_bin/g' {output.stats}
         sed -i'' 's/bin/{wildcards.EHA}_bin/g' {output.contigmap}
-        for bin in {params.outdir}/metawrap_70_10_bins/*.fa;
+        for bin in {params.outdir}/metawrap_50_10_bins/*.fa;
             do mv $bin ${{bin/bin./{wildcards.EHA}_bin.}};
                 done
 

@@ -13,24 +13,26 @@ rule DRAM:
             "{PRB}/",
             "{EHI}/",
             "{EHA}_refinement/",
-            "{EHA}_metawrap_70_10_bins.stats",
+            "{EHA}_metawrap_50_10_bins.stats",
         ),
         bin=os.path.join(
             config["workdir"],
             "{PRB}/",
             "{EHI}/",
             "{EHA}_refinement/",
-            "metawrap_70_10_bins",
+            "metawrap_50_10_bins",
             "{MAG}.fa.gz"
         )
     output:
-        annotations = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_annotations.tsv.gz"),
+        annotations = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_anno.tsv.gz"),
         genes = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.fna.gz")),
         genesfaa = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.faa.gz")),
         genesgff = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.gff.gz")),
         scaffolds = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_scaffolds.fna.gz")),
         gbk = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}.gbk.gz")),
-        distillate = directory(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_distillate"))
+        distillate = directory(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_distillate")),
+        product = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_dist.tsv.gz"),
+        complete = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "DRAM_complete")
     params:
         outdir = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/{MAG}_annotate",
         mainout = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/",
@@ -116,50 +118,9 @@ rule DRAM:
         mv {params.outdir}/*.faa.gz {output.genesfaa}
         mv {params.outdir}/*.gff.gz {output.genesgff}
         mv {params.outdir}/genbank/* {output.gbk}
+        mv {output.distillate}/product.tsv.gz {output.product}
 
-        """
-###############################################################################
-## compress/store
-rule compress_dram:
-    input:
-    #     expand(
-    #         os.path.join(
-    #             config["workdir"], 
-    #             "{combo[0]}",
-    #             "{combo[1]}",
-    #             "{combo[2]}",
-    #             "DRAM/", 
-    #             "{MAG}_annotations.tsv.gz"),
-    #             combo=valid_combinations, MAG=MAG
-    # )
-        expand(
-    os.path.join(config["workdir"], "{combo[0]}/", "{combo[1]}/", "{combo[2]}/", "DRAM/", "{MAG}_annotations.tsv.gz"),
-    combo=valid_combinations,
-    MAG=glob_wildcards(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_refinement", "metawrap_70_10_bins", "{MAG}.fa.gz")).MAG,
-    )
-    output:
-        os.path.join(
-                config["workdir"],
-                "{PRB}/",
-                "{EHI}/",
-                "{EHA}/",
-                "DRAM/",
-                "{EHA}_DRAM.tar.gz",
-    )
-    params:
-        mainout = "{config['workdir'']}/{PRB}/{EHI}/{EHA}/DRAM/"
-    conda:
-        f"{config['codedir']}/conda_envs/DRAM.yaml"
-    threads:
-        2
-    resources:
-        mem_gb=32,
-        time='04:00:00'
-    message:
-        "Tarballing outputs"
-    shell:
-        """
-        tar -cvf {output} {params.mainout}
-        rmdir {params.mainout}*_annotate/genbank
-        rmdir {params.mainout}*_annotate
+        rm {output.distillate}/*
+
+        touch {output.complete}
         """
