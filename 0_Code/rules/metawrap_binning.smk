@@ -9,7 +9,7 @@ rule metaWRAP_binning:
             config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_binning/binning_complete"
         ),
     params:
-        outdir="{config['workdir']}/{PRB}/{EHI}/{EHA}_binning",
+        outdir="'{config['workdir']}/{PRB}/{EHI}/{EHA}_binning'",
     threads: 16
     resources:
         mem_gb=96,
@@ -27,7 +27,7 @@ rule metaWRAP_binning:
         module load metawrap-mg/1.3.2
 
         # Create dummy fq/assembly files to trick metaWRAP into running without mapping
-        mkdir -p ${params.outdir}
+        mkdir -p {params.outdir}
         mkdir -p {params.outdir}/work_files
 
         touch {params.outdir}/work_files/assembly.fa.bwt
