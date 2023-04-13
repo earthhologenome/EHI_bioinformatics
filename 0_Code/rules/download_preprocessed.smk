@@ -12,7 +12,7 @@ rule download_preprocessed:
         mem_gb=8,
         time="01:00:00"
     benchmark:
-        "{{config['logdir']}}/download_preprocessed_benchmark_{PRB}_{EHI}.tsv"
+        "{config[logdir]}/download_preprocessed_benchmark_{PRB}_{EHI}.tsv"
     message:
         "Fetching metagenomics reads for {wildcards.EHI} from ERDA"
     shell:
