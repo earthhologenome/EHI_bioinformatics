@@ -7,14 +7,14 @@ rule coverM_assembly:
             "{PRB}/",
             "{EHI}/",
             "{EHA}_refinement/",
-            "{EHA}_metawrap_70_10_bins.stats",
+            "{EHA}_metawrap_50_10_bins.stats",
         ),
         contigmap=os.path.join(
             config["workdir"],
             "{PRB}/",
             "{EHI}/",
             "{EHA}_refinement/",
-            "{EHA}_metawrap_70_10_bins.contigs",
+            "{EHA}_metawrap_50_10_bins.contigs",
         ),
         bam=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHI}_{EHA}.bam"),
         contigs=os.path.join(config["workdir"], "{PRB}/" "{EHI}/" "{EHA}_contigs.fasta"),
@@ -65,5 +65,5 @@ rule coverM_assembly:
         pigz -p {threads} {input.contigs}
 
         #Print the number of MAGs to a file for combining with the assembly report
-        ls -l {params.refinement_files}/metawrap_70_10_bins/*.fa.gz | wc -l > {wildcards.EHA}_bins.tsv;
+        ls -l {params.refinement_files}/metawrap_50_10_bins/*.fa.gz | wc -l > {wildcards.EHA}_bins.tsv;
         """
