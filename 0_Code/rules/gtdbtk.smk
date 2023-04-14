@@ -38,7 +38,8 @@ rule gtdbtk:
         --genome_dir {params.bins} \
         --extension "gz" \
         --out_dir {params.outdir} \
-        --cpus {threads}
+        --cpus {threads} \
+        --mash_db /projects/ehi/data/0_Environments/databases/gtdb-tk-r207.msh
 
         # Create a merged summary output for DRAM:
         if [ -s "{params.outdir}/classify/gtdbtk.ar122.summary.tsv" ]
