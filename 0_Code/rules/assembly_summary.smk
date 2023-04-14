@@ -84,7 +84,7 @@ rule assembly_summary:
 
 
         ### Upload stats to AirTable:
-        python {config[codedir]}/airtable/add_asb_stats_airtable.py --report={output} --code={config[abb]}
+        python {config[codedir]}/airtable/add_asb_stats_airtable.py --report={output} --asb={config[abb]}
         sleep 5
 
         ### Upload contigs, coverm, & gtdb output to ERDA
