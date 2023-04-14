@@ -93,11 +93,11 @@ rule assembly_summary:
 #        lftp sftp://erda -e "mirror -R {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/DRAM/ -o /EarthHologenomeInitiative/Data/MAG/{wildcards.EHA}/; bye"
 
         # clean up empty folders, uneccesary files
-        find {config[workdir]}/ -empty -type d -delete
-        rm {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/*_contigs.fasta.*
-        rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/intermediate_contigs
-        rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_binning
-        rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_refinement
-        rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/gtdbtk
+        # find {config[workdir]}/ -empty -type d -delete
+        # rm {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/*_contigs.fasta.*
+        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/intermediate_contigs
+        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_binning
+        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_refinement
+        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/gtdbtk
 
         """

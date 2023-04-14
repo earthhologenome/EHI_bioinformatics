@@ -9,7 +9,7 @@ rule assembly_mapping:
         r2=os.path.join(config["workdir"], "{PRB}/", "{EHI}_M_2.fq.gz"),
         contigs=os.path.join(config["workdir"], "{PRB}/" "{EHI}/" "{EHA}_contigs.fasta"),
     output:
-        temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHI}_{EHA}.bam"))
+        os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHI}_{EHA}.bam")
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 16
