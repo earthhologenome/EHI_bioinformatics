@@ -68,11 +68,11 @@ rule metaWRAP_refinement:
         #Print the number of MAGs to a file for combining with the assembly report
         ls -l {params.outdir}/metawrap_50_10_bins/*.fa.gz | wc -l > {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_bins.tsv
 
-        rm -r {params.binning}/work_files/
-        rm -r {params.outdir}/work_files/
-        rm {params.binning}/concoct_bins/*.fa
-        rm {params.binning}/maxbin2_bins/*.fa
-        rm {params.binning}/metabat2_bins/*.fa
+        # rm -r {params.binning}/work_files/
+        # rm -r {params.outdir}/work_files/
+        # rm {params.binning}/concoct_bins/*.fa
+        # rm {params.binning}/maxbin2_bins/*.fa
+        # rm {params.binning}/metabat2_bins/*.fa
 
         cp {output.stats} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.stats
         cp {output.contigmap} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.contigs
