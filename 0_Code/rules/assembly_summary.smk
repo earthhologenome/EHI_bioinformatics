@@ -15,6 +15,12 @@ rule assembly_summary:
             "{EHI}/",
             "{EHA}_assembly_coverM.txt"
         ),
+        tarball=os.path.join(
+            config["workdir"], 
+            "{PRB}/", 
+            "{EHI}/", 
+            "{EHA}_coverm.tar.gz"
+        ),
         contigs_gz=os.path.join(
             config["workdir"], 
             "{PRB}/",
@@ -41,9 +47,9 @@ rule assembly_summary:
     resources:
         load=8,
         mem_gb=16,
-        time='00:05:00'
+        time='05:00:00'
     message:
-        "Creating final assembly summary table for {wildcards.EHA}"
+        "Creating final assembly summary table for {wildcards.EHA}, uploading files to ERDA"
     shell:
         """
         ### Create the final output summary table
@@ -75,8 +81,16 @@ rule assembly_summary:
         python {config[codedir]}/airtable/add_asb_stats_airtable.py --report={output} --code={config[abb]}
         sleep 5
 
-        ### Upload contigs to ERDA
+        ### Upload contigs, coverm, & gtdb output to ERDA
         lftp sftp://erda -e "put {input.contigs_gz} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+        sleep 5
+        lftp sftp://erda -e "put {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+        sleep 5
+        lftp sftp://erda -e "put {input.tarball} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+        sleep 5
+
+        ### Upload MAGs and annotations to ERDA
+#        lftp sftp://erda -e "mirror -R {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/DRAM/ -o /EarthHologenomeInitiative/Data/MAG/{wildcards.EHA}/; bye"
 
         # clean up empty folders, uneccesary files
         find {config[workdir]}/ -empty -type d -delete

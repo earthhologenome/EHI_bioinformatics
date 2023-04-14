@@ -28,6 +28,9 @@ rule coverM_assembly:
         contigs_gz=os.path.join(
             config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_contigs.fasta.gz"
         ),
+        tarball=os.path.join(
+            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_coverm.tar.gz"
+        )
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 8
@@ -63,7 +66,6 @@ rule coverM_assembly:
         # Compress the contigs
         pigz -p {threads} {input.contigs}
 
-        # Tarball files then upload to ERDA:
-        tar -cvzf {wildcards.EHA}_coverm.tar.gz {output.coverm} {output.euk}
-        lftp sftp://erda -e "put {wildcards.EHA}_coverm.tar.gz -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+        # Tarball files then \:
+        tar -cvzf {output.tarball} {output.coverm} {output.euk}
         """
