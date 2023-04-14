@@ -42,6 +42,12 @@ rule assembly_summary:
             "{PRB}/", 
             "{EHI}/", 
             "{EHA}_QUAST")
+        ),
+        stats_dir=directory(os.path.join(
+            config["workdir"],
+            "{PRB}/",
+            "{EHI}"
+        )
         )
     threads: 1
     resources:
@@ -53,28 +59,28 @@ rule assembly_summary:
     shell:
         """
         ### Create the final output summary table
-        echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\tassembly_length\tnum_bins\tassembly_mapping_percent" > headers.tsv
+        echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\tassembly_length\tnum_bins\tassembly_mapping_percent" > {params.stats_dir}/headers.tsv
 
         #parse QUAST outputs for assembly stats
-        cat {params.quast}/{wildcards.EHA}_assembly_report.tsv >> {wildcards.EHA}_temp_report.tsv
+        cat {params.quast}/{wildcards.EHA}_assembly_report.tsv >> {params.stats_dir}/{wildcards.EHA}_temp_report.tsv
 
         #Add in the % mapping to assembly stats
-        echo {wildcards.EHI}_{wildcards.EHA} >> {wildcards.EHA}_sample_ids.tsv
+        echo {wildcards.EHI}_{wildcards.EHA} >> {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv
 
-        paste {wildcards.EHA}_sample_ids.tsv {wildcards.EHA}_temp_report.tsv > {wildcards.EHA}_temp2_report.tsv
+        paste {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv {params.stats_dir}/{wildcards.EHA}_temp_report.tsv > {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv
 
         #Add in the # of bins
-        cat {wildcards.EHA}_bins.tsv >> {wildcards.EHA}_number_bins.tsv
+        cat {params.stats_dir}/{wildcards.EHA}_bins.tsv >> {params.stats_dir}/{wildcards.EHA}_number_bins.tsv
 
-        paste {wildcards.EHA}_temp2_report.tsv {wildcards.EHA}_number_bins.tsv > {wildcards.EHA}_temp3_report.tsv
+        paste {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv {params.stats_dir}/{wildcards.EHA}_number_bins.tsv > {params.stats_dir}/{wildcards.EHA}_temp3_report.tsv
 
         #Grab coverm mapping rate. 'cut -f2' pulls the second column, 'sed -n 3p' prints only the third line (% mapping)
-        cut -f2 {input.coverm} | sed -n 3p >> {wildcards.EHA}_relabun.tsv
+        cut -f2 {input.coverm} | sed -n 3p >> {params.stats_dir}/{wildcards.EHA}_relabun.tsv
 
-        paste {wildcards.EHA}_temp3_report.tsv {wildcards.EHA}_relabun.tsv > {wildcards.EHA}_temp4_report.tsv
+        paste {params.stats_dir}/{wildcards.EHA}_temp3_report.tsv {params.stats_dir}/{wildcards.EHA}_relabun.tsv > {params.stats_dir}/{wildcards.EHA}_temp4_report.tsv
 
         #Combine them into the final assembly report
-        cat headers.tsv {wildcards.EHA}_temp4_report.tsv > {output}
+        cat {params.stats_dir}/headers.tsv {params.stats_dir}/{wildcards.EHA}_temp4_report.tsv > {output}
 
 
         ### Upload stats to AirTable:
@@ -99,5 +105,6 @@ rule assembly_summary:
         # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_binning
         # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_refinement
         # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/gtdbtk
+        # rm {params.stats_dir}/*.tsv
 
         """
