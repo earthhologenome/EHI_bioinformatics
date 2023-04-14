@@ -456,7 +456,7 @@ rule singlem:
         echo "SingleM analysis not performed"
         touch {output.condense}
         touch {output.pipe}
-        echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\n0\t0\t0\t0" > {output.read_fraction}
+        echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\n0\t0\t0\t0.0%" > {output.read_fraction}
         
         fi
 
