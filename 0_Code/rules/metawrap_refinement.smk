@@ -38,10 +38,9 @@ rule metaWRAP_refinement:
         #Installing metawrap via conda is a pain in the arse, so using the module on Mjolnir here.
         module load metawrap-mg/1.3.2
 
-
-        # Setup checkM path
-        export checkmdb={config[checkmdb]}
-        printf $checkmdb | checkm data setRoot
+        # Setup checkM path (needed for conda, not module)
+        # export checkmdb={config[checkmdb]}
+        # printf $checkmdb | checkm data setRoot
         
         metawrap bin_refinement \
             -m {resources.mem_gb} \
