@@ -59,15 +59,17 @@ rule assembly_summary:
     shell:
         """
         ### Create the final output summary table
-        echo -e "sample\tN50\tL50\tnum_contigs\tlargest_contig\tassembly_length\tnum_bins\tassembly_mapping_percent" > {params.stats_dir}/headers.tsv
+        echo -e "sample\tEHA_number\tEHI_number\tN50\tL50\tnum_contigs\tlargest_contig\tassembly_length\tnum_bins\tassembly_mapping_percent" > {params.stats_dir}/headers.tsv
 
         #parse QUAST outputs for assembly stats
         cat {params.quast}/{wildcards.EHA}_assembly_report.tsv >> {params.stats_dir}/{wildcards.EHA}_temp_report.tsv
 
-        #Add in the % mapping to assembly stats
+        #Add sample IDs
         echo {wildcards.EHI}_{wildcards.EHA} >> {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv
+        echo {wildcards.EHA} >> {params.stats_dir}/{wildcards.EHA}_EHA_ids.tsv
+        echo {wildcards.EHI} >> {params.stats_dir}/{wildcards.EHA}_EHI_ids.tsv
 
-        paste {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv {params.stats_dir}/{wildcards.EHA}_temp_report.tsv > {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv
+        paste {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv {params.stats_dir}/{wildcards.EHA}_EHA_ids.tsv {params.stats_dir}/{wildcards.EHA}_EHI_ids.tsv {params.stats_dir}/{wildcards.EHA}_temp_report.tsv > {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv
 
         paste {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv {params.stats_dir}/{wildcards.EHA}_bins.tsv > {params.stats_dir}/{wildcards.EHA}_temp3_report.tsv
 
