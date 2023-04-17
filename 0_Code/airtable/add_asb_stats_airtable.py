@@ -28,7 +28,7 @@ df = pd.read_csv(args.report, sep='\t')
 for i, row in df.iterrows():
     # Get the record ID for the row based on the value in the 'EHA_number' column and 'AB_batch'
     params = {
-        'filterByFormula': f"AND({{ID}} = '{row['EHA_number']}', {{AB_batch}} = '{args.asb}')",        
+        'filterByFormula': f"AND({{Assembly_code}} = '{row['EHA_number']}', {{EHI_number_api}} = '{row['EHI_number']}')",        
         'maxRecords': 1
     }
     response = requests.get(url, headers=headers, params=params)

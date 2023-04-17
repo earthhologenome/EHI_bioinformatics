@@ -69,10 +69,7 @@ rule assembly_summary:
 
         paste {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv {params.stats_dir}/{wildcards.EHA}_temp_report.tsv > {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv
 
-        #Add in the # of bins
-        cat {params.stats_dir}/{wildcards.EHA}_bins.tsv >> {params.stats_dir}/{wildcards.EHA}_number_bins.tsv
-
-        paste {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv {params.stats_dir}/{wildcards.EHA}_number_bins.tsv > {params.stats_dir}/{wildcards.EHA}_temp3_report.tsv
+        paste {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv {params.stats_dir}/{wildcards.EHA}_bins.tsv > {params.stats_dir}/{wildcards.EHA}_temp3_report.tsv
 
         #Grab coverm mapping rate. 'cut -f2' pulls the second column, 'sed -n 3p' prints only the third line (% mapping)
         cut -f2 {input.coverm} | sed -n 3p >> {params.stats_dir}/{wildcards.EHA}_relabun.tsv
