@@ -17,7 +17,7 @@ with open('/projects/ehi/data/.airtable_api_key.json') as f:
 api_key = config['api_key']
 
 #Set variables
-url = 'https://api.airtable.com/v0/appQpr6MxnaiVHsHy/tblG6ZIvkYN844I97/'
+url = 'https://api.airtable.com/v0/appQpr6MxnaiVHsHy/tbld5JHhN4cM9P5ka'
 headers = {
     'Authorization': f'Bearer {api_key}',
     'Content-Type': 'application/json'
