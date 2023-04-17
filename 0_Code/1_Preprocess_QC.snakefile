@@ -418,6 +418,10 @@ rule singlem:
         export PATH='/projects/ehi/data/0_Environments/github_repos/singlem/bin':$PATH
         export SINGLEM_METAPACKAGE_PATH='/projects/ehi/data/0_Environments/databases/S3.1.0.metapackage_20221209.smpkg.zb/'
 
+        #Try to fix /tmp folder running out of space:
+        mkdir -p TMPDIR=/projects/ehi/data/PPR/PRBATCH/tmp/tmp
+        export TMPDIR=/projects/ehi/data/PPR/PRBATCH/tmp/TEMPDIR
+
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
         #In this case, if R1 has > 150 Mbytes, run, else, skip:
