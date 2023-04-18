@@ -53,7 +53,7 @@ checkpoint metaWRAP_checkpoint:
     output:
         os.path.join(config["workdir"], "metaWRAP_checkpoint")
     shell:
-        touch {output}
+        'touch {output}'
 
 ################################################################################
 ### Setup the desired outputs
