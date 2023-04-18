@@ -37,18 +37,11 @@ valid_combinations = set(
     (row["PR_batch"], row["EHI_number"], row["ID"]) for _, row in df.iterrows()
 )
 
-
-def mag_pattern(wildcards):
-    return wildcards.MAG + "_anno.tsv.gz"
-
 wildcard_constraints:
     MAG="[a-zA-Z0-9_-]+"
 
-# config["wildcard_constraints"] = {
-#     "unknown_files": ".+",
-#     "MAG": ".+"
-# }
-
+def mag_pattern(wildcards):
+    return wildcards.MAG + "_anno.tsv.gz"
 
 ################################################################################
 ### Setup the desired outputs
@@ -148,7 +141,7 @@ rule all:
                 "{combo[1]}/",
                 "{combo[2]}/",
                 "DRAM/",
-                "{MAG}_anno.tsv.gz",
+                mag_pattern,
             ),
             combo=valid_combinations,
             MAG="{MAG}",
