@@ -139,7 +139,7 @@ rule all:
                 "{MAG}_anno.tsv.gz",
             ),
             combo=valid_combinations,
-            MAG='[a-zA-Z0-9_-]+',
+            MAG='EHA\d+_bin\.\d+',
         ),
         expand(
             os.path.join(
