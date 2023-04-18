@@ -23,7 +23,7 @@
 
 configfile: "assembly_mag_config.yaml"
 
-
+import glob
 import pandas as pd
 
 ## The input will be automatically generated prior to the snakefile being launched-
