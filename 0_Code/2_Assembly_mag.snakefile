@@ -136,10 +136,10 @@ rule all:
                 "{combo[1]}/",
                 "{combo[2]}/",
                 "DRAM/",
-                "{MAG}_anno.tsv.gz",
+                "{basename}_anno.tsv.gz",
             ),
             combo=valid_combinations,
-            MAG='EHA\d+_bin\.\d+',
+            basename=[os.path.splitext(os.path.basename(f))[0] for f in glob.glob(os.path.join(config["workdir"], "{combo[0]}/", "{combo[1]}/", "{combo[2]}_refinement/metawrap_50_10_bins/EHA*_bin.*.fa.gz"))],
         ),
         expand(
             os.path.join(
