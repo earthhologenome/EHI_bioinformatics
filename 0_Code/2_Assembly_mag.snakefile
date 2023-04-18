@@ -38,6 +38,10 @@ valid_combinations = set(
 )
 
 
+def mag_pattern(wildcards):
+    return wildcards.MAG + "_anno.tsv.gz"
+
+
 ################################################################################
 ### Setup the desired outputs
 rule all:
