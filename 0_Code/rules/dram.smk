@@ -4,7 +4,13 @@
 ### Functionally annotate MAGs with DRAM
 rule DRAM:
     input:
-        dram_input
+        os.path.join(
+            config["workdir"],
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}_refinement/",
+            "metawrap_50_10_bins/{MAG}.fa.gz",
+        )
     output:
         annotations = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_anno.tsv.gz"),
         genes = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.fna.gz")),

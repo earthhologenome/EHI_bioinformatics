@@ -100,9 +100,6 @@ rule assembly_summary:
         lftp sftp://erda -e "put {input.tarball} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
         sleep 5
 
-        ### Upload MAGs and annotations to ERDA
-#        lftp sftp://erda -e "mirror -R {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/DRAM/ -o /EarthHologenomeInitiative/Data/MAG/{wildcards.EHA}/; bye"
-
         # clean up empty folders, uneccesary files
         # find {config[workdir]}/ -empty -type d -delete
         # rm {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/*_contigs.fasta.*
