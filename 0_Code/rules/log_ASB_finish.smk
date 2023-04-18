@@ -1,5 +1,6 @@
 ################################################################################
 ### Log AirTable that the pipeline has finished.
+### Also moves MAGs for the 3_mag_annotation.snakefile
 rule log_finish:
     input:
         expand(
@@ -19,13 +20,20 @@ rule log_finish:
     resources:
         load=8,
         mem_gb=8,
-        time="00:05:00",
+        time="00:30:00",
     message:
         "Logging AirTable that the run has been completed."
     shell:
         """
         # Log on the AirTable that the pipeline has finished:
         python {config[codedir]}/airtable/log_asb_done_airtable.py  --code={config[abb]}
+
+        # Move MAGs for the next pipeline
+        mkdir -p {config[magdir]}
+
+        for mag in {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{EHA}_refinement/metawrap_50_10/*.fa.gz;
+            do mv $mag {config[magdir]}/;
+        done
 
         touch {output}
         """

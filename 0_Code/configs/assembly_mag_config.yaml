@@ -5,6 +5,7 @@
 abb: ASBATCH
 codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code
 workdir: /projects/ehi/data/ASB/ASBATCH
+magdir: /projects/ehi/data/MAG/ASBATCH
 logdir: /projects/ehi/data/RUN/ASBATCH/logs
 #assembler you want to use (megahit or metaspades)
 assembler: megahit
