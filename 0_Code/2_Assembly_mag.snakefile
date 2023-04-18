@@ -140,10 +140,9 @@ rule all:
                 "{combo[1]}/",
                 "{combo[2]}/",
                 "DRAM/",
-                "{MAG}_anno.tsv.gz",
+                mag_pattern,
             ),
             combo=valid_combinations,
-            MAG=mag_pattern,
         ),
         expand(
             os.path.join(

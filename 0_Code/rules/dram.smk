@@ -38,6 +38,7 @@ rule DRAM:
                 "metawrap_50_10_bins/",
                 "{MAG}.fa.gz",
             ),
+            MAG="{MAG}"
         )
     params:
         MAG="{MAG}",
