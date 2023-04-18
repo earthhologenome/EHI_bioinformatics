@@ -20,7 +20,7 @@ rule DRAM:
                 "metawrap_50_10_bins/",
                 "{MAG}.fa.gz",
             ),
-            comb=valid_combinations,
+            combo=valid_combinations,
             MAG="{MAG}"
         ),
     params:
