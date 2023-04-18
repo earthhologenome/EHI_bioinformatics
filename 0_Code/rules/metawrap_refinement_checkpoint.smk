@@ -6,6 +6,15 @@ checkpoint metaWRAP_refinement:
             config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_binning/binning_complete"
         ),
     output:
+        directory(os.path.join(
+            config["workdir"],
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}_refinement/",
+            "metawrap_50_10_bins/",
+            )
+        ),
+    params:
         stats=os.path.join(
             config["workdir"],
             "{PRB}/",
@@ -20,15 +29,6 @@ checkpoint metaWRAP_refinement:
             "{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.contigs",
         ),
-        bins=directory(os.path.join(
-            config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_refinement/",
-            "metawrap_50_10_bins/",
-            )
-        ),
-    params:
         binning=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}_binning"),
         outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}_refinement")
     threads: 16
@@ -61,10 +61,10 @@ checkpoint metaWRAP_refinement:
             -x 10
 
         # Rename metawrap bins to match coassembly group:
-        mv {params.outdir}/metawrap_50_10_bins.stats {output.stats}
-        mv {params.outdir}/metawrap_50_10_bins.contigs {output.contigmap}
-        sed -i'' '2,$s/bin/{wildcards.EHA}_bin/g' {output.stats}
-        sed -i'' 's/bin/{wildcards.EHA}_bin/g' {output.contigmap}
+        mv {params.outdir}/metawrap_50_10_bins.stats {params.stats}
+        mv {params.outdir}/metawrap_50_10_bins.contigs {params.contigmap}
+        sed -i'' '2,$s/bin/{wildcards.EHA}_bin/g' {params.stats}
+        sed -i'' 's/bin/{wildcards.EHA}_bin/g' {params.contigmap}
         for bin in {params.outdir}/metawrap_50_10_bins/*.fa;
             do mv $bin ${{bin/bin./{wildcards.EHA}_bin.}};
                 done
@@ -81,6 +81,6 @@ checkpoint metaWRAP_refinement:
         # rm {params.binning}/maxbin2_bins/*.fa
         # rm {params.binning}/metabat2_bins/*.fa
 
-        cp {output.stats} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.stats
-        cp {output.contigmap} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.contigs
+        cp {params.stats} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.stats
+        cp {params.contigmap} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.contigs
         """

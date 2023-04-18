@@ -143,17 +143,31 @@ rule all:
         ),
 
 
+# def dram_input(wildcards):
+#     checkpoint_output = checkpoints.metaWRAP_refinement.get(**wildcards).output[0]
+#     return expand(os.path.join(
+#                         config["workdir"],
+#                         "{PRB}/",
+#                         "{EHI}/",
+#                         "{EHA}_refinement/",
+#                         "{EHA}_metawrap_50_10_bins/",
+#                         "{MAG}.fa.gz",
+#                     ),
+#                   MAG=glob_wildcards(os.path.join(checkpoint_output, "{MAG}.fa.gz")).MAG)
+
 def dram_input(wildcards):
-    checkpoint_output = checkpoints.metaWRAP_refinement.get(**wildcards).output.bins[0]
+    checkpoint_output = checkpoints.metaWRAP_refinement.get(**wildcards).output[0]
     return expand(os.path.join(
                         config["workdir"],
-                        "{PRB}/",
-                        "{EHI}/",
-                        "{EHA}_refinement/",
-                        "{EHA}_metawrap_50_10_bins/",
+                        "{combo[0]}/",
+                        "{combo[1]}/",
+                        "{combo[2]}_refinement/",
+                        "metawrap_50_10_bins/",
                         "{MAG}.fa.gz",
                     ),
-                  MAG=glob_wildcards(os.path.join(checkpoint_output, "{MAG}.fa.gz")).MAG)
+                combo=valid_combinations,
+                MAG=glob_wildcards(os.path.join(checkpoint_output, "{MAG}.fa.gz")).MAG
+    )
 
 
 include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
