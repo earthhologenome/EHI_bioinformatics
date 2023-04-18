@@ -41,10 +41,13 @@ valid_combinations = set(
 def mag_pattern(wildcards):
     return wildcards.MAG + "_anno.tsv.gz"
 
-config["wildcard_constraints"] = {
-    "unknown_files": ".*",
-    "MAG": ".*"
-}
+# wildcard_constraints:
+#     MAG="[a-zA-Z0-9_-]+"
+
+# config["wildcard_constraints"] = {
+#     "unknown_files": ".+",
+#     "MAG": ".+"
+# }
 
 
 ################################################################################
@@ -148,7 +151,7 @@ rule all:
                 "{MAG}_anno.tsv.gz",
             ),
             combo=valid_combinations,
-            MAG=".*",
+            MAG=".+",
         ),
         expand(
             os.path.join(
