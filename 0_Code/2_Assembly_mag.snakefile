@@ -151,7 +151,7 @@ rule all:
                 "{MAG}_anno.tsv.gz",
             ),
             combo=valid_combinations,
-#            MAG=".+",
+            MAG="{MAG}",
         ),
         expand(
             os.path.join(
