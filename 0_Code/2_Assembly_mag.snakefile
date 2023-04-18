@@ -108,26 +108,6 @@ rule all:
             ),
             combo=valid_combinations,
         ),
-        # expand(
-        #     os.path.join(
-        #         config["workdir"],
-        #         "{combo[0]}/",
-        #         "{combo[1]}/",
-        #         "{combo[2]}/",
-        #         "gtdbtk/classify/gtdbtk.bac120.summary.tsv",
-        #     ),
-        #     combo=valid_combinations,
-        # ),
-        # dynamic(
-        #     os.path.join(
-        #         config["workdir"], 
-        #         "{combo[0]}/", 
-        #         "{combo[1]}/", 
-        #         "{combo[2]}/", 
-        #         "DRAM/", 
-        #         "{MAG}_anno.tsv.gz"
-        #     ) for combo in valid_combinations for MAG in range(1, 3000)
-        # ),
         expand(
             os.path.join(
                 config["workdir"],
@@ -140,34 +120,7 @@ rule all:
         expand(
             os.path.join(config["workdir"], "{abb}_pipeline_finished"),
             abb=config["abb"],
-        ),
-
-
-# def dram_input(wildcards):
-#     checkpoint_output = checkpoints.metaWRAP_refinement.get(**wildcards).output[0]
-#     return expand(os.path.join(
-#                         config["workdir"],
-#                         "{PRB}/",
-#                         "{EHI}/",
-#                         "{EHA}_refinement/",
-#                         "{EHA}_metawrap_50_10_bins/",
-#                         "{MAG}.fa.gz",
-#                     ),
-#                   MAG=glob_wildcards(os.path.join(checkpoint_output, "{MAG}.fa.gz")).MAG)
-
-def dram_input(wildcards):
-    checkpoint_output = checkpoints.metaWRAP_refinement.get(**wildcards).output[0]
-    return expand(os.path.join(
-                        config["workdir"],
-                        "{combo[0]}/",
-                        "{combo[1]}/",
-                        "{combo[2]}_refinement/",
-                        "metawrap_50_10_bins/",
-                        "{MAG}.fa.gz",
-                    ),
-                combo=valid_combinations,
-                MAG=glob_wildcards(os.path.join(checkpoint_output, "{MAG}.fa.gz")).MAG
-    )
+        )
 
 
 include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
@@ -178,9 +131,8 @@ include: os.path.join(config["codedir"], "rules/index_assembly.smk")
 include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
 include: os.path.join(config["codedir"], "rules/upload_asb_bam.smk")
 include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
-include: os.path.join(config["codedir"], "rules/metawrap_refinement_checkpoint.smk")
+include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
 include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
 # include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
-include: os.path.join(config["codedir"], "rules/dram.smk")
 include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
 include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
