@@ -141,7 +141,7 @@ rule all:
                 "{combo[1]}/",
                 "{combo[2]}/",
                 "DRAM/",
-                mag_pattern,
+                "{MAG}_anno.tsv.gz",
             ),
             combo=valid_combinations,
             MAG="{MAG}",
