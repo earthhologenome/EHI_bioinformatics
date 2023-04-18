@@ -54,8 +54,6 @@ rule DRAM:
         gbk = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}.gbk.gz")),
         distillate = directory(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_distillate")),
         product = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_dist.tsv.gz")
-    wildcards:
-        MAG=wildcard('.+')
     conda:
         f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
