@@ -21,7 +21,7 @@ rule DRAM:
                 "{MAG}.fa.gz",
             ),
             MAG="{MAG}"
-        )
+        ),
     params:
         outdir=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_annotate"),
         trnas=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_trnas.tsv.gz"),
