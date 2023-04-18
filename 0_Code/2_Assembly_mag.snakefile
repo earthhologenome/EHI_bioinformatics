@@ -40,8 +40,6 @@ valid_combinations = set(
 wildcard_constraints:
     MAG="[a-zA-Z0-9_-]+"
 
-def mag_pattern(wildcards):
-    return wildcards.MAG + "_anno.tsv.gz"
 
 ################################################################################
 ### Setup the desired outputs
