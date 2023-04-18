@@ -156,6 +156,14 @@ rule all:
         #     ),
         #     combo=valid_combinations,
         # ),
+        os.path.join(
+            config["workdir"],
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}/",
+            "DRAM/",
+            "{MAG}_anno.tsv.gz",
+        ),
         expand(
             os.path.join(
                 config["workdir"],
