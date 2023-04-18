@@ -143,7 +143,7 @@ rule all:
         ),
 
 
-  def dram_input(wildcards):
+    def dram_input(wildcards):
       checkpoint_output = checkpoints.metaWRAP_refinement.get(**wildcards).output[0]
       return expand(mag=os.path.join(
                         config["workdir"],
