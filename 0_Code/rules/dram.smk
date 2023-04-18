@@ -11,18 +11,17 @@ rule DRAM:
             "{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
         ),
-        "metawrap_50_10_bins/{MAG}.fa.gz".format(MAG="{MAG}")
-        # expand(
-        #     os.path.join(
-        #         config["workdir"],
-        #         "{PRB}/",
-        #         "{EHI}/",
-        #         "{EHA}_refinement/",
-        #         "metawrap_50_10_bins/",
-        #         "{MAG}.fa.gz",
-        #     ),
-        #     MAG="{MAG}"
-        # ),
+        mag=expand(
+            os.path.join(
+                config["workdir"],
+                "{PRB}/",
+                "{EHI}/",
+                "{EHA}_refinement/",
+                "metawrap_50_10_bins/",
+                "{MAG}.fa.gz",
+            ),
+            MAG="{MAG}"
+        ),
     params:
         outdir=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_annotate"),
         trnas=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_trnas.tsv.gz"),
