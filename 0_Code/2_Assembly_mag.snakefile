@@ -37,6 +37,10 @@ valid_combinations = set(
     (row["PR_batch"], row["EHI_number"], row["ID"]) for _, row in df.iterrows()
 )
 
+# Set wildcard constrains for the dram.smk rule.
+wildcard_constraints:
+    unknown_mags = ".+"
+
 
 ################################################################################
 ### Setup the desired outputs
@@ -138,7 +142,7 @@ rule all:
                 "{MAG}.fa.gz",
             ),
             combo=valid_combinations,
-            MAG=unknown_files,
+            MAG=unknown_mags,
         ),
         expand(
             os.path.join(
