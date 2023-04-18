@@ -95,7 +95,4 @@ rule DRAM:
             rm -r {params.outdir}
             rm -r {params.trnas}
             rm -r {params.rrnas}
-
-
-            touch {output.complete}
         """
