@@ -139,7 +139,7 @@ rule all:
                 "{basename}_anno.tsv.gz",
             ),
             combo=valid_combinations,
-            basename=[os.path.splitext(os.path.basename(f))[0] for f in glob.glob(os.path.join(config["workdir"], "{combo[0]}/", "{combo[1]}/", "{combo[2]}_refinement/metawrap_50_10_bins/EHA*_bin.*.fa.gz"))],
+            basename=[os.path.splitext(os.path.basename(f))[0] for f in glob.glob(os.path.join(config["workdir"], "{combo[0]}/", "{combo[1]}/", "{combo[2]}_refinement/metawrap_50_10_bins/{combo[2]}_bin.*.fa.gz"))],
         ),
         expand(
             os.path.join(
