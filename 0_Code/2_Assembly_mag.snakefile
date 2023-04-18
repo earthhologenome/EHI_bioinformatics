@@ -39,7 +39,7 @@ valid_combinations = set(
 
 # Set wildcard constrains for the dram.smk rule.
 wildcard_constraints:
-    unknown_mags = ".+"
+    unknown_files = ".+"
 
 
 ################################################################################
@@ -142,7 +142,7 @@ rule all:
                 "{MAG}.fa.gz",
             ),
             combo=valid_combinations,
-            MAG=unknown_mags,
+            MAG=unknown_files,
         ),
         expand(
             os.path.join(

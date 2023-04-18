@@ -37,7 +37,7 @@ rule DRAM:
                 "{EHA}_refinement/",
                 "metawrap_50_10_bins/{MAG}.fa.gz",
             ),
-            MAG=unknown_mags,
+            MAG=unknown_files,
         )
     params:
         MAG="{MAG}",
