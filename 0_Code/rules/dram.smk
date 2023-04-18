@@ -10,12 +10,7 @@ rule DRAM:
         )
     output:
         annotations = os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
-        genes = temp(os.path.join(config["magdir"], "{MAG}_genes.fna.gz")),
-        genesfaa = temp(os.path.join(config["magdir"], "{MAG}_genes.faa.gz")),
-        genesgff = temp(os.path.join(config["magdir"], "{MAG}_genes.gff.gz")),
-        scaffolds = temp(os.path.join(config["magdir"], "{MAG}_scaffolds.fna.gz")),
-        gbk = temp(os.path.join(config["magdir"], "{MAG}.gbk.gz")),
-        distillate = directory(os.path.join(config["magdir"], "{MAG}_distillate")),
+        distillate = temp(directory(os.path.join(config["magdir"], "{MAG}_distillate"))),
         product = os.path.join(config["magdir"], "{MAG}_dist.tsv.gz")
     params:
         outdir=os.path.join(config["magdir"], "{MAG}_annotate"),
@@ -37,7 +32,7 @@ rule DRAM:
     shell:
         """
             DRAM.py annotate \
-                -i {input.mags} \
+                -i {input} \
                 -o {params.outdir} \
                 --threads {threads} \
     #            --use_uniref \
@@ -89,25 +84,18 @@ rule DRAM:
             fi        
 
             #calculate number of contigs and genes for later
-            grep '>' {params.outdir}/scaffolds.fna | wc -l > {config[workdir}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/DRAM/{input.mags}_ncontigs.txt
-            grep '>' {params.outdir}/genes.fna | wc -l > {config[workdir}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/DRAM/{input.mags}_ngenes.txt
+            grep '>' {params.outdir}/scaffolds.fna | wc -l > {config[magdir]}/{input}_ncontigs.txt
+            grep '>' {params.outdir}/genes.fna | wc -l > {config[magdir]}/{input}_ngenes.txt
 
-            pigz -p {threads} {params.outdir}/*.tsv
-            pigz -p {threads} {params.outdir}/*.fna
-            pigz -p {threads} {params.outdir}/*.faa
-            pigz -p {threads} {params.outdir}/*.gff
-            pigz -p {threads} {params.outdir}/genbank/*
-            pigz -p {threads} {output.distillate}/*
-
+            #compress, clean
+            pigz -p {threads} {params.outdir}/annotations.tsv
+            pigz -p {threads} {output.distillate}/product.tsv
             mv {params.outdir}/annotations.tsv.gz {output.annotations}
-            mv {params.outdir}/scaffolds.fna.gz {output.scaffolds}
-            mv {params.outdir}/genes.fna.gz {output.genes}
-            mv {params.outdir}/*.faa.gz {output.genesfaa}
-            mv {params.outdir}/*.gff.gz {output.genesgff}
-            mv {params.outdir}/genbank/* {output.gbk}
             mv {output.distillate}/product.tsv.gz {output.product}
+            rm -r {params.outdir}
+            rm -r {params.trnas}
+            rm -r {params.rrnas}
 
-            rm {output.distillate}/*
 
             touch {output.complete}
         """
