@@ -31,7 +31,7 @@ rule log_finish:
         # Move MAGs for the next pipeline
         mkdir -p {config[magdir]}
 
-        for mag in {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{EHA}_refinement/metawrap_50_10/*.fa.gz;
+        for mag in {config[workdir]}/{combo[1]}/{wildcards.EHI}/{EHA}_refinement/metawrap_50_10/*.fa.gz;
             do mv $mag {config[magdir]}/;
         done
 
