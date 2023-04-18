@@ -41,7 +41,6 @@ rule DRAM:
             MAG="{MAG}"
         )
     params:
-        MAG="{MAG}",
         outdir=os.path.join(config["workdir"] + "{PRB}/" + "{EHI}/" + "{EHA}/" + "DRAM/" + "{MAG}_annotate"),
         trnas=os.path.join(config["workdir"] + "{PRB}/" + "{EHI}/" + "{EHA}/" + "DRAM/" + "{MAG}_trnas.tsv.gz"),
         rrnas=os.path.join(config["workdir"] + "{PRB}/" + "{EHI}/" + "{EHA}/" + "DRAM/" + "{MAG}_rrnas.tsv.gz"),
