@@ -23,6 +23,7 @@
 
 configfile: "assembly_mag_config.yaml"
 
+import glob
 import pandas as pd
 
 ## The input will be automatically generated prior to the snakefile being launched-
@@ -35,25 +36,6 @@ df = pd.read_csv("asb_input.tsv", sep="\t")
 valid_combinations = set(
     (row["PR_batch"], row["EHI_number"], row["ID"]) for _, row in df.iterrows()
 )
-
-
-
-checkpoint metaWRAP_checkpoint:
-    input:
-        expand(
-            os.path.join(
-                config["workdir"],
-                "{combo[0]}/",
-                "{combo[1]}/",
-                "{combo[2]}_refinement/",
-                "{combo[2]}_metawrap_50_10_bins.stats",
-            ),
-            combo=valid_combinations,
-        ),
-    output:
-        os.path.join(config["workdir"], "metaWRAP_checkpoint")
-    shell:
-        'touch {output}'
 
 ################################################################################
 ### Setup the desired outputs
@@ -146,26 +128,6 @@ rule all:
         #         "{MAG}_anno.tsv.gz"
         #     ) for combo in valid_combinations for MAG in range(1, 3000)
         # ),
-        os.path.join(config["workdir"], "metaWRAP_checkpoint"),
-        # expand(
-        #     os.path.join(
-        #         config["workdir"],
-        #         "{combo[0]}/",
-        #         "{combo[1]}/",
-        #         "{combo[2]}/",
-        #         "DRAM/",
-        #         "{combo[2]}_anno.tsv.gz",
-        #     ),
-        #     combo=valid_combinations,
-        # ),
-        os.path.join(
-            config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}/",
-            "DRAM/",
-            "{MAG}_anno.tsv.gz",
-        ),
         expand(
             os.path.join(
                 config["workdir"],
@@ -181,6 +143,19 @@ rule all:
         ),
 
 
+  def dram_input(wildcards):
+      checkpoint_output = checkpoints.metaWRAP_refinement.get(**wildcards).output[0]
+      return expand(mag=os.path.join(
+                        config["workdir"],
+                        "{PRB}/",
+                        "{EHI}/",
+                        "{EHA}_refinement/",
+                        "{EHA}_metawrap_50_10_bins/",
+                        "{MAG}.fa.gz",
+                    ),
+                  MAG=glob_wildcards(os.path.join(checkpoint_output, "{MAG}.fa.gz")).MAG)
+
+
 include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
 include: os.path.join(config["codedir"], "rules/download_preprocessed.smk")
 include: os.path.join(config["codedir"], "rules/individual_assembly.smk")
@@ -189,7 +164,7 @@ include: os.path.join(config["codedir"], "rules/index_assembly.smk")
 include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
 include: os.path.join(config["codedir"], "rules/upload_asb_bam.smk")
 include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
-include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
+include: os.path.join(config["codedir"], "rules/metawrap_refinement_checkpoint.smk")
 include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
 # include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
 include: os.path.join(config["codedir"], "rules/dram.smk")

@@ -4,22 +4,7 @@
 ### Functionally annotate MAGs with DRAM
 rule DRAM:
     input:
-        stats=os.path.join(
-            config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_refinement/",
-            "{EHA}_metawrap_50_10_bins.stats",
-        ),
-        mag=os.path.join(
-            config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_refinement/",
-            "metawrap_50_10_bins/",
-            "{MAG}.fa.gz",
-            ),
-        checkpoint=os.path.join(config["workdir"], "metaWRAP_checkpoint")
+        dram_input
     output:
         annotations = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_anno.tsv.gz"),
         genes = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.fna.gz")),
