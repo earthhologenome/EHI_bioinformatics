@@ -23,7 +23,6 @@
 
 configfile: "assembly_mag_config.yaml"
 
-import glob
 import pandas as pd
 
 ## The input will be automatically generated prior to the snakefile being launched-
@@ -37,6 +36,22 @@ valid_combinations = set(
     (row["PR_batch"], row["EHI_number"], row["ID"]) for _, row in df.iterrows()
 )
 
+
+
+checkpoint metaWRAP_checkpoint:
+    input:
+        expand(
+            os.path.join(
+                config["workdir"],
+                "{combo[0]}/",
+                "{combo[1]}/",
+                "{combo[2]}_refinement/",
+                "{combo[2]}_metawrap_50_10_bins.stats",
+            ),
+            combo=valid_combinations,
+        ),
+    output:
+        os.path.join(config["workdir"], "metaWRAP_checkpoint")
 
 ################################################################################
 ### Setup the desired outputs
@@ -129,18 +144,18 @@ rule all:
         #         "{MAG}_anno.tsv.gz"
         #     ) for combo in valid_combinations for MAG in range(1, 3000)
         # ),
-        expand(
-            os.path.join(
-                config["workdir"],
-                "{combo[0]}/",
-                "{combo[1]}/",
-                "{combo[2]}/",
-                "DRAM/",
-                "{basename}_anno.tsv.gz",
-            ),
-            combo=valid_combinations,
-            basename=[os.path.splitext(os.path.basename(f))[0] for f in glob.glob(os.path.join(config["workdir"], "{combo[0]}/", "{combo[1]}/", "{combo[2]}_refinement/metawrap_50_10_bins/{combo[2]}_bin.*.fa.gz"))],
-        ),
+        os.path.join(config["workdir"], "metaWRAP_checkpoint"),
+        # expand(
+        #     os.path.join(
+        #         config["workdir"],
+        #         "{combo[0]}/",
+        #         "{combo[1]}/",
+        #         "{combo[2]}/",
+        #         "DRAM/",
+        #         "{combo[2]}_anno.tsv.gz",
+        #     ),
+        #     combo=valid_combinations,
+        # ),
         expand(
             os.path.join(
                 config["workdir"],
