@@ -11,30 +11,39 @@ rule DRAM:
             "{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
         ),
-        mag=expand(
-            os.path.join(
-                config["workdir"],
-                "{combo[0]}/",
-                "{combo[1]}/",
-                "{combo[2]}_refinement/",
-                "metawrap_50_10_bins/",
-                "{combo[2]}_bin.*.fa.gz",
+        mag=os.path.join(
+            config["workdir"],
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}_refinement/",
+            "metawrap_50_10_bins/",
+            "{EHA}_bin.*.fa.gz",
             ),
-            combo=valid_combinations,
         ),
+        # mag=expand(
+        #     os.path.join(
+        #         config["workdir"],
+        #         "{combo[0]}/",
+        #         "{combo[1]}/",
+        #         "{combo[2]}_refinement/",
+        #         "metawrap_50_10_bins/",
+        #         "{combo[2]}_bin.*.fa.gz",
+        #     ),
+        #     combo=valid_combinations,
+        # ),
     params:
-        outdir=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_annotate"),
-        trnas=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_trnas.tsv.gz"),
-        rrnas=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_rrnas.tsv.gz"),
+        outdir=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}_annotate"),
+        trnas=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}_trnas.tsv.gz"),
+        rrnas=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}_rrnas.tsv.gz"),
     output:
-        annotations = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_anno.tsv.gz"),
-        genes = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.fna.gz")),
-        genesfaa = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.faa.gz")),
-        genesgff = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.gff.gz")),
-        scaffolds = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_scaffolds.fna.gz")),
-        gbk = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}.gbk.gz")),
-        distillate = directory(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_distillate")),
-        product = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_dist.tsv.gz")
+        annotations = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}_anno.tsv.gz"),
+        genes = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}_genes.fna.gz")),
+        genesfaa = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}_genes.faa.gz")),
+        genesgff = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}_genes.gff.gz")),
+        scaffolds = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}_scaffolds.fna.gz")),
+        gbk = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}.gbk.gz")),
+        distillate = directory(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}_distillate")),
+        product = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{EHA}_dist.tsv.gz")
     conda:
         f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
@@ -43,9 +52,9 @@ rule DRAM:
         mem_gb=24,
         time='04:00:00'
     benchmark:
-        os.path.join(config["logdir"] + "/DRAM_benchmark_{PRB}_{EHI}_{EHA}_{MAG}.tsv")
+        os.path.join(config["logdir"] + "/DRAM_benchmark_{PRB}_{EHI}_{EHA}_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/DRAM_log_{PRB}_{EHI}_{EHA}_{MAG}.log")
+        os.path.join(config["logdir"] + "/DRAM_log_{PRB}_{EHI}_{EHA}_{EHA}.log")
     message:
         "Using DRAM to functionally annotate {wildcards.MAG}"
     shell:
