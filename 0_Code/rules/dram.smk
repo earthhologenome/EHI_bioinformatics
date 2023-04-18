@@ -18,7 +18,7 @@ rule DRAM:
                 "{combo[1]}/",
                 "{combo[2]}_refinement/",
                 "metawrap_50_10_bins/",
-                "EHA{combo[2]}_bin.*.fa.gz",
+                "{combo[2]}_bin.*.fa.gz",
             ),
             combo=valid_combinations,
         ),
