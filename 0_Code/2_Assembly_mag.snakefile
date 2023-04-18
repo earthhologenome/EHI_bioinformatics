@@ -37,9 +37,6 @@ valid_combinations = set(
     (row["PR_batch"], row["EHI_number"], row["ID"]) for _, row in df.iterrows()
 )
 
-wildcard_constraints:
-    MAG='[a-zA-Z0-9_-]+'
-
 
 ################################################################################
 ### Setup the desired outputs
