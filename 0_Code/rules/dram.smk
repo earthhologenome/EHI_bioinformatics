@@ -47,7 +47,7 @@ rule DRAM:
                 --trna_path {params.outdir}/trnas.tsv \
                 -o {output.distillate}
             mv {params.outdir}/rrnas.tsv {params.rrnas}
-            mv {params.outdir}/trnas.tsv {params.trnas}}
+            mv {params.outdir}/trnas.tsv {params.trnas}
             else
             echo "trnas AND rrnas are both not present"
             fi
@@ -58,7 +58,7 @@ rule DRAM:
                 -i {params.outdir}/annotations.tsv \
                 --trna_path {params.outdir}/trnas.tsv \
                 -o {output.distillate}
-            mv {params.outdir}/trnas.tsv {params.trnas}}
+            mv {params.outdir}/trnas.tsv {params.trnas}
             else
             echo "only trnas found"
             fi
