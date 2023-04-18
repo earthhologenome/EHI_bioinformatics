@@ -20,6 +20,14 @@ checkpoint metaWRAP_refinement:
             "{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.contigs",
         ),
+        bins=directory(os.path.join(
+            config["workdir"],
+            "{PRB}/",
+            "{EHI}/",
+            "{EHA}_refinement/",
+            "metawrap_50_10_bins/",
+            )
+        ),
     params:
         binning=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}_binning"),
         outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}_refinement")

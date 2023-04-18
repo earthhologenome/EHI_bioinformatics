@@ -144,7 +144,7 @@ rule all:
 
 
 def dram_input(wildcards):
-    checkpoint_output = checkpoints.metaWRAP_refinement.get(**wildcards).output[0]
+    checkpoint_output = checkpoints.metaWRAP_refinement.get(**wildcards).output.bins[0]
     return expand(os.path.join(
                         config["workdir"],
                         "{PRB}/",
