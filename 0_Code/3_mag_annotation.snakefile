@@ -26,7 +26,7 @@ import os
 import glob
 
 MAG = [os.path.basename(fn).replace(".fa.gz", "")
-            for fn in glob.glob(os.path.join("{config[magdir]}", "*.fa.gz"))]
+            for fn in glob.glob(os.path.join(f"{config['magdir']}", "*.fa.gz"))]
 
 print("Detected the following MAGs:")
 print(MAG)
