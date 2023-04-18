@@ -19,7 +19,6 @@ rule DRAM:
             "metawrap_50_10_bins/",
             "{EHA}_bin.*.fa.gz",
             ),
-        ),
         # mag=expand(
         #     os.path.join(
         #         config["workdir"],
