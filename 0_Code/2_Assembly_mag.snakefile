@@ -145,7 +145,7 @@ rule all:
                 "{combo[1]}/",
                 "{combo[2]}/",
                 "DRAM/",
-                mag_pattern,
+                mag_pattern(wildcards),
             ),
             combo=valid_combinations,
         ),
