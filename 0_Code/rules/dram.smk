@@ -18,10 +18,9 @@ rule DRAM:
                 "{combo[1]}/",
                 "{combo[2]}_refinement/",
                 "metawrap_50_10_bins/",
-                "{MAG}.fa.gz",
+                "EHA{combo[2]}_bin.*.fa.gz",
             ),
             combo=valid_combinations,
-            MAG='EHA\d+_bin\.\d+',
         ),
     params:
         outdir=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_annotate"),
