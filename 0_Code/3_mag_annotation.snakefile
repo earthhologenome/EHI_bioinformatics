@@ -18,12 +18,18 @@
 ################################################################################
 ################################################################################
 
-### Setup sample inputs and config
+### Setup MAG inputs and config
 
 configfile: "assembly_mag_config.yaml"
 
 import os
 import glob
+
+MAG = [os.path.basename(fn).replace(".fa.gz", "")
+            for fn in glob.glob(os.path.join({config[magdir]}, "*.fa.gz"))]
+
+print("Detected the following MAGs:")
+print(MAG)
 
 
 rule all:
