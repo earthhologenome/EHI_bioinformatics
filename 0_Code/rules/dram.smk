@@ -23,9 +23,9 @@ rule DRAM:
             MAG="{MAG}"
         )
     params:
-        outdir=os.path.join(config["workdir"] + "{PRB}/" + "{EHI}/" + "{EHA}/" + "DRAM/" + "{MAG}_annotate"),
-        trnas=os.path.join(config["workdir"] + "{PRB}/" + "{EHI}/" + "{EHA}/" + "DRAM/" + "{MAG}_trnas.tsv.gz"),
-        rrnas=os.path.join(config["workdir"] + "{PRB}/" + "{EHI}/" + "{EHA}/" + "DRAM/" + "{MAG}_rrnas.tsv.gz"),
+        outdir=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_annotate"),
+        trnas=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_trnas.tsv.gz"),
+        rrnas=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_rrnas.tsv.gz"),
     output:
         annotations = os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_anno.tsv.gz"),
         genes = temp(os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_genes.fna.gz")),
