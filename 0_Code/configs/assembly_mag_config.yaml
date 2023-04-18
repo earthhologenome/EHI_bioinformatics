@@ -2,11 +2,6 @@
 ### RE 04/2023
 
 
-config["wildcard_constraints"] = {
-    "unknown_files": ".+",
-    "MAG": ".+"
-}
-
 abb: ASBATCH
 codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code
 workdir: /projects/ehi/data/ASB/ASBATCH

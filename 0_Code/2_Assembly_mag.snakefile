@@ -41,6 +41,11 @@ valid_combinations = set(
 def mag_pattern(wildcards):
     return wildcards.MAG + "_anno.tsv.gz"
 
+config["wildcard_constraints"] = {
+    "unknown_files": ".+",
+    "MAG": ".+"
+}
+
 
 ################################################################################
 ### Setup the desired outputs
