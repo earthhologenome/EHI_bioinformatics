@@ -119,15 +119,26 @@ rule all:
         #     ),
         #     combo=valid_combinations,
         # ),
-        dynamic(
+        # dynamic(
+        #     os.path.join(
+        #         config["workdir"], 
+        #         "{combo[0]}/", 
+        #         "{combo[1]}/", 
+        #         "{combo[2]}/", 
+        #         "DRAM/", 
+        #         "{MAG}_anno.tsv.gz"
+        #     ) for combo in valid_combinations for MAG in range(1, 3000)
+        # ),
+        expand(
             os.path.join(
-                config["workdir"], 
-                "{combo[0]}/", 
-                "{combo[1]}/", 
-                "{combo[2]}/", 
-                "DRAM/", 
-                "{MAG}_anno.tsv.gz"
-            ) for combo in valid_combinations for MAG in range(1, 3000)
+                config["workdir"],
+                "{combo[0]}/",
+                "{combo[1]}/",
+                "{combo[2]}/",
+                "{MAG}.fa.gz",
+            ),
+            combo=valid_combinations,
+            MAG=unknown_files,
         ),
         expand(
             os.path.join(

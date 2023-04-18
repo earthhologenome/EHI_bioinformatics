@@ -11,24 +11,34 @@ rule DRAM:
             "{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
         ),
-        mags=lambda wildcards: [
+        # mags=lambda wildcards: [
+        #     os.path.join(
+        #         config["workdir"],
+        #         wildcards.PRB + "/",
+        #         wildcards.EHI + "/",
+        #         wildcards.EHA + "_refinement/",
+        #         "metawrap_50_10_bins/",
+        #         f"{MAG}.fa.gz"
+        #     ) for MAG in range(1, 3000)
+        #     if os.path.exists(os.path.join(
+        #         config["workdir"],
+        #         wildcards.PRB + "/",
+        #         wildcards.EHI + "/",
+        #         wildcards.EHA + "_refinement/",
+        #         "metawrap_50_10_bins/",
+        #         f"{MAG}.fa.gz"
+        #     ))
+        # ]
+        expand(
             os.path.join(
                 config["workdir"],
-                wildcards.PRB + "/",
-                wildcards.EHI + "/",
-                wildcards.EHA + "_refinement/",
-                "metawrap_50_10_bins/",
-                f"{MAG}.fa.gz"
-            ) for MAG in range(1, 3000)
-            if os.path.exists(os.path.join(
-                config["workdir"],
-                wildcards.PRB + "/",
-                wildcards.EHI + "/",
-                wildcards.EHA + "_refinement/",
-                "metawrap_50_10_bins/",
-                f"{MAG}.fa.gz"
-            ))
-        ]
+                "{PRB}/",
+                "{EHI}/",
+                "{EHA}_refinement/",
+                "metawrap_50_10_bins/{MAG}.fa.gz",
+            ),
+            MAG=unknown_files,
+        )
     params:
         MAG="{MAG}",
         outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}" + "/DRAM" + "{MAG}_annotate"),
