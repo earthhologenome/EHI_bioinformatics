@@ -21,7 +21,6 @@ rule DRAM:
                 "{MAG}.fa.gz",
             ),
             combo=valid_combinations,
-            MAG='[a-zA-Z0-9_-]+',
         ),
     params:
         outdir=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "DRAM/", "{MAG}_annotate"),
