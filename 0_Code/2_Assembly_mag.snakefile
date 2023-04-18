@@ -42,8 +42,8 @@ def mag_pattern(wildcards):
     return wildcards.MAG + "_anno.tsv.gz"
 
 config["wildcard_constraints"] = {
-    "unknown_files": ".+",
-    "MAG": ".+"
+    "unknown_files": ".*",
+    "MAG": ".*"
 }
 
 
