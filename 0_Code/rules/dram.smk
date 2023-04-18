@@ -14,12 +14,13 @@ rule DRAM:
         mag=expand(
             os.path.join(
                 config["workdir"],
-                "{PRB}/",
-                "{EHI}/",
-                "{EHA}_refinement/",
+                "{combo[0]}/",
+                "{combo[1]}/",
+                "{combo[2]}_refinement/",
                 "metawrap_50_10_bins/",
                 "{MAG}.fa.gz",
             ),
+            comb=valid_combinations,
             MAG="{MAG}"
         ),
     params:
