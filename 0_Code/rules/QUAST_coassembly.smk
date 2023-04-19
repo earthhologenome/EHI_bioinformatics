@@ -2,7 +2,7 @@
 ### Create QUAST reports of coassemblies
 rule QUAST:
     input:
-        os.path.join(config["workdir"], "{EHA}_contigs.fasta"),
+        os.path.join(config["workdir"], "coassembly", "{EHA}_contigs.fasta"),
     output:
         directory(os.path.join(config["workdir"], "{EHA}_QUAST")),
     conda:
