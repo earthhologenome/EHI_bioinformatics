@@ -44,7 +44,7 @@ rule all:
         expand(
             os.path.join(
                 config["workdir"], 
-                "{combo[0]}_{combo[1]}_assembly", 
+                "{combo[0]}_{combo[1]}_assembly/", 
                 "{combo[2]}_contigs.fasta"
             ),
             combo=valid_combinations,
