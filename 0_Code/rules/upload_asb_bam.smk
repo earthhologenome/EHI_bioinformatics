@@ -2,9 +2,9 @@
 ### Upload assembly BAMs to ERDA
 rule upload_bam_erda:
     input:
-        os.path.join(config["workdir"], "bams/" "{EHI}_{EHA}.bam")
+        os.path.join(config["workdir"], "bams/" "{PRB}_{EHI}_{EHA}.bam")
     output:
-        os.path.join(config["workdir"], "{EHI}_{EHA}_uploaded")
+        os.path.join(config["workdir"], "{PRB}_{EHI}_{EHA}_uploaded")
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads: 1
@@ -13,7 +13,7 @@ rule upload_bam_erda:
         mem_gb=16,
         time='00:30:00'
     benchmark:
-        os.path.join(config["logdir"] + "/upload_bam_benchmark_{EHI}_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/upload_bam_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     message:
         "Uploading {wildcards.EHA} BAM to ERDA"
     shell:
