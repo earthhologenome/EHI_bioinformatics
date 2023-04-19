@@ -14,9 +14,9 @@ rule assembly_index:
         mem_gb=96,
         time="02:00:00",
     benchmark:
-        os.path.join(config["logdir"] + "/index_assembly_benchmark_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/index_assembly_benchmark_{PRB}_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/index_assembly_log_{EHA}.log")
+        os.path.join(config["logdir"] + "/index_assembly_log_{PRB}_{EHA}.log")
     message:
         "Indexing {wildcards.EHA} assembly using Bowtie2"
     shell:
