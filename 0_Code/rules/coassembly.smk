@@ -19,7 +19,7 @@ rule coassembly:
                 combo=valid_combinations
         )   
     output:
-        os.path.join(config["workdir"], "{PRB}_{EHA}_assembly/", "{EHA}_contigs.fasta")
+        os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta")
     params:
         assembler=expand("{assembler}", assembler=config["assembler"]),
     conda:
@@ -29,9 +29,9 @@ rule coassembly:
         mem_gb=128,
         time="12:00:00",
     benchmark:
-        os.path.join(config["logdir"] + "/assembly_benchmark_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/assembly_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/assembly_log_{EHA}.log")
+        os.path.join(config["logdir"] + "/assembly_log_{PRB}_{EHI}_{EHA}.log")
     message:
         "Assembling {wildcards.EHA} using {params.assembler}"
     shell:
