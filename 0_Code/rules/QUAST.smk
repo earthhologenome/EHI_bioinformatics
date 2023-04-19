@@ -2,7 +2,7 @@
 ### Create QUAST reports of assemblies
 rule QUAST:
     input:
-        os.path.join(config["workdir"], "{EHA}_assembly/" "{EHA}_contigs.fasta"),
+        os.path.join(config["workdir"], "{PRB}_{EHA}_assembly/" "{EHA}_contigs.fasta"),
     output:
         directory(os.path.join(config["workdir"], "{EHA}_QUAST")),
     conda:
