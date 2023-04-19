@@ -14,7 +14,7 @@ rule coverM_assembly:
             ),
         contigs=os.path.join(
             config["workdir"], 
-            "{PRB}_{EHI}_assembly", 
+            "{PRB}_{EHI}_assembly/", 
             "{EHA}_contigs.fasta"
             )
     output:
