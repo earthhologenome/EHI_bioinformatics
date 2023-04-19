@@ -98,7 +98,7 @@ rule assembly_summary:
         ### Upload contigs, coverm, & gtdb output to ERDA
         pigz -p {threads} {input.contigs}
         
-        lftp sftp://erda -e "put {output.contigs_gz} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+        lftp sftp://erda -e "put {output.contigs} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
         sleep 5
 #        lftp sftp://erda -e "put  -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
         sleep 5
