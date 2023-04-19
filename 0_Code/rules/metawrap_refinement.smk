@@ -3,34 +3,31 @@
 rule metaWRAP_refinement:
     input:
         os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_binning/binning_complete"
-        ),
+            config["workdir"], 
+            "{PRB}_{EHA}_binning/binning_complete"
+            ),
     output:
         stats=os.path.join(
             config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_refinement/",
+            "{PRB}_{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
-        ),
+            ),
         contigmap=os.path.join(
             config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_refinement/",
+            "{PRB}_{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.contigs",
-        ),
+            )
     params:
-        binning=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}_binning"),
-        outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}_refinement")
+        binning=os.path.join(config["workdir"] + "/{PRB}_{EHA}_binning"),
+        outdir=os.path.join(config["workdir"] + "/{PRB}_{EHA}_refinement")
     threads: 16
     resources:
         mem_gb=128,
         time="06:00:00",
     benchmark:
-        os.path.join(config["logdir"] + "/refinement_benchmark_{PRB}_{EHI}_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/refinement_benchmark_{PRB}_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/refinement_log_{PRB}_{EHI}_{EHA}.log")
+        os.path.join(config["logdir"] + "/refinement_log_{PRB}_{EHA}.log")
     message:
         "Refining {wildcards.EHA} bins with MetaWRAP's bin refinement module"
     shell:

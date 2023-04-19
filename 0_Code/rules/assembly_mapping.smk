@@ -3,10 +3,10 @@
 rule assembly_mapping:
     input:
         contigs=os.path.join(
-            config["workdir"], "{EHA}_assembly/", "{EHA}_contigs.fasta"
+            config["workdir"], "{PRB}_{EHA}_assembly", "{EHA}_contigs.fasta"
             ),
         index=os.path.join(
-            config["workdir"], "{EHA}_assembly/", "{EHA}_contigs.fasta.rev.2.bt2l"
+            config["workdir"], "{PRB}_{EHA}_assembly", "{EHA}_contigs.fasta.rev.2.bt2l"
             ),
         r1=os.path.join(
             config["workdir"], "{PRB}/", "{EHI}_M_1.fq.gz"
@@ -15,7 +15,7 @@ rule assembly_mapping:
             config["workdir"], "{PRB}/", "{EHI}_M_2.fq.gz"
             )
     output:
-        os.path.join(config["workdir"], "bams/" "{PRB}_{EHI}_{EHA}.bam")
+        os.path.join(config["workdir"], "bams/", "{PRB}_{EHI}_{EHA}.bam")
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 16

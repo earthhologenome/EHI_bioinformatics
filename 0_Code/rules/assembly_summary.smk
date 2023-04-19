@@ -4,29 +4,24 @@ rule assembly_summary:
     input:
         mw_stats=os.path.join(
             config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_refinement/",
+            "{PRB}_{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
-        ),
+            ),
         coverm=os.path.join(
             config["workdir"], 
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_assembly_coverM.txt"
-        ),
+            "coverm/", 
+            "{PRB}_{EHI}_{EHA}_assembly_coverM.txt"
+            ),
         tarball=os.path.join(
             config["workdir"], 
-            "{PRB}/", 
-            "{EHI}/", 
-            "{EHA}_coverm.tar.gz"
-        ),
+            "coverm/", 
+            "{PRB}_{EHI}_{EHA}_coverm.tar.gz"
+            ),
         contigs=os.path.join(
             config["workdir"], 
-            "{PRB}/", 
-            "{EHI}/", 
+            "{PRB}_{EHA}_assembly", 
             "{EHA}_contigs.fasta"
-        ),
+            )
         # gtdb=os.path.join(
         #     config["workdir"], 
         #     "{PRB}/", 
@@ -36,28 +31,25 @@ rule assembly_summary:
     output:
         stats=os.path.join(
             config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_final_stats.tsv",
+            "{EHA}_stats/",
+            "{PRB}_{EHI}_{EHA}_final_stats.tsv",
         ),
         contigs=os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_contigs.fasta.gz"
+            config["workdir"], 
+            "{PRB}_{EHA}", 
+            "{EHA}_contigs.fasta.gz"
         )
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     params:
         quast=directory(os.path.join(
             config["workdir"], 
-            "{PRB}/", 
-            "{EHI}/", 
-            "{EHA}_QUAST")
-        ),
+            "{PRB}_{EHA}_QUAST")
+            ),
         stats_dir=directory(os.path.join(
             config["workdir"],
-            "{PRB}/",
-            "{EHI}"
-        )
-        )
+            "{EHA}_stats/")
+            )
     threads: 1
     resources:
         load=8,

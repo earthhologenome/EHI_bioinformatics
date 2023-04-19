@@ -2,22 +2,26 @@
 ### Bin contigs using metaWRAP's binning module
 rule metaWRAP_binning:
     input:
-        bam=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHI}_{EHA}.bam"),
-        contigs=os.path.join(config["workdir"], "{PRB}/" "{EHI}/" "{EHA}_contigs.fasta"),
+        bam=os.path.join(
+            config["workdir"], "bams/", "{EHI}_{EHA}.bam"
+            ),
+        contigs=os.path.join(
+            config["workdir"], "{PRB}_{EHA}_assembly", "{EHA}_contigs.fasta"
+            ),
     output:
         os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_binning/binning_complete"
-        ),
+            config["workdir"], "{PRB}_{EHA}_binning/binning_complete"
+            ),
     params:
-        outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}_binning")
+        outdir=os.path.join(config["workdir"] + "/{PRB}_{EHA}_binning")
     threads: 16
     resources:
         mem_gb=96,
         time="06:00:00",
     benchmark:
-        os.path.join(config["logdir"] + "/binning_benchmark_{PRB}_{EHI}_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/binning_benchmark_{PRB}_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/binning_log_{PRB}_{EHI}_{EHA}.log")
+        os.path.join(config["logdir"] + "/binning_log_{PRB}_{EHA}.log")
     message:
         "Binning {wildcards.EHA} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
     shell:

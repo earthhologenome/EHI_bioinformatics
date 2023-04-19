@@ -2,10 +2,10 @@
 ### Index assemblies
 rule assembly_index:
     input:
-        os.path.join(config["workdir"], "{EHA}_assembly/" "{EHA}_contigs.fasta"),
+        os.path.join(config["workdir"], "{PRB}_{EHA}_assembly", "{EHA}_contigs.fasta"),
     output:
         os.path.join(
-            config["workdir"], "{EHA}_assembly/", "{EHA}_contigs.fasta.rev.2.bt2l"
+            config["workdir"], "{PRB}_{EHA}_assembly", "{EHA}_contigs.fasta.rev.2.bt2l"
         ),
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"

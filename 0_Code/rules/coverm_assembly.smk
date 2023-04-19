@@ -4,30 +4,35 @@ rule coverM_assembly:
     input:
         stats=os.path.join(
             config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_refinement/",
+            "{PRB}_{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
-        ),
-        contigmap=os.path.join(
-            config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_refinement/",
-            "{EHA}_metawrap_50_10_bins.contigs",
-        ),
-        bam=os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHI}_{EHA}.bam"),
-        contigs=os.path.join(config["workdir"], "{PRB}/" "{EHI}/" "{EHA}_contigs.fasta"),
+            ),
+        bam=os.path.join(
+            config["workdir"], 
+            "bams/", 
+            "{PRB}_{EHI}_{EHA}.bam"
+            ),
+        contigs=os.path.join(
+            config["workdir"], 
+            "{PRB}_{EHA}_assembly", 
+            "{EHA}_contigs.fasta"
+            )
     output:
         coverm=os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_assembly_coverM.txt"
-        ),
+            config["workdir"], 
+            "coverm/", 
+            "{PRB}_{EHI}_{EHA}_assembly_coverM.txt"
+            ),
         euk=os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_eukaryotic_coverM.tsv"
-        ),
+            config["workdir"], 
+            "coverm/", 
+            "{PRB}_{EHI}_{EHA}_eukaryotic_coverM.tsv"
+            ),
         tarball=os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_coverm.tar.gz"
-        )
+            config["workdir"], 
+            "coverm/", 
+            "{PRB}_{EHI}_{EHA}_coverm.tar.gz"
+            )
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 8
