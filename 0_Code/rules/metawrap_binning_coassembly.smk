@@ -2,7 +2,7 @@
 ### Bin contigs using metaWRAP's binning module
 rule metaWRAP_binning:
     input:
-        expand(bam=os.path.join(
+        bam=expand(os.path.join(
             config["workdir"], "bams/", "{combo[0]}_{combo[1]}_{combo[2]}.bam"
             ),
             combo=valid_combinations
