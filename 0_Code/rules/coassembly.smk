@@ -19,7 +19,7 @@ rule coassembly:
                 combo=valid_combinations
         )   
     output:
-        expand(os.path.join(config["workdir"], "{combo[0]}_{combo[1]}_assembly/", "{combo[2]}_contigs.fasta"), combo=valid_combinations)
+        os.path.join(config["workdir"], "{EHA}_assembly/", "{EHA}_contigs.fasta")
     params:
         assembler=expand("{assembler}", assembler=config["assembler"]),
     conda:
@@ -47,11 +47,11 @@ rule coassembly:
                 --min-contig-len 1500 \
                 -1 $R1 -2 $R2 \
                 -f \
-                -o {config[workdir]}/{wildcards.PRB}_{wildcards.EHA}_assembly/
+                -o {config[workdir]}/{wildcards.EHA}_assembly/
                 2> {log}
 
         # Move the Coassembly to final destination
-        mv {config[workdir]}/{wildcards.PRB}_{wildcards.EHA}_assembly/final.contigs.fa {output}
+        mv {config[workdir]}/{wildcards.EHA}_assembly/final.contigs.fa {output}
 
         # Reformat headers
         sed -i 's/ /-/g' {output}
