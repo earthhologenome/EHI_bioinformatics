@@ -88,11 +88,11 @@ rule assembly_summary:
         paste {params.stats_dir}/{wildcards.EHA}_temp3_report.tsv {params.stats_dir}/{wildcards.EHA}_relabun.tsv > {params.stats_dir}/{wildcards.EHA}_temp4_report.tsv
 
         #Combine them into the final assembly report
-        cat {params.stats_dir}/headers.tsv {params.stats_dir}/{wildcards.EHA}_temp4_report.tsv > {output}
+        cat {params.stats_dir}/headers.tsv {params.stats_dir}/{wildcards.EHA}_temp4_report.tsv > {output.stats}
 
 
         ### Upload stats to AirTable:
-        python {config[codedir]}/airtable/add_asb_stats_airtable.py --report={output} --asb={config[abb]}
+        python {config[codedir]}/airtable/add_asb_stats_airtable.py --report={output.stats} --asb={config[abb]}
         sleep 5
 
         ### Upload contigs, coverm, & gtdb output to ERDA
