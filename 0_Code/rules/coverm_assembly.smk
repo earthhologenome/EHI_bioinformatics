@@ -4,7 +4,7 @@ rule coverM_assembly:
     input:
         stats=os.path.join(
             config["workdir"],
-            "{PRB}_{EHA}_refinement/",
+            "{PRB}_{EHI}_{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
             ),
         bam=os.path.join(
