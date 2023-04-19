@@ -49,7 +49,7 @@ rule all:
         ),
         expand(
             os.path.join(
-                config["workdir"], "{combo[0]}/", "{combo[1]}/", "{combo[2]}_QUAST"
+                config["workdir"], "{combo[2]}_QUAST"
             ),
             combo=valid_combinations,
         ),
@@ -66,9 +66,9 @@ include: os.path.join(config["codedir"], "rules/QUAST.smk")
 include: os.path.join(config["codedir"], "rules/index_assembly.smk")
 include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
 include: os.path.join(config["codedir"], "rules/upload_asb_bam.smk")
-include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
-include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
-include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
-# include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
-include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
+# include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
+# include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
+# include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
+# # include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
+# include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
 include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
