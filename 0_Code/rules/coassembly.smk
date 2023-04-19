@@ -29,9 +29,9 @@ rule coassembly:
         mem_gb=128,
         time="12:00:00",
     benchmark:
-        os.path.join(config["logdir"] + "/assembly_benchmark_{PRB}_{EHI}_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/assembly_benchmark_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/assembly_log_{PRB}_{EHI}_{EHA}.log")
+        os.path.join(config["logdir"] + "/assembly_log_{EHA}.log")
     message:
         "Assembling {wildcards.EHA} using {params.assembler}"
     shell:
