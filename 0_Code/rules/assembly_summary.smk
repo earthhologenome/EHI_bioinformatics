@@ -19,7 +19,7 @@ rule assembly_summary:
             ),
         contigs=os.path.join(
             config["workdir"], 
-            "{PRB}_{EHI}_assembly", 
+            "{PRB}_{EHI}_assembly/", 
             "{EHA}_contigs.fasta"
             )
         # gtdb=os.path.join(
@@ -36,7 +36,7 @@ rule assembly_summary:
         ),
         contigs=os.path.join(
             config["workdir"], 
-            "{PRB}_{EHI}", 
+            "{PRB}_{EHI}_assembly/", 
             "{EHA}_contigs.fasta.gz"
         )
     conda:

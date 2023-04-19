@@ -6,7 +6,7 @@ rule metaWRAP_binning:
             config["workdir"], "bams/", "{EHI}_{EHI}_{EHA}.bam"
             ),
         contigs=os.path.join(
-            config["workdir"], "{PRB}_{EHI}_assembly", "{EHA}_contigs.fasta"
+            config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta"
             ),
     output:
         os.path.join(
