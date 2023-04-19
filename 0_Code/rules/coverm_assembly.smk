@@ -25,9 +25,6 @@ rule coverM_assembly:
         euk=os.path.join(
             config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_eukaryotic_coverM.tsv"
         ),
-        contigs_gz=os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_contigs.fasta.gz"
-        ),
         tarball=os.path.join(
             config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_coverm.tar.gz"
         )
@@ -63,8 +60,6 @@ rule coverM_assembly:
             --min-covered-fraction 0 \
             > {output.euk}
 
-        # Compress the contigs
-        pigz -p {threads} {input.contigs}
 
         # Tarball files then \:
         tar -cvzf {output.tarball} {output.coverm} {output.euk}

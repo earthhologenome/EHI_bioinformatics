@@ -21,11 +21,11 @@ rule assembly_summary:
             "{EHI}/", 
             "{EHA}_coverm.tar.gz"
         ),
-        contigs_gz=os.path.join(
+        contigs=os.path.join(
             config["workdir"], 
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_contigs.fasta.gz"
+            "{PRB}/", 
+            "{EHI}/", 
+            "{EHA}_contigs.fasta"
         ),
         # gtdb=os.path.join(
         #     config["workdir"], 
@@ -34,12 +34,15 @@ rule assembly_summary:
         #     "{EHA}_gtdbtk_combined_summary.tsv"
         # )
     output:
-        os.path.join(
+        stats=os.path.join(
             config["workdir"],
             "{PRB}/",
             "{EHI}/",
             "{EHA}_final_stats.tsv",
-        )  
+        ),
+        contigs=os.path.join(
+            config["workdir"], "{PRB}/", "{EHI}/", "{EHA}_contigs.fasta.gz"
+        )
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     params:
@@ -93,12 +96,13 @@ rule assembly_summary:
         sleep 5
 
         ### Upload contigs, coverm, & gtdb output to ERDA
-        lftp sftp://erda -e "put {input.contigs_gz} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+        pigz -p {threads} {input.contigs}
+        
+        lftp sftp://erda -e "put {output.contigs_gz} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
         sleep 5
 #        lftp sftp://erda -e "put  -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
         sleep 5
         lftp sftp://erda -e "put {input.tarball} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
-        sleep 5
 
         # clean up empty folders, uneccesary files
         # find {config[workdir]}/ -empty -type d -delete
