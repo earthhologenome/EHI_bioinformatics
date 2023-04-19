@@ -56,15 +56,14 @@ rule all:
             ),
             combo=valid_combinations,
         ),
-        expand(
-            os.path.join(
-                config["workdir"],
-                "{combo[0]}",
-                "{combo[1]}",
-                "{combo[2]}_final_stats.tsv",
-            ),
-            combo=valid_combinations,
-        ),
+        # expand(
+        #     os.path.join(
+        #         config["workdir"],
+        #         "{combo[0]}",
+        #         "{combo[0]}_{combo[1]}_{combo[2]}_final_stats.tsv",
+        #     ),
+        #     combo=valid_combinations,
+        # ),
         expand(
             os.path.join(config["workdir"], "{abb}_pipeline_finished"),
             abb=config["abb"],
