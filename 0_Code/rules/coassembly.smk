@@ -19,7 +19,7 @@ rule coassembly:
                 combo=valid_combinations
         )   
     output:
-        os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta")
+        expand(os.path.join(config["workdir"], "{combo[0]}_{combo[1]}_assembly/", "{combo[2]}_contigs.fasta"), combo=valid_combinations)
     params:
         assembler=expand("{assembler}", assembler=config["assembler"]),
     conda:
