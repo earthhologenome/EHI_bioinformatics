@@ -32,7 +32,7 @@ rule assembly_summary:
         stats=os.path.join(
             config["workdir"],
             "{EHA}_stats/",
-            "{PRB}_{EHI}_{EHA}_final_stats.tsv",
+            "{PRB}_{EHA}_final_stats.tsv",
         ),
         contigs=os.path.join(
             config["workdir"], 
