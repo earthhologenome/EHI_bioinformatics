@@ -3,7 +3,7 @@
 rule metaWRAP_binning:
     input:
         bam=os.path.join(
-            config["workdir"], "bams/", "{EHI}_{EHA}.bam"
+            config["workdir"], "bams/", "{EHI}_{EHI}_{EHA}.bam"
             ),
         contigs=os.path.join(
             config["workdir"], "{PRB}_{EHI}_assembly", "{EHA}_contigs.fasta"
