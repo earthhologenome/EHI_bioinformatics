@@ -36,12 +36,16 @@ rule coassembly:
         "Assembling {wildcards.EHA} using {params.assembler}"
     shell:
         """
+        # Setup input variables for megahit
+        R1=$(for i in {input.r1}; do echo $i | tr '\n' ,; done)
+        R2=$(for i in {input.r2}; do echo $i | tr '\n' ,; done)
+
         # Run megahit
             megahit \
                 -t {threads} \
                 --verbose \
                 --min-contig-len 1500 \
-                -1 {input.r1} -2 {input.r2} \
+                -1 $R1 -2 $R2 \
                 -f \
                 -o {config[workdir]}/coassembly
                 2> {log}
