@@ -29,11 +29,11 @@ rule assembly:
                 --min-contig-len 1500 \
                 -1 {input.r1} -2 {input.r2} \
                 -f \
-                -o {config[workdir]}/{wildcards.EHA}/assembly/
+                -o {config[workdir]}/{wildcards.EHA}_{wildcards.EHI}_assembly/
                 2> {log}
 
         # Move the Coassembly to final destination
-            mv {config[workdir]}/{wildcards.EHA}/assembly/final.contigs.fa {output}
+            mv {config[workdir]}/{wildcards.EHA}_{wildcards.EHI}_assembly/final.contigs.fa {output}
 
         # Reformat headers
             sed -i 's/ /-/g' {output}

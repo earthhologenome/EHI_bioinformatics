@@ -6,9 +6,8 @@ rule log_finish:
         expand(
             os.path.join(
                 config["workdir"],
-                "{combo[0]}/",
-                "{combo[1]}/",
-                "{combo[2]}_final_stats.tsv",
+                "{combo[2]}_stats/",
+                "{combo[0]}_{combo[1]}_{combo[2]}_final_stats.tsv",
             ),
             combo=valid_combinations,
         ),
@@ -31,7 +30,7 @@ rule log_finish:
         # Move MAGs for the next pipeline
         mkdir -p {config[magdir]}
 
-        for mag in {config[workdir]}/*/*/*_refinement/metawrap_50_10/*.fa.gz;
+        for mag in {config[workdir]}/*_refinement/metawrap_50_10/*.fa.gz;
             do mv $mag {config[magdir]}/;
         done
 

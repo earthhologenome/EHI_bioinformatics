@@ -19,7 +19,7 @@ rule assembly_summary:
             ),
         contigs=os.path.join(
             config["workdir"], 
-            "{PRB}_{EHA}_assembly", 
+            "{PRB}_{EHI}_assembly", 
             "{EHA}_contigs.fasta"
             )
         # gtdb=os.path.join(
@@ -32,11 +32,11 @@ rule assembly_summary:
         stats=os.path.join(
             config["workdir"],
             "{EHA}_stats/",
-            "{PRB}_{EHA}_final_stats.tsv",
+            "{PRB}_{EHI}_{EHA}_final_stats.tsv",
         ),
         contigs=os.path.join(
             config["workdir"], 
-            "{PRB}_{EHA}", 
+            "{PRB}_{EHI}", 
             "{EHA}_contigs.fasta.gz"
         )
     conda:
@@ -44,7 +44,7 @@ rule assembly_summary:
     params:
         quast=directory(os.path.join(
             config["workdir"], 
-            "{PRB}_{EHA}_QUAST")
+            "{PRB}_{EHI}_{EHA}_QUAST")
             ),
         stats_dir=directory(os.path.join(
             config["workdir"],
