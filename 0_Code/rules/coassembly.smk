@@ -5,6 +5,7 @@ rule coassembly:
         r1=expand(
             os.path.join(
                 config["workdir"],
+                "reads/",
                 "{combo[0]}/",
                 "{combo[1]}_M_1.fq.gz"
                 ),
@@ -13,6 +14,7 @@ rule coassembly:
         r2=expand(
             os.path.join(
                 config["workdir"],
+                "reads/",
                 "{combo[0]}/",
                 "{combo[1]}_M_2.fq.gz"
                 ),
