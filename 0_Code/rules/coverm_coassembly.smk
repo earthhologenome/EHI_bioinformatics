@@ -21,17 +21,17 @@ rule coverM_assembly:
         coverm=os.path.join(
             config["workdir"], 
             "coverm/", 
-            "{EHI}_{EHA}_assembly_coverM.txt"
+            "{PRB}_{EHI}_{EHA}_assembly_coverM.txt"
             ),
         euk=os.path.join(
             config["workdir"], 
             "coverm/", 
-            "{EHI}_{EHA}_eukaryotic_coverM.tsv"
+            "{PRB}_{EHI}_{EHA}_eukaryotic_coverM.tsv"
             ),
         tarball=os.path.join(
             config["workdir"], 
             "coverm/", 
-            "{EHI}_{EHA}_coverm.tar.gz"
+            "{PRB}_{EHI}_{EHA}_coverm.tar.gz"
             )
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
@@ -41,9 +41,9 @@ rule coverM_assembly:
         mem_gb=64,
         time="00:30:00",
     benchmark:
-        os.path.join(config["logdir"] + "/coverm_benchmark_{EHI}_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/coverm_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/coverm_log_{EHI}_{EHA}.log")
+        os.path.join(config["logdir"] + "/coverm_log_{PRB}_{EHI}_{EHA}.log")
     message:
         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
     shell:
