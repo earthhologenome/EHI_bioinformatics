@@ -23,7 +23,7 @@ rule coassembly_mapping:
     threads: 16
     resources:
         mem_gb=48,
-        time="04:00:00",
+        time="02:00:00",
     benchmark:
         os.path.join(config["logdir"] + "/cassembly_mapping_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:

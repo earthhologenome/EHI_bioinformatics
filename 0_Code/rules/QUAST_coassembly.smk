@@ -1,5 +1,5 @@
 ################################################################################
-### Create QUAST reports of assemblies
+### Create QUAST reports of coassemblies
 rule QUAST:
     input:
         os.path.join(config["workdir"], "{EHA}_assembly/", "{EHA}_contigs.fasta"),

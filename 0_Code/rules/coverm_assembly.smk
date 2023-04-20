@@ -1,5 +1,5 @@
 ################################################################################
-### Calculate the number of reads that mapped to coassemblies
+### Calculate the number of reads that mapped to assemblies
 rule coverM_assembly:
     input:
         stats=os.path.join(

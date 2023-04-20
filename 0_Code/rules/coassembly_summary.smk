@@ -1,6 +1,6 @@
 ###############################################################################
-## Generate output summary for individual assemblies, update airtable
-rule assembly_summary:
+## Generate output summary for coassemblies, update airtable
+rule coassembly_summary:
     input:
         mw_stats=os.path.join(
             config["workdir"],
@@ -56,7 +56,7 @@ rule assembly_summary:
     resources:
         load=8,
         mem_gb=16,
-        time='05:00:00'
+        time='01:00:00'
     message:
         "Creating final assembly summary table for {wildcards.EHA}, uploading files to ERDA"
     shell:
@@ -65,24 +65,36 @@ rule assembly_summary:
         echo -e "sample\tEHA_number\tEHI_number\tN50\tL50\tnum_contigs\tlargest_contig\tassembly_length\tnum_bins\tassembly_mapping_percent" > {params.stats_dir}/headers.tsv
 
         #parse QUAST outputs for assembly stats
-        cat {params.quast}/{wildcards.EHA}_assembly_report.tsv >> {params.stats_dir}/{wildcards.EHA}_temp_report.tsv
+        for i in {config[workdir]}/bams/*.bam; do 
+            cat {params.quast}/{wildcards.EHA}_assembly_report.tsv >> {params.stats_dir}/temp_report.tsv;
+        done
 
         #Add sample IDs
-        for ehi in {config[workdir]}/bams/*.bam; echo ${{ehi/.bam/}} >> {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv; done
-        echo {wildcards.EHA} >> {params.stats_dir}/{wildcards.EHA}_EHA_ids.tsv
-        for ehi in {config[workdir]}/bams/*.bam; echo ${{ehi/_EHA*/}} >> {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv; done
+        for ehi in {config[workdir]}/bams/*.bam; do
+            echo ${{ehi/.bam/}} >> {params.stats_dir}/sample_ids.tsv; 
+        done
 
-        paste {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv {params.stats_dir}/{wildcards.EHA}_EHA_ids.tsv {params.stats_dir}/{wildcards.EHA}_EHI_ids.tsv {params.stats_dir}/{wildcards.EHA}_temp_report.tsv > {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv
+        echo {wildcards.EHA} >> {params.stats_dir}/EHA_ids.tsv
 
-        paste {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv {params.stats_dir}/{wildcards.EHA}_bins.tsv > {params.stats_dir}/{wildcards.EHA}_temp3_report.tsv
+        for ehi in {config[workdir]}/bams/*.bam; do
+            echo ${{ehi/_EHA*/}} >> {params.stats_dir}/EHA_ids.tsv; 
+        done
+
+        paste {params.stats_dir}/sample_ids.tsv {params.stats_dir}/EHA_ids.tsv {params.stats_dir}/EHI_ids.tsv {params.stats_dir}/temp_report.tsv > {params.stats_dir}/temp2_report.tsv
+
+        for i in {config[workdir]}/bams/*.bam; do 
+            cat {params.quast}/{params.stats_dir}/{wildcards.EHA}_bins.tsv >> {params.stats_dir}/bins.tsv;
+        done
+
+        paste {params.stats_dir}/temp2_report.tsv {params.stats_dir}/bins.tsv > {params.stats_dir}/temp3_report.tsv
 
         #Grab coverm mapping rate. 'cut -f2' pulls the second column, 'sed -n 3p' prints only the third line (% mapping)
-        cut -f2 {input.coverm} | sed -n 3p >> {params.stats_dir}/{wildcards.EHA}_relabun.tsv
+        cut -f2 {input.coverm} | sed -n 3p >> {params.stats_dir}/relabun.tsv
 
-        paste {params.stats_dir}/{wildcards.EHA}_temp3_report.tsv {params.stats_dir}/{wildcards.EHA}_relabun.tsv > {params.stats_dir}/{wildcards.EHA}_temp4_report.tsv
+        paste {params.stats_dir}/temp3_report.tsv {params.stats_dir}/relabun.tsv > {params.stats_dir}/temp4_report.tsv
 
         #Combine them into the final assembly report
-        cat {params.stats_dir}/headers.tsv {params.stats_dir}/{wildcards.EHA}_temp4_report.tsv > {output.stats}
+        cat {params.stats_dir}/headers.tsv {params.stats_dir}/temp4_report.tsv > {output.stats}
 
 
         ### Upload stats to AirTable:

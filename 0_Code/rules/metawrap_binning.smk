@@ -17,7 +17,7 @@ rule metaWRAP_binning:
     threads: 16
     resources:
         mem_gb=96,
-        time="06:00:00",
+        time="02:00:00",
     benchmark:
         os.path.join(config["logdir"] + "/binning_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
