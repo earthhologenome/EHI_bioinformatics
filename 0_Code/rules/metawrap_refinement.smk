@@ -19,7 +19,8 @@ rule metaWRAP_refinement:
             )
     params:
         binning=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_binning"),
-        outdir=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement")
+        outdir=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement"),
+        stats_dir=directory(os.path.join(config["workdir"], "{EHA}_stats/"))
     threads: 16
     resources:
         mem_gb=128,
@@ -62,7 +63,8 @@ rule metaWRAP_refinement:
         pigz -p {threads} {params.outdir}/metawrap_50_10_bins/*.fa
 
         #Print the number of MAGs to a file for combining with the assembly report
-        ls -l {params.outdir}/metawrap_50_10_bins/*.fa.gz | wc -l > {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_bins.tsv
+        mkdir -p {params.stats_dir}
+        ls -l {params.outdir}/metawrap_50_10_bins/*.fa.gz | wc -l > {params.stats_dir}/{wildcards.EHA}_bins.tsv
 
         # rm -r {params.binning}/work_files/
         # rm -r {params.outdir}/work_files/
@@ -70,6 +72,6 @@ rule metaWRAP_refinement:
         # rm {params.binning}/maxbin2_bins/*.fa
         # rm {params.binning}/metabat2_bins/*.fa
 
-        cp {output.stats} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.stats
-        cp {output.contigmap} {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_metawrap_50_10.contigs
+        cp {params.outdir}/metawrap_50_10.stats {output.stats}
+        cp {params.outdir}/metawrap_50_10.contigs {output.contigmap}
         """
