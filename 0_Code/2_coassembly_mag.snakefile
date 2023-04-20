@@ -55,6 +55,7 @@ rule all:
                 "{combo[2]}_QUAST"
             ),
             combo=valid_combinations,
+        ),
         expand(
             os.path.join(
                 config["workdir"],
