@@ -30,7 +30,7 @@ rule log_finish:
         # Move MAGs for the next pipeline
         mkdir -p {config[magdir]}
 
-        for mag in {config[workdir]}/*_refinement/metawrap_50_10/*.fa.gz;
+        for mag in {config[workdir]}/*_refinement/metawrap_50_10_bins/*.fa.gz;
             do mv $mag {config[magdir]}/;
         done
 
