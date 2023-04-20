@@ -1,6 +1,6 @@
 ################################################################################
-### Map reads to assemblies
-rule assembly_mapping:
+### Map reads to coassemblies
+rule coassembly_mapping:
     input:
         index=os.path.join(
             config["workdir"], "{EHA}_assembly/", "{EHA}_contigs.fasta.rev.2.bt2l"
@@ -16,7 +16,7 @@ rule assembly_mapping:
             ),
     output:
         os.path.join(
-            config["workdir"], "bams/", "{EHI}_{EHA}.bam"
+            config["workdir"], "bams/", "{PRB}_{EHI}_{EHA}.bam"
             )
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
@@ -25,9 +25,9 @@ rule assembly_mapping:
         mem_gb=48,
         time="04:00:00",
     benchmark:
-        os.path.join(config["logdir"] + "/cassembly_mapping_benchmark_{EHI}_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/cassembly_mapping_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/cassembly_mapping_log_{EHI}_{EHA}.log")
+        os.path.join(config["logdir"] + "/cassembly_mapping_log_{PRB}_{EHI}_{EHA}.log")
     message:
         "Mapping {wildcards.EHI} to {wildcards.EHA} assembly using Bowtie2"
     shell:

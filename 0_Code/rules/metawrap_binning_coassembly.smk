@@ -3,7 +3,7 @@
 rule metaWRAP_binning:
     input:
         bam=expand(os.path.join(
-            config["workdir"], "bams/", "{combo[1]}_{combo[2]}.bam"
+            config["workdir"], "bams/", "{combo[0]}_{combo[1]}_{combo[2]}.bam"
             ),
             combo=valid_combinations
         ),
