@@ -83,7 +83,7 @@ rule coassembly_summary:
         paste {params.stats_dir}/sample_ids.tsv {params.stats_dir}/EHA_ids.tsv {params.stats_dir}/EHI_ids.tsv {params.stats_dir}/temp_report.tsv > {params.stats_dir}/temp2_report.tsv
 
         for i in {config[workdir]}/bams/*.bam; do 
-            cat {params.quast}/{params.stats_dir}/{wildcards.EHA}_bins.tsv >> {params.stats_dir}/bins.tsv;
+            cat {params.stats_dir}/{wildcards.EHA}_bins.tsv >> {params.stats_dir}/bins.tsv;
         done
 
         paste {params.stats_dir}/temp2_report.tsv {params.stats_dir}/bins.tsv > {params.stats_dir}/temp3_report.tsv

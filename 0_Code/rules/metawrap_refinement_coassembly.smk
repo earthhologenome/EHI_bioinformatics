@@ -19,7 +19,8 @@ rule metaWRAP_refinement:
             )
     params:
         binning=os.path.join(config["workdir"] + "/{EHA}_binning"),
-        outdir=os.path.join(config["workdir"] + "/{EHA}_refinement")
+        outdir=os.path.join(config["workdir"] + "/{EHA}_refinement"),
+        stats_dir=directory(os.path.join(config["workdir"], "{EHA}_stats/"))
     threads: 16
     resources:
         mem_gb=128,
@@ -62,7 +63,8 @@ rule metaWRAP_refinement:
         pigz -p {threads} {params.outdir}/metawrap_50_10_bins/*.fa
 
         #Print the number of MAGs to a file for combining with the assembly report
-        ls -l {params.outdir}/metawrap_50_10_bins/*.fa.gz | wc -l > {config[workdir]}/{wildcards.EHA}_bins.tsv
+        mkdir -p {params.stats_dir}
+        ls -l {params.outdir}/metawrap_50_10_bins/*.fa.gz | wc -l > {params.stats_dir}/{wildcards.EHA}_bins.tsv
 
         # rm -r {params.binning}/work_files/
         # rm -r {params.outdir}/work_files/
