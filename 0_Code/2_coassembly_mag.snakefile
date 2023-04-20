@@ -62,7 +62,7 @@ rule all:
             ),
             combo=valid_combinations
         ),
-        expand(coverm=os.path.join(
+        expand(os.path.join(
             config["workdir"], 
             "coverm/", 
             "{combo[1]}_{combo[2]}_assembly_coverM.txt"
