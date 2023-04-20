@@ -35,13 +35,22 @@ for i, row in df.iterrows():
     # Set the cell data you want to update
     data = {
         'fields': {
-            'assembly_length': int(row['assembly_length']),
+            'mag_name': int(row['mag_name']),
+            'eha_number': int(row['eha_number']),
+            'domain': int(row['domain']),
+            'phylum': int(row['phylum']),
+            'class': int(row['class']),
+            'order': int(row['order']),
+            'family': int(row['family']),
+            'genus': int(row['genus']),
+            'species': int(row['species']),
+            'closest_placement_ani': int(row['closest_placement_ani']),
+            'completeness': int(row['completeness']),
+            'contamination': int(row['contamination']),
+            'size': int(row['size']),
+            'GC': int(row['GC']),
             'N50': int(row['N50']),
-            'L50': int(row['L50']),
-            'num_contigs': int(row['num_contigs']),
-            'largest_contig': int(row['largest_contig']),
-            'num_bins': int(row['num_bins']),
-            'assembly_mapping_percent': int(row['assembly_mapping_percent'])
+            'contigs': int(row['contigs'])
         }
     }
 
