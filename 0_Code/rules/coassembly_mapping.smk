@@ -3,7 +3,7 @@
 rule assembly_mapping:
     input:
         index=os.path.join(
-            config["workdir"], "assembly/", "{EHA}_contigs.fasta.rev.2.bt2l"
+            config["workdir"], "{EHA}_assembly/", "{EHA}_contigs.fasta.rev.2.bt2l"
             ),
         r1=os.path.join(
             config["workdir"], "{PRB}/", "{EHI}_M_1.fq.gz"

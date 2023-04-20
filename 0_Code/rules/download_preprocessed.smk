@@ -2,8 +2,8 @@
 ### Fetch preprocessed reads from ERDA
 rule download_preprocessed:
     output:
-        r1=os.path.join(config["workdir"], "{PRB}/", "{EHI}_M_1.fq.gz"),
-        r2=os.path.join(config["workdir"], "{PRB}/", "{EHI}_M_2.fq.gz"),
+        r1=os.path.join(config["workdir"], "reads/", "{PRB}/", "{EHI}_M_1.fq.gz"),
+        r2=os.path.join(config["workdir"], "reads/", "{PRB}/", "{EHI}_M_2.fq.gz"),
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads: 1
@@ -17,5 +17,5 @@ rule download_preprocessed:
         "Fetching metagenomics reads for {wildcards.EHI} from ERDA"
     shell:
         """
-        lftp sftp://erda -e "mirror --include-glob='{wildcards.PRB}/{wildcards.EHI}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {config[workdir]}/; bye"
+        lftp sftp://erda -e "mirror --include-glob='{wildcards.PRB}/{wildcards.EHI}*.fq.gz' /EarthHologenomeInitiative/Data/PPR/ {config[workdir]}/reads/; bye"
         """

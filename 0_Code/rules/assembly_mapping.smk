@@ -9,10 +9,10 @@ rule assembly_mapping:
             config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta.rev.2.bt2l"
             ),
         r1=os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}_M_1.fq.gz"
+            config["workdir"], "reads/", "{PRB}/", "{EHI}_M_1.fq.gz"
             ),
         r2=os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}_M_2.fq.gz"
+            config["workdir"], "reads/", "{PRB}/", "{EHI}_M_2.fq.gz"
             )
     output:
         os.path.join(
