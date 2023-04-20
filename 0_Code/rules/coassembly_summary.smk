@@ -44,7 +44,7 @@ rule assembly_summary:
         stats_dir=directory(os.path.join(
             config["workdir"],
             "{EHA}_stats/")
-            )
+            ),
         contigs=os.path.join(
             config["workdir"], 
             "{EHA}_assembly/", 
