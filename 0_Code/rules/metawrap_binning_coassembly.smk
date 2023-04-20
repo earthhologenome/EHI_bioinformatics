@@ -15,7 +15,7 @@ rule metaWRAP_binning:
             config["workdir"], "{EHA}_binning/binning_complete"
             ),
     params:
-        outdir=os.path.join(config["workdir"] + "{EHA}_binning")
+        outdir=os.path.join(config["workdir"] + "/{EHA}_binning")
     threads: 16
     resources:
         mem_gb=96,

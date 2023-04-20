@@ -4,17 +4,20 @@ rule gtdbtk:
     input:
         stats=os.path.join(
             config["workdir"],
-            "{PRB}/",
-            "{EHI}/",
-            "{EHA}_refinement/",
+            "{PRB}_{EHI}_{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
-        )
+            )
     output:
-        os.path.join(config["workdir"], "{PRB}/", "{EHI}/", "{EHA}/", "gtdbtk/classify/gtdbtk.bac120.summary.tsv")
+        os.path.join(
+            config["workdir"], 
+            "{PRB}/", 
+            "{EHI}/", 
+            "{EHA}/", 
+            "gtdbtk/classify/gtdbtk.bac120.summary.tsv")
     params:
         GTDB_data=expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}" + "/gtdbtk"),
-        bins=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}_refinement" + "/metawrap_50_10_bins")
+        bins=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement" + "/metawrap_50_10_bins")
     conda:
         f"{config['codedir']}/conda_envs/GTDB-tk.yaml"
     threads:
