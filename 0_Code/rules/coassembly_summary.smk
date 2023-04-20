@@ -71,13 +71,18 @@ rule coassembly_summary:
 
         #Add sample IDs
         for ehi in {config[workdir]}/bams/*.bam; do
-            echo ${{ehi/.bam/}} >> {params.stats_dir}/sample_ids.tsv; 
+            echo $(basename ${{ehi/.bam/}}) >> {params.stats_dir}/sample_ids.tsv; 
         done
 
-        echo {wildcards.EHA} >> {params.stats_dir}/EHA_ids.tsv
-
         for ehi in {config[workdir]}/bams/*.bam; do
-            echo ${{ehi/_EHA*/}} >> {params.stats_dir}/EHI_ids.tsv; 
+            echo {wildcards.EHA} >> {params.stats_dir}/EHA_ids.tsv
+        done
+
+        # for ehi in {config[workdir]}/bams/*.bam; do
+        #     echo $(basename ${{ehi/_EHA*/}}) >> {params.stats_dir}/EHI_ids.tsv; 
+        # done
+        for ehi in {config[workdir]}/bams/*.bam; do
+            echo {wildcards.EHI} >> {params.stats_dir}/EHI_ids.tsv; 
         done
 
         paste {params.stats_dir}/sample_ids.tsv {params.stats_dir}/EHA_ids.tsv {params.stats_dir}/EHI_ids.tsv {params.stats_dir}/temp_report.tsv > {params.stats_dir}/temp2_report.tsv
@@ -89,7 +94,9 @@ rule coassembly_summary:
         paste {params.stats_dir}/temp2_report.tsv {params.stats_dir}/bins.tsv > {params.stats_dir}/temp3_report.tsv
 
         #Grab coverm mapping rate. 'cut -f2' pulls the second column, 'sed -n 3p' prints only the third line (% mapping)
-        cut -f2 {input.coverm} | sed -n 3p >> {params.stats_dir}/relabun.tsv
+        for i in {input.coverm};
+            do cut -f2 $i | sed -n 3p >> {params.stats_dir}/relabun.tsv
+        done 
 
         paste {params.stats_dir}/temp3_report.tsv {params.stats_dir}/relabun.tsv > {params.stats_dir}/temp4_report.tsv
 
