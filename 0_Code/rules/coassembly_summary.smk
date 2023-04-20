@@ -24,9 +24,6 @@ rule coassembly_summary:
             "{EHA}_assembly/", 
             "{EHA}_contigs.fasta"
             ),
-        testing=os.path.join(
-            config["workdir"], "bams/", "{PRB}_{EHI}_{EHA}.bam"
-        )
         # gtdb=os.path.join(
         #     config["workdir"], 
         #     "{PRB}/", 
@@ -85,7 +82,7 @@ rule coassembly_summary:
         #     echo $(basename ${{ehi/_EHA*/}}) >> {params.stats_dir}/EHI_ids.tsv; 
         # done
         for ehi in {config[workdir]}/bams/*.bam; do
-            echo {wildcards.EHI} >> {params.stats_dir}/EHI_ids.tsv; 
+            echo {wildcards.combo[1]} >> {params.stats_dir}/EHI_ids.tsv; 
         done
 
         paste {params.stats_dir}/sample_ids.tsv {params.stats_dir}/EHA_ids.tsv {params.stats_dir}/EHI_ids.tsv {params.stats_dir}/temp_report.tsv > {params.stats_dir}/temp2_report.tsv
