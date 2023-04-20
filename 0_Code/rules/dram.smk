@@ -16,8 +16,8 @@ rule DRAM:
         outdir=os.path.join(config["magdir"], "{MAG}_annotate"),
         trnas=os.path.join(config["magdir"], "{MAG}_trnas.tsv.gz"),
         rrnas=os.path.join(config["magdir"], "{MAG}_rrnas.tsv.gz"), 
-    conda:
-        f"{config['codedir']}/conda_envs/DRAM.yaml"
+    # conda:
+    #     f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
         2
     resources:
@@ -31,6 +31,9 @@ rule DRAM:
         "Using DRAM to functionally annotate {wildcards.MAG}"
     shell:
         """
+        #Loading DRAM from our custom DRAM build:
+        source activate /projects/mjolnir1/people/ncl550/0_software/miniconda3/envs/DRAM_more_modules
+
             DRAM.py annotate \
                 -i {input} \
                 -o {params.outdir} \

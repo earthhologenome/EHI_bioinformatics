@@ -55,4 +55,7 @@ rule gtdbtk:
         else
         cat {output} > {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
         fi
+
+        # Parse the gtdb output for uploading to the EHI MAG database
+        
         """
