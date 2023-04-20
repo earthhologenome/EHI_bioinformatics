@@ -3,27 +3,27 @@
 rule metaWRAP_binning:
     input:
         bam=expand(os.path.join(
-            config["workdir"], "bams/", "{combo[0]}_{combo[1]}_{combo[2]}.bam"
+            config["workdir"], "bams/", "{combo[1]}_{combo[2]}.bam"
             ),
             combo=valid_combinations
         ),
         contigs=os.path.join(
-            config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta"
+            config["workdir"], "{EHA}_assembly/", "{EHA}_contigs.fasta"
             ),
     output:
         os.path.join(
-            config["workdir"], "{PRB}_{EHI}_{EHA}_binning/binning_complete"
+            config["workdir"], "{EHA}_binning/binning_complete"
             ),
     params:
-        outdir=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_binning")
+        outdir=os.path.join(config["workdir"] + "{EHA}_binning")
     threads: 16
     resources:
         mem_gb=96,
         time="06:00:00",
     benchmark:
-        os.path.join(config["logdir"] + "/binning_benchmark_{PRB}_{EHI}_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/binning_benchmark_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/binning_log_{PRB}_{EHI}_{EHA}.log")
+        os.path.join(config["logdir"] + "/binning_log_{EHA}.log")
     message:
         "Binning {wildcards.EHA} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
     shell:

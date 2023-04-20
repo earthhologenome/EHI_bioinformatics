@@ -6,13 +6,13 @@ rule assembly_mapping:
             config["workdir"], "{EHA}_assembly/", "{EHA}_contigs.fasta.rev.2.bt2l"
             ),
         r1=os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}_M_1.fq.gz"
+            config["workdir"], "reads/", "{PRB}/", "{EHI}_M_1.fq.gz"
             ),
         r2=os.path.join(
-            config["workdir"], "{PRB}/", "{EHI}_M_2.fq.gz"
+            config["workdir"], "reads/", "{PRB}/", "{EHI}_M_2.fq.gz"
             ),
         contigs=os.path.join(
-            config["workdir"], "assembly/", "{EHA}_contigs.fasta"
+            config["workdir"], "{EHA}_assembly/", "{EHA}_contigs.fasta"
             ),
     output:
         os.path.join(

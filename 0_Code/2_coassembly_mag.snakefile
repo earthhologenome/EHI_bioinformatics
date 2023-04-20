@@ -56,6 +56,10 @@ rule all:
             ),
             combo=valid_combinations,
         ),
+        expand(os.path.join(
+            config["workdir"], "{EHA}_binning/binning_complete"
+            ),combo=valid_combinations
+        )
         # expand(
         #     os.path.join(
         #         config["workdir"],
