@@ -61,6 +61,12 @@ rule all:
             "{combo[2]}_binning/binning_complete"
             ),
             combo=valid_combinations
+        ),
+        expand(coverm=os.path.join(
+            config["workdir"], 
+            "coverm/", 
+            "{combo[1]}_{combo[2]}_assembly_coverM.txt"
+            ), combo=valid_combinations
         )
         # expand(
         #     os.path.join(
@@ -83,8 +89,8 @@ include: os.path.join(config["codedir"], "rules/QUAST_coassembly.smk")
 include: os.path.join(config["codedir"], "rules/index_coassembly.smk")
 include: os.path.join(config["codedir"], "rules/coassembly_mapping.smk")
 include: os.path.join(config["codedir"], "rules/metawrap_binning_coassembly.smk")
-# include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
-# include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
+include: os.path.join(config["codedir"], "rules/metawrap_refinement_coassembly.smk")
+include: os.path.join(config["codedir"], "rules/coverm_coassembly.smk")
 # # include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
 # include: os.path.join(config["codedir"], "rules/dram.smk")
 # include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
