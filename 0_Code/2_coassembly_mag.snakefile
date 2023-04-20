@@ -64,22 +64,22 @@ rule all:
         #     ),
         #     combo=valid_combinations,
         # ),
-        expand(
-            os.path.join(config["workdir"], "{abb}_pipeline_finished"),
-            abb=config["abb"],
-        )
+        # expand(
+        #     os.path.join(config["workdir"], "{abb}_pipeline_finished"),
+        #     abb=config["abb"],
+        # )
 
 
 include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
 include: os.path.join(config["codedir"], "rules/download_preprocessed.smk")
 include: os.path.join(config["codedir"], "rules/coassembly.smk")
-include: os.path.join(config["codedir"], "rules/QUAST.smk")
-include: os.path.join(config["codedir"], "rules/index_assembly.smk")
-include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
-include: os.path.join(config["codedir"], "rules/metawrap_binning_coassembly.smk")
-include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
-include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
-# include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
-include: os.path.join(config["codedir"], "rules/dram.smk")
-include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
-include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
+include: os.path.join(config["codedir"], "rules/QUAST_coassembly.smk")
+# include: os.path.join(config["codedir"], "rules/index_assembly.smk")
+# include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
+# include: os.path.join(config["codedir"], "rules/metawrap_binning_coassembly.smk")
+# include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
+# include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
+# # include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
+# include: os.path.join(config["codedir"], "rules/dram.smk")
+# include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
+# include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
