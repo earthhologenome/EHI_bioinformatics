@@ -2,8 +2,8 @@
 ### Perform individual assembly on each sample
 rule assembly:
     input:
-        r1=os.path.join(config["workdir"], "{PRB}/", "{EHI}_M_1.fq.gz"),
-        r2=os.path.join(config["workdir"], "{PRB}/", "{EHI}_M_2.fq.gz"),
+        r1=os.path.join(config["workdir"], "reads/", "{PRB}/", "{EHI}_M_1.fq.gz"),
+        r2=os.path.join(config["workdir"], "reads/", "{PRB}/", "{EHI}_M_2.fq.gz"),
     output:
         os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta")
     params:
