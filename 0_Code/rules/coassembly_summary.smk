@@ -7,15 +7,17 @@ rule assembly_summary:
             "{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
             ),
-        coverm=os.path.join(
+        coverm=expand(os.path.join(
             config["workdir"], 
             "coverm/", 
-            "{PRB}_{EHI}_{EHA}_assembly_coverM.txt"
+            "{combo[0]}_{combo[1]}_{combo[2]}_assembly_coverM.txt"
+                ), combo=valid_combinations
             ),
-        tarball=os.path.join(
+        tarball=expand(os.path.join(
             config["workdir"], 
             "coverm/", 
-            "{PRB}_{EHI}_{EHA}_coverm.tar.gz"
+            "{combo[0]}_{combo[1]}_{combo[2]}_coverm.tar.gz"
+                ), combo=valid_combinations
             ),
         contigs=os.path.join(
             config["workdir"], 
@@ -32,7 +34,7 @@ rule assembly_summary:
         stats=os.path.join(
             config["workdir"],
             "{EHA}_stats/",
-            "{PRB}_{EHI}_{EHA}_final_stats.tsv",
+            "{EHA}_final_stats.tsv",
         )
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
