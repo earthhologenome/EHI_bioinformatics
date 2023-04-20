@@ -57,8 +57,10 @@ rule all:
             combo=valid_combinations,
         ),
         expand(os.path.join(
-            config["workdir"], "{combo[2]}_binning/binning_complete"
-            ),combo=valid_combinations
+            config["workdir"], 
+            "{combo[2]}_binning/binning_complete"
+            ),
+            combo=valid_combinations
         )
         # expand(
         #     os.path.join(
