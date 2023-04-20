@@ -68,9 +68,9 @@ rule assembly_summary:
         cat {params.quast}/{wildcards.EHA}_assembly_report.tsv >> {params.stats_dir}/{wildcards.EHA}_temp_report.tsv
 
         #Add sample IDs
-        echo {wildcards.EHI}_{wildcards.EHA} >> {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv
+        for ehi in {config[workdir]}/bams/*.bam; echo ${{ehi/.bam/}} >> {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv; done
         echo {wildcards.EHA} >> {params.stats_dir}/{wildcards.EHA}_EHA_ids.tsv
-        echo {wildcards.EHI} >> {params.stats_dir}/{wildcards.EHA}_EHI_ids.tsv
+        for ehi in {config[workdir]}/bams/*.bam; echo ${{ehi/_EHA*/}} >> {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv; done
 
         paste {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv {params.stats_dir}/{wildcards.EHA}_EHA_ids.tsv {params.stats_dir}/{wildcards.EHA}_EHI_ids.tsv {params.stats_dir}/{wildcards.EHA}_temp_report.tsv > {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv
 
@@ -100,11 +100,11 @@ rule assembly_summary:
 
         # clean up empty folders, uneccesary files
         # find {config[workdir]}/ -empty -type d -delete
-        # rm {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/*_contigs.fasta.*
-        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/intermediate_contigs
-        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_binning
-        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_refinement
-        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/gtdbtk
+        # rm {config[workdir]}/{wildcards.EHA}/*_contigs.fasta.*
+        # rm -r {config[workdir]}/{wildcards.EHA}/intermediate_contigs
+        # rm -r {config[workdir]}/{wildcards.EHA}_binning
+        # rm -r {config[workdir]}/{wildcards.EHA}_refinement
+        # rm -r {config[workdir]}/{wildcards.EHA}/gtdbtk
         # rm {params.stats_dir}/*.tsv
 
         """
