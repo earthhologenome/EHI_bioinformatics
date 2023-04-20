@@ -73,4 +73,4 @@ include: os.path.join(config["codedir"], "rules/metawrap_refinement_coassembly.s
 include: os.path.join(config["codedir"], "rules/coverm_coassembly.smk")
 # # include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
 include: os.path.join(config["codedir"], "rules/coassembly_summary.smk")
-include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
+include: os.path.join(config["codedir"], "rules/log_coASB_finish.smk")
