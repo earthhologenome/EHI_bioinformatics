@@ -17,6 +17,7 @@ rule gtdbtk:
     params:
         GTDB_data=expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}" + "/gtdbtk"),
+        refinement=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement"),
         bins=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement" + "/metawrap_50_10_bins")
     conda:
         f"{config['codedir']}/conda_envs/GTDB-tk.yaml"
@@ -57,5 +58,26 @@ rule gtdbtk:
         fi
 
         # Parse the gtdb output for uploading to the EHI MAG database
-        
+        cut -f2 gtdbtk_combined_summary.tsv | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
+        cut -f1,11 gtdbtk_combined_summary.tsv | sed '1d;' > {params.outdir}/id_ani.tsv
+        echo -e 'mag_name\tclosest_placement_ani\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
+        paste id_ani.tsv taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
+        cat gtdb_headers.tsv gtdb_temp.tsv > {params.outdir}/gtdb_airtable.tsv
+
+        # Get the # contigs per MAG, also completeness/contamination/size from metawrap stats
+        for mag in {params.bins}/*.fa.gz;
+            do echo $(basename $i) >> {params.outdir}/mag_names.tsv && zcat $i | grep '>' | wc -l >> {params.outdir}/n_contigs.tsv;
+        done
+
+        paste {params.outdir}/mag_names.tsv {params.outdir}/n_contigs.tsv > {params.outdir}/ncontigs_temp.tsv
+        echo -e 'mag_id\tcontigs' > {params.outdir}/ncontigs_header.tsv
+        cat {params.outdir}/ncontigs_header.tsv {params.outdir}/ncontigs_temp.tsv > {params.outdir}/ncontigs_temp2.tsv
+
+        cut -f1,2,3,4,6,7 {params.refinement}/{wildcards.EHA}_metawrap_50_10_bins.stats > {params.outdir}/mw_stats.tsv
+
+        #combine into final table for upload to airtable:
+        paste {params.outdir}/gtdb_airtable.tsv {params.outdir}/ncontigs_temp2.tsv {params.outdir}/mw_stats.tsv > {params.outdir}/airtable_mag.tsv
+
+        #update EHI MAG airtable with stats:
+        python {config[codedir]}/airtable/add_mag_stats_airtable.py --report={params.outdir}/airtable_mag.tsv
         """

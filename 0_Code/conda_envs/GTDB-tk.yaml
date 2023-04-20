@@ -4,4 +4,7 @@
     - bioconda
     - defaults
  dependencies:
-    - gtdbtk=2.2.6
+    - gtdbtk=
+    - lftp=4.9.2
+    - pandas
+    - requests

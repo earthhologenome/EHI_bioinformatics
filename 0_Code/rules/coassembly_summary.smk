@@ -77,7 +77,7 @@ rule coassembly_summary:
         echo {wildcards.EHA} >> {params.stats_dir}/EHA_ids.tsv
 
         for ehi in {config[workdir]}/bams/*.bam; do
-            echo ${{ehi/_EHA*/}} >> {params.stats_dir}/EHA_ids.tsv; 
+            echo ${{ehi/_EHA*/}} >> {params.stats_dir}/EHI_ids.tsv; 
         done
 
         paste {params.stats_dir}/sample_ids.tsv {params.stats_dir}/EHA_ids.tsv {params.stats_dir}/EHI_ids.tsv {params.stats_dir}/temp_report.tsv > {params.stats_dir}/temp2_report.tsv
