@@ -72,6 +72,4 @@ rule metaWRAP_refinement:
         # rm {params.binning}/maxbin2_bins/*.fa
         # rm {params.binning}/metabat2_bins/*.fa
 
-        cp {params.outdir}/metawrap_50_10.stats {output.stats}
-        cp {params.outdir}/metawrap_50_10.contigs {output.contigmap}
         """
