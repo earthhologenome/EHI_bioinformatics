@@ -33,11 +33,6 @@ rule assembly_summary:
             config["workdir"],
             "{EHA}_stats/",
             "{PRB}_{EHI}_{EHA}_final_stats.tsv",
-        ),
-        contigs=os.path.join(
-            config["workdir"], 
-            "{EHA}_assembly/", 
-            "{EHA}_contigs.fasta.gz"
         )
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
@@ -49,6 +44,11 @@ rule assembly_summary:
         stats_dir=directory(os.path.join(
             config["workdir"],
             "{EHA}_stats/")
+            )
+        contigs=os.path.join(
+            config["workdir"], 
+            "{EHA}_assembly/", 
+            "{EHA}_contigs.fasta.gz"
             )
     threads: 1
     resources:
@@ -90,7 +90,7 @@ rule assembly_summary:
         ### Upload contigs, coverm, & gtdb output to ERDA
         pigz -p {threads} {input.contigs}
         
-        lftp sftp://erda -e "put {output.contigs} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+        lftp sftp://erda -e "put {params.contigs} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
         sleep 5
 #        lftp sftp://erda -e "put  -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
         sleep 5
