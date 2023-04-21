@@ -11,7 +11,7 @@ rule upload_bam_erda:
     resources:
         load=8,
         mem_gb=16,
-        time='00:30:00'
+        time='01:00:00'
     benchmark:
         os.path.join(config["logdir"] + "/upload_bam_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     message:

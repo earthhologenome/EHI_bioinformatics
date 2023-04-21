@@ -35,11 +35,11 @@ rule coverM_assembly:
             )
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
-    threads: 8
+    threads: 4
     resources:
-        load=8,
+        load=1,
         mem_gb=64,
-        time="00:30:00",
+        time="00:15:00",
     benchmark:
         os.path.join(config["logdir"] + "/coverm_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:

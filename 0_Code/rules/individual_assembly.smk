@@ -13,7 +13,7 @@ rule assembly:
     threads: 16
     resources:
         mem_gb=128,
-        time="2:00:00",
+        time="16:00:00",
     benchmark:
         os.path.join(config["logdir"] + "/assembly_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:

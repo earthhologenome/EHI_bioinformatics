@@ -20,10 +20,10 @@ rule assembly_mapping:
             )
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
-    threads: 16
+    threads: 8
     resources:
         mem_gb=48,
-        time="02:00:00",
+        time="03:00:00",
     benchmark:
         os.path.join(config["logdir"] + "/assembly_mapping_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
