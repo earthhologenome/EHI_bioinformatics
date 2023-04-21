@@ -96,13 +96,4 @@ rule assembly_summary:
         sleep 5
         lftp sftp://erda -e "put {input.tarball} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
 
-        # clean up empty folders, uneccesary files
-        # find {config[workdir]}/ -empty -type d -delete
-        # rm {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/*_contigs.fasta.*
-        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/intermediate_contigs
-        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_binning
-        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_refinement
-        # rm -r {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}/gtdbtk
-        # rm {params.stats_dir}/*.tsv
-
         """

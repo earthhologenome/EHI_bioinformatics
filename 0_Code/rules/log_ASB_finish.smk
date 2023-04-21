@@ -34,5 +34,8 @@ rule log_finish:
             do mv $mag {config[magdir]}/;
         done
 
+        # Clean up
+        rm -r {config[workdir]}/*
+
         touch {output}
         """
