@@ -14,8 +14,8 @@ rule DRAM:
         product = os.path.join(config["magdir"], "{MAG}_dist.tsv.gz")
     params:
         outdir=os.path.join(config["magdir"], "{MAG}_annotate"),
-        trnas=os.path.join(config["magdir"], "{MAG}_trnas.tsv.gz"),
-        rrnas=os.path.join(config["magdir"], "{MAG}_rrnas.tsv.gz"), 
+        trnas=os.path.join(config["magdir"], "{MAG}_trnas.tsv"),
+        rrnas=os.path.join(config["magdir"], "{MAG}_rrnas.tsv"), 
     # conda:
     #     f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
@@ -86,16 +86,10 @@ rule DRAM:
             echo "neither trnas nor rrnas found"
             fi        
 
-            #calculate number of contigs and genes for later
-            grep '>' {params.outdir}/scaffolds.fna | wc -l > {config[magdir]}/{input}_ncontigs.txt
-            grep '>' {params.outdir}/genes.fna | wc -l > {config[magdir]}/{input}_ngenes.txt
-
             #compress, clean
             pigz -p {threads} {params.outdir}/annotations.tsv
             pigz -p {threads} {output.distillate}/product.tsv
             mv {params.outdir}/annotations.tsv.gz {output.annotations}
             mv {output.distillate}/product.tsv.gz {output.product}
             rm -r {params.outdir}
-            rm -r {params.trnas}
-            rm -r {params.rrnas}
         """
