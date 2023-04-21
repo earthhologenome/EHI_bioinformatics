@@ -37,6 +37,7 @@ for i, row in df.iterrows():
         'fields': {
             'mag_name': int(row['mag_name']),
             'eha_number': int(row['eha_number']),
+            'GTDB_version': int(row['GTDB_version']),
             'domain': int(row['domain']),
             'phylum': int(row['phylum']),
             'class': int(row['class']),

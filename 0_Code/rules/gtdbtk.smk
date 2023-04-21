@@ -37,6 +37,9 @@ rule gtdbtk:
         # Specify path to reference data:
         export GTDBTK_DATA_PATH={params.GTDB_data}
 
+        # Get version number for AirTable:
+        gtdbtk --version | cut -f3 -d ' ' > {params.outdir}/version.tsv
+
         # Run GTDB-tk:
         gtdbtk classify_wf \
         --genome_dir {params.bins} \
@@ -74,8 +77,8 @@ rule gtdbtk:
             do echo {wildcards.EHA} >> {params.outdir}/EHA.tsv;
         done
 
-        paste {params.outdir}/mag_names.tsv {params.outdir}/n_contigs.tsv {params.outdir}/EHA.tsv > {params.outdir}/ncontigs_temp.tsv
-        echo -e 'mag_id\tcontigs\teha_number' > {params.outdir}/ncontigs_header.tsv
+        paste {params.outdir}/mag_names.tsv {params.outdir}/n_contigs.tsv {params.outdir}/EHA.tsv {params.outdir}/version.tsv > {params.outdir}/ncontigs_temp.tsv
+        echo -e 'mag_id\tcontigs\teha_number\tGTDB_version' > {params.outdir}/ncontigs_header.tsv
         cat {params.outdir}/ncontigs_header.tsv {params.outdir}/ncontigs_temp.tsv > {params.outdir}/ncontigs_temp2.tsv
 
         cut -f1,2,3,4,6,7 {params.refinement}/{wildcards.EHA}_metawrap_50_10_bins.stats > {params.outdir}/mw_stats.tsv
