@@ -63,5 +63,5 @@ with open(output_file_path, 'w', newline='') as tsvfile:
         ehi_number_value = ehi_number_response.json()['fields']['EHI_number']
 
         # Write the row to the TSV file
-        row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code'][0]]
+        row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code'][1]]
         writer.writerow(row)
