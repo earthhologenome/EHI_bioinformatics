@@ -34,7 +34,7 @@ df = pd.read_csv("asb_input.tsv", sep="\t")
 
 # Use set to create a list of valid combinations of wildcards. Note that 'ID' = EHA number.
 valid_combinations = set(
-    (row["PR_batch"], row["EHI_number"], row["ID"]) for _, row in df.iterrows()
+    (row["PR_batch"], row["EHI_number"], row["Assembly_code"]) for _, row in df.iterrows()
 )
 
 ################################################################################
