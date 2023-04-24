@@ -11,7 +11,8 @@ rule DRAM:
     output:
         annotations = os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
         distillate = temp(directory(os.path.join(config["magdir"], "{MAG}_distillate"))),
-        product = os.path.join(config["magdir"], "{MAG}_dist.tsv.gz")
+        product = os.path.join(config["magdir"], "{MAG}_dist.tsv.gz"),
+        gbk = os.path.join(config["magdir"], "{MAG}.gbk.gz")
     params:
         outdir=os.path.join(config["magdir"], "{MAG}_annotate"),
         trnas=os.path.join(config["magdir"], "{MAG}_trnas.tsv"),
@@ -85,7 +86,10 @@ rule DRAM:
             #compress, clean
             pigz -p {threads} {params.outdir}/annotations.tsv
             pigz -p {threads} {output.distillate}/product.tsv
+            pigz -p {threads} {params.outdir}/*.gbk
+
             mv {params.outdir}/annotations.tsv.gz {output.annotations}
             mv {output.distillate}/product.tsv.gz {output.product}
+            mv {params.outdir}/*.gbk.gz {output.gbk}
             rm -r {params.outdir}
         """
