@@ -86,10 +86,10 @@ rule DRAM:
             #compress, clean
             pigz -p {threads} {params.outdir}/annotations.tsv
             pigz -p {threads} {output.distillate}/product.tsv
-            pigz -p {threads} {params.outdir}/*.gbk
+            pigz -p {threads} {params.outdir}/genbank/*.gbk
 
             mv {params.outdir}/annotations.tsv.gz {output.annotations}
             mv {output.distillate}/product.tsv.gz {output.product}
-            mv {params.outdir}/*.gbk.gz {output.gbk}
+            mv {params.outdir}/genbank/*.gbk.gz {output.gbk}
             rm -r {params.outdir}
         """
