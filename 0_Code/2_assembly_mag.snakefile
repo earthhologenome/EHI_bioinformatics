@@ -43,6 +43,13 @@ rule all:
     input:
         expand(
             os.path.join(
+                config["workdir"], 
+                "{abb}_ERDA_folder_created"
+            ),
+            abb=config["abb"]
+        ),
+        expand(
+            os.path.join(
                 config["workdir"], "{combo[0]}_{combo[1]}_{combo[2]}_QUAST"
             ),
             combo=valid_combinations,

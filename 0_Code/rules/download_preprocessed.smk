@@ -1,11 +1,9 @@
 ################################################################################
 ### Fetch preprocessed reads from ERDA
 rule download_preprocessed:
-    input:
-        os.path.join(config["workdir"], "{abb}_ERDA_folder_created")
     output:
         r1=os.path.join(config["workdir"], "reads/", "{PRB}/", "{EHI}_M_1.fq.gz"),
-        r2=os.path.join(config["workdir"], "reads/", "{PRB}/", "{EHI}_M_2.fq.gz"),
+        r2=os.path.join(config["workdir"], "reads/", "{PRB}/", "{EHI}_M_2.fq.gz")
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads: 1
