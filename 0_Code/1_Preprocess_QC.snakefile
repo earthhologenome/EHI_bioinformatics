@@ -420,7 +420,7 @@ rule singlem:
 
         #Try to fix /tmp folder running out of space:
         mkdir -p TMPDIR=/projects/ehi/data/PPR/PRBATCH/tmp/tmp
-        export TMPDIR=/projects/ehi/data/PPR/PRBATCH/tmp/TEMPDIR
+        export TMPDIR=/projects/ehi/data/PPR/PRBATCH/tmp/tmp
 
         #IF statement to account for situations where there are not enough
         #microbial reads in a sample (e.g. high host% or non-metagenomic sample)
