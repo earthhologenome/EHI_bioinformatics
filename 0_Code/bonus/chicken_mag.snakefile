@@ -21,9 +21,10 @@ rule all:
 ###############################################################################
 ## Download dereplicated MAGs from ERDA
 rule get_derepd_mags:
-    input:
     output:
         directory("dereplicated_mags/")
+    conda:
+        
     shell:
         """
 
