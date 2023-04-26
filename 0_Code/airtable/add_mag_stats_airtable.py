@@ -25,26 +25,19 @@ df = pd.read_csv(args.report, sep='\t')
 
 # Loop through each row in the dataframe
 for i, row in df.iterrows():
-    params = {
-        'maxRecords': 1
-    }
-    response = requests.get(url, headers=headers, params=params)
-    data = response.json()
-    record_id = data['records'][0]['id']
-
     # Set the cell data you want to update
     data = {
         'fields': {
-            'mag_name': int(row['mag_name']),
-            'eha_number': int(row['eha_number']),
+            'mag_name': str(row['mag_name']),
+            'eha_number': str(row['eha_number']),
             'GTDB_version': int(row['GTDB_version']),
-            'domain': int(row['domain']),
-            'phylum': int(row['phylum']),
-            'class': int(row['class']),
-            'order': int(row['order']),
-            'family': int(row['family']),
-            'genus': int(row['genus']),
-            'species': int(row['species']),
+            'domain': str(row['domain']),
+            'phylum': str(row['phylum']),
+            'class': str(row['class']),
+            'order': str(row['order']),
+            'family': str(row['family']),
+            'genus': str(row['genus']),
+            'species': str(row['species']),
             'closest_placement_ani': int(row['closest_placement_ani']),
             'completeness': int(row['completeness']),
             'contamination': int(row['contamination']),
@@ -55,8 +48,8 @@ for i, row in df.iterrows():
         }
     }
 
-    # Send a PATCH request to update the record
-    response = requests.patch(f'{url}/{record_id}', headers=headers, data=json.dumps(data))
+    # Send a POST request to create a new record
+    response = requests.post(url, headers=headers, data=json.dumps(data))
 
     # Print the response status code
     print(response.status_code)
