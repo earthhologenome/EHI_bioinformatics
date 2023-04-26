@@ -21,14 +21,14 @@ rule assembly_summary:
             config["workdir"], 
             "{PRB}_{EHI}_assembly/", 
             "{EHA}_contigs.fasta"
-            )
+            ),
         gtdb=os.path.join(
             config["workdir"], 
             "{PRB}/", 
             "{EHI}/", 
             "{EHA}/",
             "gtdbtk/classify/gtdbtk.bac120.summary.tsv"
-        )
+            )
     output:
         stats=os.path.join(
             config["workdir"],
