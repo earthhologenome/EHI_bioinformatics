@@ -44,23 +44,23 @@ rule gtdbtk:
         --extension "gz" \
         --out_dir {params.outdir} \
         --cpus {threads} \
-        --mash_db /projects/ehi/data/0_Environments/databases/gtdb-tk-r207.msh
+        --mash_db /projects/ehi/data/0_Environments/databases/{wildcards.EHA}_gtdb-tk-r207.msh
 
         # Create a merged summary output for DRAM:
         if [ -s "{params.outdir}/classify/gtdbtk.ar122.summary.tsv" ]
         then
         sed '1d;' {params.outdir}/classify/gtdbtk.ar122.summary.tsv > {params.outdir}/ar122.tsv
-        cat {output} {params.outdir}/ar122.tsv > {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
+        cat {output} {params.outdir}/ar122.tsv > {config[workdir]}/{wildcards.EHA}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
         rm {params.outdir}/ar122.tsv
 
         # Otherwise, just use the bacterial summary (if no archaeal bins)
         else
-        cat {output} > {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
+        cat {output} > {config[workdir]}/{wildcards.EHA}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
         fi
 
         # Parse the gtdb output for uploading to the EHI MAG database
-        cut -f2 gtdbtk_combined_summary.tsv | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
-        cut -f1,11 gtdbtk_combined_summary.tsv | sed '1d;' > {params.outdir}/id_ani.tsv
+        cut -f2 {config[workdir]}/{wildcards.EHA}/{wildcards.EHA}_gtdbtk_combined_summary.tsv | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
+        cut -f1,11 {config[workdir]}/{wildcards.EHA}/{wildcards.EHA}_gtdbtk_combined_summary.tsv | sed '1d;' > {params.outdir}/id_ani.tsv
         echo -e 'mag_name\tclosest_placement_ani\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
         paste id_ani.tsv taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
         cat gtdb_headers.tsv gtdb_temp.tsv > {params.outdir}/gtdb_airtable.tsv
