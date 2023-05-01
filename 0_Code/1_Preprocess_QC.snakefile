@@ -61,7 +61,7 @@ def estimate_time_mapping(wildcards):
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
-    estimate_time_mapping = ((input_size_gb * 2 ) + 2) * 15
+    estimate_time_mapping = ((input_size_gb * 2 ) + 2) * 12
     return int(estimate_time_mapping)
 
 def estimate_time_nonpareil(wildcards):
@@ -83,7 +83,7 @@ def estimate_time_singlem(wildcards):
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
-    estimate_time_singlem = ((input_size_gb) + 7) * 7
+    estimate_time_singlem = ((input_size_gb) + 7) * 4.5
     return int(estimate_time_singlem)
 
 ################################################################################
