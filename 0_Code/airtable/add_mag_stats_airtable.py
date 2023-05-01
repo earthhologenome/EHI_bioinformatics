@@ -38,11 +38,11 @@ for i, row in df.iterrows():
             'family': str(row['family']),
             'genus': str(row['genus']),
             'species': str(row['species']),
-            'closest_placement_ani': str(row['closest_placement_ani']),
-            'completeness': int(row['completeness']),
-            'contamination': int(row['contamination']),
+            'closest_placement_ani': float(row['closest_placement_ani']),
+            'completeness': float(row['completeness']),
+            'contamination': float(row['contamination']),
             'size': int(row['size']),
-            'GC': int(row['GC']),
+            'GC': float(row['GC']),
             'N50': int(row['N50']),
             'contigs': int(row['contigs'])
         }
