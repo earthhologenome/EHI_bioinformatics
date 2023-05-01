@@ -43,9 +43,9 @@ rule dereplication:
     conda:
         "conda_envs/3_dRep.yaml"
     threads:
-        24
+        16
     resources:
-        mem_gb=256,
+        mem_gb=128,
         time='10:00:00'
     benchmark:
         "3_Outputs/0_Logs/dRep.benchmark.tsv"
@@ -96,9 +96,9 @@ rule gtdbtk:
     conda:
         "conda_envs/3_GTDB-tk.yaml"
     threads:
-        24
+        16
     resources:
-        mem_gb=256,
+        mem_gb=128,
         time='10:00:00'
     benchmark:
         "3_Outputs/0_Logs/gtdbtk.benchmark.tsv"
@@ -146,7 +146,7 @@ rule Coassembly_index:
     conda:
         "conda_envs/2_Assembly_Binning.yaml"
     threads:
-        24
+        16
     resources:
         mem_gb=128,
         time='02:00:00'
@@ -195,10 +195,10 @@ rule MAG_catalogue_mapping:
     conda:
         "conda_envs/2_Assembly_Binning.yaml"
     threads:
-        24
+        8
     resources:
-        mem_gb=90,
-        time='02:00:00'
+        mem_gb=48,
+        time='03:00:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_MAG_mapping.benchmark.tsv"
     log:
@@ -229,9 +229,9 @@ rule coverM_assembly:
     conda:
         "conda_envs/2_Assembly_Binning.yaml"
     threads:
-        24
+        8
     resources:
-        mem_gb=128,
+        mem_gb=96,
         time='02:00:00'
     benchmark:
         "3_Outputs/0_Logs/coverm.benchmark.tsv"
