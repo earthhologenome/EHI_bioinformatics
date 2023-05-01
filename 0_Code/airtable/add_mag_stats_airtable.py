@@ -38,7 +38,7 @@ for i, row in df.iterrows():
             'family': str(row['family']),
             'genus': str(row['genus']),
             'species': str(row['species']),
-            'closest_placement_ani': int(row['closest_placement_ani']),
+            'closest_placement_ani': str(row['closest_placement_ani']),
             'completeness': int(row['completeness']),
             'contamination': int(row['contamination']),
             'size': int(row['size']),
