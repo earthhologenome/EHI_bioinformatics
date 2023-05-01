@@ -64,8 +64,8 @@ rule gtdbtk:
         cut -f2 {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
         cut -f1,11 {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv | sed '1d;' > {params.outdir}/id_ani.tsv
         echo -e 'mag_name\tclosest_placement_ani\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
-        paste id_ani.tsv taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
-        cat gtdb_headers.tsv gtdb_temp.tsv > {params.outdir}/gtdb_airtable.tsv
+        paste {params.outdir}/id_ani.tsv {params.outdir}/taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
+        cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {params.outdir}/gtdb_airtable.tsv
 
         # Get the # contigs per MAG, also completeness/contamination/size from metawrap stats
         for mag in {params.bins}/*.fa.gz;
