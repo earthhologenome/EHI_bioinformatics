@@ -68,12 +68,12 @@ rule gtdbtk:
         cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {params.outdir}/gtdb_airtable.tsv
 
         # Get the # contigs per MAG, also completeness/contamination/size from metawrap stats
-        for mag in {params.bins}/*.fa.gz;
+        for i in {params.bins}/*.fa.gz;
             do echo $(basename $i) >> {params.outdir}/mag_names.tsv && zcat $i | grep '>' | wc -l >> {params.outdir}/n_contigs.tsv;
         done
 
         # Get the EHA number
-        for mag in {params.bins}/*.fa.gz;
+        for i in {params.bins}/*.fa.gz;
             do echo {wildcards.EHA} >> {params.outdir}/EHA.tsv;
         done
 
