@@ -38,6 +38,10 @@ rule gtdbtk:
 
         gtdbtk --version | cut -f3 -d ' ' > {params.outdir}/version.tsv
 
+        for i in {params.bins}/*.fa.gz;
+            do cat {params.outdir}/version.tsv >> {params.outdir}/version_catted.tsv;
+        done
+
         # Run GTDB-tk:
         gtdbtk classify_wf \
         --genome_dir {params.bins} \
@@ -66,16 +70,16 @@ rule gtdbtk:
         cat gtdb_headers.tsv gtdb_temp.tsv > {params.outdir}/gtdb_airtable.tsv
 
         # Get the # contigs per MAG, also completeness/contamination/size from metawrap stats
-        for mag in {params.bins}/*.fa.gz;
+        for i in {params.bins}/*.fa.gz;
             do echo $(basename $i) >> {params.outdir}/mag_names.tsv && zcat $i | grep '>' | wc -l >> {params.outdir}/n_contigs.tsv;
         done
 
         # Get the EHA number
-        for mag in {params.bins}/*.fa.gz;
+        for i in {params.bins}/*.fa.gz;
             do echo {wildcards.EHA} >> {params.outdir}/EHA.tsv;
         done
 
-        paste {params.outdir}/mag_names.tsv {params.outdir}/n_contigs.tsv {params.outdir}/EHA.tsv {params.outdir}/version.tsv > {params.outdir}/ncontigs_temp.tsv
+        paste {params.outdir}/mag_names.tsv {params.outdir}/n_contigs.tsv {params.outdir}/EHA.tsv {params.outdir}/version_catted.tsv > {params.outdir}/ncontigs_temp.tsv
         echo -e 'mag_id\tcontigs\teha_number\tGTDB_version' > {params.outdir}/ncontigs_header.tsv
         cat {params.outdir}/ncontigs_header.tsv {params.outdir}/ncontigs_temp.tsv > {params.outdir}/ncontigs_temp2.tsv
 
