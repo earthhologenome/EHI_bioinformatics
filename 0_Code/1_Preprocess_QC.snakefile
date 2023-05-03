@@ -187,7 +187,7 @@ rule fastp:
         8
     resources:
         load=1,
-        mem_gb=24,
+        mem_gb=10,
         time=estimate_time_fastp
     benchmark:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_fastp.benchmark.tsv"
@@ -355,7 +355,7 @@ rule nonpareil:
         8
     resources:
         load=1,
-        mem_gb=45,
+        mem_gb=8,
         time=estimate_time_nonpareil
     benchmark:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_nonpareil.benchmark.tsv"
@@ -406,7 +406,7 @@ rule singlem:
         3
     resources:
         load=1,
-        mem_gb=36,
+        mem_gb=8,
         time=estimate_time_singlem
     benchmark:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_singlem.benchmark.tsv"
@@ -495,7 +495,7 @@ rule coverM:
         2
     resources:
         load=1,
-        mem_gb=16,
+        mem_gb=8,
         time='00:10:00'
     benchmark:
         "/projects/ehi/data/RUN/PRBATCH/logs/{sample}_coverM.benchmark.tsv"
