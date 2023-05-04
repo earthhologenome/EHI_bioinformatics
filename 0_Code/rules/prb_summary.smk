@@ -6,28 +6,28 @@ rule report:
             os.path.join(
                 config["workdir"],
                 "/misc/{sample}_coverM_mapped_host.tsv"
-            )
+            ),
             sample=SAMPLE
         ),
         fastp=expand(
             os.path.join(
                 config["workdir"],
                 "misc/{sample}.json"
-            )
+            ),
             sample=SAMPLE
         ),
         read_fraction=expand(
             os.path.join(
                 config["workdir"],
                 "misc/{sample}_readfraction.tsv"
-            )
+            ),
             sample=SAMPLE
         ),        
         uploaded=expand(
             os.path.join(
                 config["workdir"],
                 "/misc/{sample}_uploaded"
-            )
+            ),
             sample=SAMPLE
         ),
     output:
@@ -45,7 +45,7 @@ rule report:
             os.path.join(
                 config["workdir"],
                 "misc/{sample}.npo"
-            )
+            ),
             sample=SAMPLE
         ),
         misc_dir=os.path.join(
