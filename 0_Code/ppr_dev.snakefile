@@ -30,10 +30,12 @@ import pandas as pd
 ## using the 'get_prb_input.py' script, which pulls the information from AirTable and saves-
 ## it as 'prb_input.tsv'.
 
-df = pd.read_csv("prb_input.tsv", sep="\t")
+# Get list of samples (EHI numbers)
+with open("prb_input.tsv", "r") as f:
+    SAMPLE = [line.strip() for line in f]
 
-# Use set to create a list of valid combinations of wildcards. Note that 'ID' = EHA number.
-
+print("Detected these samples")
+print(SAMPLE)
 ### Code to scale time needed by raw read file sizes
 ### Scaling is based on benchmark data for ~280 jobs 3/4/2023 RE
 import os
