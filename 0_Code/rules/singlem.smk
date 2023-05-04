@@ -6,11 +6,11 @@ rule singlem:
             config["workdir"],
             "misc/{sample}.npo"
         ),
-        non_host_r1c=os.path.join(
+        non_host_r1=os.path.join(
             config["workdir"],
             "{sample}_M_1.fq.gz"
         ),
-        non_host_r2c=os.path.join(
+        non_host_r2=os.path.join(
             config["workdir"],
             "{sample}_M_1.fq.gz"
         )
