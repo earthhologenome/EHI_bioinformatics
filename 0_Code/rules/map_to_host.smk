@@ -4,11 +4,11 @@ rule map_to_ref:
     input:
         r1i=os.path.join(
             config["workdir"],
-            "tmp/{sample}_trimmed_1.fq.gz"
+            "{sample}_trimmed_1.fq.gz"
         ),
         r2i=os.path.join(
             config["workdir"],
-            "tmp/{sample}_trimmed_2.fq.gz"
+            "{sample}_trimmed_2.fq.gz"
         ),
         bt2_index=os.path.join(
             config["workdir"],
