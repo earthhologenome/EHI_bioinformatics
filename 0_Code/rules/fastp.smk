@@ -13,12 +13,12 @@ rule fastp:
     output:
         r1o=temp(os.path.join(
             config["workdir"],
-            "tmp/{sample}_trimmed_1.fq.gz"
+            "{sample}_trimmed_1.fq.gz"
             )
         ),
         r2o=temp(os.path.join(
             config["workdir"],
-            "tmp/{sample}_trimmed_2.fq.gz"
+            "{sample}_trimmed_2.fq.gz"
             )
         ),
         fastp_html=os.path.join(
