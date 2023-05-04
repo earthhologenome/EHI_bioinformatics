@@ -8,8 +8,8 @@ rule gtdbtk:
             "{EHA}_metawrap_50_10_bins.stats",
             )
     output:
-        os.path.join(
-        bac=config["workdir"], 
+        bac=os.path.join(
+            config["workdir"], 
             "{PRB}/", 
             "{EHI}/", 
             "{EHA}/", 
