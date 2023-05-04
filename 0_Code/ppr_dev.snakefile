@@ -20,7 +20,6 @@
 
 ### Setup sample inputs and config
 
-
 configfile: "preprocess_qc_config.yaml"
 
 import glob
@@ -41,7 +40,7 @@ print(SAMPLE)
 import os
 
 def estimate_time_download(wildcards):
-    fs_sample = f"{config[workdir]}/{wildcards.sample}_filesize.txt"
+    fs_sample = f"{config['workdir']}/{wildcards.sample}_filesize.txt"
     with open(fs_sample, 'r') as f:
         input_size = int(f.read().strip())
     # convert from bytes to gigabytes
@@ -51,8 +50,8 @@ def estimate_time_download(wildcards):
     return int(estimate_time_download)
 
 def estimate_time_fastp(wildcards):
-    r1_path = f"{config[workdir]}/{wildcards.sample}_1.fq.gz"
-    r2_path = f"/{config[workdir]}/{wildcards.sample}_2.fq.gz"
+    r1_path = f"{config['workdir']}/{wildcards.sample}_1.fq.gz"
+    r2_path = f"/{config['workdir']}/{wildcards.sample}_2.fq.gz"
     input_files = [r1_path, r2_path]
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
@@ -62,8 +61,8 @@ def estimate_time_fastp(wildcards):
     return int(estimate_time_fastp)
 
 def estimate_time_mapping(wildcards):
-    r1_path = f"{config[workdir]}/{wildcards.sample}_trimmed_1.fq.gz"
-    r2_path = f"{config[workdir]}/{wildcards.sample}_trimmed_2.fq.gz"
+    r1_path = f"{config['workdir']}/{wildcards.sample}_trimmed_1.fq.gz"
+    r2_path = f"{config['workdir']}/{wildcards.sample}_trimmed_2.fq.gz"
     input_files = [r1_path, r2_path]
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
@@ -72,8 +71,8 @@ def estimate_time_mapping(wildcards):
     return int(estimate_time_mapping)
 
 def estimate_time_nonpareil(wildcards):
-    r1_path = f"{config[workdir]}/{wildcards.sample}_M_1.fq"
-    r2_path = f"{config[workdir]}/{wildcards.sample}_M_2.fq"
+    r1_path = f"{config['workdir']}/{wildcards.sample}_M_1.fq"
+    r2_path = f"{config['workdir']}/{wildcards.sample}_M_2.fq"
     input_files = [r1_path, r2_path]
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
@@ -84,8 +83,8 @@ def estimate_time_nonpareil(wildcards):
 
 
 def estimate_time_singlem(wildcards):
-    r1_path = f"{config[workdir]}/{wildcards.sample}_M_1.fq.gz"
-    r2_path = f"{config[workdir]}/{wildcards.sample}_M_2.fq.gz"
+    r1_path = f"{config['workdir']}/{wildcards.sample}_M_1.fq.gz"
+    r2_path = f"{config['workdir']}/{wildcards.sample}_M_2.fq.gz"
     input_files = [r1_path, r2_path]
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
