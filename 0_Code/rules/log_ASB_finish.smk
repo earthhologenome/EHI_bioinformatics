@@ -5,8 +5,7 @@ rule log_finish:
     input:
         expand(
             os.path.join(
-                config["workdir"],
-                "{combo[2]}_stats/",
+                "/projects/ehi/data/REP/",
                 "{combo[0]}_{combo[1]}_{combo[2]}_final_stats.tsv",
             ),
             combo=valid_combinations,
