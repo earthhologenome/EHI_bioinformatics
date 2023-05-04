@@ -9,11 +9,18 @@ rule gtdbtk:
             )
     output:
         os.path.join(
-            config["workdir"], 
+        bac=config["workdir"], 
             "{PRB}/", 
             "{EHI}/", 
             "{EHA}/", 
-            "gtdbtk/classify/gtdbtk.bac120.summary.tsv")
+            "gtdbtk/classify/gtdbtk.bac120.summary.tsv"
+            ),
+        combined=os.path.join(
+            config["workdir"], 
+            "{PRB}/", 
+            "{EHI}/",
+            "{EHA}_gtdbtk_combined_summary.tsv"
+            )
     params:
         GTDB_data=expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}" + "/gtdbtk"),
@@ -56,17 +63,16 @@ rule gtdbtk:
         if [ -s "{params.outdir}/classify/gtdbtk.ar122.summary.tsv" ]
         then
         sed '1d;' {params.outdir}/classify/gtdbtk.ar122.summary.tsv > {params.outdir}/ar122.tsv
-        cat {output} {params.outdir}/ar122.tsv > {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
+        cat {output.bac} {params.outdir}/ar122.tsv > {output.combined}
         rm {params.outdir}/ar122.tsv
 
         # Otherwise, just use the bacterial summary (if no archaeal bins)
         else
-        cat {output} > {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
-        fi
+        cat {output.bac} > {output.combined}
 
         # Parse the gtdb output for uploading to the EHI MAG database
-        cut -f2 {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
-        cut -f1,11 {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv | sed '1d;' > {params.outdir}/id_ani.tsv
+        cut -f2 {output.combined} | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
+        cut -f1,11 {output.combined} | sed '1d;' > {params.outdir}/id_ani.tsv
         sed -i 's@N/A@0@g' {params.outdir}/id_ani.tsv
         echo -e 'mag_name\tclosest_placement_ani\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
         paste {params.outdir}/id_ani.tsv {params.outdir}/taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
