@@ -24,7 +24,7 @@ rule nonpareil:
         non_host_r2c=temp(
             os.path.join(
                 config["workdir"],
-                "{sample}_M_1.fq.gz"
+                "{sample}_M_2.fq.gz"
             )
         )
     conda:
