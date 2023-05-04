@@ -52,7 +52,7 @@ rule nonpareil:
             -f fastq \
             -T kmer \
             -t {threads} \
-            -b {params.sample}
+            -b {wildcards.sample}
         else
         #Create dummy file for snakemake to proceed
         touch {output.npo}
