@@ -15,7 +15,7 @@ rule map_to_ref:
             config["hostgenome"],
             config["hostgenome"] + "_RN.fna.gz.rev.2.bt2l",
         ),
-        rn_catted_ref=os.path.join(
+        catted_ref=os.path.join(
             config["workdir"],
             config["hostgenome"],
             config["hostgenome"] + "_RN.fna.gz"
