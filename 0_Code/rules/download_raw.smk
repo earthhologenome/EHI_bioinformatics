@@ -14,13 +14,13 @@ rule download_from_ERDA:
         r1o=temp(
             os.path.join(
                 config["workdir"],
-                "{sample}_1.fq.gz"
+                "{sample}_raw_1.fq.gz"
             )
         ),
         r2o=temp(
             os.path.join(
                 config["workdir"],
-                "{sample}_2.fq.gz"
+                "{sample}_raw_2.fq.gz"
             )
         )
     conda:

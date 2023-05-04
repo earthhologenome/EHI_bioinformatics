@@ -4,21 +4,23 @@ rule fastp:
     input:
         r1i=os.path.join(
             config["workdir"],
-            "{sample}_1.fq.gz"
+            "{sample}_raw_1.fq.gz"
         ),
         r2i=os.path.join(
             config["workdir"],
-            "{sample}_2.fq.gz"
+            "{sample}_raw_2.fq.gz"
         )
     output:
-        r1o=temp(os.path.join(
-            config["workdir"],
-            "{sample}_trimmed_1.fq.gz"
+        r1o=temp(
+            os.path.join(
+                config["workdir"],
+                "{sample}_trimmed_1.fq.gz"
             )
         ),
-        r2o=temp(os.path.join(
-            config["workdir"],
-            "{sample}_trimmed_2.fq.gz"
+        r2o=temp(
+            os.path.join(
+                config["workdir"],
+                "{sample}_trimmed_2.fq.gz"
             )
         ),
         fastp_html=os.path.join(
