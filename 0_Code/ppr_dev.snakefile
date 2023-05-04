@@ -51,7 +51,7 @@ def estimate_time_download(wildcards):
 
 def estimate_time_fastp(wildcards):
     r1_path = f"{config['workdir']}/{wildcards.sample}_1.fq.gz"
-    r2_path = f"/{config['workdir']}/{wildcards.sample}_2.fq.gz"
+    r2_path = f"{config['workdir']}/{wildcards.sample}_2.fq.gz"
     input_files = [r1_path, r2_path]
     input_size = sum(os.path.getsize(f) for f in input_files)
     # convert from bytes to gigabytes
