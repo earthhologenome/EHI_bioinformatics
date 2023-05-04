@@ -29,7 +29,7 @@ rule report:
                 "/misc/{sample}_uploaded"
             )
             sample=SAMPLE
-        )
+        ),
     output:
         report="/projects/ehi/data/REP/{config[prb]}.tsv",
         npar_metadata=os.path.join(
@@ -50,7 +50,8 @@ rule report:
         ),
         misc_dir=os.path.join(
             config["workdir"],
-            "misc/",
+            "misc/"
+        )
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads:
