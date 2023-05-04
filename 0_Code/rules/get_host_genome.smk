@@ -43,7 +43,7 @@ rule fetch_host_genome:
             then
                 echo "Downloading and indexing reference genome"
                 mkdir -p {config[workdir]}/{config[prb]}/{config[hostgenome]}/
-                wget HG_URL -q -O {config[workdir]}/{config[prb]}/{config[hostgenome]}/{config[hostgenome]}.fna.gz
+                wget {config[hg_url]} -q -O {config[workdir]}/{config[prb]}/{config[hostgenome]}/{config[hostgenome]}.fna.gz
 
                 # Add '_' separator for CoverM
                 rename.sh \
