@@ -8,7 +8,7 @@ rule download_from_ERDA:
         ),
         filesize=os.path.join(
             config["workdir"],
-            "{sample}_filesize.txt"
+            "file_sizes/{sample}_filesize.txt"
         )
     output:
         r1o=temp(
