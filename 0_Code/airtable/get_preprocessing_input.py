@@ -27,7 +27,6 @@ headers = {
 # Set up the query parameters to filter the records
 query_params = {
     'filterByFormula': f"{{PR_batch}} = '{args.prb}'",
-    'fields': ['EHI_number']
 
 }
 
