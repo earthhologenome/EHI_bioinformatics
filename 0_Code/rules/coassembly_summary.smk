@@ -24,16 +24,14 @@ rule coassembly_summary:
             "{EHA}_assembly/", 
             "{EHA}_contigs.fasta"
             ),
-        # gtdb=os.path.join(
-        #     config["workdir"], 
-        #     "{PRB}/", 
-        #     "{EHI}/", 
-        #     "{EHA}_gtdbtk_combined_summary.tsv"
-        # )
+        gtdb=os.path.join(
+            config["workdir"], 
+            "{EHA}/",
+            "{EHA}_gtdbtk_combined_summary.tsv"
+            )
     output:
         stats=os.path.join(
-            config["workdir"],
-            "{EHA}_stats/",
+            "/projects/ehi/data/REP/",
             "{EHA}_final_stats.tsv",
         )
     conda:
@@ -111,7 +109,9 @@ rule coassembly_summary:
         
         lftp sftp://erda -e "put {params.contigs} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
         sleep 5
-#        lftp sftp://erda -e "put  -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+        lftp sftp://erda -e "put {output.stats} -o /EarthHologenomeInitiative/Data/REP/; bye"
+        sleep 5
+        lftp sftp://erda -e "put {input.gtdb} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"        
         sleep 5
         lftp sftp://erda -e "put {input.tarball} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
 

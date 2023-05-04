@@ -26,13 +26,11 @@ rule assembly_summary:
             config["workdir"], 
             "{PRB}/", 
             "{EHI}/", 
-            "{EHA}/",
-            "gtdbtk/classify/gtdbtk.bac120.summary.tsv"
+            "{EHA}_gtdbtk_combined_summary.tsv"
             )
     output:
         stats=os.path.join(
-            config["workdir"],
-            "{EHA}_stats/",
+            "/projects/ehi/data/REP/",
             "{PRB}_{EHI}_{EHA}_final_stats.tsv",
         ),
         contigs=os.path.join(
@@ -93,7 +91,9 @@ rule assembly_summary:
         
         lftp sftp://erda -e "put {output.contigs} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
         sleep 5
-#        lftp sftp://erda -e "put  -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+        lftp sftp://erda -e "put {output.stats} -o /EarthHologenomeInitiative/Data/REP/; bye"
+        sleep 5
+        lftp sftp://erda -e "put {input.gtdb} -o /EarthHologenomeInitiative/Data/REP/; bye"
         sleep 5
         lftp sftp://erda -e "put {input.tarball} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
 

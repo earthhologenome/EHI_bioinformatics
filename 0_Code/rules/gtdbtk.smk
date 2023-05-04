@@ -89,8 +89,8 @@ rule gtdbtk:
         cut -f1,2,3,4,6,7 {params.refinement}/{wildcards.EHA}_metawrap_50_10_bins.stats > {params.outdir}/mw_stats.tsv
 
         #combine into final table for upload to airtable:
-        paste {params.outdir}/gtdb_airtable.tsv {params.outdir}/ncontigs_temp2.tsv {params.outdir}/mw_stats.tsv > {params.outdir}/airtable_mag.tsv
+        paste {params.outdir}/gtdb_airtable.tsv {params.outdir}/ncontigs_temp2.tsv {params.outdir}/mw_stats.tsv > /projects/ehi/data/REP/{config[abb]}_{wildcards.EHA}_mags.tsv
 
         #update EHI MAG airtable with stats:
-        python {config[codedir]}/airtable/add_mag_stats_airtable.py --report={params.outdir}/airtable_mag.tsv
+        python {config[codedir]}/airtable/add_mag_stats_airtable.py --report=/projects/ehi/data/REP/{config[abb]}_{wildcards.EHA}_mags.tsv
         """
