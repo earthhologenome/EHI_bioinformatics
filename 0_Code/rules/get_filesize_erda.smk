@@ -10,7 +10,7 @@ rule filesize_from_ERDA:
         temp(
             os.path.join(
                 config["workdir"],
-                "file_sizes/{sample}_filesize.txt"
+                "{sample}_filesize.txt"
             )
         )
     conda:
