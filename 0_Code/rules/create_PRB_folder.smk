@@ -22,6 +22,6 @@ rule create_PRB_folder:
         touch {output}
 
         #Also, log the AirTable that the PRB is running!
-        python {config[codedir]}/airtable/log_prb_start_airtable.py --code=PRBATCH
+        python {config[codedir]}/airtable/log_prb_start_airtable.py --code={config[prb]}
 
         """
