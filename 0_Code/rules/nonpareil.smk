@@ -36,7 +36,7 @@ rule nonpareil:
         mem_gb=8,
         time=estimate_time_nonpareil
     benchmark:
-        os.path.join(config["logdir"] + "{sample}_nonpareil.benchmark.tsv")
+        os.path.join(config["logdir"] + "/{sample}_nonpareil.benchmark.tsv")
     message:
         "Estimating microbial diversity using nonpareil"
     shell:
@@ -57,6 +57,8 @@ rule nonpareil:
         #Create dummy file for snakemake to proceed
         touch {output.npo}
         fi
+
+        mv {wildcards.sample}.* {config[workdir]}/misc/
 
         #Compress reads
         pigz -p {threads} {input.non_host_r1}

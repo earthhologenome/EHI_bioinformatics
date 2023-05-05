@@ -46,7 +46,7 @@ rule singlem:
         mem_gb=8,
         time=estimate_time_singlem
     benchmark:
-        os.path.join(config["logdir"] + "{sample}_singlem.benchmark.tsv")
+        os.path.join(config["logdir"] + "/{sample}_singlem.benchmark.tsv")
     message:
         "Estimating microbial fraction using singlem"
     shell:

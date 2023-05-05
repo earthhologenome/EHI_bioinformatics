@@ -43,9 +43,9 @@ rule fastp:
         mem_gb=10,
         time=estimate_time_fastp
     benchmark:
-        os.path.join(config["logdir"] + "{sample}_fastp.benchmark.tsv")
+        os.path.join(config["logdir"] + "/{sample}_fastp.benchmark.tsv")
     log:
-        os.path.join(config["logdir"] + "{sample}_fastp.log")
+        os.path.join(config["logdir"] + "/{sample}_fastp.log")
     message:
         "Using FASTP to trim adapters and low quality sequences for {wildcards.sample}"
     shell:

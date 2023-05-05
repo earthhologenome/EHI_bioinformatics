@@ -48,9 +48,9 @@ rule map_to_ref:
         mem_gb=24,
         time=estimate_time_mapping
     benchmark:
-        os.path.join(config["logdir"] + "{sample}_mapping.benchmark.tsv")
+        os.path.join(config["logdir"] + "/{sample}_mapping.benchmark.tsv")
     log:
-        os.path.join(config["logdir"] + "{sample}_mapping.log")
+        os.path.join(config["logdir"] + "/{sample}_mapping.log")
     message:
         "Mapping {wildcards.sample} reads to host genomes"
     shell:

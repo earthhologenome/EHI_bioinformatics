@@ -24,9 +24,9 @@ rule coverM:
         mem_gb=8,
         time='00:10:00'
     benchmark:
-        os.path.join(config["logdir"] + "{sample}_coverM.benchmark.tsv")
+        os.path.join(config["logdir"] + "/{sample}_coverM.benchmark.tsv")
     log:
-        os.path.join(config["logdir"] + "{sample}_coverM.log")
+        os.path.join(config["logdir"] + "/{sample}_coverM.log")
     message:
         "Calculating percentage of reads mapped to host genome/s using coverM"
     shell:

@@ -40,7 +40,7 @@ rule upload_to_ERDA:
         mem_gb=16,
         time=estimate_time_download
     log:
-        os.path.join(config["logdir"] + "{sample}_upload.log")
+        os.path.join(config["logdir"] + "/{sample}_upload.log")
     message:
         "Uploading reads and BAM to ERDA"
     shell:
