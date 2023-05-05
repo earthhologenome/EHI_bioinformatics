@@ -59,12 +59,12 @@ rule gtdbtk:
         if [ -s "{params.outdir}/classify/gtdbtk.ar122.summary.tsv" ]
         then
         sed '1d;' {params.outdir}/classify/gtdbtk.ar122.summary.tsv > {params.outdir}/ar122.tsv
-        cat {output} {params.outdir}/ar122.tsv > {output.combined}
+        cat {output.bac} {params.outdir}/ar122.tsv > {output.combined}
         rm {params.outdir}/ar122.tsv
 
         # Otherwise, just use the bacterial summary (if no archaeal bins)
         else
-        cat {output} > {output.combined}
+        cat {output.bac} > {output.combined}
         fi
 
         # Parse the gtdb output for uploading to the EHI MAG database
