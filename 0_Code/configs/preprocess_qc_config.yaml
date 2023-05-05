@@ -3,7 +3,7 @@
 
 prb: PRBATCH
 codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code
-workdir: /projects/ehi/data/PRB/PRBATCH
+workdir: /projects/ehi/data/PPR/PRBATCH
 logdir: /projects/ehi/data/RUN/PRBATCH/logs
 
 hg_url: HG_URL
