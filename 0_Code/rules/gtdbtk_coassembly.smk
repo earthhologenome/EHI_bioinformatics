@@ -73,8 +73,8 @@ rule gtdbtk:
         sed -i 's@N/A@0@g' {params.outdir}/id_ani.tsv
         echo -e 'mag_name\tclosest_placement_ani\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
 
-        paste id_ani.tsv taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
-        cat gtdb_headers.tsv gtdb_temp.tsv > {params.outdir}/gtdb_airtable.tsv
+        paste {params.outdir}/id_ani.tsv {params.outdir}/taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
+        cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {params.outdir}/gtdb_airtable.tsv
 
         # Get the # contigs per MAG, also completeness/contamination/size from metawrap stats
         for i in {params.bins}/*.fa.gz;
@@ -96,5 +96,5 @@ rule gtdbtk:
         paste {params.outdir}/gtdb_airtable.tsv {params.outdir}/ncontigs_temp2.tsv {params.outdir}/mw_stats.tsv > /projects/ehi/data/REP/{config[abb]}_mags.tsv
 
         #update EHI MAG airtable with stats:
-        python {config[codedir]}/airtable/add_mag_stats_airtable.py --report=/projects/ehi/data/REP/{config[abb]}_mags.tsvs
+        python {config[codedir]}/airtable/add_mag_stats_airtable.py --report=/projects/ehi/data/REP/{config[abb]}_mags.tsv
         """
