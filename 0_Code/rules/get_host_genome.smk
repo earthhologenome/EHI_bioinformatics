@@ -42,17 +42,17 @@ rule fetch_host_genome:
 
             then
                 echo "Downloading and indexing reference genome"
-                mkdir -p {config[workdir]}/{config[prb]}/{config[hostgenome]}/
-                wget {config[hg_url]} -q -O {config[workdir]}/{config[prb]}/{config[hostgenome]}/{config[hostgenome]}.fna.gz
+                mkdir -p {config[workdir]}/{config[hostgenome]}/
+                wget {config[hg_url]} -q -O {config[workdir]}/{config[hostgenome]}/{config[hostgenome]}.fna.gz
 
                 # Add '_' separator for CoverM
                 rename.sh \
-                    in={config[workdir]}/{config[prb]}/{config[hostgenome]}/{config[hostgenome]}.fna.gz \
+                    in={config[workdir]}/{config[hostgenome]}/{config[hostgenome]}.fna.gz \
                     out={output.rn_catted_ref} \
                     prefix={config[hostgenome]} \
                     -Xmx{resources.mem_gb}G 
                 
-                rm {config[workdir]}/{config[prb]}/{config[hostgenome]}/{config[hostgenome]}.fna.gz
+                rm {config[workdir]}/{config[hostgenome]}/{config[hostgenome]}.fna.gz
 
                 # Index catted genomes
                 bowtie2-build \
@@ -62,18 +62,18 @@ rule fetch_host_genome:
                     &> {log}
 
                 # Compress and upload to ERDA for future use
-                cd {config[workdir]}/{config[prb]}/{config[hostgenome]}/
+                cd {config[workdir]}/{config[hostgenome]}/
                 tar -I pigz -cvf {config[hostgenome]}.tar.gz *
                 sftp erda:/EarthHologenomeInitiative/Data/GEN/ <<< $'put {config[hostgenome]}.tar.gz'
                 rm {config[hostgenome]}.tar.gz
-                cd {config[workdir]}/{config[prb]}
+                cd {config[workdir]}
 
                 # Log AirTable that a new genome has been indexed and uploaded to ERDA
                 python {config[codedir]}/airtable/log_genome_airtable.py --code={config[hostgenome]}
 
             else 
                 echo "Indexed genome exists on erda, unpacking."
-                tar -xvzf {config[hostgenome]}.tar.gz --directory {config[workdir]}/{config[prb]}/{config[hostgenome]}/
+                tar -xvzf {config[hostgenome]}.tar.gz --directory {config[workdir]}/{config[hostgenome]}/
                 rm {config[hostgenome]}.tar.gz
 
         fi

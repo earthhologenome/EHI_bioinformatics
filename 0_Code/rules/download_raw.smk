@@ -36,6 +36,6 @@ rule download_from_ERDA:
     shell:
         """
         lftp sftp://erda -e "mirror --include-glob='{wildcards.sample}*.fq.gz' /EarthHologenomeInitiative/Data/RAW/ {config[workdir]}; bye"
-        mv {config[workdir]}{wildcards.sample}*_1.fq.gz {output.r1o}
-        mv {config[workdir]}{wildcards.sample}*_2.fq.gz {output.r2o}
+        mv {config[workdir]}/{wildcards.sample}*_1.fq.gz {output.r1o}
+        mv {config[workdir]}/{wildcards.sample}*_2.fq.gz {output.r2o}
         """
