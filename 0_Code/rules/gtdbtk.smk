@@ -69,7 +69,8 @@ rule gtdbtk:
         # Otherwise, just use the bacterial summary (if no archaeal bins)
         else
         cat {output.bac} > {output.combined}
-
+        fi 
+        
         # Parse the gtdb output for uploading to the EHI MAG database
         cut -f2 {output.combined} | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
         cut -f1,11 {output.combined} | sed '1d;' > {params.outdir}/id_ani.tsv
