@@ -8,11 +8,11 @@ rule upload_to_ERDA:
         ),      
         non_host_r1=os.path.join(
             config["workdir"],
-            "{sample}_M_1.fq"
+            "{sample}_M_1.fq.gz"
         ),
         non_host_r2=os.path.join(
             config["workdir"],
-            "{sample}_M_2.fq"
+            "{sample}_M_2.fq.gz"
         ),
         host_bam=os.path.join(
             config["workdir"],
