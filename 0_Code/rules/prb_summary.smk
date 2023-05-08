@@ -100,7 +100,7 @@ rule report:
         tar -czf {config[workdir]}/{config[prb]}_stats.tar.gz {params.misc_dir}
 
         #Upload stats and report to ERDA for storage
-        lftp sftp://erda -e "put {config[prb]}_stats.tar.gz -o /EarthHologenomeInitiative/Data/PPR/{config[prb]}/; bye"
+        lftp sftp://erda -e "put {config[workdir]}/{config[prb]}_stats.tar.gz -o /EarthHologenomeInitiative/Data/PPR/{config[prb]}/; bye"
         sleep 10
         lftp sftp://erda -e "put {output.report} -o /EarthHologenomeInitiative/Data/REP/; bye"
 
