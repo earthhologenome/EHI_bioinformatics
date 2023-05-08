@@ -96,7 +96,7 @@ def estimate_time_singlem(wildcards):
 ### Setup the desired outputs
 rule all:
     input:
-        expand("/projects/ehi/data/REP/{prb}.tsv"
+        expand("/projects/ehi/data/REP/{prb}.tsv",
                 prb=config["prb"]
         )
 
