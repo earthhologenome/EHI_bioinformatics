@@ -94,7 +94,7 @@ rule report:
 
         cp {output.report} {params.misc_dir}
         cp {output.npar_metadata} {params.misc_dir}
-        tar -czf {config[prb]}_stats.tar.gz {params.misc_dir}
+        tar -czf {config[workdir]}/{config[prb]}_stats.tar.gz {params.misc_dir}
 
         #Upload stats and report to ERDA for storage
         lftp sftp://erda -e "put {config[prb]}_stats.tar.gz -o /EarthHologenomeInitiative/Data/PPR/{config[prb]}/; bye"
