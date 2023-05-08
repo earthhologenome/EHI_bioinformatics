@@ -5,7 +5,7 @@ rule report:
         coverm=expand(
             os.path.join(
                 config["workdir"],
-                "/misc/{sample}_coverM_mapped_host.tsv"
+                "misc/{sample}_coverM_mapped_host.tsv"
             ),
             sample=SAMPLE
         ),
@@ -26,7 +26,7 @@ rule report:
         uploaded=expand(
             os.path.join(
                 config["workdir"],
-                "/misc/{sample}_uploaded"
+                "misc/{sample}_uploaded"
             ),
             sample=SAMPLE
         ),

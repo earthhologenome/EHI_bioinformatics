@@ -20,7 +20,7 @@ rule upload_to_ERDA:
         ),
         coverm=os.path.join(
             config["workdir"],
-            "/misc/{sample}_coverM_mapped_host.tsv"
+            "misc/{sample}_coverM_mapped_host.tsv"
         ),      
         file_size=os.path.join(
             config["workdir"],
@@ -29,7 +29,7 @@ rule upload_to_ERDA:
     output:
         os.path.join(
             config["workdir"],
-            "/misc/{sample}_uploaded"
+            "misc/{sample}_uploaded"
         )
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
