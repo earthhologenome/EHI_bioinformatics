@@ -30,11 +30,11 @@ rule singlem:
     params:
         pipe_uncompressed=os.path.join(
             config["workdir"],
-            "/misc/{sample}_pipe.tsv"
+            "misc/{sample}_pipe.tsv"
         ),
         read_fraction_taxa=os.path.join(
             config["workdir"],
-            "/misc/{sample}_readfraction_per_taxa.tsv"
+            "misc/{sample}_readfraction_per_taxa.tsv"
         )
 # Current issue with snakemake and pre-built conda environments: https://github.com/snakemake/snakemake/pull/1708
     conda:

@@ -13,7 +13,7 @@ rule coverM:
     output:
         os.path.join(
             config["workdir"],
-            "/misc/{sample}_coverM_mapped_host.tsv"
+            "misc/{sample}_coverM_mapped_host.tsv"
         )
     conda:
         f"{config['codedir']}/conda_envs/coverm.yaml"
