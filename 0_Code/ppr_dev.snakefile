@@ -96,7 +96,9 @@ def estimate_time_singlem(wildcards):
 ### Setup the desired outputs
 rule all:
     input:
-        "/projects/ehi/data/REP/{config['prb']}.tsv"
+        expand("/projects/ehi/data/REP/{prb}.tsv"
+                prb=config["prb"]
+        )
 
 
 include: os.path.join(config["codedir"], "rules/create_PRB_folder.smk")
