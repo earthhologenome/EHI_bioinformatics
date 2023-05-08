@@ -111,7 +111,7 @@ rule report:
         python {config[codedir]}/airtable/log_prb_done_airtable.py --code={config[prb]}
        
         #Clean up the files/directories
-        rm {config[prb]}_stats.tar.gz
+        rm {config[workdir]}/{config[prb]}_stats.tar.gz
         rm -r {config[workdir]}/{config[hostgenome]}/
         rm -r {params.misc_dir}
         rm -r {params.tmpdir}
