@@ -12,7 +12,7 @@ rule singlem:
         ),
         non_host_r2=os.path.join(
             config["workdir"],
-            "{sample}_M_1.fq.gz"
+            "{sample}_M_2.fq.gz"
         )
     output:
         pipe=os.path.join(
