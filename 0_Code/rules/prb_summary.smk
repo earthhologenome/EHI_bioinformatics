@@ -31,10 +31,13 @@ rule report:
             sample=SAMPLE
         ),
     output:
-        report="/projects/ehi/data/REP/{config['prb']}.tsv",
+        report=os.path.join(
+            "/projects/ehi/data/REP/",
+            config["prb"]".tsv"
+        ),
         npar_metadata=os.path.join(
             config["workdir"],
-            "{config['prb']}_nonpareil_metadata.tsv"
+            config["prb"]"_nonpareil_metadata.tsv"
         )
     params:
         tmpdir=os.path.join(
