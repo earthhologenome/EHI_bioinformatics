@@ -51,5 +51,6 @@ rule upload_to_ERDA:
         lftp sftp://erda -e "put {input.non_host_r2} -o /EarthHologenomeInitiative/Data/PPR/{config[prb]}/; bye"
         sleep 5
         lftp sftp://erda -e "put {input.host_bam} -o /EarthHologenomeInitiative/Data/PPR/{config[prb]}/; bye"
-        touch {output}ss
+        
+        touch {output}
         """
