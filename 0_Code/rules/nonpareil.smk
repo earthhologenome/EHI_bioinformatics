@@ -53,12 +53,13 @@ rule nonpareil:
             -T kmer \
             -t {threads} \
             -b {wildcards.sample}
+
+        mv {wildcards.sample}.* {config[workdir]}/misc/
         else
         #Create dummy file for snakemake to proceed
         touch {output.npo}
         fi
 
-        mv {wildcards.sample}.* {config[workdir]}/misc/
 
         #Compress reads
         pigz -p {threads} {input.non_host_r1}
