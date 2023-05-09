@@ -38,6 +38,8 @@ for i, row in df.iterrows():
             'family': str(row['family']),
             'genus': str(row['genus']),
             'species': str(row['species']),
+            'fastani_ani': float(row['fastani_ani']),
+            'closest_placement_af': float(row['closest_placement_af']),
             'closest_placement_ani': float(row['closest_placement_ani']),
             'completeness': float(row['completeness']),
             'contamination': float(row['contamination']),

@@ -53,7 +53,7 @@ rule gtdbtk:
         --extension "gz" \
         --out_dir {params.outdir} \
         --cpus {threads} \
-        --mash_db /projects/ehi/data/0_Environments/databases/{wildcards.EHA}_gtdb-tk-r207.msh
+        --skip_ani_screen
 
         # Create a merged summary output for DRAM:
         if [ -s "{params.outdir}/classify/gtdbtk.ar122.summary.tsv" ]
@@ -69,9 +69,9 @@ rule gtdbtk:
 
         # Parse the gtdb output for uploading to the EHI MAG database
         cut -f2 {output.combined} | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
-        cut -f1,11 {output.combined} | sed '1d;' > {params.outdir}/id_ani.tsv
+        cut -f1,6,11,12 {output.combined} | sed '1d;' > {params.outdir}/id_ani.tsv
         sed -i 's@N/A@0@g' {params.outdir}/id_ani.tsv
-        echo -e 'mag_name\tclosest_placement_ani\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
+        echo -e 'mag_name\tfastani_ani\tclosest_placement_ani\tclosest_placement_af\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
 
         paste {params.outdir}/id_ani.tsv {params.outdir}/taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
         cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {params.outdir}/gtdb_airtable.tsv
