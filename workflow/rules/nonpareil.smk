@@ -15,6 +15,10 @@ rule nonpareil:
             config["workdir"],
             "misc/{sample}.npo"
         ),
+        npstats=os.path.join(
+            config["workdir"],
+            "misc/{sample}_np.tsv"
+        ),
         non_host_r1c=temp(
             os.path.join(
                 config["workdir"],
@@ -55,9 +59,15 @@ rule nonpareil:
             -b {wildcards.sample}
 
         mv {wildcards.sample}.* {config[workdir]}/misc/
+
+        #Script to extract nonpareil values of interest
+        RScript {config[codedir]}/scripts/nonpareil_table.R {output.npo} {output.npstats}
+
         else
         #Create dummy file for snakemake to proceed
         touch {output.npo}
+        echo -e "sample\tkappa\tC\tLR\tmodelRt\tLRstar\tdiversity\n{wildcards.sample}\t0\t0\t0\t0\t0\t0" > {output.npstats}
+
         fi
 
 

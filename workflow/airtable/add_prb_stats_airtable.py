@@ -47,7 +47,13 @@ for i, row in df.iterrows():
             'host_reads': int(row['host_reads']),
             'bacterial_archaeal_bases': int(row['bacterial_archaeal_bases']),
             'metagenomic_bases': int(row['metagenomic_bases']),
-            'singlem_fraction': float(row['singlem_fraction'].strip('%'))/100
+            'singlem_fraction': float(row['singlem_fraction'].strip('%'))/100,
+            'kappa': float(row['kappa']),
+            'C': float(row['C']),
+            'LR': int(row['LR']),
+            'modelR': float(row['modelR']),
+            'LRstar': int(row['LRstar']),
+            'diversity': float(row['diversity'])
         }
     }
 
