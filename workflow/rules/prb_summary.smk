@@ -30,6 +30,10 @@ rule report:
             ),
             sample=SAMPLE
         ),
+        npstats=os.path.join(
+            config["workdir"],
+            "misc/{sample}_np.tsv"
+        )
     output:
         report=os.path.join(
             "/projects/ehi/data/REP/",
@@ -91,8 +95,11 @@ rule report:
         #parse singlem estimates
         for i in {input.read_fraction}; do sed '1d;' $i | cut -f2,3,4 >> {params.tmpdir}/singlem.tsv; done
 
-        paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/singlem.tsv > {params.tmpdir}/preprocessing_stats.tsv
-        echo -e "EHI_number\treads_pre_fastp\treads_post_fastp\tbases_pre_fastp\tbases_post_fastp\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction" > {params.tmpdir}/headers.tsv
+        #parse nonpareil estimates
+        for i in {input.npstats}; do sed '1d;' $i | cut -f2,3,4,5,6,7 >> {params.tmpdir}/npstats.tsv; done
+
+        paste {params.tmpdir}/names.tsv {params.tmpdir}/read_pre_filt.tsv {params.tmpdir}/read_post_filt.tsv {params.tmpdir}/bases_pre_filt.tsv {params.tmpdir}/bases_post_filt.tsv {params.tmpdir}/adapter_trimmed_reads.tsv {params.tmpdir}/adapter_trimmed_bases.tsv {params.tmpdir}/host_reads.tsv {params.tmpdir}/singlem.tsv {params.tmpdir}/npstats.tsv > {params.tmpdir}/preprocessing_stats.tsv
+        echo -e "EHI_number\treads_pre_fastp\treads_post_fastp\tbases_pre_fastp\tbases_post_fastp\tadapter_trimmed_reads\tadapter_trimmed_bases\thost_reads\tbacterial_archaeal_bases\tmetagenomic_bases\tsinglem_fraction\tkappa\tC\tLR\tmodelR\tLRstar\tdiversity" > {params.tmpdir}/headers.tsv
         cat {params.tmpdir}/headers.tsv {params.tmpdir}/preprocessing_stats.tsv > {output.report}
 
         cp {output.report} {params.misc_dir}
