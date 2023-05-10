@@ -61,7 +61,7 @@ rule nonpareil:
         mv {wildcards.sample}.* {config[workdir]}/misc/
 
         #Script to extract nonpareil values of interest
-        RScript {config[codedir]}/scripts/nonpareil_table.R {output.npo} {output.npstats}
+        Rscript {config[codedir]}/scripts/nonpareil_table.R {output.npo} {output.npstats}
 
         else
         #Create dummy file for snakemake to proceed
