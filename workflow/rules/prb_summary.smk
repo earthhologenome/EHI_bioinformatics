@@ -30,9 +30,12 @@ rule report:
             ),
             sample=SAMPLE
         ),
-        npstats=os.path.join(
-            config["workdir"],
-            "misc/{sample}_np.tsv"
+        npstats=expand(
+            os.path.join(
+                config["workdir"],
+                "misc/{sample}_np.tsv"
+            ),
+            sample=SAMPLE
         )
     output:
         report=os.path.join(
