@@ -2,7 +2,7 @@
 ### RE 11/10/2022
 
 prb: PRBATCH
-codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/0_Code
+codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/workflow
 workdir: /projects/ehi/data/PPR/PRBATCH
 logdir: /projects/ehi/data/RUN/PRBATCH/logs
 
