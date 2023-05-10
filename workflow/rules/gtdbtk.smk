@@ -75,7 +75,7 @@ rule gtdbtk:
         cut -f2 {output.combined} | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
         cut -f1,6,11,12 {output.combined} | sed '1d;' > {params.outdir}/id_ani.tsv
         sed -i 's@N/A@0@g' {params.outdir}/id_ani.tsv
-        echo -e 'mag_name\tfastani_ani\tclosest_placement_ani\tclosest_placement_ani\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
+        echo -e 'mag_name\tfastani_ani\tclosest_placement_ani\tclosest_placement_af\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
         paste {params.outdir}/id_ani.tsv {params.outdir}/taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
         cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {params.outdir}/gtdb_airtable.tsv
 
