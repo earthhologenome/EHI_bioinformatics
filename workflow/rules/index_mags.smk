@@ -5,7 +5,7 @@ rule mag_index:
         expand(
             os.path.join(
                 config["magdir"], 
-                "{wildcards.mag}.gz"
+                "{mag}.gz"
             ), mag = MAG
         )
     output:
