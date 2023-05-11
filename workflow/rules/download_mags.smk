@@ -38,6 +38,7 @@ rule download_mags:
         paste {config[workdir]}/get.tsv {config[workdir]}/mag.tsv -d '' > {config[workdir]}/batchfile.txt
 
         #Execute batch file to pull the suckers
+        cd {config[magdir]}
         sftp -b {config[workdir]}/batchfile.txt erda
 
         #Indicate files are downloaded
