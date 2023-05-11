@@ -34,7 +34,7 @@ df = pd.read_csv("read_input.tsv", sep="\t")
 
 # Use set to create a list of valid combinations of wildcards. Note that 'ID' = EHA number.
 valid_combinations = set(
-    (row["PR_batch"], row["EHI_number"], row["Assembly_code"]) for _, row in df.iterrows()
+    (row["PR_batch"], row["EHI_number"]) for _, row in df.iterrows()
 )
 
 ## Setup the list of MAGs that we want, this is pulled from airtable using the

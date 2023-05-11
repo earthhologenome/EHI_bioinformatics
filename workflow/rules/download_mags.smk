@@ -10,7 +10,7 @@ rule download_mags:
         mags=expand(
             os.path.join(
                 config["magdir"], 
-                "{wildcards.mag}.gz"
+                {wildcards.mag} + ".gz"
             ), mag = MAG
         ),
         genome_info=os.path.join(
