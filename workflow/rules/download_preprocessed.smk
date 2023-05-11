@@ -4,7 +4,7 @@ rule download_preprocessed:
     input:
         os.path.join(
             config["workdir"], 
-            "{abb}_ERDA_folder_created"
+            "ERDA_folder_created"
         )
     output:
         r1=os.path.join(

@@ -41,12 +41,9 @@ valid_combinations = set(
 ### Setup the desired outputs
 rule all:
     input:
-        expand(
-            os.path.join(
+        os.path.join(
                 config["workdir"], 
-                "{abb}_ERDA_folder_created"
-            ),
-            abb=config["abb"]
+                "ERDA_folder_created"
         ),
         expand(
             os.path.join(
