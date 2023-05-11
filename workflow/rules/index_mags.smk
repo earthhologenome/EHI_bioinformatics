@@ -41,7 +41,7 @@ rule mag_index:
         done
 
         # Concatenate MAGs
-        cat {config[magdir]}/*_renamed.fa.gz > {config[magdir]}/{wildcards.dmb}_mags.fasta.gz
+        cat {config[magdir]}/*_renamed.fa.gz > {config[magdir]}/{config[dmb]}_mags.fasta.gz
 
         # Index the coassembly
         bowtie2-build \
