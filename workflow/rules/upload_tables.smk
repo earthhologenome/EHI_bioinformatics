@@ -7,7 +7,7 @@ rule upload_tables:
             "coverm/", 
             config["dmb"] + "_count_table.tsv"
         ),
-        mapping_rate=os.path.join(
+        mapping_rates=os.path.join(
             config["workdir"], 
             "coverm/", 
             config["dmb"] + "_mapping_rate.tsv"
