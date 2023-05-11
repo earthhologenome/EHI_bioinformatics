@@ -32,7 +32,7 @@ rule download_mags:
         """
         #Setup batch file for downloading MAGs from erda:
         for mag in {output.mags};
-            do echo "get *" >> {config[workdir]}/get.tsv && echo $mag >> {config[workdir]}/mag.tsv;
+            do echo "get EarthHologenomeInitiative/Data/MAG/*/" >> {config[workdir]}/get.tsv && echo $(basename $mag) >> {config[workdir]}/mag.tsv;
         done
 
         paste {config[workdir]}/get.tsv {config[workdir]}/mag.tsv -d '' > {config[workdir]}/batchfile.txt
