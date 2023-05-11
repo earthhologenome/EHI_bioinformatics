@@ -36,7 +36,7 @@ rule gtdbtk_full_tree:
     shell:
         """
         # Specify path to reference data:
-        export GTDBTK_DATA_PATH={config[GTDB_data]}
+        export GTDBTK_DATA_PATH={{config[GTDB_data]}}
 
         # Run GTDB-tk:
         gtdbtk classify_wf \
