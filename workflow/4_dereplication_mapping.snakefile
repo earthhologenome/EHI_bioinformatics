@@ -42,7 +42,7 @@ valid_combinations = set(
 
 df2 = pd.read_csv("mags.csv", sep=",")
 
-MAG = list(df.iloc[:, 0])
+MAG = list(df2.iloc[:, 0])
 
 # Remove the first element of the list (which is the column name "genome")
 MAG.pop(0)
@@ -66,3 +66,4 @@ include: os.path.join(config["codedir"], "rules/gtdbtk_full_tree.smk")
 include: os.path.join(config["codedir"], "rules/index_mags.smk")
 include: os.path.join(config["codedir"], "rules/mag_mapping.smk")
 include: os.path.join(config["codedir"], "rules/coverm_mags.smk")
+include: os.path.join(config["codedir"], "rules/upload_tables.smk")

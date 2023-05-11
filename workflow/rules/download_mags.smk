@@ -31,7 +31,7 @@ rule download_mags:
     shell:
         """
         #Setup batch file for downloading MAGs from erda:
-        for mag in {wildcards.mag};
+        for mag in {output.mags};
             do echo "get */" >> {config[workdir]}/get.tsv && echo $mag >> {config[workdir]}/mag.tsv;
         done
 
