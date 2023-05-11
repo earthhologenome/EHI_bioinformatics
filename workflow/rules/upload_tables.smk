@@ -11,6 +11,10 @@ rule upload_tables:
             config["workdir"], 
             "coverm/", 
             config["dmb"] + "_mapping_rate.tsv"
+        ),
+        combined=os.path.join(
+            config["workdir"], 
+            config["dmb"] + "_gtdbtk_combined_summary.tsv"
         )        
     output:
         os.path.join(
