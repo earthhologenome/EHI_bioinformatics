@@ -24,9 +24,9 @@ rule mag_index:
         mem_gb=96,
         time="02:00:00",
     benchmark:
-        os.path.join(config["logdir"] + "/index_mags_benchmark_{dmb}.tsv")
+        os.path.join(config["logdir"] + "/index_mags_benchmark.tsv")
     log:
-        os.path.join(config["logdir"] + "/index_mags_log_{dmb}.log")
+        os.path.join(config["logdir"] + "/index_mags_log.log")
     message:
         "Indexing mags using Bowtie2"
     shell:
