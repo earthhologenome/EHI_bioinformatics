@@ -44,23 +44,19 @@ output_file_path = 'read_input.tsv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
-    writer.writerow(['PR_batch', 'EHI_number', 'Assembly_code'])
+    writer.writerow(['PR_batch', 'EHI_number'])
 
     for record in records:
         # Get the values of the PR_batch and EHI_number lookup fields
-        # PR_batch and EHI_number are lookups in the AB_assembly_binning table, so we perform further API requests.
-        pr_batch_id = record['fields']['PR_batch'][0]
-        ehi_number_id = record['fields']['EHI_number'][0]
+        record_id = record['id']
 
         # Make requests to retrieve the linked records
-        pr_batch_response = requests.get(f"{AIRTABLE_API_ENDPOINT}/{pr_batch_id}", headers=headers)
-        ehi_number_response = requests.get(f"{AIRTABLE_API_ENDPOINT}/{ehi_number_id}", headers=headers)
+        record_response = requests.get(f"{AIRTABLE_API_ENDPOINT}/{record_id}", headers=headers)
 
         # Extract the values of the linked fields from the linked records
-        # Note that PR_batch is called 'Code' in the PR_batch table.
-        pr_batch_value = pr_batch_response.json()['fields']['Code']
-        ehi_number_value = ehi_number_response.json()['fields']['EHI_number']
+        pr_batch_value = record_response.json()['fields'].get('PR_Batch', '')
+        ehi_number_value = record_response.json()['fields'].get('EHI_number', '')
 
         # Write the row to the TSV file
-        row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code']]
+        row = [pr_batch_value, ehi_number_value]
         writer.writerow(row)
