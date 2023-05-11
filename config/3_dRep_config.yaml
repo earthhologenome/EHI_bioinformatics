@@ -1,8 +1,0 @@
-### Config file for dRep
-### RE 06/2022
-
-ANI: 0.98
-
-GTDB_data: /projects/mjolnir1/data/databases/GTDBTK_DB/release207_v2
-
-DRAM_data: /home/databases/ku-cbd/DRAM/20210705/20210705.dram.config
