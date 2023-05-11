@@ -6,8 +6,8 @@ rule coverM_mag:
             os.path.join(
                 config["workdir"], 
                 "bams/", 
-                "{PRB}_{EHI}_" + config["dmb"] + ".bam"
-            ), prb = PRB, ehi = EHI
+                "{combo[0]}_{combo[1]}_" + config["dmb"] + ".bam"
+            ), combo=valid_combinations
         )
     output:
         count_table=os.path.join(
