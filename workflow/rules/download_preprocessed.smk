@@ -25,7 +25,7 @@ rule download_preprocessed:
     resources:
         load=8,
         mem_gb=8,
-        time="01:00:00"
+        time="02:00:00"
     benchmark:
         os.path.join(config["logdir"] + "/download_preprocessed_benchmark_{PRB}_{EHI}.tsv")
     message:
