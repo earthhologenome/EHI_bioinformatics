@@ -7,3 +7,4 @@ codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/workflow
 workdir: /projects/ehi/data/DMB/DMBATCH
 magdir: /projects/ehi/data/DMB/DMBATCH/mags
 logdir: /projects/ehi/data/RUN/DMBATCH/logs
+GTDB_data: /projects/ehi/data/release214
