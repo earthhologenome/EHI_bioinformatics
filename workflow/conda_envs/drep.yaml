@@ -2,5 +2,4 @@
  channels:
     - bioconda
  dependencies:
-    - drep
-    - pigz=2.6
+    - drep=3.4.3

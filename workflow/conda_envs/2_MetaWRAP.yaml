@@ -1,8 +1,0 @@
-name: /projects/mjolnir1/apps/conda/metawrap-mg-1.3.2
-channels:
-  - ursky
-  - bioconda
-  - conda-forge
-  - defaults
-dependencies:
-  - metawrap-mg=1.3.2
