@@ -13,7 +13,7 @@ rule download_mags:
                 "{mag}.gz"
             ), mag = MAG
         ),
-        genome_info=os.path.join(
+        downloaded=os.path.join(
             config["magdir"],
             "mags_downloaded"
         )
