@@ -31,17 +31,8 @@ rule mag_index:
         "Indexing mags using Bowtie2"
     shell:
         """
-        # Reformat MAG headers for CoverM
-        for mag in {input};
-            do rename.sh \
-                in=$mag \
-                out=${{mag/.fa.gz/_renamed.fa.gz}} \
-                zl=9 \
-                prefix=$(basename ${{mag/.fa.gz/^}});
-        done
-
         # Concatenate MAGs
-        cat {config[magdir]}/*_renamed.fa.gz > {config[magdir]}/{config[dmb]}_mags.fasta.gz
+        cat {input} > {config[magdir]}/{config[dmb]}_mags.fasta.gz
 
         # Index the coassembly
         bowtie2-build \

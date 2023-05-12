@@ -35,6 +35,7 @@ rule metaWRAP_refinement:
         """
         #Installing metawrap via conda is a pain in the arse, so using the module on Mjolnir here.
         module load metawrap-mg/1.3.2
+        module load bbmap/39.01
 
         # Setup checkM path (needed for conda, not module)
         # export checkmdb={config[checkmdb]}
@@ -65,6 +66,20 @@ rule metaWRAP_refinement:
         #Print the number of MAGs to a file for combining with the assembly report
         mkdir -p {params.stats_dir}
         ls -l {params.outdir}/metawrap_50_10_bins/*.fa.gz | wc -l > {params.stats_dir}/{wildcards.EHA}_bins.tsv
+
+        # Reformat MAG headers for CoverM
+        for mag in {params.outdir}/metawrap_50_10_bins/*.fa.gz;
+            do rename.sh \
+                in=$mag \
+                out={params.outdir}/${{mag/.fa.gz/_renamed.fa.gz}} \
+                zl=9 \
+                prefix=$(basename ${{mag/.fa.gz/^}});
+        done
+
+        rm {params.outdir}/metawrap_50_10_bins/*.fa.gz
+        for mag in {params.outdir}/*.fa.gz;
+            do mv $mag {params.outdir}/metawrap_50_10_bins/$(basename ${{mag/_renamed/}});
+        done
 
         # rm -r {params.binning}/work_files/
         # rm -r {params.outdir}/work_files/

@@ -1,3 +1,7 @@
+https://chinarajames.com/how-to-upload-images-to-airtable-using-their-api/
+
+
+
 import argparse
 import pandas as pd
 import requests

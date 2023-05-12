@@ -11,7 +11,7 @@ logdir: /projects/ehi/data/RUN/ASBATCH/logs
 assembler: megahit
 #path to checkmdb
 checkmdb: /projects/ehi/data/0_Environments/databases/checkm_2015
-GTDB_data: /projects/ehi/data/release214
+GTDB_data: /projects/mjolnir1/data/databases/GTDBTK_DB/release214
 #min contig length for binning
 minlength: 1500
 # #pre-trained environment model for SemiBin (choice of: human_gut, dog_gut, ocean, soil, cat_gut, human_oral, mouse_gut, pig_gut, built_environment, wastewater, global)
