@@ -41,6 +41,9 @@ rule upload_tables:
         ## Upload count table to airtable
         python {config[codedir]}/airtable/upload_count_table_airtable.py --table={input.count_table}
 
+        ## Log AirTable that the run is finished
+        python {config[codedir]}/airtable/log_dmb_done_airtable.py --dmb={config[dmb]}
+
         ## Clean up
 
         ## Create output to end pipeline
