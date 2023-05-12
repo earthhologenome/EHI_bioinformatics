@@ -47,6 +47,6 @@ rule mag_index:
         bowtie2-build \
             --large-index \
             --threads {threads} \
-            {output} {output} \
+            {output.mags} {output.mags} \
         &> {log}
         """
