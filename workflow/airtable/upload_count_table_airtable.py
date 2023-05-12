@@ -1,5 +1,6 @@
 https://chinarajames.com/how-to-upload-images-to-airtable-using-their-api/
 
+https://sid.erda.dk/share_redirect/BaMZodj9sA/
 
 
 import argparse

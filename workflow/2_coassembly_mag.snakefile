@@ -54,6 +54,12 @@ rule all:
             combo=valid_combinations,
         ),
         expand(
+            os.path.join(
+                config["workdir"], "{combo[0]}_{combo[1]}_{combo[2]}_uploaded"
+            ),
+            combo=valid_combinations,
+        ),
+        expand(
             os.path.join(config["workdir"], "{abb}_pipeline_finished"),
             abb=config["abb"],
         )
@@ -65,6 +71,7 @@ include: os.path.join(config["codedir"], "rules/coassembly.smk")
 include: os.path.join(config["codedir"], "rules/QUAST_coassembly.smk")
 include: os.path.join(config["codedir"], "rules/index_coassembly.smk")
 include: os.path.join(config["codedir"], "rules/coassembly_mapping.smk")
+include: os.path.join(config["codedir"], "rules/upload_asb_bam.smk")
 include: os.path.join(config["codedir"], "rules/metawrap_binning_coassembly.smk")
 include: os.path.join(config["codedir"], "rules/metawrap_refinement_coassembly.smk")
 include: os.path.join(config["codedir"], "rules/coverm_coassembly.smk")

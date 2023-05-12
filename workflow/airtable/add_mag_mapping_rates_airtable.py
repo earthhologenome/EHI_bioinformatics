@@ -14,7 +14,7 @@ with open('/projects/ehi/data/.airtable_api_key.json') as f:
 api_key = config['api_key']
 
 #Set variables
-url = 'https://api.airtable.com/v0/appWbHBNLE6iAsMRV/tblMzd3oyaJhdeQcs'
+url = 'https://api.airtable.com/v0/appWbHBNLE6iAsMRV/tblWDyQmM9rQ9wq57'
 headers = {
     'Authorization': f'Bearer {api_key}',
     'Content-Type': 'application/json'
@@ -28,8 +28,9 @@ for i, row in df.iterrows():
     # Set the cell data you want to update
     data = {
         'fields': {
-            'mag_name': str(row['mag_name']),
-            'eha_number': str(row['eha_number']),
+            'PR_sample_static': str(row['PR_sample_static']),
+            'DM_Batch_static': str(row['DM_Batch_static']),
+            'MAG_mapping_percentage': int(row['MAG_mapping_percentage']),
         }
     }
 
