@@ -32,11 +32,10 @@ rule upload_tables:
         os.path.join(config["logdir"] + "/upload_tables_benchmark.tsv")    
     shell:
         """
-        ## Upload MAGs and annotations to ERDA
-        lftp sftp://erda -e "mirror -R {config[magdir]} /EarthHologenomeInitiative/Data/MAG/; bye"
-
         ## Add MAG mapping rates to airtable
-        python {config[codedir]}/airtable/add_mag_mapping_rates_airtable.py --table={input.mapping_rates}
+        head -2 {input.mapping_rates} | cut -f2- | sed 's/ Relative Abundance (%)//g' > unmapped.tsv
+        
+        python {config[codedir]}/airtable/add_mag_mapping_rates_airtable.py --table=unmapped.tsv
 
         ## Upload count table to airtable
         python {config[codedir]}/airtable/upload_count_table_airtable.py --table={input.count_table}

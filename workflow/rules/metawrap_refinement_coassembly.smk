@@ -71,14 +71,14 @@ rule metaWRAP_refinement:
         for mag in {params.outdir}/metawrap_50_10_bins/*.fa.gz;
             do rename.sh \
                 in=$mag \
-                out={params.outdir}/${{mag/.fa.gz/_renamed.fa.gz}} \
+                out={params.outdir}/$(basename ${mag/.fa.gz/_renamed.fa.gz}) \
                 zl=9 \
-                prefix=$(basename ${{mag/.fa.gz/^}});
+                prefix=$(basename ${mag/.fa.gz/^});
         done
 
         rm {params.outdir}/metawrap_50_10_bins/*.fa.gz
         for mag in {params.outdir}/*.fa.gz;
-            do mv $mag {params.outdir}/metawrap_50_10_bins/$(basename ${{mag/_renamed/}});
+            do mv $mag {params.outdir}/metawrap_50_10_bins/$(basename ${mag/_renamed/});
         done
 
         # rm -r {params.binning}/work_files/
