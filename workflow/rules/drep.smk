@@ -13,8 +13,6 @@ rule drep:
             "figures/",
             config["dmb"] + "_Primary_clustering_dendrogram.pdf"
         )
-    conda:
-        f"{config['codedir']}/conda_envs/drep.yaml"
     threads:
         16
     resources:
@@ -29,6 +27,9 @@ rule drep:
         "Dereplicating MAGs with dRep"
     shell:
         """
+        # Load dRep module, as the conda recipe is cooked atm
+        module load drep/3.4.0
+
         # Massage genome info file:
         sed -i 's/.fa/.fa.gz/g' mags.csv
 
