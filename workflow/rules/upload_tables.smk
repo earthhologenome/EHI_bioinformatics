@@ -40,6 +40,9 @@ rule upload_tables:
         ## Upload count table to airtable
         python {config[codedir]}/airtable/upload_count_table_airtable.py --table={input.count_table}
 
+        ## Upload the gtdb tree to airtable
+        python {config[codedir]}/airtable/upload_tree_airtable.py --tree=
+
         ## Log AirTable that the run is finished
         python {config[codedir]}/airtable/log_dmb_done_airtable.py --dmb={config[dmb]}
 

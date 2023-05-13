@@ -68,9 +68,4 @@ rule gtdbtk_full_tree:
         cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {params.outdir}/{config[dmb]}_taxon_table.tsv
         gzip {params.outdir}/{config[dmb]}_taxon_table.tsv
 
-        #upload the tree to airtable
-#        python {config[codedir]}/airtable/upload_tree_airtable.py --tree=
-
-        #upload taxon table to airtable
-        python {config[codedir]}/airtable/upload_taxon_table_airtable.py --table={params.outdir}/{config[dmb]}_taxon_table.tsv.gz
         """
