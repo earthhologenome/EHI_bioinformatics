@@ -38,5 +38,6 @@ rule check_assembly_size:
             touch {output}
         fi
         """
-    onerr:
-        raise RuntimeError("Processing of sample {wildcards.EHI} stopped because the output file size is below the minimum threshold")
+onerrmsg = "Processing of sample {wildcards.EHI} stopped because the assembly size is below the minimum threshold"
+onerror:
+    raise RuntimeError(onerrmsg)
