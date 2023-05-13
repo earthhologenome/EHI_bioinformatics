@@ -18,6 +18,7 @@ rule gtdbtk_full_tree:
             config["dmb"] + "_gtdbtk_combined_summary.tsv"
             )
     params:
+        GTDB_data=expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir=os.path.join(config["workdir"] + "/gtdbtk"),
         dereplicated_mags=os.path.join(config["workdir"] + "drep/dereplicated_genomes"),
     conda:
@@ -36,7 +37,7 @@ rule gtdbtk_full_tree:
     shell:
         """
         # Specify path to reference data:
-        export GTDBTK_DATA_PATH={{config[GTDB_data]}}
+        export GTDBTK_DATA_PATH={params.GTDB_data}
 
         # Run GTDB-tk:
         gtdbtk classify_wf \
