@@ -3,6 +3,10 @@ rule check_assembly_size:
         os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta")
     output:
         os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_checkpoint")
+    threads: 1
+    resources:
+        mem_gb=8,
+        time="00:05:00",
     shell:
         """
         # check the size of the output file
