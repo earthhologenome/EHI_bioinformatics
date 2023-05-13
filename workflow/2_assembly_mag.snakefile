@@ -66,6 +66,7 @@ rule all:
 include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
 include: os.path.join(config["codedir"], "rules/download_preprocessed.smk")
 include: os.path.join(config["codedir"], "rules/individual_assembly.smk")
+include: os.path.join(config["codedir"], "rules/check_assembly_size.smk")
 include: os.path.join(config["codedir"], "rules/QUAST.smk")
 include: os.path.join(config["codedir"], "rules/index_assembly.smk")
 include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
