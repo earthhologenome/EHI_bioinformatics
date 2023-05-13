@@ -2,19 +2,21 @@
 ### Index mags
 rule mag_index:
     input:
-        expand(
-            os.path.join(
-                config["magdir"], 
-                "{mag}"
-            ), mag = MAG
+        drep=os.path.join(
+            config["workdir"],
+            "drep/",
+            "figures/",
+            config["dmb"] + "_Primary_clustering_dendrogram.pdf"
         )
     output:
         mags=os.path.join(
-            config["magdir"],
+            config["workdir"],
+            "mag_catalogue/",
             config["dmb"] + "_mags.fasta.gz"
         ),
         index=os.path.join(
-            config["magdir"],
+            config["workdir"],
+            "mag_catalogue/",
             config["dmb"] + "_mags.fasta.gz.rev.2.bt2l"
         )
     conda:
@@ -32,7 +34,7 @@ rule mag_index:
     shell:
         """
         # Concatenate MAGs
-        cat {input} > {config[magdir]}/{config[dmb]}_mags.fasta.gz
+        cat {config[workdir]}/drep/dereplicated_genomes/*.fa.gz > {config[workdir]}/mag_catalogue/{config[dmb]}_mags.fasta.gz
 
         # Index the coassembly
         bowtie2-build \
