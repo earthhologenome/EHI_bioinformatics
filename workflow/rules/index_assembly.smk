@@ -2,8 +2,8 @@
 ### Index assemblies
 rule assembly_index:
     input:
-        os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta"),
-        checkpoint_output("check_file_size")
+        contigs=os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta"),
+        cp=os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_checkpoint")
     output:
         os.path.join(
             config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta.rev.2.bt2l"
@@ -26,6 +26,6 @@ rule assembly_index:
         bowtie2-build \
             --large-index \
             --threads {threads} \
-            {input} {input} \
+            {input.contigs} {input.contigs} \
         &> {log}
         """
