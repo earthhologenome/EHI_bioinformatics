@@ -43,6 +43,14 @@ rule assembly:
         if [ $(( $(stat -c '%s' {output}) / 1024 / 1024 )) -lt 50 ]
         then
             touch {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_uploaded
+            mkdir -p {config[workdir]}/bams
+            touch {config[workdir]}/bams/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}.bam
+            mkdir -p {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_binning
+            touch {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_binning/binning_complete
+            mkdir -p {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/
+            touch {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
+            mkdir -p {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_refinement
+            touch {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_refinement/{wildcards.EHA}_metawrap_50_10_bins.stats            
 
             # Create sample table for airtable
             echo -e "sample\tEHA_number\tEHI_number\tN50\tL50\tnum_contigs\tlargest_contig\tassembly_length\tnum_bins\tassembly_mapping_percent" > headers.tsv
