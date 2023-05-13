@@ -20,7 +20,7 @@ rule gtdbtk_full_tree:
     params:
         GTDB_data=expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir=os.path.join(config["workdir"] + "/gtdbtk"),
-        dereplicated_mags=os.path.join(config["workdir"] + "drep/dereplicated_genomes"),
+        dereplicated_mags=os.path.join(config["workdir"] + "/drep/dereplicated_genomes"),
     conda:
         f"{config['codedir']}/conda_envs/GTDB-tk.yaml"
     threads:
