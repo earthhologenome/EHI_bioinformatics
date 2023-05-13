@@ -31,7 +31,7 @@ rule drep:
         module load drep/3.4.0
 
         # Massage genome info file:
-        sed -i 's/.fa/.fa.gz/g' mags.csv
+        sed -i 's/.fa/.fa.gz/g' mags.csv > mags_formatted.csv
 
         # Dereplicate these suckers:
         dRep dereplicate \
@@ -40,10 +40,10 @@ rule drep:
                 -comp 50 \
                 -sa {config[ani]} \
                 -g {config[magdir]}/*.fa.gz \
-                --genomeInfo mags.csv
+                --genomeInfo mags_formatted.csv
                 2> {log}
 
         for i in {config[workdir]}/drep/figures/*;
-            do mv $i {config[dmb]}_"$i";
+            do mv $i {config[workdir]}/drep/figures/{config[dmb]}_$(basename "$i");
         done
         """
