@@ -3,11 +3,13 @@
 rule mag_mapping:
     input:
         contigs=os.path.join(
-            config["magdir"], 
+            config["workdir"],
+            "mag_catalogue/",
             config["dmb"] + "_mags.fasta.gz"
             ),
         index=os.path.join(
-            config["magdir"],
+            config["workdir"],
+            "mag_catalogue/",
             config["dmb"] + "_mags.fasta.gz.rev.2.bt2l"
             ),
         r1=os.path.join(
