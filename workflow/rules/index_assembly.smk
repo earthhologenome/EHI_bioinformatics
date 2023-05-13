@@ -3,6 +3,7 @@
 rule assembly_index:
     input:
         os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta"),
+        checkpoint_output("check_file_size")
     output:
         os.path.join(
             config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta.rev.2.bt2l"

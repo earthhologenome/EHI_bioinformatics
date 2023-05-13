@@ -8,8 +8,6 @@ rule assembly:
         os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta")
     params:
         assembler=expand("{assembler}", assembler=config["assembler"]),
-    checkpoint: 
-        "check_file_size"
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 16
