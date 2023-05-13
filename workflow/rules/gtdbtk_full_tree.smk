@@ -68,4 +68,6 @@ rule gtdbtk_full_tree:
         cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {params.outdir}/{config[dmb]}_taxon_table.tsv
         gzip {params.outdir}/{config[dmb]}_taxon_table.tsv
 
+        cp {params.outdir}/classify/gtdbtk.bac120.classify.tree {params.outdir}/{config[dmb]}_gtdbtk.bac120.classify.tree
+        gzip {params.outdir}/{config[dmb]}_gtdbtk.bac120.classify.tree
         """
