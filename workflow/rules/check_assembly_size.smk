@@ -21,6 +21,10 @@ rule check_assembly_size:
             touch {config[workdir]}/{wildcards.PRB}/{wildcards.EHI}/{wildcards.EHA}_gtdbtk_combined_summary.tsv
             mkdir -p {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_refinement
             touch {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_refinement/{wildcards.EHA}_metawrap_50_10_bins.stats            
+            mkdir -p {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_assembly/
+            touch {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_assembly/{wildcards.EHA}_contigs.fasta.gz
+     
+
 
             # Create sample table for airtable
             echo -e "sample\tEHA_number\tEHI_number\tN50\tL50\tnum_contigs\tlargest_contig\tassembly_length\tnum_bins\tassembly_mapping_percent" > headers.tsv
