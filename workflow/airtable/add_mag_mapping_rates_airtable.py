@@ -23,18 +23,6 @@ headers = {
 #Read in the TSV file using pandas
 df = pd.read_csv(args.report, sep='\t')
 
-# Split the first row by '_' to create three new columns
-new_cols = df.iloc[0, :].str.split('_', expand=True)
-new_cols = new_cols.rename(columns={0: 'PR_batch_static', 1: 'EHI_sample_static', 2: 'DM_batch_static'})
-
-# Drop the first row and assign the new column names to the DataFrame
-df = df.drop(0)
-df.columns = new_cols.columns
-
-# Convert the mapping_rate column to a float and subtract it from 100
-df['MAG_mapping_percentage'] = 100 - df['MAG_mapping_percentage'].astype(float)
-
-
 # Loop through each row in the dataframe
 for i, row in df.iterrows():
     # Set the cell data you want to update
