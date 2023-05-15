@@ -12,11 +12,19 @@ rule gtdbtk_full_tree:
         bac=os.path.join(
             config["workdir"], 
             "gtdbtk/classify/gtdbtk.bac120.summary.tsv"
-            ),
+        ),
         combined=os.path.join(
             config["workdir"], 
             config["dmb"] + "_gtdbtk_combined_summary.tsv"
-            )
+        ),
+        tree=os.path.join(
+            config["workdir"],
+            config["dmb"] + "_gtdbtk.bac120.classify.tree"
+        ),
+        taxonomy=os.path.join(
+            config["workdir"],
+            config["dmb"] + "_taxon_table.tsv"
+        )
     params:
         GTDB_data=expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir=os.path.join(config["workdir"] + "/gtdbtk"),
@@ -65,9 +73,7 @@ rule gtdbtk_full_tree:
         cut -f2 {output.combined} | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
         echo -e 'mag_name\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
         paste {params.outdir}/mag_names.tsv {params.outdir}/taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
-        cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {params.outdir}/{config[dmb]}_taxon_table.tsv
-        gzip {params.outdir}/{config[dmb]}_taxon_table.tsv
+        cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {config[workdir]}/{config[dmb]}_taxon_table.tsv
 
-        cp {params.outdir}/classify/gtdbtk.bac120.classify.tree {params.outdir}/{config[dmb]}_gtdbtk.bac120.classify.tree
-        gzip {params.outdir}/{config[dmb]}_gtdbtk.bac120.classify.tree
+        cp {params.outdir}/classify/gtdbtk.bac120.classify.tree {output.tree}
         """

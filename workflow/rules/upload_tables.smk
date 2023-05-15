@@ -15,7 +15,15 @@ rule upload_tables:
         combined=os.path.join(
             config["workdir"], 
             config["dmb"] + "_gtdbtk_combined_summary.tsv"
-        )        
+        ),
+        tree=os.path.join(
+            config["workdir"],
+            config["dmb"] + "_gtdbtk.bac120.classify.tree"
+        ),
+        taxonomy=os.path.join(
+            config["workdir"],
+            config["dmb"] + "_taxon_table.tsv"
+        )
     output:
         os.path.join(
             config["workdir"],
@@ -27,21 +35,55 @@ rule upload_tables:
     resources:
         load=8,
         mem_gb=16,
-        time='00:10:00'
+        time='00:15:00'
     benchmark:
         os.path.join(config["logdir"] + "/upload_tables_benchmark.tsv")    
     shell:
         """
         ## Add MAG mapping rates to airtable
         head -2 {input.mapping_rates} | cut -f2- | sed 's/ Relative Abundance (%)//g' > unmapped.tsv
+
+        # Determine the number of columns in the input file
+        num_columns=$(head -n1 unmapped.tsv | awk -F'\t' '{print NF}')
+
+        # Print the header
+        echo -e "PR_batch_static\tEHI_sample_static\tDM_batch_static\tMAG_mapping_percentage" > mapping_header.tsv
+
+        # Loop through each column and extract the corresponding elements
+        for ((col=1; col<=$num_columns; col++)); do
+        # Extract the elements from the current column, split by '_' and join with tab delimiter
+        awk -F'\t' -v col="$col" '
+            NR==1 {
+            split($col, arr, "_");
+            printf("%s\t%s\t%s\n", arr[1], arr[2], arr[3]);
+            }
+            NR>1 {
+            value = 100 - $col;
+            printf("%.5f\n", value);
+            }
+        ' unmapped.tsv | paste -d'\t' -s
+        done > longer.tsv
+
+        cat mapping_header.tsv longer.tsv > mapping_rates.tsv
         
-        python {config[codedir]}/airtable/add_mag_mapping_rates_airtable.py --table=unmapped.tsv
+        python {config[codedir]}/airtable/add_mag_mapping_rates_airtable.py --report=mapping_rates.tsv
 
-        ## Upload count table to airtable
-        python {config[codedir]}/airtable/upload_count_table_airtable.py --table={input.count_table}
+        ## Upload other files to AirTable (count table, tree)
+        gzip {input.count_table}
+        gzip {input.tree}
+        gzip {input.taxonomy}
+        lftp sftp://erda -e "put {input.count_table}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 5
+        lftp sftp://erda -e "put {input.tree}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 5
+        lftp sftp://erda -e "put {input.taxonomy}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 60
 
-        ## Upload the gtdb tree to airtable
-        python {config[codedir]}/airtable/upload_tree_airtable.py --tree=
+        python {config[codedir]}/airtable/link_dmb_files.py \
+        --table=https://sid.erda.dk/share_redirect/BaMZodj9sA/DMB/{config[dmb]}/coverm/{input.count_table}.gz \
+        --tree=https://sid.erda.dk/share_redirect/BaMZodj9sA/DMB/{config[dmb]}/{input.tree}.gz \
+        --taxonomy=https://sid.erda.dk/share_redirect/BaMZodj9sA/DMB/{config[dmb]}/{input.taxonomy}.gz \
+        --dmb={config[dmb]}
 
         ## Log AirTable that the run is finished
         python {config[codedir]}/airtable/log_dmb_done_airtable.py --dmb={config[dmb]}
