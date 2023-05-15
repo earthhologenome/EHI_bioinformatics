@@ -53,14 +53,14 @@ rule upload_tables:
         for ((col=1; col<=$num_columns; col++)); do
         # Extract the elements from the current column, split by '_' and join with tab delimiter
         awk -F'\t' -v col="$col" '
-            NR==1 {
+            NR==1 {{
             split($col, arr, "_");
             printf("%s\t%s\t%s\n", arr[1], arr[2], arr[3]);
-            }
-            NR>1 {
+            }}
+            NR>1 {{
             value = 100 - $col;
             printf("%.5f\n", value);
-            }
+            }}
         ' unmapped.tsv | paste -d'\t' -s
         done > longer.tsv
 
