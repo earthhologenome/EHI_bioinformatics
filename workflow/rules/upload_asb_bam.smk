@@ -2,7 +2,14 @@
 ### Upload assembly BAMs to ERDA
 rule upload_bam_erda:
     input:
-        os.path.join(config["workdir"], "bams/" "{PRB}_{EHI}_{EHA}.bam")
+        bam=os.path.join(
+            config["workdir"], 
+            "bams/" 
+            "{PRB}_{EHI}_{EHA}.bam"
+        ),
+        contigs=os.path.join(
+            config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta"
+        )
     output:
         os.path.join(config["workdir"], "{PRB}_{EHI}_{EHA}_uploaded")
     conda:
@@ -25,7 +32,7 @@ rule upload_bam_erda:
         else
 
             #Upload BAM to ERDA for storage
-            lftp sftp://erda -e "put {input} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+            lftp sftp://erda -e "put {input.bam} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
             touch {output}
         fi
         """
