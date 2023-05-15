@@ -43,26 +43,11 @@ rule upload_tables:
         ## Add MAG mapping rates to airtable
         head -2 {input.mapping_rates} | cut -f2- | sed 's/ Relative Abundance (%)//g' > unmapped.tsv
 
-        # Determine the number of columns in the input file
-        num_columns=$(head -n1 unmapped.tsv | awk -F'\t' '{{print NF}}')
-
         # Print the header
         echo -e "PR_batch_static\tEHI_sample_static\tDM_batch_static\tMAG_mapping_percentage" > mapping_header.tsv
 
-        # Loop through each column and extract the corresponding elements
-        for ((col=1; col<=$num_columns; col++)); do
-        # Extract the elements from the current column, split by '_' and join with tab delimiter
-        awk -F'\t' -v col="$col" '
-            NR==1 {{
-            split($col, arr, "_");
-            printf("%s\t%s\t%s\n", arr[1], arr[2], arr[3]);
-            }}
-            NR>1 {{
-            value = 100 - $col;
-            printf("%.5f\n", value);
-            }}
-        ' unmapped.tsv | paste -d'\t' -s
-        done > longer.tsv
+        # Run script to transpose table
+        bash {config[codedir]}/scripts/transpose_table.sh
 
         cat mapping_header.tsv longer.tsv > mapping_rates.tsv
         
