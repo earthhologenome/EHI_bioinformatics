@@ -64,7 +64,7 @@ rule upload_tables:
         lftp sftp://erda -e "put {input.taxonomy}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 60
 
-        python {config[codedir]}/airtable/link_dmb_files.py \
+        python {config[codedir]}/airtable/link_dmb_files_airtable.py \
         --table=https://sid.erda.dk/share_redirect/BaMZodj9sA/DMB/{config[dmb]}/coverm/{input.count_table}.gz \
         --tree=https://sid.erda.dk/share_redirect/BaMZodj9sA/DMB/{config[dmb]}/{input.tree}.gz \
         --taxonomy=https://sid.erda.dk/share_redirect/BaMZodj9sA/DMB/{config[dmb]}/{input.taxonomy}.gz \
