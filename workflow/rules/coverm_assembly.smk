@@ -48,24 +48,34 @@ rule coverM_assembly:
         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
     shell:
         """
-        coverm genome \
-            -b {input.bam} \
-            --genome-fasta-files {input.contigs} \
-            -m relative_abundance \
-            -t {threads} \
-            --min-covered-fraction 0 \
-            > {output.coverm}
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 50 ]
+        then
+            touch {output.coverm}
+            touch {output.euk}
+            touch {output.tarball}
 
-        #Run coverm for the eukaryotic assessment pipeline
-        coverm genome \
-            -s - \
-            -b {input.bam} \
-            -m relative_abundance count mean covered_fraction \
-            -t {threads} \
-            --min-covered-fraction 0 \
-            > {output.euk}
+        else
+
+            coverm genome \
+                -b {input.bam} \
+                --genome-fasta-files {input.contigs} \
+                -m relative_abundance \
+                -t {threads} \
+                --min-covered-fraction 0 \
+                > {output.coverm}
+
+            #Run coverm for the eukaryotic assessment pipeline
+            coverm genome \
+                -s - \
+                -b {input.bam} \
+                -m relative_abundance count mean covered_fraction \
+                -t {threads} \
+                --min-covered-fraction 0 \
+                > {output.euk}
 
 
-        # Tarball files then \:
-        tar -cvzf {output.tarball} {output.coverm} {output.euk}
+            # Tarball files then \:
+            tar -cvzf {output.tarball} {output.coverm} {output.euk}
+
+        fi
         """

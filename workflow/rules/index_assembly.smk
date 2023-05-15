@@ -3,7 +3,6 @@
 rule assembly_index:
     input:
         contigs=os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta"),
-        cp=os.path.join(config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_checkpoint")
     output:
         os.path.join(
             config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta.rev.2.bt2l"

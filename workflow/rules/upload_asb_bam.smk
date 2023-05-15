@@ -18,7 +18,14 @@ rule upload_bam_erda:
         "Uploading {wildcards.EHA} BAM to ERDA"
     shell:
         """
-        #Upload BAM to ERDA for storage
-        lftp sftp://erda -e "put {input} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
-        touch {output}
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 50 ]
+        then
+            touch {output}
+
+        else
+
+            #Upload BAM to ERDA for storage
+            lftp sftp://erda -e "put {input} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+            touch {output}
+        fi
         """

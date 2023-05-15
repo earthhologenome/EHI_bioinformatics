@@ -26,33 +26,41 @@ rule metaWRAP_binning:
         "Binning {wildcards.EHA} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
     shell:
         """
-        #Installing metawrap via conda is a pain in the arse, so using the module on Mjolnir here.
-        #It should be possible to get the conda environment done manually 'mamba create -n X -c ursky metawrap-mg'
-        module load metawrap-mg/1.3.2
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 50 ]
+        then
+            touch {output}
 
-        # Create dummy fq/assembly files to trick metaWRAP into running without mapping
-        mkdir -p {params.outdir}
-        mkdir -p {params.outdir}/work_files
+        else
 
-        touch {params.outdir}/work_files/assembly.fa.bwt
+            #Installing metawrap via conda is a pain in the arse, so using the module on Mjolnir here.
+            #It should be possible to get the conda environment done manually 'mamba create -n X -c ursky metawrap-mg'
+            module load metawrap-mg/1.3.2
 
-        for bam in {input.bam}; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_1.fastq}}); done
-        for bam in {input.bam}; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_2.fastq}}); done
+            # Create dummy fq/assembly files to trick metaWRAP into running without mapping
+            mkdir -p {params.outdir}
+            mkdir -p {params.outdir}/work_files
 
-        #Symlink BAMs for metaWRAP
-        for bam in {input.bam}; do ln -sf $bam {params.outdir}/work_files/$(basename $bam); done
+            touch {params.outdir}/work_files/assembly.fa.bwt
 
-        # Run metaWRAP binning
-        metawrap binning -o {params.outdir} \
-            -t {threads} \
-            -m {resources.mem_gb} \
-            -a {input.contigs} \
-            -l 1500 \
-            --metabat2 \
-            --maxbin2 \
-            --concoct \
-        {params.outdir}/work_files/*_1.fastq {params.outdir}/work_files/*_2.fastq
+            for bam in {input.bam}; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_1.fastq}}); done
+            for bam in {input.bam}; do echo "@" > {params.outdir}/work_files/$(basename ${{bam/.bam/_2.fastq}}); done
 
-        # Create output for the next rule
-        touch {output}
+            #Symlink BAMs for metaWRAP
+            for bam in {input.bam}; do ln -sf $bam {params.outdir}/work_files/$(basename $bam); done
+
+            # Run metaWRAP binning
+            metawrap binning -o {params.outdir} \
+                -t {threads} \
+                -m {resources.mem_gb} \
+                -a {input.contigs} \
+                -l 1500 \
+                --metabat2 \
+                --maxbin2 \
+                --concoct \
+            {params.outdir}/work_files/*_1.fastq {params.outdir}/work_files/*_2.fastq
+
+            # Create output for the next rule
+            touch {output}
+
+        fi
         """
