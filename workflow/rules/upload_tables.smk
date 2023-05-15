@@ -71,7 +71,7 @@ rule upload_tables:
         --dmb={config[dmb]}
 
         ## Log AirTable that the run is finished
-        python {config[codedir]}/airtable/log_dmb_done_airtable.py --dmb={config[dmb]}
+        python {config[codedir]}/airtable/log_dmb_done_airtable.py --code={config[dmb]}
 
         ## Clean up
 
