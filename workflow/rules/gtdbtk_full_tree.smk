@@ -73,7 +73,7 @@ rule gtdbtk_full_tree:
         cut -f2 {output.combined} | sed '1d;' | tr ';' '\t' > {params.outdir}/taxonomy.tsv
         echo -e 'mag_name\tdomain\tphylum\tclass\torder\tfamily\tgenus\tspecies' > {params.outdir}/gtdb_headers.tsv
         paste {params.outdir}/mag_names.tsv {params.outdir}/taxonomy.tsv > {params.outdir}/gtdb_temp.tsv
-        cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {config[workdir]}/{config[dmb]}_taxon_table.tsv
+        cat {params.outdir}/gtdb_headers.tsv {params.outdir}/gtdb_temp.tsv > {output.taxonomy}
 
         cp {params.outdir}/classify/gtdbtk.bac120.classify.tree {output.tree}
         """
