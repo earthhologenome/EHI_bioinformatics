@@ -44,7 +44,7 @@ rule upload_tables:
         head -2 {input.mapping_rates} | cut -f2- | sed 's/ Relative Abundance (%)//g' > unmapped.tsv
 
         # Determine the number of columns in the input file
-        num_columns=$(head -n1 unmapped.tsv | awk -F'\t' '{print NF}')
+        num_columns=$(head -n1 unmapped.tsv | awk -F'\t' '{{print NF}}')
 
         # Print the header
         echo -e "PR_batch_static\tEHI_sample_static\tDM_batch_static\tMAG_mapping_percentage" > mapping_header.tsv
