@@ -51,6 +51,10 @@ rule gtdbtk:
 
         else
 
+            # Create temp folder
+            export TMPDIR={config[workdir]}/tmpdir
+            mkdir -p $TMPDIR
+            
             # Specify path to reference data:
             export GTDBTK_DATA_PATH={params.GTDB_data}
 
