@@ -86,6 +86,7 @@ rule metaWRAP_refinement:
                     prefix=$(basename ${{mag/.fa.gz/^}});
             done
 
+            rm {params.outdir}/metawrap_50_10_bins/*.fa.gz
             for mag in {params.outdir}/*.fa.gz;
                 do mv $mag {params.outdir}/metawrap_50_10_bins/$(basename ${{mag/_renamed/}});
             done
