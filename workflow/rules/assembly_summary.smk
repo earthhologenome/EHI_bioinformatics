@@ -94,7 +94,7 @@ rule assembly_summary:
             sleep 5
 
             ### Upload contigs, coverm, & gtdb output to ERDA
-            pigz -p {threads} {input.contigs}
+            pigz -k -p {threads} {input.contigs}
             
             lftp sftp://erda -e "put {output.contigs} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
             sleep 5
