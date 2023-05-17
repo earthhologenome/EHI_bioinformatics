@@ -136,10 +136,10 @@ rule map_to_ref:
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
-        24
+        8
     resources:
-        mem_gb=90,
-        time='02:00:00'
+        mem_gb=64,
+        time='06:00:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_mapping.benchmark.tsv"
     log:
@@ -184,7 +184,7 @@ rule nonpareil:
         16
     resources:
         mem_gb=45,
-        time='02:00:00'
+        time='03:00:00'
     benchmark:
         "3_Outputs/0_Logs/{sample}_nonpareil.benchmark.tsv"
     message:
@@ -238,7 +238,7 @@ rule coverM:
     conda:
         "conda_envs/1_Preprocess_QC.yaml"
     threads:
-        16
+        8
     resources:
         mem_gb=45,
         time='00:30:00'
