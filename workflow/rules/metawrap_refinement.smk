@@ -36,7 +36,7 @@ rule metaWRAP_refinement:
         "Refining {wildcards.EHA} bins with MetaWRAP's bin refinement module"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 50 ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 40 ]
         then
             touch {output.stats}
             touch {output.contigmap}

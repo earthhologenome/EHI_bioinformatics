@@ -58,7 +58,7 @@ rule assembly_summary:
         "Creating final assembly summary table for {wildcards.EHA}, uploading files to ERDA"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 50 ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 40 ]
         then
             touch {output.stats}
             touch {output.contigs}
