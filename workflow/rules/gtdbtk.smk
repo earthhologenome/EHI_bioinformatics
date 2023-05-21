@@ -74,11 +74,11 @@ rule gtdbtk:
             --skip_ani_screen
 
             # Create a merged summary output for DRAM:
-            if [ -s "{params.outdir}/classify/gtdbtk.ar122.summary.tsv" ]
+            if [ -s "{params.outdir}/classify/gtdbtk.ar53.summary.tsv" ]
             then
-                sed '1d;' {params.outdir}/classify/gtdbtk.ar122.summary.tsv > {params.outdir}/ar122.tsv
-                cat {output.bac} {params.outdir}/ar122.tsv > {output.combined}
-            rm {params.outdir}/ar122.tsv
+                sed '1d;' {params.outdir}/classify/gtdbtk.ar53.summary.tsv > {params.outdir}/ar53.tsv
+                cat {output.bac} {params.outdir}/ar53.tsv > {output.combined}
+            rm {params.outdir}/ar53.tsv
 
             # Otherwise, just use the bacterial summary (if no archaeal bins)
             else
