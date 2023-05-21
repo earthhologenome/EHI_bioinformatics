@@ -51,14 +51,19 @@ rule metaWRAP_refinement:
             -c 50 \
             -x 10
 
-        # Rename metawrap bins to match coassembly group:
-        mv {params.outdir}/metawrap_50_10_bins.stats {output.stats}
+        # Rename output files, and sort metawrap by bin name
+        head -1 {params.outdir}/metawrap_50_10_bins.stats > {params.outdir}/mw_colnames.tsv
+        sed '1d;' {params.outdir}/metawrap_50_10_bins.stats | sort -k1,1 -t$'\t' > {params.outdir}/mw_sorted.tsv
+        cat {params.outdir}/mw_colnames.tsv {params.outdir}/mw_sorted.tsv > {params.outdir}/mw_sorted_col.tsv
+        mv {params.outdir}/mw_sorted_col.tsv {output.stats}
         mv {params.outdir}/metawrap_50_10_bins.contigs {output.contigmap}
         sed -i'' '2,$s/bin/{wildcards.EHA}_bin/g' {output.stats}
         sed -i'' 's/bin/{wildcards.EHA}_bin/g' {output.contigmap}
+
+        # Rename metawrap bins to match coassembly group:
         for bin in {params.outdir}/metawrap_50_10_bins/*.fa;
             do mv $bin ${{bin/bin./{wildcards.EHA}_bin.}};
-                done
+        done
 
         # Compress output bins
         pigz -p {threads} {params.outdir}/metawrap_50_10_bins/*.fa
