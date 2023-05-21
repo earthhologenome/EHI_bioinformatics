@@ -7,6 +7,11 @@ rule coverM_assembly:
             "{PRB}_{EHI}_{EHA}_refinement/",
             "{EHA}_metawrap_50_10_bins.stats",
             ),
+        contigmap=os.path.join(
+            config["workdir"],
+            "{PRB}_{EHI}_{EHA}_refinement/",
+            "{EHA}_metawrap_50_10_bins.contigs",
+            ),
         bam=os.path.join(
             config["workdir"], 
             "bams/", 
@@ -75,7 +80,7 @@ rule coverM_assembly:
 
 
             # Tarball files then \:
-            tar -cvzf {output.tarball} {output.coverm} {output.euk}
+            tar -cvzf {output.tarball} {output.coverm} {input.stats} {input.contigmap} {output.euk}
 
         fi
         """
