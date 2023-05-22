@@ -37,6 +37,10 @@ valid_combinations = set(
     (row["PR_batch"], row["EHI_number"], row["Assembly_code"]) for _, row in df.iterrows()
 )
 
+### Define the dynamic time estimates based on input file sizes
+
+
+
 ################################################################################
 ### Setup the desired outputs
 rule all:
