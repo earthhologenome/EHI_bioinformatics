@@ -76,3 +76,16 @@ include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
 include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
 include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
 include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
+
+# Error logging
+def send_email(subject, message, recipient):
+    bash_command = 'echo "{}" | mailx -s "{} has failed" {}'.format(message, subject, recipient)
+    shell(bash_command)
+
+def pipeline_failed(wildcards, input, output, log):
+    subject = "Pipeline Failed {config[abb]}"
+    message = "The pipeline failed for /projects/ehi/data/RUN/{config[abb]}"
+    recipient = "EMAIL_ADD"
+    send_email(subject, message, recipient)
+
+onerror: pipeline_failed
