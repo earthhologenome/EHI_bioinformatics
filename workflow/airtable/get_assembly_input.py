@@ -45,7 +45,7 @@ output_file_path = 'asb_input.tsv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
-    writer.writerow(['PR_batch', 'EHI_number', 'Assembly_code'])
+    writer.writerow(['PR_batch', 'EHI_number', 'Assembly_code', 'metagenomic_bases'])
 
     for record in records:
         # Get the values of the PR_batch and EHI_number lookup fields
@@ -63,5 +63,5 @@ with open(output_file_path, 'w', newline='') as tsvfile:
         ehi_number_value = ehi_number_response.json()['fields']['EHI_number']
 
         # Write the row to the TSV file
-        row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code']]
+        row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code'], record['fields']['metagenomic_bases']]
         writer.writerow(row)
