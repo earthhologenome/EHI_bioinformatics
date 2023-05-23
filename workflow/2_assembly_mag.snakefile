@@ -57,7 +57,7 @@ def estimate_time_assembly(wildcards):
     metagenomic_bases = row["metagenomic_bases"]
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_download = input_size_gb / 0.0275
+    estimate_time_assembly = input_size_gb / 0.0275
     return int(estimate_time_assembly)
 
 def estimate_time_assembly_mapping(wildcards):
@@ -68,7 +68,7 @@ def estimate_time_assembly_mapping(wildcards):
     metagenomic_bases = row["metagenomic_bases"]
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_download = input_size_gb / 0.13
+    estimate_time_assembly_mapping = input_size_gb / 0.13
     return int(estimate_time_assembly_mapping)
 
 def estimate_time_binning(wildcards):
@@ -79,7 +79,7 @@ def estimate_time_binning(wildcards):
     metagenomic_bases = row["metagenomic_bases"]
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_download = input_size_gb / 0.03
+    estimate_time_bining = input_size_gb / 0.03
     return int(estimate_time_bining)
 
 def estimate_time_coverm(wildcards):
@@ -90,7 +90,7 @@ def estimate_time_coverm(wildcards):
     metagenomic_bases = row["metagenomic_bases"]
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_download = input_size_gb / 2.5
+    estimate_time_coverm = input_size_gb / 2.5
     return int(estimate_time_coverm)
 
 def estimate_time_index_assembly(wildcards):
@@ -101,7 +101,7 @@ def estimate_time_index_assembly(wildcards):
     metagenomic_bases = row["metagenomic_bases"]
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_download = input_size_gb / 0.9
+    estimate_time_index_assembly = input_size_gb / 0.9
     return int(estimate_time_index_assembly)
 
 def estimate_time_gtdb(wildcards):
@@ -112,7 +112,7 @@ def estimate_time_gtdb(wildcards):
     metagenomic_bases = row["metagenomic_bases"]
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_download = input_size_gb / 0.03
+    estimate_time_gtdb = input_size_gb / 0.03
     return int(estimate_time_gtdb)
 
 def estimate_time_refinement(wildcards):
@@ -123,7 +123,7 @@ def estimate_time_refinement(wildcards):
     metagenomic_bases = row["metagenomic_bases"]
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_download = input_size_gb / 0.015
+    estimate_time_refinement = input_size_gb / 0.015
     return int(estimate_time_refinement)
 
 def estimate_time_upload_bam(wildcards):
@@ -134,7 +134,7 @@ def estimate_time_upload_bam(wildcards):
     metagenomic_bases = row["metagenomic_bases"]
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_download = input_size_gb / 2
+    estimate_time_upload_bam = input_size_gb / 2
     return int(estimate_time_upload_bam)
 
 ################################################################################
