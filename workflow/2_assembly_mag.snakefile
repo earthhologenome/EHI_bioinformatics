@@ -39,18 +39,6 @@ valid_combinations = set(
 
 ### Define the dynamic time estimates based on input file sizes
 
-def get_metagenomic_bases(wildcards):
-    row = df.loc[
-        (df["PR_batch"] == wildcards.PRB) &
-        (df["EHI_number"] == wildcards.EHI) &
-        (df["Assembly_code"] == wildcards.EHA)
-    ]
-    if len(row) == 1:
-        metagenomic_bases = row["metagenomic_bases"].values[0]
-        return metagenomic_bases
-    else:
-        raise ValueError("Error: Invalid combination of wildcards!")
-
 def estimate_time_download(metagenomic_bases):
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
