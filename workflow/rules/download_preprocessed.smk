@@ -25,7 +25,7 @@ rule download_preprocessed:
     resources:
         load=8,
         mem_gb=8,
-        time=lambda wildcards: estimate_time_download(get_metagenomic_bases(wildcards))
+        time=estimate_time_download
     benchmark:
         os.path.join(config["logdir"] + "/download_preprocessed_benchmark_{PRB}_{EHI}.tsv")
     message:
