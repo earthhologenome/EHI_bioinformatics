@@ -40,7 +40,7 @@ valid_combinations = set(
 ### Define the dynamic time estimates based on input file sizes
 
 def get_metagenomic_bases(wildcards):
-    valid_combination = (wildcards.PRB, wildcards.EHI, wildcards.ASSEMBLY, wildcards.metagenomic_bases)
+    valid_combination = (wildcards.PRB, wildcards.EHI, wildcards.EHA, wildcards.metagenomic_bases)
     if valid_combination in valid_combinations:
         return wildcards.metagenomic_bases
     else:
