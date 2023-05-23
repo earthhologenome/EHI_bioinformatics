@@ -20,7 +20,6 @@
 
 ### Setup sample inputs and config
 
-
 configfile: "assembly_mag_config.yaml"
 
 import glob
@@ -39,18 +38,17 @@ valid_combinations = set(
 
 ### Define the dynamic time estimates based on input file sizes
 
-def estimate_time_download(metagenomic_bases):
+def estimate_time_download(wildcards):
+    row = df[
+        (df["PR_batch"] == wildcards.PRB) &
+        (df["EHI_number"] == wildcards.EHI)
+    ].iloc[0]
+    metagenomic_bases = row["metagenomic_bases"]
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    # Multiply by 2 and set time based on 30 MB/s download speed
+    #         # Multiply by 2 and set time based on 30 MB/s download speed
     estimate_time_download = input_size_gb / 1.4
     return int(estimate_time_download)
-
-def estimate_time_assembly(metagenomic_bases):
-    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    # Multiply by 2 and set time based on 30 MB/s download speed
-    estimate_time_download = input_size_gb / 0.0275
-    return int(estimate_time_assembly)
 
 
 ################################################################################
