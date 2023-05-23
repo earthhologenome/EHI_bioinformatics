@@ -78,3 +78,8 @@ include: os.path.join(config["codedir"], "rules/coverm_coassembly.smk")
 include: os.path.join(config["codedir"], "rules/gtdbtk_coassembly.smk")
 include: os.path.join(config["codedir"], "rules/coassembly_summary.smk")
 include: os.path.join(config["codedir"], "rules/log_coASB_finish.smk")
+
+onerror:
+    shell("""
+            echo "/projects/ehi/data/RUN/{config[abb]}" | mailx -s "{config[abb]} ERROR" EMAIL_ADD
+          """)

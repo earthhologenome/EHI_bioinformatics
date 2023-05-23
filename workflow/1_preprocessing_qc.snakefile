@@ -114,4 +114,7 @@ include: os.path.join(config["codedir"], "rules/upload_prb.smk")
 include: os.path.join(config["codedir"], "rules/prb_summary.smk")
 
 
-
+onerror:
+    shell("""
+            echo "/projects/ehi/data/RUN/{config[prb]}" | mailx -s "{config[prb]} ERROR" EMAIL_ADD
+          """)
