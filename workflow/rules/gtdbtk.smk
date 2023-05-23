@@ -34,8 +34,8 @@ rule gtdbtk:
     threads:
         16
     resources:
-        mem_gb=96,
-        time='08:00:00'
+        mem_gb=72,
+        time=estimate_time_gtdb
     benchmark:
         os.path.join(config["logdir"] + "/gtdb-tk_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:

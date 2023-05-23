@@ -37,7 +37,7 @@ valid_combinations = set(
 )
 
 ### Define the dynamic time estimates based on input file sizes
-
+## values are derived from benchmarks (gbp / time required)
 def estimate_time_download(wildcards):
     row = df[
         (df["PR_batch"] == wildcards.PRB) &
@@ -46,10 +46,96 @@ def estimate_time_download(wildcards):
     metagenomic_bases = row["metagenomic_bases"]
     # convert from bytes to gigabytes
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    #         # Multiply by 2 and set time based on 30 MB/s download speed
     estimate_time_download = input_size_gb / 1.4
     return int(estimate_time_download)
 
+def estimate_time_assembly(wildcards):
+    row = df[
+        (df["PR_batch"] == wildcards.PRB) &
+        (df["EHI_number"] == wildcards.EHI)
+    ].iloc[0]
+    metagenomic_bases = row["metagenomic_bases"]
+    # convert from bytes to gigabytes
+    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    estimate_time_download = input_size_gb / 0.0275
+    return int(estimate_time_assembly)
+
+def estimate_time_assembly_mapping(wildcards):
+    row = df[
+        (df["PR_batch"] == wildcards.PRB) &
+        (df["EHI_number"] == wildcards.EHI)
+    ].iloc[0]
+    metagenomic_bases = row["metagenomic_bases"]
+    # convert from bytes to gigabytes
+    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    estimate_time_download = input_size_gb / 0.13
+    return int(estimate_time_assembly_mapping)
+
+def estimate_time_binning(wildcards):
+    row = df[
+        (df["PR_batch"] == wildcards.PRB) &
+        (df["EHI_number"] == wildcards.EHI)
+    ].iloc[0]
+    metagenomic_bases = row["metagenomic_bases"]
+    # convert from bytes to gigabytes
+    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    estimate_time_download = input_size_gb / 0.03
+    return int(estimate_time_bining)
+
+def estimate_time_coverm(wildcards):
+    row = df[
+        (df["PR_batch"] == wildcards.PRB) &
+        (df["EHI_number"] == wildcards.EHI)
+    ].iloc[0]
+    metagenomic_bases = row["metagenomic_bases"]
+    # convert from bytes to gigabytes
+    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    estimate_time_download = input_size_gb / 2.5
+    return int(estimate_time_coverm)
+
+def estimate_time_index_assembly(wildcards):
+    row = df[
+        (df["PR_batch"] == wildcards.PRB) &
+        (df["EHI_number"] == wildcards.EHI)
+    ].iloc[0]
+    metagenomic_bases = row["metagenomic_bases"]
+    # convert from bytes to gigabytes
+    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    estimate_time_download = input_size_gb / 0.9
+    return int(estimate_time_index_assembly)
+
+def estimate_time_gtdb(wildcards):
+    row = df[
+        (df["PR_batch"] == wildcards.PRB) &
+        (df["EHI_number"] == wildcards.EHI)
+    ].iloc[0]
+    metagenomic_bases = row["metagenomic_bases"]
+    # convert from bytes to gigabytes
+    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    estimate_time_download = input_size_gb / 0.03
+    return int(estimate_time_gtdb)
+
+def estimate_time_refinement(wildcards):
+    row = df[
+        (df["PR_batch"] == wildcards.PRB) &
+        (df["EHI_number"] == wildcards.EHI)
+    ].iloc[0]
+    metagenomic_bases = row["metagenomic_bases"]
+    # convert from bytes to gigabytes
+    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    estimate_time_download = input_size_gb / 0.015
+    return int(estimate_time_refinement)
+
+def estimate_time_upload_bam(wildcards):
+    row = df[
+        (df["PR_batch"] == wildcards.PRB) &
+        (df["EHI_number"] == wildcards.EHI)
+    ].iloc[0]
+    metagenomic_bases = row["metagenomic_bases"]
+    # convert from bytes to gigabytes
+    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    estimate_time_download = input_size_gb / 2
+    return int(estimate_time_upload_bam)
 
 ################################################################################
 ### Setup the desired outputs

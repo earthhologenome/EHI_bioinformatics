@@ -24,10 +24,10 @@ rule metaWRAP_refinement:
         binning=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_binning"),
         outdir=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement"),
         stats_dir=directory(os.path.join(config["workdir"], "{EHA}_stats/"))
-    threads: 16
+    threads: 4
     resources:
-        mem_gb=128,
-        time="16:00:00",
+        mem_gb=164,
+        time=estimate_time_refinement,
     benchmark:
         os.path.join(config["logdir"] + "/refinement_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
