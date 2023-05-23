@@ -63,5 +63,6 @@ with open(output_file_path, 'w', newline='') as tsvfile:
         ehi_number_value = ehi_number_response.json()['fields']['EHI_number']
 
         # Write the row to the TSV file
-        row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code'], 'metagenomic_bases']
+        row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code'], record['fields']['metagenomic_bases']]
+        row[-1] = str(row[-1][0])
         writer.writerow(row)

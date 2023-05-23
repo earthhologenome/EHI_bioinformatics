@@ -12,8 +12,8 @@ rule assembly:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 16
     resources:
-        mem_gb=128,
-        time="16:00:00",
+        mem_gb=72,
+        time=lambda wildcards: estimate_time_assembly(get_metagenomic_bases(wildcards))
     benchmark:
         os.path.join(config["logdir"] + "/assembly_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:

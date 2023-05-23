@@ -34,11 +34,30 @@ df = pd.read_csv("asb_input.tsv", sep="\t")
 
 # Use set to create a list of valid combinations of wildcards. Note that 'ID' = EHA number.
 valid_combinations = set(
-    (row["PR_batch"], row["EHI_number"], row["Assembly_code"]) for _, row in df.iterrows()
+    (row["PR_batch"], row["EHI_number"], row["Assembly_code"], row["metagenomic_bases"]) for _, row in df.iterrows()
 )
 
 ### Define the dynamic time estimates based on input file sizes
 
+def get_metagenomic_bases(wildcards):
+    valid_combination = (wildcards.PRB, wildcards.EHI, wildcards.ASSEMBLY, wildcards.metagenomic_bases)
+    if valid_combination in valid_combinations:
+        return wildcards.metagenomic_bases
+    else:
+        raise ValueError("Invalid combination of wildcards!")
+
+def estimate_time_download(metagenomic_bases):
+    # convert from bytes to gigabytes
+    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    # Multiply by 2 and set time based on 30 MB/s download speed
+    estimate_time_download = input_size_gb / 1.4
+    return int(estimate_time_download)
+
+def estimate_time_assembly(metagenomic_bases):
+    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    # Multiply by 2 and set time based on 30 MB/s download speed
+    estimate_time_download = input_size_gb / 0.0275
+    return int(estimate_time_assembly)
 
 
 ################################################################################
