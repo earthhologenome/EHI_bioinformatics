@@ -27,7 +27,7 @@ headers = {
 # Set up the query parameters to filter the records
 query_params = {
     'filterByFormula': f"{{AB_batch}} = '{args.abb}'",
-    'fields': ['ID', 'PR_batch', 'EHI_number', 'Assembly_code']
+    'fields': ['ID', 'PR_batch', 'EHI_number', 'Assembly_code', 'metagenomic_bases']
 
 }
 
