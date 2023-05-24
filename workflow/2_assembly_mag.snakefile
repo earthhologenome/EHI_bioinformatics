@@ -37,50 +37,7 @@ valid_combinations = set(
 )
 
 
-################################################################################
-### Setup the desired outputs
-rule all:
-    input:
-        os.path.join(
-                config["workdir"], 
-                "ERDA_folder_created"
-        ),
-        expand(
-            os.path.join(
-                config["workdir"], "{combo[0]}_{combo[1]}_{combo[2]}_QUAST"
-            ),
-            combo=valid_combinations,
-        ),
-        expand(
-            os.path.join(
-                config["workdir"], "{combo[0]}_{combo[1]}_{combo[2]}_uploaded"
-            ),
-            combo=valid_combinations,
-        ),
-        expand(
-            os.path.join(config["workdir"], "{abb}_pipeline_finished"),
-            abb=config["abb"],
-        )
-
-
-include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
-include: os.path.join(config["codedir"], "rules/download_preprocessed.smk")
-include: os.path.join(config["codedir"], "rules/individual_assembly.smk")
-include: os.path.join(config["codedir"], "rules/QUAST.smk")
-include: os.path.join(config["codedir"], "rules/index_assembly.smk")
-include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
-include: os.path.join(config["codedir"], "rules/upload_asb_bam.smk")
-include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
-include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
-include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
-include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
-include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
-include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
-
-
 ## Set up dynamic times for rules based on input data:
-
-### Define the dynamic time estimates based on input file sizes
 ## values are derived from benchmarks (gbp / time required) see URL TO GITHUB MD *********
 def estimate_time_download(wildcards):
     row = df[
@@ -107,7 +64,7 @@ def estimate_time_assembly(wildcards):
     estimate_time_assembly = -217.6446692 + (13.6639860 * diversity) - (23.1672386 * singlem_fraction) + (11.5142151 * input_size_gb) - (0.5745956 * nonpareil_estimated_coverage)
     return int(estimate_time_assembly)
 
-def estimate_time_assembly_attempt(wildcards, attempt)
+def estimate_time_assembly_attempt(wildcards, attempt):
     return attempt * estimate_time_assembly
 
 def estimate_time_assembly_mapping(wildcards):
@@ -186,6 +143,49 @@ def estimate_time_upload_bam(wildcards):
     input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
     estimate_time_upload_bam = input_size_gb / 2
     return int(estimate_time_upload_bam)
+
+
+
+
+################################################################################
+### Setup the desired outputs
+rule all:
+    input:
+        os.path.join(
+                config["workdir"], 
+                "ERDA_folder_created"
+        ),
+        expand(
+            os.path.join(
+                config["workdir"], "{combo[0]}_{combo[1]}_{combo[2]}_QUAST"
+            ),
+            combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(
+                config["workdir"], "{combo[0]}_{combo[1]}_{combo[2]}_uploaded"
+            ),
+            combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(config["workdir"], "{abb}_pipeline_finished"),
+            abb=config["abb"],
+        )
+
+
+include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
+include: os.path.join(config["codedir"], "rules/download_preprocessed.smk")
+include: os.path.join(config["codedir"], "rules/individual_assembly.smk")
+include: os.path.join(config["codedir"], "rules/QUAST.smk")
+include: os.path.join(config["codedir"], "rules/index_assembly.smk")
+include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
+include: os.path.join(config["codedir"], "rules/upload_asb_bam.smk")
+include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
+include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
+include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
+include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
+include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
+include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
 
 
 
