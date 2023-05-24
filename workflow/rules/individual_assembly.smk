@@ -13,7 +13,7 @@ rule assembly:
     threads: 16
     resources:
         mem_gb=72,
-        time=estimate_time_assembly_attempt
+        time=estimate_time_assembly * attempt
     benchmark:
         os.path.join(config["logdir"] + "/assembly_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
