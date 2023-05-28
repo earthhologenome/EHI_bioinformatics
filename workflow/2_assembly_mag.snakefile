@@ -39,111 +39,75 @@ valid_combinations = set(
 
 ## Set up dynamic times for rules based on input data:
 ## values are derived from benchmarks (gbp / time required) see URL TO GITHUB MD *********
-def estimate_time_download(wildcards):
-    row = df[
+def get_row(wildcards):
+    return df[
         (df["PR_batch"] == wildcards.PRB) &
         (df["EHI_number"] == wildcards.EHI)
     ].iloc[0]
-    metagenomic_bases = row["metagenomic_bases"]
+
+def calculate_input_size_gb(metagenomic_bases):
     # convert from bytes to gigabytes
-    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    return metagenomic_bases / (1024 * 1024 * 1024)
+
+## Rule-specific time estimations
+## This also includes retries by attempt
+def estimate_time_download(wildcards):
+    row = get_row(wildcards)
+    input_size_gb = calculate_input_size_gb(row["metagenomic_bases"])
     estimate_time_download = input_size_gb / 1.4
-    return int(estimate_time_download)
+    return attempt * int(estimate_time_download)
 
 def estimate_time_assembly(wildcards):
-    row = df[
-        (df["PR_batch"] == wildcards.PRB) &
-        (df["EHI_number"] == wildcards.EHI)
-    ].iloc[0]
+    row = get_row(wildcards)
     metagenomic_bases = row["metagenomic_bases"]
     singlem_fraction = row["singlem_fraction"]
     diversity = row["diversity"]
     nonpareil_estimated_coverage = row["nonpareil_estimated_coverage"]
-    # convert from bytes to gigabytes
-    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
+    input_size_gb = calculate_input_size_gb(metagenomic_bases)
     estimate_time_assembly = -217.6446692 + (13.6639860 * diversity) - (23.1672386 * singlem_fraction) + (11.5142151 * input_size_gb) - (0.5745956 * nonpareil_estimated_coverage)
-    return int(estimate_time_assembly)
+    return attempt * int(estimate_time_assembly)
 
-def estimate_time_assembly_attempt(wildcards, attempt):
-    return attempt * estimate_time_assembly
+# def estimate_time_assembly_attempt(wildcards, attempt):
+#     return attempt * estimate_time_assembly(wildcards)
 
-def estimate_time_assembly_mapping(wildcards):
-    row = df[
-        (df["PR_batch"] == wildcards.PRB) &
-        (df["EHI_number"] == wildcards.EHI)
-    ].iloc[0]
-    metagenomic_bases = row["metagenomic_bases"]
-    # convert from bytes to gigabytes
-    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_assembly_mapping = input_size_gb / 0.13
-    return int(estimate_time_assembly_mapping)
+# def estimate_time_assembly_mapping(wildcards):
+#     row = get_row(wildcards)
+#     input_size_gb = calculate_input_size_gb(row["metagenomic_bases"])
+#     estimate_time_assembly_mapping = input_size_gb / 0.13
+#     return int(estimate_time_assembly_mapping)
 
-def estimate_time_binning(wildcards):
-    row = df[
-        (df["PR_batch"] == wildcards.PRB) &
-        (df["EHI_number"] == wildcards.EHI)
-    ].iloc[0]
-    metagenomic_bases = row["metagenomic_bases"]
-    # convert from bytes to gigabytes
-    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_bining = input_size_gb / 0.03
-    return int(estimate_time_bining)
+# def estimate_time_assembly_mapping_attempt(wildcards, attempt):
+#     return attempt * estimate_time_assembly_mapping(wildcards)
 
-def estimate_time_coverm(wildcards):
-    row = df[
-        (df["PR_batch"] == wildcards.PRB) &
-        (df["EHI_number"] == wildcards.EHI)
-    ].iloc[0]
-    metagenomic_bases = row["metagenomic_bases"]
-    # convert from bytes to gigabytes
-    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_coverm = input_size_gb / 2.5
-    return int(estimate_time_coverm)
+# def estimate_time_binning(wildcards):
 
-def estimate_time_index_assembly(wildcards):
-    row = df[
-        (df["PR_batch"] == wildcards.PRB) &
-        (df["EHI_number"] == wildcards.EHI)
-    ].iloc[0]
-    metagenomic_bases = row["metagenomic_bases"]
-    # convert from bytes to gigabytes
-    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_index_assembly = input_size_gb / 0.9
-    return int(estimate_time_index_assembly)
+# def estimate_time_binning_attempt(wildcards, attempt):
+#     return attempt * estimate_time_binning(wildcards)
 
-def estimate_time_gtdb(wildcards):
-    row = df[
-        (df["PR_batch"] == wildcards.PRB) &
-        (df["EHI_number"] == wildcards.EHI)
-    ].iloc[0]
-    metagenomic_bases = row["metagenomic_bases"]
-    # convert from bytes to gigabytes
-    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_gtdb = input_size_gb / 0.03
-    return int(estimate_time_gtdb)
+# def estimate_time_coverm(wildcards):
 
-def estimate_time_refinement(wildcards):
-    row = df[
-        (df["PR_batch"] == wildcards.PRB) &
-        (df["EHI_number"] == wildcards.EHI)
-    ].iloc[0]
-    metagenomic_bases = row["metagenomic_bases"]
-    # convert from bytes to gigabytes
-    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_refinement = input_size_gb / 0.015
-    return int(estimate_time_refinement)
+# def estimate_time_coverm_attempt(wildcards, attempt):
+#     return attempt * estimate_time_coverm(wildcards)
 
-def estimate_time_upload_bam(wildcards):
-    row = df[
-        (df["PR_batch"] == wildcards.PRB) &
-        (df["EHI_number"] == wildcards.EHI)
-    ].iloc[0]
-    metagenomic_bases = row["metagenomic_bases"]
-    # convert from bytes to gigabytes
-    input_size_gb = metagenomic_bases / (1024 * 1024 * 1024)
-    estimate_time_upload_bam = input_size_gb / 2
-    return int(estimate_time_upload_bam)
+# def estimate_time_index_assembly(wildcards):
 
+# def estimate_time_index_assembly_attempt(wildcards, attempt):
+#     return attempt * estimate_time_index_assembly(wildcards)
+
+# def estimate_time_gtdb(wildcards):
+
+# def estimate_time_gtdb_attempt(wildcards, attempt):
+#     return attempt * estimate_time_gtdb(wildcards)
+
+# def estimate_time_refinement(wildcards):
+
+# def estimate_time_refinement_attempt(wildcards, attempt):
+#     return attempt * estimate_time_refinement(wildcards)
+
+# def estimate_time_upload_bam(wildcards):
+
+# def estimate_time_upload_bam_attempt(wildcards, attempt):
+#     return attempt * estimate_time_upload_bam(wildcards)
 
 
 
