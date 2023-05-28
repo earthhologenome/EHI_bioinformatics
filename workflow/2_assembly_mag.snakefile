@@ -51,7 +51,7 @@ def calculate_input_size_gb(metagenomic_bases):
 
 ## Rule-specific time estimations
 ## This also includes retries by attempt
-def estimate_time_download(wildcards):
+def estimate_time_download(wildcards, attempt):
     row = get_row(wildcards)
     input_size_gb = calculate_input_size_gb(row["metagenomic_bases"])
     estimate_time_download = input_size_gb / 1.4
