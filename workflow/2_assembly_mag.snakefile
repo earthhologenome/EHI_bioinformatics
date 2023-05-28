@@ -57,7 +57,7 @@ def estimate_time_download(wildcards):
     estimate_time_download = input_size_gb / 1.4
     return attempt * int(estimate_time_download)
 
-def estimate_time_assembly(wildcards):
+def estimate_time_assembly(wildcards, attempt):
     row = get_row(wildcards)
     metagenomic_bases = row["metagenomic_bases"]
     singlem_fraction = row["singlem_fraction"]
