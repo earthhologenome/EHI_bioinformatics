@@ -67,6 +67,9 @@ def estimate_time_assembly(wildcards, attempt):
     estimate_time_assembly = -217.6446692 + (13.6639860 * diversity) - (23.1672386 * singlem_fraction) + (11.5142151 * gbp_post_mapping) - (0.5745956 * nonpareil_estimated_coverage)
     return attempt * int(estimate_time_assembly)
 
+def estimate_time_quast(wildcards, attempt):
+    return attempt * 5
+
 def estimate_time_assembly_mapping(wildcards, attempt):
     row = get_row(wildcards)
     metagenomic_bases = row["metagenomic_bases"]

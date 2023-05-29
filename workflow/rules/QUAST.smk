@@ -10,7 +10,7 @@ rule QUAST:
     threads: 4
     resources:
         mem_gb=32,
-        time="00:30:00",
+        time=estimate_time_quast,
     message:
         "Running -QUAST on {wildcards.EHA} coassembly"
     shell:
