@@ -92,6 +92,9 @@ def estimate_time_binning(wildcards, attempt):
 def estimate_time_refinement(wildcards, attempt):
     return attempt * 180
 
+def estimate_time_gtdb(wildcards, attempt):
+    return attempt * 90
+
 def estimate_time_upload_bam(wildcards, attempt):
     return attempt * 5
 
