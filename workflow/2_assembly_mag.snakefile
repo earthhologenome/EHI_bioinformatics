@@ -63,52 +63,37 @@ def estimate_time_assembly(wildcards, attempt):
     singlem_fraction = row["singlem_fraction"]
     diversity = row["diversity"]
     nonpareil_estimated_coverage = row["nonpareil_estimated_coverage"]
-    input_size_gb = calculate_input_size_gb(metagenomic_bases)
-    estimate_time_assembly = -217.6446692 + (13.6639860 * diversity) - (23.1672386 * singlem_fraction) + (11.5142151 * input_size_gb) - (0.5745956 * nonpareil_estimated_coverage)
+    gbp_post_mapping = calculate_input_size_gb(metagenomic_bases)
+    estimate_time_assembly = -217.6446692 + (13.6639860 * diversity) - (23.1672386 * singlem_fraction) + (11.5142151 * gbp_post_mapping) - (0.5745956 * nonpareil_estimated_coverage)
     return attempt * int(estimate_time_assembly)
 
-# def estimate_time_assembly_attempt(wildcards, attempt):
-#     return attempt * estimate_time_assembly(wildcards)
+def estimate_time_assembly_mapping(wildcards, attempt):
+    row = get_row(wildcards)
+    metagenomic_bases = row["metagenomic_bases"]
+    singlem_fraction = row["singlem_fraction"]
+    diversity = row["diversity"]
+    nonpareil_estimated_coverage = row["nonpareil_estimated_coverage"]
+    C = row["C"]
+    gbp_post_mapping = calculate_input_size_gb(row["metagenomic_bases"])
+    estimate_time_assembly_mapping = -38.41 + (0.91 * diversity) - (5.29 * singlem_fraction) + (4.15 * gbp_post_mapping) - (0.35 * nonpareil_estimated_coverage) + (28.43 * C)
+    return attempt * int(estimate_time_assembly_mapping)
 
-# def estimate_time_assembly_mapping(wildcards):
-#     row = get_row(wildcards)
-#     input_size_gb = calculate_input_size_gb(row["metagenomic_bases"])
-#     estimate_time_assembly_mapping = input_size_gb / 0.13
-#     return int(estimate_time_assembly_mapping)
+def estimate_time_binning(wildcards, attempt):
+    row = get_row(wildcards)
+    metagenomic_bases = row["metagenomic_bases"]
+    singlem_fraction = row["singlem_fraction"]
+    diversity = row["diversity"]
+    nonpareil_estimated_coverage = row["nonpareil_estimated_coverage"]
+    C = row["C"]
+    gbp_post_mapping = calculate_input_size_gb(row["metagenomic_bases"])
+    estimate_time_binning = -497.24 + (20.77 * diversity) + (13.46 * singlem_fraction) + (7.00 * gbp_post_mapping) - (1.62 * nonpareil_estimated_coverage) + (144.45 * C)
+    return attempt * int(estimate_time_binning)
 
-# def estimate_time_assembly_mapping_attempt(wildcards, attempt):
-#     return attempt * estimate_time_assembly_mapping(wildcards)
+def estimate_time_refinement(wildcards, attempt):
+    return attempt * 180
 
-# def estimate_time_binning(wildcards):
-
-# def estimate_time_binning_attempt(wildcards, attempt):
-#     return attempt * estimate_time_binning(wildcards)
-
-# def estimate_time_coverm(wildcards):
-
-# def estimate_time_coverm_attempt(wildcards, attempt):
-#     return attempt * estimate_time_coverm(wildcards)
-
-# def estimate_time_index_assembly(wildcards):
-
-# def estimate_time_index_assembly_attempt(wildcards, attempt):
-#     return attempt * estimate_time_index_assembly(wildcards)
-
-# def estimate_time_gtdb(wildcards):
-
-# def estimate_time_gtdb_attempt(wildcards, attempt):
-#     return attempt * estimate_time_gtdb(wildcards)
-
-# def estimate_time_refinement(wildcards):
-
-# def estimate_time_refinement_attempt(wildcards, attempt):
-#     return attempt * estimate_time_refinement(wildcards)
-
-# def estimate_time_upload_bam(wildcards):
-
-# def estimate_time_upload_bam_attempt(wildcards, attempt):
-#     return attempt * estimate_time_upload_bam(wildcards)
-
+def estimate_time_upload_bam(wildcards, attempt):
+    return attempt * 5
 
 
 ################################################################################
@@ -125,31 +110,31 @@ rule all:
             ),
             combo=valid_combinations,
         ),
-#         expand(
-#             os.path.join(
-#                 config["workdir"], "{combo[0]}_{combo[1]}_{combo[2]}_uploaded"
-#             ),
-#             combo=valid_combinations,
-#         ),
-#         expand(
-#             os.path.join(config["workdir"], "{abb}_pipeline_finished"),
-#             abb=config["abb"],
-#         )
+        expand(
+            os.path.join(
+                config["workdir"], "{combo[0]}_{combo[1]}_{combo[2]}_uploaded"
+            ),
+            combo=valid_combinations,
+        ),
+        expand(
+            os.path.join(config["workdir"], "{abb}_pipeline_finished"),
+            abb=config["abb"],
+        )
 
 
 include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
 include: os.path.join(config["codedir"], "rules/download_preprocessed.smk")
 include: os.path.join(config["codedir"], "rules/individual_assembly.smk")
 include: os.path.join(config["codedir"], "rules/QUAST.smk")
-# include: os.path.join(config["codedir"], "rules/index_assembly.smk")
-# include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
-# include: os.path.join(config["codedir"], "rules/upload_asb_bam.smk")
-# include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
-# include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
-# include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
-# include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
-# include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
-# include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
+include: os.path.join(config["codedir"], "rules/index_assembly.smk")
+include: os.path.join(config["codedir"], "rules/assembly_mapping.smk")
+include: os.path.join(config["codedir"], "rules/upload_asb_bam.smk")
+include: os.path.join(config["codedir"], "rules/metawrap_binning.smk")
+include: os.path.join(config["codedir"], "rules/metawrap_refinement.smk")
+include: os.path.join(config["codedir"], "rules/coverm_assembly.smk")
+include: os.path.join(config["codedir"], "rules/gtdbtk.smk")
+include: os.path.join(config["codedir"], "rules/assembly_summary.smk")
+include: os.path.join(config["codedir"], "rules/log_ASB_finish.smk")
 
 
 

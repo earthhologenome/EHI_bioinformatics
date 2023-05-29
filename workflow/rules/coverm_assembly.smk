@@ -44,7 +44,7 @@ rule coverM_assembly:
     resources:
         load=1,
         mem_gb=32,
-        time=estimate_time_coverm,
+        time="00:05:00",
     benchmark:
         os.path.join(config["logdir"] + "/coverm_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
