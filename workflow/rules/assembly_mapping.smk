@@ -23,7 +23,7 @@ rule assembly_mapping:
     threads: 8
     resources:
         mem_gb=48,
-        time="03:00:00",
+        time=estimate_time_assembly_mapping,
     benchmark:
         os.path.join(config["logdir"] + "/assembly_mapping_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:

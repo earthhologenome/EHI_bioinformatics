@@ -53,7 +53,7 @@ rule assembly_summary:
     resources:
         load=8,
         mem_gb=16,
-        time='01:30:00'
+        time='00:45:00'
     message:
         "Creating final assembly summary table for {wildcards.EHA}, uploading files to ERDA"
     shell:
