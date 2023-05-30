@@ -63,7 +63,7 @@ def estimate_time_assembly(wildcards, attempt):
     singlem_fraction = row["singlem_fraction"]
     diversity = row["diversity"]
     gbp_post_mapping = calculate_input_size_gb(metagenomic_bases)
-    estimate_time_assembly = --220.41 + (15.00 * diversity) - (56.77 * singlem_fraction) + (11.35 * gbp_post_mapping)
+    estimate_time_assembly = -220.41 + (15.00 * diversity) - (56.77 * singlem_fraction) + (11.35 * gbp_post_mapping)
     return attempt * int(estimate_time_assembly)
 
 def estimate_time_quast(wildcards, attempt):
