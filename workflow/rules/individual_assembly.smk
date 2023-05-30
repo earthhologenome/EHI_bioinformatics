@@ -39,7 +39,7 @@ rule assembly:
             sed -i 's/ /-/g' {output}
 
 
-        if statement for situations where the assembly is too small to continue binning
+        # if statement for situations where the assembly is too small to continue binning
         if [ $(( $(stat -c '%s' {output}) / 1024 / 1024 )) -lt 50 ]
         then
             touch {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_uploaded
