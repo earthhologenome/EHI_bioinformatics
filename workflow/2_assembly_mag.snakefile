@@ -33,7 +33,7 @@ df = pd.read_csv("asb_input.tsv", sep="\t")
 
 # Use set to create a list of valid combinations of wildcards. Note that 'ID' = EHA number.
 valid_combinations = set(
-    (row["PR_batch"], row["EHI_number"], row["Assembly_code"], row["metagenomic_bases"], row["singlem_fraction"], row["diversity"], row["nonpareil_estimated_coverage"], row["C"]) for _, row in df.iterrows()
+    (row["PR_batch"], row["EHI_number"], row["Assembly_code"], row["metagenomic_bases"], row["singlem_fraction"], row["diversity"], row["C"]) for _, row in df.iterrows()
 )
 
 
@@ -62,9 +62,8 @@ def estimate_time_assembly(wildcards, attempt):
     metagenomic_bases = row["metagenomic_bases"]
     singlem_fraction = row["singlem_fraction"]
     diversity = row["diversity"]
-    nonpareil_estimated_coverage = row["nonpareil_estimated_coverage"]
     gbp_post_mapping = calculate_input_size_gb(metagenomic_bases)
-    estimate_time_assembly = -217.64 + (13.66 * diversity) - (23.16 * singlem_fraction) + (11.51 * gbp_post_mapping) - (0.57 * nonpareil_estimated_coverage)
+    estimate_time_assembly = --220.41 + (15.00 * diversity) - (56.77 * singlem_fraction) + (11.35 * gbp_post_mapping)
     return attempt * int(estimate_time_assembly)
 
 def estimate_time_quast(wildcards, attempt):
@@ -75,10 +74,9 @@ def estimate_time_assembly_mapping(wildcards, attempt):
     metagenomic_bases = row["metagenomic_bases"]
     singlem_fraction = row["singlem_fraction"]
     diversity = row["diversity"]
-    nonpareil_estimated_coverage = row["nonpareil_estimated_coverage"]
     C = row["C"]
     gbp_post_mapping = calculate_input_size_gb(row["metagenomic_bases"])
-    estimate_time_assembly_mapping = -38.41 + (0.91 * diversity) - (5.29 * singlem_fraction) + (4.15 * gbp_post_mapping) - (0.35 * nonpareil_estimated_coverage) + (28.43 * C)
+    estimate_time_assembly_mapping = -59.69 + (2.14 * diversity) - (0.016 * singlem_fraction) + (4.34 * gbp_post_mapping) + (22.22 * C)
     return attempt * int(estimate_time_assembly_mapping)
 
 def estimate_time_binning(wildcards, attempt):
@@ -89,7 +87,7 @@ def estimate_time_binning(wildcards, attempt):
     nonpareil_estimated_coverage = row["nonpareil_estimated_coverage"]
     C = row["C"]
     gbp_post_mapping = calculate_input_size_gb(row["metagenomic_bases"])
-    estimate_time_binning = -497.24 + (20.77 * diversity) + (13.46 * singlem_fraction) + (7.00 * gbp_post_mapping) - (1.62 * nonpareil_estimated_coverage) + (144.45 * C)
+    estimate_time_binning = -595.79 + (25.59 * diversity) - (0.18 * singlem_fraction) + (5.72 * gbp_post_mapping) + (169.88 * C)
     return attempt * int(estimate_time_binning)
 
 def estimate_time_refinement(wildcards, attempt):
