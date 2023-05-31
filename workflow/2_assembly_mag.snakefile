@@ -54,7 +54,7 @@ def calculate_input_size_gb(metagenomic_bases):
 def estimate_time_download(wildcards, attempt):
     row = get_row(wildcards)
     input_size_gb = calculate_input_size_gb(row["metagenomic_bases"])
-    estimate_time_download = input_size_gb / 1.4
+    estimate_time_download = (input_size_gb / 1.4) + 1
     return attempt * int(estimate_time_download)
 
 def estimate_time_assembly(wildcards, attempt):
