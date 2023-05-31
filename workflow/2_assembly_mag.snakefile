@@ -63,6 +63,7 @@ def estimate_time_assembly(wildcards, attempt):
     metagenomic_bases = row["metagenomic_bases"]
     singlem_fraction = row["singlem_fraction"]
     diversity = row["diversity"]
+    C = row["C"]
     gbp_post_mapping = calculate_input_size_gb(metagenomic_bases)
     estimate_time_assembly = -112.01 + (11.10 * diversity) - (51.77 * singlem_fraction) + (12.72 * gbp_post_mapping) - (53.05 * C)
     estimate_time_assembly = max(estimate_time_assembly, 20)
