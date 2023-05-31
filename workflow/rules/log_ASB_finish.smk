@@ -33,6 +33,12 @@ rule log_finish:
             do mv $mag {config[magdir]}/;
         done
 
+        # Upload MAGs and annotations to ERDA
+        lftp sftp://erda -e "mirror -R {config[magdir]} /EarthHologenomeInitiative/Data/MAG/; bye"
+
+        # Clean up
+        rm -r {config[magdir]}/*
+
         # Clean up
         rm -r {config[workdir]}/*
 
