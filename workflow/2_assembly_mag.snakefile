@@ -54,7 +54,8 @@ def calculate_input_size_gb(metagenomic_bases):
 def estimate_time_download(wildcards, attempt):
     row = get_row(wildcards)
     input_size_gb = calculate_input_size_gb(row["metagenomic_bases"])
-    estimate_time_download = input_size_gb / 1.4
+    estimate_time_download = (input_size_gb / 1.4)
+    estimate_time_download = max(estimate_time_download, 2)
     return attempt * int(estimate_time_download)
 
 def estimate_time_assembly(wildcards, attempt):
@@ -62,8 +63,10 @@ def estimate_time_assembly(wildcards, attempt):
     metagenomic_bases = row["metagenomic_bases"]
     singlem_fraction = row["singlem_fraction"]
     diversity = row["diversity"]
+    C = row["C"]
     gbp_post_mapping = calculate_input_size_gb(metagenomic_bases)
-    estimate_time_assembly = -220.41 + (15.00 * diversity) - (56.77 * singlem_fraction) + (11.35 * gbp_post_mapping)
+    estimate_time_assembly = -112.01 + (11.10 * diversity) - (51.77 * singlem_fraction) + (12.72 * gbp_post_mapping) - (53.05 * C)
+    estimate_time_assembly = max(estimate_time_assembly, 20)
     return attempt * int(estimate_time_assembly)
 
 def estimate_time_quast(wildcards, attempt):
@@ -77,6 +80,7 @@ def estimate_time_assembly_mapping(wildcards, attempt):
     C = row["C"]
     gbp_post_mapping = calculate_input_size_gb(row["metagenomic_bases"])
     estimate_time_assembly_mapping = -59.69 + (2.14 * diversity) - (0.016 * singlem_fraction) + (4.34 * gbp_post_mapping) + (22.22 * C)
+    estimate_time_assembly_mapping = max(estimate_time_assembly_mapping, 5)
     return attempt * int(estimate_time_assembly_mapping)
 
 def estimate_time_binning(wildcards, attempt):
@@ -88,6 +92,7 @@ def estimate_time_binning(wildcards, attempt):
     C = row["C"]
     gbp_post_mapping = calculate_input_size_gb(row["metagenomic_bases"])
     estimate_time_binning = -595.79 + (25.59 * diversity) - (0.18 * singlem_fraction) + (5.72 * gbp_post_mapping) + (169.88 * C)
+    estimate_time_binning = max(estimate_time_binning, 20)
     return attempt * int(estimate_time_binning)
 
 def estimate_time_refinement(wildcards, attempt):
