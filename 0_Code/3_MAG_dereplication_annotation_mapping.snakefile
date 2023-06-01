@@ -45,8 +45,8 @@ rule dereplication:
     threads:
         16
     resources:
-        mem_gb=128,
-        time='10:00:00'
+        mem_gb=64,
+        time='08:00:00'
     benchmark:
         "3_Outputs/0_Logs/dRep.benchmark.tsv"
     log:
@@ -99,7 +99,7 @@ rule gtdbtk:
         16
     resources:
         mem_gb=128,
-        time='10:00:00'
+        time='08:00:00'
     benchmark:
         "3_Outputs/0_Logs/gtdbtk.benchmark.tsv"
     log:
@@ -122,11 +122,11 @@ rule gtdbtk:
         --cpus {threads}
 
         # Create a merged summary output for DRAM:
-        if [ -s "{params.outdir}/classify/gtdbtk.ar122.summary.tsv" ]
+        if [ -s "{params.outdir}/classify/gtdbtk.ar53.summary.tsv" ]
         then
-        sed '1d;' {params.outdir}/classify/gtdbtk.ar122.summary.tsv > {params.outdir}/ar122.tsv
-        cat {output} {params.outdir}/ar122.tsv > {params.outdir}/gtdbtk_combined_summary.tsv
-        rm {params.outdir}/ar122.tsv
+        sed '1d;' {params.outdir}/classify/gtdbtk.ar53.summary.tsv > {params.outdir}/ar53.tsv
+        cat {output} {params.outdir}/ar53.tsv > {params.outdir}/gtdbtk_combined_summary.tsv
+        rm {params.outdir}/ar53.tsv
 
         # Otherwise, just use the bacterial summary (if no archaeal bins)
         else
@@ -146,9 +146,9 @@ rule Coassembly_index:
     conda:
         "conda_envs/2_Assembly_Binning.yaml"
     threads:
-        16
+        8
     resources:
-        mem_gb=128,
+        mem_gb=64,
         time='02:00:00'
     benchmark:
         "3_Outputs/0_Logs/MAG_indexing.benchmark.tsv"
@@ -231,7 +231,7 @@ rule coverM_assembly:
     threads:
         8
     resources:
-        mem_gb=96,
+        mem_gb=64,
         time='02:00:00'
     benchmark:
         "3_Outputs/0_Logs/coverm.benchmark.tsv"
