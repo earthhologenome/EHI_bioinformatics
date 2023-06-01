@@ -4,9 +4,4 @@
     - bioconda
     - defaults
  dependencies:
-<<<<<<< HEAD
     - gtdbtk=2.3.0
-=======
-    - gtdbtk=2.1.0
-    - numpy=1.23.1
->>>>>>> ca1c4b5136c097f9b2ae64f3e2ac740c6c70b307
