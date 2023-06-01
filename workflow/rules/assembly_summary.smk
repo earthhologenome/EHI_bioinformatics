@@ -69,19 +69,19 @@ rule assembly_summary:
             echo -e "sample\tEHA_number\tEHI_number\tN50\tL50\tnum_contigs\tlargest_contig\tassembly_length\tnum_bins\tassembly_mapping_percent" > {params.stats_dir}/headers.tsv
 
             #parse QUAST outputs for assembly stats
-            cat {params.quast}/{wildcards.EHA}_assembly_report.tsv >> {params.stats_dir}/{wildcards.EHA}_temp_report.tsv
+            cat {params.quast}/{wildcards.EHA}_assembly_report.tsv > {params.stats_dir}/{wildcards.EHA}_temp_report.tsv
 
             #Add sample IDs
-            echo {wildcards.EHI}_{wildcards.EHA} >> {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv
-            echo {wildcards.EHA} >> {params.stats_dir}/{wildcards.EHA}_EHA_ids.tsv
-            echo {wildcards.EHI} >> {params.stats_dir}/{wildcards.EHA}_EHI_ids.tsv
+            echo {wildcards.EHI}_{wildcards.EHA} > {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv
+            echo {wildcards.EHA} > {params.stats_dir}/{wildcards.EHA}_EHA_ids.tsv
+            echo {wildcards.EHI} > {params.stats_dir}/{wildcards.EHA}_EHI_ids.tsv
 
             paste {params.stats_dir}/{wildcards.EHA}_sample_ids.tsv {params.stats_dir}/{wildcards.EHA}_EHA_ids.tsv {params.stats_dir}/{wildcards.EHA}_EHI_ids.tsv {params.stats_dir}/{wildcards.EHA}_temp_report.tsv > {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv
 
             paste {params.stats_dir}/{wildcards.EHA}_temp2_report.tsv {params.stats_dir}/{wildcards.EHA}_bins.tsv > {params.stats_dir}/{wildcards.EHA}_temp3_report.tsv
 
             #Grab coverm mapping rate. 'cut -f2' pulls the second column, 'sed -n 3p' prints only the third line (% mapping)
-            cut -f2 {input.coverm} | sed -n 3p >> {params.stats_dir}/{wildcards.EHA}_relabun.tsv
+            cut -f2 {input.coverm} | sed -n 3p > {params.stats_dir}/{wildcards.EHA}_relabun.tsv
 
             paste {params.stats_dir}/{wildcards.EHA}_temp3_report.tsv {params.stats_dir}/{wildcards.EHA}_relabun.tsv > {params.stats_dir}/{wildcards.EHA}_temp4_report.tsv
 
