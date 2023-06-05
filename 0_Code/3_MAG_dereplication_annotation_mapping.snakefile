@@ -119,7 +119,8 @@ rule gtdbtk:
         --extension "gz" \
         --out_dir {params.outdir} \
         --tmpdir {params.outdir}/tmp \
-        --cpus {threads}
+        --cpus {threads} \
+        --skip_ani_screen
 
         # Create a merged summary output for DRAM:
         if [ -s "{params.outdir}/classify/gtdbtk.ar53.summary.tsv" ]
