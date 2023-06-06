@@ -46,6 +46,8 @@ rule metaWRAP_refinement:
             #Installing metawrap via conda is a pain in the arse, so using the module on Mjolnir here.
             module load metawrap-mg/1.3.2
             module load bbmap/39.01
+            #seems to be an issue with mamba=1.4.1 module, so unload it to get concoct to work ^_^"
+            module unload mamba
 
             # Setup checkM path (needed for conda, not module)
             # export checkmdb={config[checkmdb]}
