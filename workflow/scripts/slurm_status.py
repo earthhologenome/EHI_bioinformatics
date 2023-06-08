@@ -1,4 +1,3 @@
-# sourced from https://github.com/ManavalanG/slurm/blob/master/%7B%7Bcookiecutter.profile_name%7D%7D/slurm-status.py
 #!/usr/bin/env python3
 import re
 import subprocess as sp
@@ -62,6 +61,9 @@ elif (status == "SUSPENDED"):
     print("failed")
 else:
     print("running")
+
+
+# sourced from https://github.com/ManavalanG/slurm/blob/master/%7B%7Bcookiecutter.profile_name%7D%7D/slurm-status.py
 
 # #!/usr/bin/env python3
 # import subprocess
