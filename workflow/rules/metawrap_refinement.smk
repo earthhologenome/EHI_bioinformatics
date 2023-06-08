@@ -24,7 +24,7 @@ rule metaWRAP_refinement:
         binning=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_binning"),
         outdir=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement"),
         stats_dir=directory(os.path.join(config["workdir"], "{EHA}_stats/"))
-    threads: 4
+    threads: 8
     resources:
         mem_gb=164,
         time=estimate_time_refinement,
