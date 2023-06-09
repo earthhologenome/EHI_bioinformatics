@@ -45,7 +45,7 @@ output_file_path = 'asb_input.tsv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
-    writer.writerow(['PR_batch', 'EHI_number', 'Assembly_code', 'metagenomic_bases', 'singlem_fraction', 'diversity', 'nonpareil_estimated_coverage', 'C'])
+    writer.writerow(['PR_batch', 'EHI_number', 'Assembly_code', 'metagenomic_bases', 'singlem_fraction', 'diversity', 'C'])
 
     # Process records from assembly table
     for record in asb_records:
