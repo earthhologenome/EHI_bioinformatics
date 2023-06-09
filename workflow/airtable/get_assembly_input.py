@@ -64,7 +64,7 @@ with open(output_file_path, 'w', newline='') as tsvfile:
         # Set up the query parameters for Table 2 based on the 'EHI_number' value
         ppr_query_params = {
             'filterByFormula': f"{{EHI_number}} = '{ehi_number_value}'",
-            'fields': ['metagenomic_bases', 'singlem_fraction', 'diversity', 'nonpareil_estimated_coverage', 'C']
+            'fields': ['metagenomic_bases', 'singlem_fraction', 'diversity', 'C']
         }
 
         # Make the request to get the records from Table 2
@@ -83,8 +83,7 @@ with open(output_file_path, 'w', newline='') as tsvfile:
             singlem_fraction_value = ppr_record['fields']['singlem_fraction']
             diversity_value = ppr_record['fields']['diversity']
             C_value = ppr_record['fields']['C']
-            nonpareil_estimated_coverage_value = ppr_record['fields']['nonpareil_estimated_coverage'].replace('%', '')
 
             # Write the row to the TSV file
-            row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code'], metagenomic_bases_value, singlem_fraction_value, diversity_value, nonpareil_estimated_coverage_value, C_value]
+            row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code'], metagenomic_bases_value, singlem_fraction_value, diversity_value, C_value]
             writer.writerow(row)
