@@ -63,7 +63,7 @@ with open(output_file_path, 'w', newline='') as tsvfile:
 
         # Set up the query parameters for Table 2 based on the 'EHI_number' value
         ppr_query_params = {
-            'filterByFormula': f"{{EHI_number}} = '{ehi_number_value}'",
+            'filterByFormula': f"AND({{EHI_number}} = '{ehi_number_value}', {{PR_Batch}} = '{pr_batch_value}')",
             'fields': ['metagenomic_bases', 'singlem_fraction', 'diversity', 'C']
         }
 
