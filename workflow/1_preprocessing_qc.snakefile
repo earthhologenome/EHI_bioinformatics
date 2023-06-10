@@ -39,7 +39,7 @@ print(SAMPLE)
 ### Scaling is based on benchmark data for ~280 jobs 3/4/2023 RE
 import os
 
-def estimate_time_download(wildcards):
+def estimate_time_download(wildcards, attempt):
     fs_sample = f"{config['workdir']}/{wildcards.sample}_filesize.txt"
     with open(fs_sample, 'r') as f:
         input_size = int(f.read().strip())
@@ -47,9 +47,9 @@ def estimate_time_download(wildcards):
     input_size_gb = input_size / (1024 * 1024 * 1024)
     # Multiply by 2, and set time based on 30 MB/s download speed.
     estimate_time_download = ((input_size_gb * 2.1 ) + 12 ) / 1.25
-    return int(estimate_time_download)
+    return attempt * int(estimate_time_download)
 
-def estimate_time_fastp(wildcards):
+def estimate_time_fastp(wildcards, attempt):
     r1_path = f"{config['workdir']}/{wildcards.sample}_raw_1.fq.gz"
     r2_path = f"{config['workdir']}/{wildcards.sample}_raw_2.fq.gz"
     input_files = [r1_path, r2_path]
@@ -58,9 +58,9 @@ def estimate_time_fastp(wildcards):
     input_size_gb = input_size / (1024 * 1024 * 1024)
     # Add scaling (* 2.5 is for the Gbp to .gz compressed filesize scaling -- e.g. 3 Gbp sample ~ 1.5 GBytes) 
     estimate_time_fastp = ((input_size_gb * 2.5 ) + 6) / 2
-    return int(estimate_time_fastp)
+    return attempt * int(estimate_time_fastp)
 
-def estimate_time_mapping(wildcards):
+def estimate_time_mapping(wildcards, attempt):
     r1_path = f"{config['workdir']}/{wildcards.sample}_trimmed_1.fq.gz"
     r2_path = f"{config['workdir']}/{wildcards.sample}_trimmed_2.fq.gz"
     input_files = [r1_path, r2_path]
@@ -68,9 +68,9 @@ def estimate_time_mapping(wildcards):
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
     estimate_time_mapping = ((input_size_gb * 2 ) + 2) * 12
-    return int(estimate_time_mapping)
+    return attempt * int(estimate_time_mapping)
 
-def estimate_time_nonpareil(wildcards):
+def estimate_time_nonpareil(wildcards, attempt):
     r1_path = f"{config['workdir']}/{wildcards.sample}_M_1.fq"
     r2_path = f"{config['workdir']}/{wildcards.sample}_M_2.fq"
     input_files = [r1_path, r2_path]
@@ -79,10 +79,10 @@ def estimate_time_nonpareil(wildcards):
     input_size_gb = input_size / (1024 * 1024 * 1024)
     # N.b. for estimate_time_nonpareil we estimate from uncompressed fq
     estimate_time_nonpareil = (input_size_gb + 2) * 2
-    return int(estimate_time_nonpareil)
+    return attempt * int(estimate_time_nonpareil)
 
 
-def estimate_time_singlem(wildcards):
+def estimate_time_singlem(wildcards, attempt):
     r1_path = f"{config['workdir']}/{wildcards.sample}_M_1.fq.gz"
     r2_path = f"{config['workdir']}/{wildcards.sample}_M_2.fq.gz"
     input_files = [r1_path, r2_path]
@@ -90,7 +90,7 @@ def estimate_time_singlem(wildcards):
     # convert from bytes to gigabytes
     input_size_gb = input_size / (1024 * 1024 * 1024)
     estimate_time_singlem = ((input_size_gb) + 7) * 4.5
-    return int(estimate_time_singlem)
+    return attempt * int(estimate_time_singlem)
 
 ################################################################################
 ### Setup the desired outputs

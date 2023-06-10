@@ -55,6 +55,9 @@ rule map_to_ref:
         "Mapping {wildcards.sample} reads to host genomes"
     shell:
         """
+        # Remove temp files in case of relaunch
+        rm -f {config[workdir]}/tmp/{wildcards.sample}*.bam
+
         # Map reads to catted reference using Bowtie2
         bowtie2 \
             --time \
