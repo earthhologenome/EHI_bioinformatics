@@ -37,6 +37,35 @@ valid_combinations = set(
     (row["PR_batch"], row["EHI_number"], row["Assembly_code"]) for _, row in df.iterrows()
 )
 
+## Set up dynamic times for rules based on input data:
+## values are derived from benchmarks (gbp / time required) see URL TO GITHUB MD *********
+
+def estimate_time_download(wildcards, attempt):
+    return attempt * 20
+
+def estimate_time_assembly(wildcards, attempt):
+    return attempt * 960
+
+def estimate_time_mapping(wildcards, attempt):
+    return attempt * 180
+
+def estimate_time_binning(wildcards, attempt):
+    return attempt * 960
+
+def estimate_time_refinement(wildcards, attempt):
+    return attempt * 960
+
+def estimate_time_gtdb(wildcards, attempt):
+    return attempt * 300
+
+def estimate_time_upload_bam(wildcards, attempt):
+    return attempt * 15
+
+def estimate_time_summary(wildcards, attempt):
+    return attempt * 60
+
+def estimate_time_coverm(wildcards, attempt):
+    return attempt * 10
 
 ################################################################################
 ### Setup the desired outputs

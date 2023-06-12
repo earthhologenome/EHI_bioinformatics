@@ -24,7 +24,7 @@ rule metaWRAP_refinement:
     threads: 8
     resources:
         mem_gb=168,
-        time="16:00:00",
+        time=estimate_time_refinement,
     benchmark:
         os.path.join(config["logdir"] + "/refinement_benchmark_{EHA}.tsv")
     log:

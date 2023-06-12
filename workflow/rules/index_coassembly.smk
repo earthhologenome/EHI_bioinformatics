@@ -11,7 +11,7 @@ rule coassembly_index:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 16
     resources:
-        mem_gb=96,
+        mem_gb=64,
         time="02:00:00",
     benchmark:
         os.path.join(config["logdir"] + "/index_assembly_benchmark_{EHA}.tsv")
