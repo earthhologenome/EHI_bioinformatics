@@ -21,10 +21,18 @@ rule assembly_index:
         "Indexing {wildcards.EHA} assembly using Bowtie2"
     shell:
         """
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 1 ]
+        then
+            touch {output}
+
+        else
+
         # Index the coassembly
         bowtie2-build \
             --large-index \
             --threads {threads} \
             {input.contigs} {input.contigs} \
         &> {log}
+
+        fi
         """

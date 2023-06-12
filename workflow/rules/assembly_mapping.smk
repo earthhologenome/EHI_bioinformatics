@@ -32,6 +32,11 @@ rule assembly_mapping:
         "Mapping {wildcards.EHI} to {wildcards.EHA} assembly using Bowtie2"
     shell:
         """
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 1 ]
+        then
+            touch {output}
+        
+        else
         # Map reads to assembly using Bowtie2
         bowtie2 \
             --time \
@@ -40,4 +45,6 @@ rule assembly_mapping:
             -1 {input.r1} \
             -2 {input.r2} \
         | samtools sort -@ {threads} -o {output}
+
+        fi
         """
