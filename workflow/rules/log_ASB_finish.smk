@@ -18,7 +18,7 @@ rule log_finish:
     resources:
         load=8,
         mem_gb=8,
-        time="00:05:00",
+        time="01:00:00",
     message:
         "Logging AirTable that the run has been completed."
     shell:
