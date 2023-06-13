@@ -4,6 +4,6 @@
     - bioconda
     - defaults
  dependencies:
-    - lftp=4.8.4
+    - lftp=4.9.2
     - pandas
     - requests
