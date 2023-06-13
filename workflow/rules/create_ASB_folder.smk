@@ -18,8 +18,9 @@ rule create_ASB_folder:
     shell:
         """
         lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/ASB/{config[abb]} ; bye"
+        sleep 10
         touch {output}
-
+        sleep 10
         #Also, log the AirTable that the ASB is running!
         python {config[codedir]}/airtable/log_asb_start_airtable.py --code={config[abb]}
         """
