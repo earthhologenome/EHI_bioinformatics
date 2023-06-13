@@ -39,6 +39,9 @@ print(SAMPLE)
 ### Scaling is based on benchmark data for ~280 jobs 3/4/2023 RE
 import os
 
+def estimate_fetch_host(wildcards, attempt):
+    return attempt * 210
+
 def estimate_time_download(wildcards, attempt):
     fs_sample = f"{config['workdir']}/{wildcards.sample}_filesize.txt"
     with open(fs_sample, 'r') as f:

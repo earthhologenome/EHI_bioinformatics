@@ -24,7 +24,7 @@ rule fetch_host_genome:
     resources:
         load=1,
         mem_gb=96,
-        time='03:00:00'
+        time=estimate_fetch_host
     log:
         os.path.join(config["logdir"] + "/host_genome_indexing.log")
     message:
