@@ -18,7 +18,8 @@ rule create_PRB_folder:
         "Creating PRB folder on ERDA"
     shell:
         """
-        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/PPR/{config[prb]} ; bye"
+#        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/PPR/{config[prb]} ; bye"
+        echo "mkdir EarthHologenomeInitiative/Data/PPR/{config[prb]}" | sftp erda
         touch {output}
 
         #Also, log the AirTable that the PRB is running!
