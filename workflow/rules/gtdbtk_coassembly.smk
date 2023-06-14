@@ -41,6 +41,9 @@ rule gtdbtk:
         # Specify path to reference data:
         export GTDBTK_DATA_PATH={params.GTDB_data}
 
+        # Remove outdir (incase of rerunning due to time limit)
+        rm -rf {params.outdir}
+
         gtdbtk --version | cut -f3 -d ' ' > {params.outdir}/version.tsv
 
         for i in {params.bins}/*.fa.gz;

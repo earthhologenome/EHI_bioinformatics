@@ -58,6 +58,9 @@ rule gtdbtk:
             # Specify path to reference data:
             export GTDBTK_DATA_PATH={params.GTDB_data}
 
+            # Remove outdir (incase of rerunning due to time limit)
+            rm -rf {params.outdir}
+
             # Get version number for AirTable:
             gtdbtk --version | cut -f3 -d ' ' > {params.outdir}/version.tsv
 
