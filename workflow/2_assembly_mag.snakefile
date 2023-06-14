@@ -80,7 +80,7 @@ def estimate_time_assembly_mapping(wildcards, attempt):
     C = row["C"]
     gbp_post_mapping = calculate_input_size_gb(row["metagenomic_bases"])
     estimate_time_assembly_mapping = -59.69 + (2.14 * diversity) - (0.016 * singlem_fraction) + (4.34 * gbp_post_mapping) + (22.22 * C)
-    estimate_time_assembly_mapping = max(estimate_time_assembly_mapping, 10)
+    estimate_time_assembly_mapping = max(estimate_time_assembly_mapping, 20)
     return attempt * int(estimate_time_assembly_mapping)
 
 def estimate_time_binning(wildcards, attempt):
