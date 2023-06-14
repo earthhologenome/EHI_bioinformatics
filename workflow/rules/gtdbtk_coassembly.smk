@@ -43,6 +43,7 @@ rule gtdbtk:
 
         # Remove outdir (incase of rerunning due to time limit)
         rm -rf {params.outdir}
+        mkdir -p {params.outdir}
 
         gtdbtk --version | cut -f3 -d ' ' > {params.outdir}/version.tsv
 
