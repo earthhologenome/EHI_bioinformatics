@@ -1,7 +1,7 @@
 ### Config file for 4_dereplication_mapping.snakefile
 ### RE 05/2023
 
-ani: 0.98
+ani: ANI_VALUE
 dmb: DMBATCH
 codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/workflow
 workdir: /projects/ehi/data/DMB/DMBATCH
