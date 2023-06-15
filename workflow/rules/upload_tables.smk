@@ -79,6 +79,7 @@ rule upload_tables:
         python {config[codedir]}/airtable/log_dmb_done_airtable.py --code={config[dmb]}
 
         ## Clean up
+        rm -r {config[workdir]}/*
 
         ## Create output to end pipeline
         touch {output}
