@@ -45,7 +45,7 @@ rule map_to_ref:
         8
     resources:
         load=1,
-        mem_gb=24,
+        mem_gb=mapping_memory,
         time=estimate_time_mapping
     benchmark:
         os.path.join(config["logdir"] + "/{sample}_mapping.benchmark.tsv")
