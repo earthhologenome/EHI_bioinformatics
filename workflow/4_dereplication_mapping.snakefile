@@ -74,3 +74,8 @@ include: os.path.join(config["codedir"], "rules/index_mags.smk")
 include: os.path.join(config["codedir"], "rules/mag_mapping.smk")
 include: os.path.join(config["codedir"], "rules/coverm_mags.smk")
 include: os.path.join(config["codedir"], "rules/upload_tables.smk")
+
+onerror:
+    shell("""
+            echo "/projects/ehi/data/RUN/{config[abb]}" | mailx -s "{config[abb]} ERROR" EMAIL_ADD
+          """)
