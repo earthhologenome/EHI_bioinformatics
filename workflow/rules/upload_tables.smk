@@ -35,7 +35,7 @@ rule upload_tables:
     resources:
         load=8,
         mem_gb=16,
-        time='00:15:00'
+        time='04:00:00'
     benchmark:
         os.path.join(config["logdir"] + "/upload_tables_benchmark.tsv")    
     shell:
@@ -57,11 +57,16 @@ rule upload_tables:
         gzip {input.count_table}
         gzip {input.tree}
         gzip {input.taxonomy}
+        gzip {input.combined}
         lftp sftp://erda -e "put {input.count_table}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
         lftp sftp://erda -e "put {input.tree}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
+        lftp sftp://erda -e "put {input.combined}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 5
         lftp sftp://erda -e "put {input.taxonomy}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 5
+        lftp sftp://erda -e "put {config[workdir]}/bams/*.bam -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/
         sleep 60
 
         python {config[codedir]}/airtable/link_dmb_files_airtable.py \
