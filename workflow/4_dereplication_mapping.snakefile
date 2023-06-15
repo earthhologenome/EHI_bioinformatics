@@ -51,6 +51,13 @@ print("Detected the following MAGs:")
 print(MAG)
 
 
+### Code to scale time needed by raw read file sizes
+### Scaling is based on benchmark data for ~280 jobs 3/4/2023 RE
+import os
+
+def estimate_time_download(wildcards, attempt):
+    return attempt * 15
+
 rule all:
     input:
         os.path.join(
