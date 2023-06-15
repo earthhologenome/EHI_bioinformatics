@@ -74,7 +74,8 @@ def estimate_time_mapping(wildcards, attempt):
     return attempt * int(estimate_time_mapping)
 
 def mapping_memory(wildcards, attempt):
-    return attempt * 48
+    mapping_memory = 48
+    return attempt * mapping_memory
 
 def estimate_time_nonpareil(wildcards, attempt):
     r1_path = f"{config['workdir']}/{wildcards.sample}_M_1.fq"
