@@ -18,7 +18,8 @@ rule create_DMB_folder:
         "Creating DMB folder on ERDA"
     shell:
         """
-        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/DMB/{config[dmb]} ; bye"
+        #lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/DMB/{config[dmb]} ; bye"
+        echo "mkdir EarthHologenomeInitiative/Data/DMB/{config[dmb]}" | sftp erda
         touch {output}
 
         #Also, log the AirTable that the DMB is running!
