@@ -15,6 +15,8 @@ rule QUAST:
         "Running -QUAST on {wildcards.EHA} coassembly"
     shell:
         """
+        module purge
+
         # Run QUAST
         quast \
             -o {output} \
