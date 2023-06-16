@@ -37,7 +37,7 @@ data = response.json()
 records = data['records']
 
 # Set up the output TSV file
-output_file_path = '{args.dmb}_mag_info.tsv'
+output_file_path = f'{args.dmb}_mag_info.tsv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
