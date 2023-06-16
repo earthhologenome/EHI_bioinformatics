@@ -66,7 +66,7 @@ rule upload_tables:
         sleep 5
         lftp sftp://erda -e "put {input.taxonomy}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
-        lftp sftp://erda -e "put {config[workdir]}/bams/*.bam -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/
+        lftp sftp://erda -e "put {config[workdir]}/bams/*.bam -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 60
 
         python {config[codedir]}/airtable/link_dmb_files_airtable.py \
