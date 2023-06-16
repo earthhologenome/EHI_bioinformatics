@@ -38,7 +38,7 @@ rule coverM_mag:
         coverm genome \
             -b {input} \
             -s ^ \
-            -m count covered_fraction length \
+            -m count covered_fraction \
             -t {threads} \
             --min-covered-fraction 0 \
             > {output.count_table}

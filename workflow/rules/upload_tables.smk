@@ -20,9 +20,9 @@ rule upload_tables:
             config["workdir"],
             config["dmb"] + "_gtdbtk.bac120.classify.tree"
         ),
-        taxonomy=os.path.join(
+        pruned_tree=os.path.join(
             config["workdir"],
-            config["dmb"] + "_taxon_table.tsv"
+            config["dmb"] + "_pruned.tree"
         )
     output:
         os.path.join(
@@ -53,27 +53,32 @@ rule upload_tables:
         
         python {config[codedir]}/airtable/add_mag_mapping_rates_airtable.py --report=mapping_rates.tsv
 
+        python {config[codedir]}/airtable/get_mag_info_airtable.py --dmb={config[dmb]}
+
         ## Upload other files to AirTable (count table, tree)
         gzip {input.count_table}
         gzip {input.tree}
-        gzip {input.taxonomy}
+        gzip {input.pruned_tree}
+        gzip {config[dmb]}_mag_info.tsv
         gzip {input.combined}
+
+
         lftp sftp://erda -e "put {input.count_table}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
         lftp sftp://erda -e "put {input.tree}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
+        lftp sftp://erda -e "put {input.pruned_tree}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 5
         lftp sftp://erda -e "put {input.combined}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
-        lftp sftp://erda -e "put {input.taxonomy}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        lftp sftp://erda -e "put {config[dmb]}__mag_info.tsv -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
         lftp sftp://erda -e "put {config[workdir]}/bams/*.bam -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 60
 
-        python {config[codedir]}/airtable/link_dmb_files_airtable.py \
-        --table=https://sid.erda.dk/share_redirect/BaMZodj9sA/DMB/{config[dmb]}/coverm/{input.count_table}.gz \
-        --tree=https://sid.erda.dk/share_redirect/BaMZodj9sA/DMB/{config[dmb]}/{input.tree}.gz \
-        --taxonomy=https://sid.erda.dk/share_redirect/BaMZodj9sA/DMB/{config[dmb]}/{input.taxonomy}.gz \
-        --dmb={config[dmb]}
+        ## Log # of dereplicated MAGs to airtable
+        ls -l {config[workdir]}/drep/dereplicated_genomes/*.fa.gz | wc -l > dereplicated_mags.tsv
+
 
         ## Log AirTable that the run is finished
         python {config[codedir]}/airtable/log_dmb_done_airtable.py --code={config[dmb]}

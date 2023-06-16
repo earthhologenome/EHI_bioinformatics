@@ -32,10 +32,16 @@ response = requests.get(url, headers=headers, params=params)
 record_id = response.json().get('records')[0].get('id')
 
 
+tsv_file_path = f"{args.code}_dereplicated_mags.tsv"
+with open(tsv_file_path, 'r') as tsv_file:
+    tsv_content = tsv_file.read()
+    number_of_dereplicated_mags = int(tsv_content.strip())
+
     #Change the value in the AirTable
 data = {
         'fields': {
             'Status': 'Done',
+            'number_of_dereplicated_mags': number_of_dereplicated_mags
         }
     }
 

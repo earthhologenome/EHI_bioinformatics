@@ -1,25 +1,15 @@
 ################################################################################
 ### Run GTDB-tk on refined bins
-rule gtdbtk_full_tree:
+rule prune_tree:
     input:
         os.path.join(
             config["workdir"],
-            "drep/",
-            "figures/",
-            config["dmb"] + "_Primary_clustering_dendrogram.pdf"
+            config["dmb"] + "_gtdbtk.bac120.classify.tree"
         )
     output:
-        bac=os.path.join(
-            config["workdir"], 
-            "gtdbtk/classify/gtdbtk.bac120.summary.tsv"
-        ),
-        combined=os.path.join(
-            config["workdir"], 
-            config["dmb"] + "_gtdbtk_combined_summary.tsv"
-        ),
-        tree=os.path.join(
+        os.path.join(
             config["workdir"],
-            config["dmb"] + "_gtdbtk.bac120.classify.tree"
+            config["dmb"] + "_pruned.tree"
         )
     params:
         GTDB_data=expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
