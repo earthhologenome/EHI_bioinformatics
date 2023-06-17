@@ -77,7 +77,7 @@ rule upload_tables:
         sleep 60
 
         ## Log # of dereplicated MAGs to airtable
-        ls -l {config[workdir]}/drep/dereplicated_genomes/*.fa.gz | wc -l > dereplicated_mags.tsv
+        ls -l {config[workdir]}/drep/dereplicated_genomes/*.fa.gz | wc -l > {config[dmb]}_dereplicated_mags.tsv
 
 
         ## Log AirTable that the run is finished
