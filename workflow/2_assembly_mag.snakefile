@@ -101,7 +101,7 @@ def estimate_time_gtdb(wildcards, attempt):
     return attempt * 90
 
 def estimate_time_upload_bam(wildcards, attempt):
-    return attempt * 5
+    return attempt * 30
 
 def estimate_time_summary(wildcards, attempt):
     return attempt * 60
