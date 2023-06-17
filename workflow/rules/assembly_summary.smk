@@ -92,6 +92,8 @@ rule assembly_summary:
             ### Upload stats to AirTable:
             python {config[codedir]}/airtable/add_asb_stats_airtable.py --report={output.stats} --asb={config[abb]}
             sleep 5
+            python {config[codedir]}/airtable/add_mag_stats_airtable.py --report=/projects/ehi/data/REP/{config[abb]}_{wildcards.EHA}_mags.tsv
+
 
             ### Upload contigs, coverm, & gtdb output to ERDA
             pigz -k -p {threads} {input.contigs}
