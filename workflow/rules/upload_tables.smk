@@ -71,7 +71,7 @@ rule upload_tables:
         sleep 5
         lftp sftp://erda -e "put {input.combined}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
-        lftp sftp://erda -e "put {config[dmb]}__mag_info.tsv -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        lftp sftp://erda -e "put {config[dmb]}_mag_info.tsv -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
         lftp sftp://erda -e "put {config[workdir]}/bams/*.bam -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 60
