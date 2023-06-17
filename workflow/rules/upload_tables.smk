@@ -56,11 +56,11 @@ rule upload_tables:
         python {config[codedir]}/airtable/get_mag_info_airtable.py --dmb={config[dmb]}
 
         ## Upload other files to AirTable (count table, tree)
-        gzip {input.count_table}
-        gzip {input.tree}
-        gzip {input.pruned_tree}
-        gzip {config[dmb]}_mag_info.tsv
-        gzip {input.combined}
+        gzip -k {input.count_table}
+        gzip -k {input.tree}
+        gzip -k {input.pruned_tree}
+        gzip -k {config[dmb]}_mag_info.tsv
+        gzip -k {input.combined}
 
 
         lftp sftp://erda -e "put {input.count_table}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
