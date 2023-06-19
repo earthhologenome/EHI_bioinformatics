@@ -22,7 +22,15 @@ rule upload_tables:
         ),
         pruned_tree=os.path.join(
             config["workdir"],
-            config["dmb"] + "_pruned.tree"
+            config["dmb"] + ".tree"
+        ),
+        counts=os.path.join(
+            config["workdir"],
+            config["dmb"] + "_counts.tsv"
+        ),
+        coverage=os.path.join(
+            config["workdir"],
+            config["dmb"] + "_coverage.tsv"
         )
     output:
         os.path.join(
@@ -55,13 +63,20 @@ rule upload_tables:
 
         python {config[codedir]}/airtable/get_mag_info_airtable.py --dmb={config[dmb]}
 
+        python {config[codedir]}/airtable/get_sample_metadata_airtable.py --samples=read_input.tsv --dmb={config[dmb]}
+
+        ## Remove trailing '.fa'
+        sed -i'' 's/\.fa//g' {config[dmb]}_mag_info.tsv
+
         ## Upload other files to AirTable (count table, tree)
         gzip -k {input.count_table}
+        gzip -k {config[dmb]}_metadata.tsv
         gzip -k {input.tree}
         gzip -k {input.pruned_tree}
         gzip -k {config[dmb]}_mag_info.tsv
         gzip -k {input.combined}
-
+        gzip -k {input.counts}
+        gzip -k {input.coverage}
 
         lftp sftp://erda -e "put {input.count_table}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
@@ -71,7 +86,13 @@ rule upload_tables:
         sleep 5
         lftp sftp://erda -e "put {input.combined}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
-        lftp sftp://erda -e "put {config[dmb]}_mag_info.tsv -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        lftp sftp://erda -e "put {config[dmb]}_mag_info.tsv.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 5
+        lftp sftp://erda -e "put {config[dmb]}_metadata.tsv.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 5
+        lftp sftp://erda -e "put {input.counts}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 5
+        lftp sftp://erda -e "put {input.coverage}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
         lftp sftp://erda -e "mirror -R {config[workdir]}/bams/ /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 60
@@ -79,13 +100,12 @@ rule upload_tables:
         ## Log # of dereplicated MAGs to airtable
         ls -l {config[workdir]}/drep/dereplicated_genomes/*.fa.gz | wc -l > {config[dmb]}_dereplicated_mags.tsv
 
-
         ## Log AirTable that the run is finished
         python {config[codedir]}/airtable/log_dmb_done_airtable.py --code={config[dmb]}
 
         ## Clean up
         rm -r {config[workdir]}/*
 
-        ## Create output to end pipeline
+        ## Create dummy files to end pipeline
         touch {output}
         """

@@ -1,5 +1,4 @@
 
-
 import argparse
 import pandas as pd
 import requests
@@ -8,6 +7,7 @@ import json
 # Load in CSV file
 parser = argparse.ArgumentParser()
 parser.add_argument('--samples', required=True, help='Path to samples file')
+parser.add_argument('--dmb', required=True, help='DMB number')
 args = parser.parse_args()
 
 # Read the API key from the config file
@@ -35,16 +35,18 @@ for i, row in df.iterrows():
         'filterByFormula': f"AND({{EHI_number}} = '{row['EHI_number']}', {{PR_Batch}} = '{row['PR_batch']}')",
         'maxRecords': 1
     }
-    response = requestas.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=params)
     data = response.json()
-    
+
     # Check if any records are found
     if 'records' in data and len(data['records']) > 0:
         record_fields = data['records'][0]['fields']
         filtered_records.append(record_fields)
 
+
+
 # Specify the desired columns to be included in the new TSV file
-desired_columns = ['sample_type', 'species', 'order', 'sex', 'country', 'region', 'latitude', 'longitude']  
+desired_columns = ['species', 'region', 'sample_type', 'order', 'sex', 'country', 'latitude', 'longitude']
 
 # Create a new DataFrame from the filtered records
 filtered_records_df = pd.DataFrame(filtered_records)
@@ -52,5 +54,7 @@ filtered_records_df = pd.DataFrame(filtered_records)
 # Select only the desired columns
 filtered_records_df = filtered_records_df[desired_columns]
 
+filtered_records_df = filtered_records_df.applymap(lambda x: str(x).strip("[]'"))
+
 # Save the filtered records to a new TSV file
-filtered_records_df.to_csv('filtered_records.tsv', sep='\t', index=False)
+filtered_records_df.to_csv(f'{args.dmb}_metadata.tsv', sep='\t', index=False)

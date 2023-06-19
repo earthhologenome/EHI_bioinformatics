@@ -62,6 +62,12 @@ rule coassembly_summary:
         ### Create the final output summary table
         echo -e "sample\tEHA_number\tEHI_number\tN50\tL50\tnum_contigs\tlargest_contig\tassembly_length\tnum_bins\tassembly_mapping_percent" > {params.stats_dir}/headers.tsv
 
+        ## clean up old files in case of relaunch
+        rm -f {params.stats_dir}/temp*
+        rm -f {params.stats_dir}/*ids.tsv
+        rm -f {params.stats_dir}/relsabun.tsv
+        rm -f {params.stats_dir}/bins.tsv
+        
         #parse QUAST outputs for assembly stats
         for i in {config[workdir]}/bams/*.bam; do 
             cat {params.quast}/{wildcards.EHA}_assembly_report.tsv >> {params.stats_dir}/temp_report.tsv;
