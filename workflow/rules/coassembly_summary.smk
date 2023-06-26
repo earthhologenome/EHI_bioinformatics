@@ -121,6 +121,6 @@ rule coassembly_summary:
         sleep 5
         lftp sftp://erda -e "put {input.gtdb} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"        
         sleep 5
-        lftp sftp://erda -e "put {input.tarball} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
+        lftp sftp://erda -e "mirror -R {config[workdir]}/coverm /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
 
         """
