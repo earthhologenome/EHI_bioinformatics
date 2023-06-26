@@ -94,6 +94,8 @@ rule upload_tables:
         sleep 5
         lftp sftp://erda -e "put {input.coverage}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
+        lftp sftp://erda -e "put {config[workdir]}/mag_catalogue/{config[dmb]}_mags.fasta.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 5
         lftp sftp://erda -e "mirror -R {config[workdir]}/bams/ /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 60
 
