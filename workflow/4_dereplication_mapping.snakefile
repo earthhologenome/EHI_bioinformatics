@@ -44,9 +44,6 @@ df2 = pd.read_csv("mags.csv", sep=",")
 
 MAG = list(df2.iloc[:, 0])
 
-# Remove the first element of the list (which is the column name "genome")
-MAG.pop(0)
-
 print("Detected the following MAGs:")
 print(MAG)
 
