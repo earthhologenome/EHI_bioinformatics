@@ -24,6 +24,11 @@ rule prune_tree:
             config["workdir"],
             config["dmb"] + "_coverage.tsv"
         )
+    params:
+        arch_tree=os.path.join(
+            config["workdir"],
+            config["dmb"] + "_gtdbtk.ar53.classify.tree"
+        ),
     conda:
         f"{config['codedir']}/conda_envs/R_tidyverse.yaml"
     threads:
@@ -37,7 +42,14 @@ rule prune_tree:
         "Pruning tree & splitting count table"
     shell:
         """
-        Rscript {config[codedir]}/scripts/prune_tree.R -i {input.tree} -o {output.tree}
+        #IF statement, as sometimes we won't have an archaeal tree
+        IF [ -f {params.arch_tree} ]
+        then
+            Rscript {config[codedir]}/scripts/prune_tree.R -b {input.tree} -a {params.arch_tree} -i {input.count_table} -o {output.tree}
+
+        else
+            Rscript {config[codedir]}/scripts/prune_tree.R -b {input.tree} -i {input.count_table} -o {output.tree}
+        fi
 
         ## Remove trailing '.fa'
         sed -i'' 's/\.fa//g' {output.tree}

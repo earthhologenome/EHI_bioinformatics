@@ -1,7 +1,7 @@
 ####
 # Prune phylogenetic tree for EHI DM output
 # By Antton Alberdi (antton.alberdi@sund.ku.dk)
-# 16/06/2023
+# 30/06/2023
 ####
 
 #Load libraries
@@ -10,13 +10,24 @@ suppressPackageStartupMessages(library(argparse))
 
 #Parse input-output
 parser <- ArgumentParser()
-parser$add_argument("-i", "--input", action="store", help="Input tree file")
+parser$add_argument("-a", "--archaea", action="store", help="Input archaea tree file")
+parser$add_argument("-b", "--bacteria", action="store", help="Input bacteria tree file")
+parser$add_argument("-i", "--info", action="store", help="Genome info table")
 parser$add_argument("-o", "--output", action="store", help="Output tree file")
 args <- parser$parse_args()
 
-#Prune and output tree
-input_tree <- ape::read.tree(args$input)
-input_tips <- input_tree$tip.label
-output_tips <- input_tips[grepl("^EHA", input_tips)]
-output_tree <- ape::keep.tip(input_tree,output_tips)
-ape::write.tree(output_tree,args$output)
+#Load and bind trees
+archaea_tree <- ape::read.tree(args$archaea)
+bacteria_tree <- ape::read.tree(args$bacteria)
+prokaryote_tree <- bind.tree(bacteria_tree, archaea_tree)
+
+#Prune tree
+genomes <- read.table(args$info)[,1]
+output_tree <- ape::keep.tip(prokaryote_tree, genomes)
+
+#Quality-check
+if(length(genomes) == length(output_tree$tip.label)){
+	ape::write.tree(output_tree, args$output)
+}else{
+	stop("Mag info and tree tips do not match")
+}
