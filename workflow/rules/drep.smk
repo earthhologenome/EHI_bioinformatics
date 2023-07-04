@@ -46,4 +46,5 @@ rule drep:
         for i in {config[workdir]}/drep/figures/*;
             do mv $i {config[workdir]}/drep/figures/{config[dmb]}_$(basename "$i");
         done
+
         """

@@ -25,8 +25,12 @@ configfile: "assembly_mag_config.yaml"
 import os
 import glob
 
-MAG = [os.path.basename(fn).replace(".fa.gz", "")
-            for fn in glob.glob(os.path.join(f"{config['magdir']}", "*.fa.gz"))]
+## Setup the list of MAGs that we want, this is pulled from airtable using the
+## 'get_derep_mags_airtable.py' script.
+
+df2 = pd.read_csv("dereped_mags.csv", sep=",")
+
+MAG = list(df2.iloc[:, 0])
 
 print("Detected the following MAGs:")
 print(MAG)
@@ -40,4 +44,4 @@ rule all:
         )
 
 include: os.path.join(config["codedir"], "rules/dram.smk")
-include: os.path.join(config["codedir"], "rules/upload_mags.smk")
+include: os.path.join(config["codedir"], "rules/upload_dram.smk")

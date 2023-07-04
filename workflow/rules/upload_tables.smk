@@ -102,6 +102,9 @@ rule upload_tables:
         ## Log # of dereplicated MAGs to airtable
         ls -l {config[workdir]}/drep/dereplicated_genomes/*.fa.gz | wc -l > {config[dmb]}_dereplicated_mags.tsv
 
+        ## Log dereplicated MAG names to airtable
+        python {config[codedir]}/airtable/log_dmb_derep_names_airtable.py --dmb={config[dmb]} --mags={config[workdir]}/dereplicated_mags.tsv
+
         ## Log AirTable that the run is finished
         python {config[codedir]}/airtable/log_dmb_done_airtable.py --code={config[dmb]}
 
