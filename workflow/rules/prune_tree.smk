@@ -51,11 +51,11 @@ rule prune_tree:
             Rscript {config[codedir]}/scripts/prune_tree.R -b {input.tree} -i {input.count_table} -o {output.tree}
         fi
 
+        ## Create list of dereplicated MAG names for updating AirTable
+        cut -f1 {input.count_table} | sed '1d;' > {config[workdir]}/dereplicated_mags.tsv
+
         ## Remove trailing '.fa'
         sed -i'' 's/\.fa//g' {output.tree}
-
-        ## Create list of dereplicated MAG names for upload to AirTable
-        cut -f1 {input.count_table} | sed '1d;' > {config[workdir]}/dereplicated_mags.tsv
 
         ## Remove '.fa' suffix for mag_info, and keep only EHI number for count table
         sed -i'' 's/PRB.....//g' {input.count_table}

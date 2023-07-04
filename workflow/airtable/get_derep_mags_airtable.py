@@ -25,8 +25,7 @@ headers = {
 
 # Set up the query parameters to filter the records
 query_params = {
-    'filterByFormula': f"{{DM_batch}} = '{args.dmb}'",
-
+    'filterByFormula': f"AND(FIND('{args.dmb}', {{DM_batch}}), {{dereplicated}} = 'true', {{annotated}} = 'false')",
 }
 
 # Make the request to get the records
@@ -43,7 +42,7 @@ output_file_path = 'dereped_mags.csv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter=',')
-    writer.writerow(['genome', 'completeness', 'contamination'])
+    writer.writerow(['ehm', 'mag_name'])
 
     # Loop through the records and write each one to the csv file
     for record in records:
@@ -54,10 +53,9 @@ with open(output_file_path, 'w', newline='') as tsvfile:
         record_response = requests.get(f"{url}/{record_id}", headers=headers)
 
         # Extract the values of the completeness and contamination fields
+        ehm = record_response.json()['fields'].get('ID', '')
         mag_name = record_response.json()['fields'].get('mag_name', '')
-        completeness = record_response.json()['fields'].get('completeness', '')
-        contamination = record_response.json()['fields'].get('contamination', '')
 
         # Write the row to the csv file
-        row = [mag_name, completeness, contamination]
+        row = [ehm, mag_name]
         writer.writerow(row)
