@@ -43,7 +43,7 @@ rule prune_tree:
     shell:
         """
         #IF statement, as sometimes we won't have an archaeal tree
-        IF [ -f {params.arch_tree} ]
+        if [ -f {params.arch_tree} ]
         then
             Rscript {config[codedir]}/scripts/prune_tree.R -b {input.tree} -a {params.arch_tree} -i {input.count_table} -o {output.tree}
 
