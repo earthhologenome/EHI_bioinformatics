@@ -4,16 +4,19 @@
 ### Functionally annotate MAGs with DRAM
 rule DRAM:
     input:
-        for combo in valid_combinations:
-            os.path.join(config["magdir"], f"{combo[1]}.fa.gz")
+        os.path.join(
+            config["magdir"],
+            "{MAG}.fa.gz"
+        )
     output:
-        annotations = os.path.join(config["magdir"], "{combo[0]}_anno.tsv.gz"),
-        product = os.path.join(config["magdir"], "{combo[0]}_kegg.tsv.gz"),
-        gbk = os.path.join(config["magdir"], "{combo[0]}.gbk.gz")
+        annotations = os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
+        distillate = temp(directory(os.path.join(config["magdir"], "{MAG}_distillate"))),
+        product = os.path.join(config["magdir"], "{MAG}_dist.tsv.gz"),
+        gbk = os.path.join(config["magdir"], "{MAG}.gbk.gz")
     params:
-        outdir=os.path.join(config["magdir"], "{combo[0]}_annotate"),
-        trnas=os.path.join(config["magdir"], "{combo[0]}_trnas.tsv"),
-        rrnas=os.path.join(config["magdir"], "{combo[0]}_rrnas.tsv"),
+        outdir=os.path.join(config["magdir"], "{MAG}_annotate"),
+        trnas=os.path.join(config["magdir"], "{MAG}_trnas.tsv"),
+        rrnas=os.path.join(config["magdir"], "{MAG}_rrnas.tsv"), 
     # conda:
     #     f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
@@ -22,11 +25,11 @@ rule DRAM:
         mem_gb=24,
         time='03:00:00'
     benchmark:
-        os.path.join(config["logdir"] + "/DRAM_benchmark_{combo[0]}.tsv")
+        os.path.join(config["logdir"] + "/DRAM_benchmark_{MAG}.tsv")
     log:
-        os.path.join(config["logdir"] + "/DRAM_log_{combo[0]}.log")
+        os.path.join(config["logdir"] + "/DRAM_log_{MAG}.log")
     message:
-        "Functionally annotating MAGs"
+        "Using DRAM to functionally annotate {wildcards.MAG}"
     shell:
         """
         #Loading DRAM from our custom DRAM build:
@@ -80,31 +83,13 @@ rule DRAM:
             echo "neither trnas nor rrnas found"
             fi        
 
-            ##get stats from annotations
-            #number of gene calls
-            sed '1d;' {params.outdir}/annotations.tsv | wc -l > {params.outdir}/num_genes.tsv
-            #number of genes with KEGG hits
-            sed '1d;' {params.outdir}/annotations.tsv | cut -f9 | grep -v '^$' | wc -l > {params.outdir}/kegg_hits.tsv
-            #number of pfam hits
-            sed '1d;' {params.outdir}/annotations.tsv | cut -f18 | grep -v '^$' | wc -l > {params.outdir}/pfam_hits.tsv
-            #number of cazy hits
-            sed '1d;' {params.outdir}/annotations.tsv | cut -f19 | grep -v '^$' | wc -l > {params.outdir}/cazy_hits.tsv
-            #number of genes without annotations
-            awk -F'\t' 'BEGIN { count = 0; } { empty = 1; for (i = 9; i <= 19; i++) { if ($i != "") { empty = 0; break; } } if (empty == 1) { count++; } } END { print count; }' {params.outdir}/annotations.tsv > {params.outdir}/unannotated.tsv
-
-
-
-            #fetch only KEGG modules from product (keep DRAM distillate)
-            cut -f1-381 {output.distillate}/product.tsv > {output.distillate}/kegg_product.tsv
-#            cut -f1,382-466 {output.distillate}/product.tsv > {output.distillate}/dram_product.tsv
-
-            #compress, clean, move
+            #compress, clean
             pigz -p {threads} {params.outdir}/annotations.tsv
-            pigz -p {threads} {output.distillate}/kegg_product.tsv
+            pigz -p {threads} {output.distillate}/product.tsv
             pigz -p {threads} {params.outdir}/genbank/*.gbk
 
             mv {params.outdir}/annotations.tsv.gz {output.annotations}
-            mv {output.distillate}/kegg_product.tsv.gz {output.product}
+            mv {output.distillate}/product.tsv.gz {output.product}
             mv {params.outdir}/genbank/*.gbk.gz {output.gbk}
-          
+            rm -r {params.outdir}
         """

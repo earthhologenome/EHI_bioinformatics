@@ -3,30 +3,35 @@
 rule upload_mags:
     input:
         expand(
-            os.path.join(
-                config["magdir"],
-                "{MAG}_anno.tsv.gz"
-            ),
-            MAG=MAG
+            os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
+            MAG=[combo[0] for combo in valid_combinations]
         )
     output:
-            os.path.join(
-                config["magdir"],
-                "MAGs_uploaded"
-                )
+        os.path.join(
+            config["magdir"],
+            "MAGs_uploaded"
+        )
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
     threads: 1
     resources:
         load=8,
         mem_gb=16,
-        time='01:00:00'
+        time='04:00:00'
     benchmark:
         os.path.join(config["logdir"] + "/upload_mag_benchmark.tsv")    
     shell:
         """
-        ## Upload MAGs and annotations to ERDA
-        lftp sftp://erda -e "mirror -R {config[magdir]} /EarthHologenomeInitiative/Data/MAG/; bye"
+        #Setup batch file for uploading MAGs from erda:
+        for mag in {output.mags};
+            do echo "put" >> {config[workdir]}/put.tsv && echo $(basename $mag) >> {config[workdir]}/up_mag.tsv && echo "erda:EarthHologenomeInitiative/Data/ANN/" > ann.tsv;
+        done
+
+        paste {config[workdir]}/get.tsv {config[workdir]}/up_mag.tsv {config[workdir]}/ann.tsv -d '' > {config[workdir]}/upload_batchfile.txt
+
+        #Execute batch file to upload the suckers
+        cd {config[magdir]}
+        sftp -b {config[workdir]}/upload_batchfile.txt erda
 
         ## Clean up
         rm -r {config[magdir]}/*

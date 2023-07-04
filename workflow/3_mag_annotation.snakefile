@@ -30,18 +30,28 @@ import glob
 
 df2 = pd.read_csv("dereped_mags.csv", sep=",")
 
-MAG = list(df2.iloc[:, 0])
+#MAG = list(df2.iloc[:, 0])
+
+valid_combinations = set(
+    (row["ehm"], row["mag_name"]) for _, row in df.iterrows()
+)
 
 print("Detected the following MAGs:")
-print(MAG)
-
+for combination in valid_combinations:
+    ehm, _ = combination
+    print(ehm)
 
 rule all:
     input:
+        os.path.join(
+            config["magdir"], 
+            "{combo[0]}_anno.tsv.gz"
+        ),    
         os.path.join(
             config["magdir"],
             "MAGs_uploaded"
         )
 
+include: os.path.join(config["codedir"], "rules/download_dereplicated.smk")
 include: os.path.join(config["codedir"], "rules/dram.smk")
 include: os.path.join(config["codedir"], "rules/upload_dram.smk")
