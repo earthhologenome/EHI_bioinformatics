@@ -4,7 +4,7 @@ rule upload_mags:
     input:
         expand(
             os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
-            MAG=[combo[0] for combo in valid_combinations]
+            MAG=[combo[1] for combo in valid_combinations]
         )
     output:
         os.path.join(
