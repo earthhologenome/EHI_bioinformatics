@@ -2,7 +2,7 @@
 ### Fetch dereplicated MAGs from ERDA
 rule download_mags:
     output:
-        expand(
+        mags=expand(
             os.path.join(config["magdir"], "{MAG}.gz"),
             MAG=[combo[1] for combo in valid_combinations]
         ),
