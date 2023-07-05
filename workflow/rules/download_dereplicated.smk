@@ -5,8 +5,8 @@ rule download_mags:
         mags=expand(
             os.path.join(
                 config["magdir"], "{MAG}.gz"
-                )
-                MAG=MAG,
+                ),
+                MAG=MAG
         ),
         downloaded=os.path.join(
             config["magdir"],

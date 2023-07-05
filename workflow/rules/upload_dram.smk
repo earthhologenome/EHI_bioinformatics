@@ -5,8 +5,8 @@ rule upload_mags:
         mags=expand(
             os.path.join(
                 config["magdir"], "{MAG}_anno.tsv.gz"
-                )
-                MAG=MAG,
+                ),
+                MAG=MAG
         )
     output:
         os.path.join(
