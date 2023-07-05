@@ -4,7 +4,7 @@
 ### Functionally annotate MAGs with DRAM
 rule DRAM:
     input:
-        lambda wildcard: os.path.join(config["magdir"], "{wildcards.MAG}.gz"
+        lambda wildcard: os.path.join(config["magdir"], "{MAG}.gz"
 #            MAG=[combo[1] for combo in valid_combinations]
         ),
         downloaded=os.path.join(
@@ -12,14 +12,16 @@ rule DRAM:
             "mags_downloaded"
         )
     output:
-        annotations = os.path.join(config["magdir"], "{wildcards.ehm}_anno.tsv.gz"),
-        product = os.path.join(config["magdir"], "{wildcards.ehm}_kegg.tsv.gz"),
-        gbk = os.path.join(config["magdir"], "{wildcards.ehm}.gbk.gz"),
-        distillate = os.path.join(config["magdir"], "{wildcards.ehm}_distillate")
+        annotations = os.path.join(config["magdir"], "{ehm}_anno.tsv.gz"),
+        product = os.path.join(config["magdir"], "{ehm}_kegg.tsv.gz"),
+        gbk = os.path.join(config["magdir"], "{ehm}.gbk.gz"),
+        distillate = os.path.join(config["magdir"], "{ehm}_distillate")
     params:
-        outdir=os.path.join(config["magdir"], "{wildcards.ehm}_annotate"),
-        trnas=os.path.join(config["magdir"], "{wildcards.ehm}_trnas.tsv"),
-        rrnas=os.path.join(config["magdir"], "{wildcards.ehm}_rrnas.tsv")
+        ehm=lambda wildcards: next((combo[0] for combo in valid_combinations if combo[1] == wildcards.MAG), None),
+        MAG=lambda wildcards: wildcards.MAG,
+        outdir=os.path.join(config["magdir"], "{ehm}_annotate"),
+        trnas=os.path.join(config["magdir"], "{ehm}_trnas.tsv"),
+        rrnas=os.path.join(config["magdir"], "{ehm}_rrnas.tsv")
     # conda:
     #     f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
@@ -28,9 +30,9 @@ rule DRAM:
         mem_gb=24,
         time='03:00:00'
     benchmark:
-        os.path.join(config["logdir"] + "/DRAM_benchmark_{wildcards.MAG}.tsv")
+        os.path.join(config["logdir"] + "/DRAM_benchmark_{MAG}.tsv")
     log:
-        os.path.join(config["logdir"] + "/DRAM_log_{wildcards.MAG}.log")
+        os.path.join(config["logdir"] + "/DRAM_log_{MAG}.log")
     message:
         "Functionally annotating MAGs"
     shell:
