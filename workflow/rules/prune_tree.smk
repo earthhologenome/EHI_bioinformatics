@@ -27,7 +27,7 @@ rule prune_tree:
     params:
         arch_tree=os.path.join(
             config["workdir"],
-            "gtdbtk/classify" + config["dmb"] + "_gtdbtk.ar53.classify.tree"
+            "gtdbtk/classify/gtdbtk.ar53.classify.tree"
         ),
     conda:
         f"{config['codedir']}/conda_envs/R_tidyverse.yaml"
