@@ -14,12 +14,12 @@ rule DRAM:
         )
     output:
         annotations = os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
-        # product = os.path.join(config["magdir"], "{wildcard[0]}_kegg.tsv.gz"),
-        # gbk = os.path.join(config["magdir"], "{wildcard[0]}.gbk.gz")
+        product = os.path.join(config["magdir"], "{MAG}_kegg.tsv.gz"),
+        gbk = os.path.join(config["magdir"], "{MAG}.gbk.gz")
     params:
-        # outdir=os.path.join(config["magdir"], "{wildcard[0]}_annotate"),
-        # trnas=os.path.join(config["magdir"], "{wildcard[0]}_trnas.tsv"),
-        # rrnas=os.path.join(config["magdir"], "{wildcard[0]}_rrnas.tsv"),
+        outdir=os.path.join(config["magdir"], "{MAG}_annotate"),
+        trnas=os.path.join(config["magdir"], "{MAG}_trnas.tsv"),
+        rrnas=os.path.join(config["magdir"], "{MAG}_rrnas.tsv"),
     # conda:
     #     f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
