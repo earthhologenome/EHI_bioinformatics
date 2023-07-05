@@ -4,7 +4,7 @@
 ### Functionally annotate MAGs with DRAM
 rule DRAM:
     input:
-        expand(
+        lambda wildcard: expand(
             os.path.join(config["magdir"], "{MAG}.gz"),
             MAG=[combo[1] for combo in valid_combinations]
         ),
@@ -13,13 +13,13 @@ rule DRAM:
             "mags_downloaded"
         )
     output:
-        annotations = os.path.join(config["magdir"], "{combo[0]}_anno.tsv.gz"),
-        product = os.path.join(config["magdir"], "{combo[0]}_kegg.tsv.gz"),
-        gbk = os.path.join(config["magdir"], "{combo[0]}.gbk.gz")
+        annotations = os.path.join(config["magdir"], "{wildcard[0]}_anno.tsv.gz"),
+        product = os.path.join(config["magdir"], "{wildcard[0]}_kegg.tsv.gz"),
+        gbk = os.path.join(config["magdir"], "{wildcard[0]}.gbk.gz")
     params:
-        outdir=os.path.join(config["magdir"], "{combo[0]}_annotate"),
-        trnas=os.path.join(config["magdir"], "{combo[0]}_trnas.tsv"),
-        rrnas=os.path.join(config["magdir"], "{combo[0]}_rrnas.tsv"),
+        outdir=os.path.join(config["magdir"], "{wildcard[0]}_annotate"),
+        trnas=os.path.join(config["magdir"], "{wildcard[0]}_trnas.tsv"),
+        rrnas=os.path.join(config["magdir"], "{wildcard[0]}_rrnas.tsv"),
     # conda:
     #     f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
@@ -28,9 +28,9 @@ rule DRAM:
         mem_gb=24,
         time='03:00:00'
     benchmark:
-        os.path.join(config["logdir"] + "/DRAM_benchmark_{combo[0]}.tsv")
+        os.path.join(config["logdir"] + "/DRAM_benchmark_{wildcard[0]}.tsv")
     log:
-        os.path.join(config["logdir"] + "/DRAM_log_{combo[0]}.log")
+        os.path.join(config["logdir"] + "/DRAM_log_{wildcard[0]}.log")
     message:
         "Functionally annotating MAGs"
     shell:
