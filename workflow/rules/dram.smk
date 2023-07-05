@@ -15,11 +15,12 @@ rule DRAM:
     output:
         annotations = os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
         product = os.path.join(config["magdir"], "{MAG}_kegg.tsv.gz"),
-        gbk = os.path.join(config["magdir"], "{MAG}.gbk.gz")
+        gbk = os.path.join(config["magdir"], "{MAG}.gbk.gz"),
+        distillate = os.path.join(config["magdir"], "{MAG}_distillate")
     params:
         outdir=os.path.join(config["magdir"], "{MAG}_annotate"),
         trnas=os.path.join(config["magdir"], "{MAG}_trnas.tsv"),
-        rrnas=os.path.join(config["magdir"], "{MAG}_rrnas.tsv"),
+        rrnas=os.path.join(config["magdir"], "{MAG}_rrnas.tsv")
     # conda:
     #     f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
