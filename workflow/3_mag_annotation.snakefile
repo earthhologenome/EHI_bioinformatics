@@ -20,7 +20,7 @@
 
 ### Setup MAG inputs and config
 
-configfile: "assembly_mag_config.yaml"
+configfile: "derepliation_mapping.yaml"
 
 import os
 import glob
