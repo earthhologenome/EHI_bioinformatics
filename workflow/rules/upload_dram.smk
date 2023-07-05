@@ -2,7 +2,7 @@
 ## Upload DRAM annotations to ERDA and update AirTable MAG database
 rule upload_mags:
     input:
-        expand(
+        mags=expand(
             os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
             MAG=[combo[0] for combo in valid_combinations]
         )
