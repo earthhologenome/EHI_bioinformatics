@@ -2,11 +2,14 @@
 # Prune phylogenetic tree for EHI DM output
 # By Antton Alberdi (antton.alberdi@sund.ku.dk)
 # 30/06/2023
+# bug fix by Raphael 5/7/2023
 ####
 
 #Load libraries
 suppressPackageStartupMessages(library(ape))
 suppressPackageStartupMessages(library(argparse))
+suppressPackageStartupMessages(library(tidyverse))
+
 
 #Parse input-output
 parser <- ArgumentParser()
@@ -22,7 +25,8 @@ bacteria_tree <- ape::read.tree(args$bacteria)
 prokaryote_tree <- bind.tree(bacteria_tree, archaea_tree)
 
 #Prune tree
-genomes <- read.table(args$info)[,1]
+genomes <- read.table(args$info, sep = '\t', skip = 1)[,1]
+genomes <- str_replace_all(genomes, "$", ".fa")
 output_tree <- ape::keep.tip(prokaryote_tree, genomes)
 
 #Quality-check
