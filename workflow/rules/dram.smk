@@ -4,8 +4,7 @@
 ### Functionally annotate MAGs with DRAM
 rule DRAM:
     input:
-#        lambda wildcard:
-        os.path.join(config["magdir"], "{EHA}.gz"
+        lambda wildcard: os.path.join(config["magdir"], "{MAG}.gz"
 #            MAG=[combo[1] for combo in valid_combinations]
         ),
         downloaded=os.path.join(
@@ -13,14 +12,14 @@ rule DRAM:
             "mags_downloaded"
         )
     output:
-        annotations = os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
-        product = os.path.join(config["magdir"], "{MAG}_kegg.tsv.gz"),
-        gbk = os.path.join(config["magdir"], "{MAG}.gbk.gz"),
-        distillate = os.path.join(config["magdir"], "{MAG}_distillate")
+        annotations = os.path.join(config["magdir"], "{ehm}_anno.tsv.gz"),
+        product = os.path.join(config["magdir"], "{ehm}_kegg.tsv.gz"),
+        gbk = os.path.join(config["magdir"], "{ehm}.gbk.gz"),
+        distillate = os.path.join(config["magdir"], "{ehm}_distillate")
     params:
-        outdir=os.path.join(config["magdir"], "{MAG}_annotate"),
-        trnas=os.path.join(config["magdir"], "{MAG}_trnas.tsv"),
-        rrnas=os.path.join(config["magdir"], "{MAG}_rrnas.tsv")
+        outdir=os.path.join(config["magdir"], "{ehm}_annotate"),
+        trnas=os.path.join(config["magdir"], "{ehm}_trnas.tsv"),
+        rrnas=os.path.join(config["magdir"], "{ehm}_rrnas.tsv")
     # conda:
     #     f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
