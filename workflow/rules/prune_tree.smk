@@ -52,7 +52,7 @@ rule prune_tree:
         fi
 
         ## Create list of dereplicated MAG names for updating AirTable
-        cut -f1 {input.count_table} | sed '1d;' > {config[workdir]}/dereplicated_mags.tsv
+        cut -f1 {input.count_table} | sed '1d;' | sed 's/$/.fa/g' > {config[workdir]}/dereplicated_mags.tsv
 
         ## Remove trailing '.fa'
         sed -i'' 's/\.fa//g' {output.tree}
