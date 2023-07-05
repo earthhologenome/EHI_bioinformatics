@@ -20,15 +20,16 @@
 
 ### Setup MAG inputs and config
 
-configfile: "derepliation_mapping.yaml"
+configfile: "dereplication_mapping.yaml"
 
 import os
 import glob
+import pandas as pd
 
 ## Setup the list of MAGs that we want, this is pulled from airtable using the
 ## 'get_derep_mags_airtable.py' script.
 
-df2 = pd.read_csv("dereped_mags.csv", sep=",")
+df = pd.read_csv("dereped_mags.csv", sep=",")
 
 #MAG = list(df2.iloc[:, 0])
 

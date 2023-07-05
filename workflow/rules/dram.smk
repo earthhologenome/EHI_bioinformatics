@@ -4,8 +4,10 @@
 ### Functionally annotate MAGs with DRAM
 rule DRAM:
     input:
-        for combo in valid_combinations:
-            os.path.join(config["magdir"], f"{combo[1]}.fa.gz")
+        lambda wildcard: expand(
+            os.path.join(config["magdir"], "{MAG}.fa.gz"),
+            MAG=[combo[1] for combo in valid_combinations]
+        )
     output:
         annotations = os.path.join(config["magdir"], "{combo[0]}_anno.tsv.gz"),
         product = os.path.join(config["magdir"], "{combo[0]}_kegg.tsv.gz"),
