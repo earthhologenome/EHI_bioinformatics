@@ -3,7 +3,7 @@
 rule download_mags:
     output:
         expand(
-            os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
+            os.path.join(config["magdir"], "{MAG}.fa.gz"),
             MAG=[combo[0] for combo in valid_combinations]
         ),
         downloaded=os.path.join(
