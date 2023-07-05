@@ -7,6 +7,10 @@ rule DRAM:
         lambda wildcard: expand(
             os.path.join(config["magdir"], "{MAG}.fa.gz"),
             MAG=[combo[1] for combo in valid_combinations]
+        ),
+        downloaded=os.path.join(
+            config["magdir"],
+            "mags_downloaded"
         )
     output:
         annotations = os.path.join(config["magdir"], "{combo[0]}_anno.tsv.gz"),
