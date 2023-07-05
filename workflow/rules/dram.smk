@@ -4,7 +4,7 @@
 ### Functionally annotate MAGs with DRAM
 rule DRAM:
     input:
-        os.path.join(
+        mag=os.path.join(
             config["magdir"], "{MAG}.gz"
         ),
         downloaded=os.path.join(
@@ -39,7 +39,7 @@ rule DRAM:
         source activate /projects/mjolnir1/people/ncl550/0_software/miniconda3/envs/DRAM_more_modules
 
             DRAM.py annotate \
-                -i {input} \
+                -i {input.mag} \
                 -o {params.outdir} \
                 --threads {threads} \
     #            --use_uniref \
