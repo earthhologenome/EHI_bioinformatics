@@ -48,7 +48,7 @@ rule all:
                 config["magdir"], 
                 "{MAG}_anno.tsv.gz"
             ),
-            combo=valid_combinations
+            MAG=MAG
         ),    
         os.path.join(
             config["magdir"],
