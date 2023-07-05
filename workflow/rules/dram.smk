@@ -13,7 +13,7 @@ rule DRAM:
             "mags_downloaded"
         )
     output:
-        annotations = os.path.join(config["magdir"], "{wildcard[0]}_anno.tsv.gz"),
+        annotations = os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
         product = os.path.join(config["magdir"], "{wildcard[0]}_kegg.tsv.gz"),
         gbk = os.path.join(config["magdir"], "{wildcard[0]}.gbk.gz")
     params:

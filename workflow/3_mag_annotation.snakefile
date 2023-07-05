@@ -44,9 +44,12 @@ for combination in valid_combinations:
 
 rule all:
     input:
-        os.path.join(
-            config["magdir"], 
-            "{combo[0]}_anno.tsv.gz"
+        expand(
+            os.path.join(
+                config["magdir"], 
+                "{combo[0]}_anno.tsv.gz"
+            ),
+            combo=valid_combinations
         ),    
         os.path.join(
             config["magdir"],
