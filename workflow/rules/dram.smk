@@ -15,7 +15,7 @@ rule DRAM:
         annotations = os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
         product = os.path.join(config["magdir"], "{MAG}_kegg.tsv.gz"),
         gbk = os.path.join(config["magdir"], "{MAG}.gbk.gz"),
-        distillate = os.path.join(config["magdir"], "{MAG}_distillate")
+        distillate = directory(os.path.join(config["magdir"], "{MAG}_distillate"))
     params:
         outdir=os.path.join(config["magdir"], "{MAG}_annotate"),
         trnas=os.path.join(config["magdir"], "{MAG}_trnas.tsv"),

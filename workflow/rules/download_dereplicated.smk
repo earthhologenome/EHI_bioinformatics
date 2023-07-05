@@ -25,6 +25,9 @@ rule download_mags:
         "Fetching MAGs from ERDA"
     shell:
         """
+        #Log airtable that pipeline is running
+        python {config[codedir]}/airtable/log_ann_start_airtable.py --dmb={config[dmb]}
+        
         #Setup batch file for downloading MAGs from erda:
         for mag in {output.mags};
             do echo "get EarthHologenomeInitiative/Data/MAG/*/" >> {config[workdir]}/get.tsv && echo $(basename $mag) >> {config[workdir]}/mag.tsv;
