@@ -4,8 +4,10 @@
 ### Functionally annotate MAGs with DRAM
 rule DRAM:
     input:
-        lambda wildcard: 
-            os.path.join(config["magdir"], "{MAG}.gz",
+#        lambda wildcard:
+        expand(
+            os.path.join(config["magdir"], "{combo[1]}.gz"),
+            combo=valid_combinations,
 #            MAG=[combo[1] for combo in valid_combinations]
         ),
         downloaded=os.path.join(
