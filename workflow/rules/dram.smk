@@ -5,7 +5,7 @@
 rule DRAM:
     input:
 #        lambda wildcard:
-            os.path.join(config["magdir"], "{EHA}.gz"
+        os.path.join(config["magdir"], "{EHA}.gz"
 #            MAG=[combo[1] for combo in valid_combinations]
         ),
         downloaded=os.path.join(
