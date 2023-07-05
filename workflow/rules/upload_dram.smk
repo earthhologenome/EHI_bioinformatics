@@ -23,7 +23,7 @@ rule upload_mags:
     shell:
         """
         #Setup batch file for uploading MAGs from erda:
-        for mag in {output.mags};
+        for mag in {input.mags};
             do echo "put" >> {config[workdir]}/put.tsv && echo $(basename $mag) >> {config[workdir]}/up_mag.tsv && echo "erda:EarthHologenomeInitiative/Data/ANN/" > ann.tsv;
         done
 
@@ -34,7 +34,7 @@ rule upload_mags:
         sftp -b {config[workdir]}/upload_batchfile.txt erda
 
         ## Clean up
-        rm -r {config[magdir]}/*
+#        rm -r {config[magdir]}/*
 
         ## Create output to end pipeline
         touch {output}
