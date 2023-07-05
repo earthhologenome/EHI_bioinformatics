@@ -4,7 +4,7 @@
 ### Functionally annotate MAGs with DRAM
 rule DRAM:
     input:
-        lambda wildcard: expand(
+        expand(
             os.path.join(config["magdir"], "{MAG}.fa.gz"),
             MAG=[combo[1] for combo in valid_combinations]
         ),
