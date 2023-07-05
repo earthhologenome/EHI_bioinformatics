@@ -31,23 +31,22 @@ import pandas as pd
 
 df = pd.read_csv("dereped_mags.csv", sep=",")
 
-#MAG = list(df2.iloc[:, 0])
+MAG = list(df.iloc[:, 1])
 
 valid_combinations = set(
     (row["ehm"], row["mag_name"]) for _, row in df.iterrows()
 )
 
+
 print("Detected the following MAGs:")
-for combination in valid_combinations:
-    ehm, _ = combination
-    print(ehm)
+print(MAG)
 
 rule all:
     input:
         expand(
             os.path.join(
                 config["magdir"], 
-                "{combo[0]}_anno.tsv.gz"
+                "{MAG}_anno.tsv.gz"
             ),
             combo=valid_combinations
         ),    
