@@ -26,7 +26,7 @@ rule coverM_mag:
     resources:
         load=1,
         mem_gb=64,
-        time="00:15:00",
+        time="02:00:00",
     benchmark:
         os.path.join(config["logdir"] + "/coverm_benchmark.tsv")
     log:
