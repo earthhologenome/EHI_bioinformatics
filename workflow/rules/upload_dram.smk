@@ -30,28 +30,28 @@ rule upload_mags:
         dos2unix ehm_eha_mapping.tsv
 
         while read ehm eha; 
-            do cp {config[magdir]}/"$eha"_anno.tsv.gz {config[magdir]}/"$ehm"_anno.tsv.gz && echo {config[magdir]}/"$ehm"_anno.tsv.gz >> anno_mag.tsv; 
+            do mv {config[magdir]}/"$eha"_anno.tsv.gz {config[magdir]}/"$ehm"_anno.tsv.gz && echo {config[magdir]}/"$ehm"_anno.tsv.gz >> anno_mag.tsv; 
         done < ehm_eha_mapping.tsv
 
         while read ehm eha; 
-            do cp {config[magdir]}/"$eha"_kegg.tsv.gz {config[magdir]}/"$ehm"_kegg.tsv.gz && echo {config[magdir]}/"$ehm"_kegg.tsv.gz >> kegg_mag.tsv; 
+            do mv {config[magdir]}/"$eha"_kegg.tsv.gz {config[magdir]}/"$ehm"_kegg.tsv.gz && echo {config[magdir]}/"$ehm"_kegg.tsv.gz >> kegg_mag.tsv; 
         done < ehm_eha_mapping.tsv
 
         while read ehm eha; 
-            do cp {config[magdir]}/"$eha".gbk.gz {config[magdir]}/"$ehm".gbk.gz && echo {config[magdir]}/"$ehm"_gbk.gz >> gbk_mag.tsv; 
+            do mv {config[magdir]}/"$eha".gbk.gz {config[magdir]}/"$ehm".gbk.gz && echo {config[magdir]}/"$ehm"_gbk.gz >> gbk_mag.tsv; 
         done < ehm_eha_mapping.tsv
 
 
         #Setup batch file for uploading MAGs from erda:
-        for mag in *_anno.tsv.gz;
-            do echo "put" >> put.tsv && echo "erda:EarthHologenomeInitiative/Data/ANN/" > ann.tsv;
+        for mag in {config[magdir]}/*_anno.tsv.gz;
+            do echo "put" >> put.tsv && echo "erda:EarthHologenomeInitiative/Data/ANN/" >> ann.tsv;
         done
 
         cat anno_mag.tsv kegg_mag.tsv gbk_mag.tsv > upload_filenames.tsv
         cat put.tsv put.tsv put.tsv > upload_put.tsv
         cat ann.tsv ann.tsv ann.tsv > upload_ann.tsv
 
-        paste upload_filenames.tsv upload_put.tsv upload_ann.tsv > batchfile.txt
+        paste upload_put.tsv upload_filenames.tsv upload_ann.tsv > batchfile.txt
 
         #Execute batch file to upload the suckers
         sftp -b batchfile.txt erda
