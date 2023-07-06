@@ -48,7 +48,7 @@ rule prune_tree:
             Rscript {config[codedir]}/scripts/prune_tree.R -b {input.tree} -a {params.arch_tree} -i {input.count_table} -o {output.tree}
 
         else
-            Rscript {config[codedir]}/scripts/prune_tree.R -b {input.tree} -i {input.count_table} -o {output.tree}
+            Rscript {config[codedir]}/scripts/prune_tree_bact.R -b {input.tree} -i {input.count_table} -o {output.tree}
         fi
 
         ## Create list of dereplicated MAG names for updating AirTable
