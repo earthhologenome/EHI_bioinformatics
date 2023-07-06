@@ -26,6 +26,8 @@ rule upload_mags:
         """
         ##Rename files from EHA -> EHM
         sed -s '1d;' dereped_mags.csv | tr ',' '\t' > ehm_eha_mapping.tsv
+        #fix issue with separators
+        dos2unix ehm_eha_mapping.tsv
 
         while read ehm eha; 
             do cp {config[magdir]}/"$eha"_anno.tsv.gz {config[magdir]}/"$ehm"_anno.tsv.gz && echo {config[magdir]}/"$ehm"_anno.tsv.gz >> anno_mag.tsv; 
