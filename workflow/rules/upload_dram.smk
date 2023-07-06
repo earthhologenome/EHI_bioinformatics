@@ -30,15 +30,15 @@ rule upload_mags:
         dos2unix ehm_eha_mapping.tsv
 
         while read ehm eha; 
-            do mv {config[magdir]}/"$eha"_anno.tsv.gz {config[magdir]}/"$ehm"_anno.tsv.gz && echo {config[magdir]}/"$ehm"_anno.tsv.gz >> anno_mag.tsv; 
+            do cp {config[magdir]}/"$eha"_anno.tsv.gz {config[magdir]}/"$ehm"_anno.tsv.gz && echo {config[magdir]}/"$ehm"_anno.tsv.gz >> anno_mag.tsv; 
         done < ehm_eha_mapping.tsv
 
         while read ehm eha; 
-            do mv {config[magdir]}/"$eha"_kegg.tsv.gz {config[magdir]}/"$ehm"_kegg.tsv.gz && echo {config[magdir]}/"$ehm"_kegg.tsv.gz >> kegg_mag.tsv; 
+            do cp {config[magdir]}/"$eha"_kegg.tsv.gz {config[magdir]}/"$ehm"_kegg.tsv.gz && echo {config[magdir]}/"$ehm"_kegg.tsv.gz >> kegg_mag.tsv; 
         done < ehm_eha_mapping.tsv
 
         while read ehm eha; 
-            do mv {config[magdir]}/"$eha".gbk.gz {config[magdir]}/"$ehm".gbk.gz && echo {config[magdir]}/"$ehm".gbk.gz >> gbk_mag.tsv; 
+            do cp {config[magdir]}/"$eha".gbk.gz {config[magdir]}/"$ehm".gbk.gz && echo {config[magdir]}/"$ehm".gbk.gz >> gbk_mag.tsv; 
         done < ehm_eha_mapping.tsv
 
 
