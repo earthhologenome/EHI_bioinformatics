@@ -38,7 +38,7 @@ rule upload_mags:
         done < ehm_eha_mapping.tsv
 
         while read ehm eha; 
-            do mv {config[magdir]}/"$eha".gbk.gz {config[magdir]}/"$ehm".gbk.gz && echo {config[magdir]}/"$ehm"_gbk.gz >> gbk_mag.tsv; 
+            do mv {config[magdir]}/"$eha".gbk.gz {config[magdir]}/"$ehm".gbk.gz && echo {config[magdir]}/"$ehm".gbk.gz >> gbk_mag.tsv; 
         done < ehm_eha_mapping.tsv
 
 
