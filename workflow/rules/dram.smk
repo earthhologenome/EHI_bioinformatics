@@ -35,6 +35,10 @@ rule DRAM:
         "Functionally annotating MAGs"
     shell:
         """
+        # Remove tmp files in case job needs to be rerun
+        rm -r {params.outdir}
+        rm -r {output.distillate}
+
         #Loading DRAM from our custom DRAM build:
         source activate /projects/mjolnir1/people/ncl550/0_software/miniconda3/envs/DRAM_more_modules
 
