@@ -26,7 +26,7 @@ rule DRAM:
         2
     resources:
         mem_gb=24,
-        time='03:00:00'
+        time='04:00:00'
     benchmark:
         os.path.join(config["logdir"] + "/DRAM_benchmark_{MAG}.tsv")
     log:
