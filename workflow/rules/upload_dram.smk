@@ -44,7 +44,7 @@ rule upload_mags:
 
         #Setup batch file for uploading MAGs from erda:
         for mag in {config[magdir]}/*_anno.tsv.gz;
-            do echo "put" >> put.tsv && echo "erda:EarthHologenomeInitiative/Data/ANN/" >> ann.tsv;
+            do echo "put" >> put.tsv && echo "EarthHologenomeInitiative/Data/ANN/" >> ann.tsv;
         done
 
         cat anno_mag.tsv kegg_mag.tsv gbk_mag.tsv > upload_filenames.tsv
