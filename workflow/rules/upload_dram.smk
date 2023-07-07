@@ -60,7 +60,7 @@ rule upload_mags:
 #        rm -r {config[magdir]}/*
 
         ## Log job is done on AirTable
-        python {config[codedir]}/airtable/log_ann_done_airtable.py --dmb={config[dmb]}
+        python {config[codedir]}/airtable/log_ann_done_airtable.py --code={config[dmb]}
 
         ## Create output to end pipeline
         touch {output}
