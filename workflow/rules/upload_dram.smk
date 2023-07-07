@@ -57,7 +57,7 @@ rule upload_mags:
         sftp -b batchfile.txt erda
 
         ## Clean up
-#        rm -r {config[magdir]}/*
+        rm -r {config[magdir]}/*
 
         ## Log job is done on AirTable
         python {config[codedir]}/airtable/log_ann_done_airtable.py --code={config[dmb]}
