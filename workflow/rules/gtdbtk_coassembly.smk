@@ -45,7 +45,7 @@ rule gtdbtk:
         rm -rf {params.outdir}
         mkdir -p {params.outdir}
 
-        gtdbtk --version | cut -f3 -d ' ' > {params.outdir}/version.tsv
+        gtdbtk --version | cut -f3 -d ' ' | head -1 > {params.outdir}/version.tsv
 
         for i in {params.bins}/*.fa.gz;
             do cat {params.outdir}/version.tsv >> {params.outdir}/version_catted.tsv;
