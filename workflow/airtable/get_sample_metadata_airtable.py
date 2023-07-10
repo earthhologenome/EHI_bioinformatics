@@ -46,7 +46,7 @@ for i, row in df.iterrows():
 
 
 # Specify the desired columns to be included in the new TSV file
-desired_columns = ['sample_code', 'species', 'region', 'sample_type', 'order', 'sex', 'country', 'latitude', 'longitude', 'singlem_fraction', 'metagenomic_bases', 'diversity', 'C']
+desired_columns = ['EHI_plaintext', 'sample_code', 'species', 'region', 'sample_type', 'order', 'sex', 'country', 'latitude', 'longitude', 'singlem_fraction', 'metagenomic_bases', 'host_bases', 'bases_lost_fastp_percent', 'diversity', 'C']
 
 # Create a new DataFrame from the filtered records
 filtered_records_df = pd.DataFrame(filtered_records)

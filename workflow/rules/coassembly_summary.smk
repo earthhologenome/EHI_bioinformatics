@@ -65,7 +65,7 @@ rule coassembly_summary:
         ## clean up old files in case of relaunch
         rm -f {params.stats_dir}/temp*
         rm -f {params.stats_dir}/*ids.tsv
-        rm -f {params.stats_dir}/relsabun.tsv
+        rm -f {params.stats_dir}/relabun.tsv
         rm -f {params.stats_dir}/bins.tsv
         
         #parse QUAST outputs for assembly stats
