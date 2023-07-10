@@ -47,43 +47,55 @@ with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
     writer.writerow(['PR_batch', 'EHI_number', 'Assembly_code', 'metagenomic_bases', 'singlem_fraction', 'diversity', 'C'])
 
+
+    offset = None
+    while True:
+        # Update the query parameters with the offset if it exists
+        if offset:
+            query_params['offset'] = offset
+
     # Process records from assembly table
-    for record in asb_records:
-        # Get the values of the PR_batch and EHI_number lookup fields
-        pr_batch_id = record['fields']['PR_batch'][0]
-        ehi_number_id = record['fields']['EHI_number'][0]
+        for record in asb_records:
+            # Get the values of the PR_batch and EHI_number lookup fields
+            pr_batch_id = record['fields']['PR_batch'][0]
+            ehi_number_id = record['fields']['EHI_number'][0]
 
-        # Make requests to retrieve the linked records
-        pr_batch_response = requests.get(f"{AIRTABLE_ASB}/{pr_batch_id}", headers=headers)
-        ehi_number_response = requests.get(f"{AIRTABLE_ASB}/{ehi_number_id}", headers=headers)
+            # Make requests to retrieve the linked records
+            pr_batch_response = requests.get(f"{AIRTABLE_ASB}/{pr_batch_id}", headers=headers)
+            ehi_number_response = requests.get(f"{AIRTABLE_ASB}/{ehi_number_id}", headers=headers)
 
-        # Extract the values of the linked fields from the linked records
-        pr_batch_value = pr_batch_response.json()['fields']['Code']
-        ehi_number_value = ehi_number_response.json()['fields']['EHI_number']
+            # Extract the values of the linked fields from the linked records
+            pr_batch_value = pr_batch_response.json()['fields']['Code']
+            ehi_number_value = ehi_number_response.json()['fields']['EHI_number']
 
-        # Set up the query parameters for Table 2 based on the 'EHI_number' value
-        ppr_query_params = {
-            'filterByFormula': f"AND({{EHI_number}} = '{ehi_number_value}', {{PR_Batch}} = '{pr_batch_value}')",
-            'fields': ['metagenomic_bases', 'singlem_fraction', 'diversity', 'C']
-        }
+            # Set up the query parameters for Table 2 based on the 'EHI_number' value
+            ppr_query_params = {
+                'filterByFormula': f"AND({{EHI_number}} = '{ehi_number_value}', {{PR_Batch}} = '{pr_batch_value}')",
+                'fields': ['metagenomic_bases', 'singlem_fraction', 'diversity', 'C']
+            }
 
-        # Make the request to get the records from Table 2
-        ppr_response = requests.get(AIRTABLE_PPR, params=ppr_query_params, headers=headers)
+            # Make the request to get the records from Table 2
+            ppr_response = requests.get(AIRTABLE_PPR, params=ppr_query_params, headers=headers)
 
-        # Convert the response to a JSON object
-        ppr_data = ppr_response.json()
+            # Convert the response to a JSON object
+            ppr_data = ppr_response.json()
 
-        # Extract the records from the JSON object for Table 2
-        ppr_records = ppr_data['records']
+            # Extract the records from the JSON object for Table 2
+            ppr_records = ppr_data['records']
 
-        # Process records from Table 2
-        for ppr_record in ppr_records:
-            # Extract the values from Table 2 and perform further processing
-            metagenomic_bases_value = ppr_record['fields']['metagenomic_bases']
-            singlem_fraction_value = ppr_record['fields']['singlem_fraction']
-            diversity_value = ppr_record['fields']['diversity']
-            C_value = ppr_record['fields']['C']
+            # Process records from Table 2
+            for ppr_record in ppr_records:
+                # Extract the values from Table 2 and perform further processing
+                metagenomic_bases_value = ppr_record['fields']['metagenomic_bases']
+                singlem_fraction_value = ppr_record['fields']['singlem_fraction']
+                diversity_value = ppr_record['fields']['diversity']
+                C_value = ppr_record['fields']['C']
 
-            # Write the row to the TSV file
-            row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code'], metagenomic_bases_value, singlem_fraction_value, diversity_value, C_value]
-            writer.writerow(row)
+                # Write the row to the TSV file
+                row = [pr_batch_value, ehi_number_value, record['fields']['Assembly_code'], metagenomic_bases_value, singlem_fraction_value, diversity_value, C_value]
+                writer.writerow(row)
+        
+        if 'offset' in data:
+            offset = data['offset']
+        else:
+            break

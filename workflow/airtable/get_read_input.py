@@ -46,17 +46,28 @@ with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
     writer.writerow(['PR_batch', 'EHI_number'])
 
-    for record in records:
-        # Get the values of the PR_batch and EHI_number lookup fields
-        record_id = record['id']
+    offset = None
+    while True:
+        # Update the query parameters with the offset if it exists
+        if offset:
+            query_params['offset'] = offset
 
-        # Make requests to retrieve the linked records
-        record_response = requests.get(f"{AIRTABLE_API_ENDPOINT}/{record_id}", headers=headers)
+        for record in records:
+            # Get the values of the PR_batch and EHI_number lookup fields
+            record_id = record['id']
 
-        # Extract the values of the linked fields from the linked records
-        pr_batch_value = record_response.json()['fields'].get('PR_Batch', '')
-        ehi_number_value = record_response.json()['fields'].get('EHI_number', '')
+            # Make requests to retrieve the linked records
+            record_response = requests.get(f"{AIRTABLE_API_ENDPOINT}/{record_id}", headers=headers)
 
-        # Write the row to the TSV file
-        row = [pr_batch_value, ehi_number_value]
-        writer.writerow(row)
+            # Extract the values of the linked fields from the linked records
+            pr_batch_value = record_response.json()['fields'].get('PR_Batch', '')
+            ehi_number_value = record_response.json()['fields'].get('EHI_number', '')
+
+            # Write the row to the TSV file
+            row = [pr_batch_value, ehi_number_value]
+            writer.writerow(row)
+
+        if 'offset' in data:
+            offset = data['offset']
+        else:
+            break

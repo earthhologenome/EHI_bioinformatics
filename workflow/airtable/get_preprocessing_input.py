@@ -45,17 +45,28 @@ output_file_path = 'prb_input.tsv'
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
 
-    for record in records:
-        # Get the values of the EHI_number lookup fields
-        # EHI_number are lookups in the AB_assembly_binning table, so we perform further API requests.
-        ehi_number_id = record['fields']['EHI_number'][0]
+    offset = None
+    while True:
+        # Update the query parameters with the offset if it exists
+        if offset:
+            query_params['offset'] = offset
 
-        # Make requests to retrieve the linked records
-        ehi_number_response = requests.get(f"{AIRTABLE_API_ENDPOINT}/{ehi_number_id}", headers=headers)
+        for record in records:
+            # Get the values of the EHI_number lookup fields
+            # EHI_number are lookups in the AB_assembly_binning table, so we perform further API requests.
+            ehi_number_id = record['fields']['EHI_number'][0]
 
-        # Extract the values of the linked fields from the linked records
-        ehi_number_value = ehi_number_response.json()['fields']['EHI_number']
+            # Make requests to retrieve the linked records
+            ehi_number_response = requests.get(f"{AIRTABLE_API_ENDPOINT}/{ehi_number_id}", headers=headers)
 
-        # Write the row to the TSV file
-        row = [ehi_number_value]
-        writer.writerow(row)
+            # Extract the values of the linked fields from the linked records
+            ehi_number_value = ehi_number_response.json()['fields']['EHI_number']
+
+            # Write the row to the TSV file
+            row = [ehi_number_value]
+            writer.writerow(row)
+
+        if 'offset' in data:
+            offset = data['offset']
+        else:
+            break
