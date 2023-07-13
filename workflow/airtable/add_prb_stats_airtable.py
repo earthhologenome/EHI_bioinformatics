@@ -1,56 +1,64 @@
-
-
 import argparse
 import pandas as pd
 import requests
 import json
 
-# Load in CSV file
+#Load in CSV file
 parser = argparse.ArgumentParser()
-parser.add_argument('--samples', required=True, help='Path to samples file')
+parser.add_argument('--report', required=True, help='Path to report file')
+parser.add_argument('--prb', required=True, help='PR batch number')
 args = parser.parse_args()
 
-# Read the API key from the config file
+#Read the API key from config file
 with open('/projects/ehi/data/.airtable_api_key.json') as f:
     config = json.load(f)
 api_key = config['api_key']
 
-# Set variables
+#Set variables
 url = 'https://api.airtable.com/v0/appQpr6MxnaiVHsHy/tblJfLRU2FIVz37Y1'
 headers = {
     'Authorization': f'Bearer {api_key}',
     'Content-Type': 'application/json'
 }
 
-# Read in the TSV file using pandas
-df = pd.read_csv(args.samples, sep='\t')
-
-# Create an empty list to store the filtered records
-filtered_records = []
+#Read in the TSV file using pandas
+df = pd.read_csv(args.report, sep='\t')
 
 # Loop through each row in the dataframe
 for i, row in df.iterrows():
-    # Get the record ID for the row based on the value in the 'EHI_number' column and 'PR_batch'
+    # Get the record ID for the row based on the value in the 'ehi_number' column and 'pr_batch'
     params = {
-        'filterByFormula': f"AND({{EHI_number}} = '{row['EHI_number']}', {{PR_Batch}} = '{row['PR_batch']}')",
+        'filterByFormula': f"AND({{EHI_number}} = '{row['EHI_number']}', {{PR_Batch}} = '{args.prb}')",        
         'maxRecords': 1
     }
-    response = requestas.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=params)
     data = response.json()
-    
-    # Check if any records are found
-    if 'records' in data and len(data['records']) > 0:
-        record_fields = data['records'][0]['fields']
-        filtered_records.append(record_fields)
+    record_id = data['records'][0]['id']
 
-# Specify the desired columns to be included in the new TSV file
-desired_columns = ['sample_type', 'species', 'order', 'sex', 'country', 'region', 'latitude', 'longitude']  
+    # Set the cell data you want to update
+    data = {
+        'fields': {
+            'reads_pre_fastp': int(row['reads_pre_fastp']),
+            'reads_post_fastp': int(row['reads_post_fastp']),
+            'bases_pre_fastp': int(row['bases_pre_fastp']),
+            'bases_post_fastp': int(row['bases_post_fastp']),
+            'adapter_trimmed_reads': int(row['adapter_trimmed_reads']),
+            'adapter_trimmed_bases': int(row['adapter_trimmed_bases']),
+            'host_reads': int(row['host_reads']),
+            'bacterial_archaeal_bases': int(row['bacterial_archaeal_bases']),
+            'metagenomic_bases': int(row['metagenomic_bases']),
+            'singlem_fraction': float(row['singlem_fraction'].strip('%'))/100,
+            'kappa': float(row['kappa']),
+            'C': float(row['C']),
+            'LR': int(row['LR']),
+            'modelR': float(row['modelR']),
+            'LRstar': int(row['LRstar']),
+            'diversity': float(row['diversity'])
+        }
+    }
 
-# Create a new DataFrame from the filtered records
-filtered_records_df = pd.DataFrame(filtered_records)
+    # Send a PATCH request to update the record
+    response = requests.patch(f'{url}/{record_id}', headers=headers, data=json.dumps(data))
 
-# Select only the desired columns
-filtered_records_df = filtered_records_df[desired_columns]
-
-# Save the filtered records to a new TSV file
-filtered_records_df.to_csv('filtered_records.tsv', sep='\t', index=False)
+    # Print the response status code
+    print(response.status_code)
