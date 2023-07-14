@@ -25,7 +25,7 @@ rule upload_bam_erda:
         "Uploading {wildcards.EHA} BAM to ERDA"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 40 ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {config[contigsize]} ]
         then
             touch {output}
 

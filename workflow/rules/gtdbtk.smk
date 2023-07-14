@@ -44,7 +44,7 @@ rule gtdbtk:
         "Annotating taxonomy to {wildcards.EHA}'s bins using GTDB-tk"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 40 ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {config[contigsize]} ]
         then
             touch {output.bac}
             touch {output.combined}

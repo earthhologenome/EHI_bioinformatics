@@ -53,7 +53,7 @@ rule coverM_assembly:
         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 40 ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {config[contigsize]} ]
         then
             touch {output.coverm}
             touch {output.euk}
