@@ -26,7 +26,7 @@ rule metaWRAP_refinement:
             ),
     params:
         semibin2=os.path.join(config["workdir"] + "{EHA}_semibin2"),
-        vamb=os.path.join(config["workdir"] + "{EHA}_vamb")
+        vamb=os.path.join(config["workdir"] + "{EHA}_vamb"),
         outdir=os.path.join(config["workdir"] + "{EHA}_refinement"),
         stats_dir=directory(os.path.join(config["workdir"], "{EHA}_stats/"))
     threads: 8
