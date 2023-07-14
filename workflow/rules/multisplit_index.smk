@@ -12,9 +12,9 @@ rule multisplit_index:
         mem_gb=64,
         time="02:00:00",
     benchmark:
-        os.path.join(config["logdir"] + "/index_multisplit_benchmark.tsv")
+        os.path.join(config["logdir"] + "/{EHA}_index_multisplit_benchmark.tsv")
     log:
-        os.path.join(config["logdir"] + "/index_multisplit_log.log")
+        os.path.join(config["logdir"] + "/{EHA}_index_multisplit_log.log")
     message:
         "Indexing {wildcards.EHA} assembly using Bowtie2"
     shell:
