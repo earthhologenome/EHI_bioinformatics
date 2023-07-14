@@ -48,7 +48,8 @@ rule assembly_summary:
         stats_dir=directory(os.path.join(
             config["workdir"],
             "{EHA}_stats/")
-            )
+            ),
+        contigsize=config["contigsize"]
     threads: 1
     resources:
         load=8,
@@ -58,7 +59,7 @@ rule assembly_summary:
         "Creating final assembly summary table for {wildcards.EHA}, uploading files to ERDA"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {expand('{{config[contigsize]}}', config=config)} ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
         then
             touch {output.stats}
             touch {output.contigs}

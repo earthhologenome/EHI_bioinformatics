@@ -13,7 +13,8 @@ rule metaWRAP_binning:
             config["workdir"], "{PRB}_{EHI}_{EHA}_binning/binning_complete"
             ),
     params:
-        outdir=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_binning")
+        outdir=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_binning"),
+        contigsize=config["contigsize"]
     threads: 16
     resources:
         mem_gb=64,
@@ -26,7 +27,7 @@ rule metaWRAP_binning:
         "Binning {wildcards.EHA} contigs with MetaWRAP (concoct, maxbin2, metabat2)"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {{config[contigsize]}} ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
         then
             touch {output}
 

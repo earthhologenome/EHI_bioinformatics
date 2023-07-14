@@ -28,7 +28,8 @@ rule gtdbtk:
         GTDB_data=expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir=os.path.join(config["workdir"] + "/{PRB}" + "/{EHI}" + "/{EHA}" + "/gtdbtk"),
         refinement=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement"),
-        bins=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement" + "/metawrap_50_10_bins")
+        bins=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement" + "/metawrap_50_10_bins"),
+        contigsize=config["contigsize"]
     conda:
         f"{config['codedir']}/conda_envs/GTDB-tk.yaml"
     threads:
@@ -44,7 +45,7 @@ rule gtdbtk:
         "Annotating taxonomy to {wildcards.EHA}'s bins using GTDB-tk"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {{config[contigsize]}} ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
         then
             touch {output.bac}
             touch {output.combined}

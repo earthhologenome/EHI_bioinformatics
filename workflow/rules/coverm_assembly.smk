@@ -40,6 +40,8 @@ rule coverM_assembly:
             )
     conda:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
+    params:
+        contigsize=config["contigsize"]
     threads: 4
     resources:
         load=1,
@@ -53,7 +55,7 @@ rule coverM_assembly:
         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {{config[contigsize]}} ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
         then
             touch {output.coverm}
             touch {output.euk}

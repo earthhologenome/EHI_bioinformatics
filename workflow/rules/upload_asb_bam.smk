@@ -14,6 +14,8 @@ rule upload_bam_erda:
         os.path.join(config["workdir"], "{PRB}_{EHI}_{EHA}_uploaded")
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
+    params:
+        contigsize=config["contigsize"]
     threads: 1
     resources:
         load=8,
@@ -25,7 +27,7 @@ rule upload_bam_erda:
         "Uploading {wildcards.EHA} BAM to ERDA"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {{config[contigsize]}} ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
         then
             touch {output}
 

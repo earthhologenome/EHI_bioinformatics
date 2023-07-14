@@ -23,7 +23,8 @@ rule metaWRAP_refinement:
     params:
         binning=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_binning"),
         outdir=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement"),
-        stats_dir=directory(os.path.join(config["workdir"], "{EHA}_stats/"))
+        stats_dir=directory(os.path.join(config["workdir"], "{EHA}_stats/")),
+        contigsize=config["contigsize"]
     threads: 8
     resources:
         mem_gb=164,
@@ -36,7 +37,7 @@ rule metaWRAP_refinement:
         "Refining {wildcards.EHA} bins with MetaWRAP's bin refinement module"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {{config[contigsize]}} ]
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
         then
             touch {output.stats}
             touch {output.contigmap}
