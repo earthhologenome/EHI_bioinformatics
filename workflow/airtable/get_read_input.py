@@ -26,7 +26,7 @@ headers = {
 
 # Set up the query parameters to filter the records
 query_params = {
-    'filterByFormula': f"{{DM_batch}} = '{args.dmb}'",
+    'filterByFormula': f"FIND('{args.dmb}', {{DM_batch}})",
 
 }
 
