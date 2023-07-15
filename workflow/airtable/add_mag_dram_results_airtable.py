@@ -26,7 +26,7 @@ headers = {
 }
 
 # Read the TSV file using pandas
-df = pd.read_csv(args.report, sep='\t')
+df = pd.read_csv(args.table, sep='\t')
 
 # Loop through each row in the dataframe
 for i, row in df.iterrows():
@@ -48,7 +48,7 @@ for i, row in df.iterrows():
             'number_unannotated_genes': int(row['number_unannotated_genes']),
         }
     }
-    
+
     if existing_record:
         # Update existing record
         record_id = existing_record['id']
