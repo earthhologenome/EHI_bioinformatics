@@ -61,8 +61,6 @@ rule upload_tables:
         
         python {config[codedir]}/airtable/add_mag_mapping_rates_airtable.py --report=mapping_rates.tsv
 
-        python {config[codedir]}/airtable/get_mag_info_airtable.py --dmb={config[dmb]}
-
         python {config[codedir]}/airtable/get_sample_metadata_airtable.py --samples=read_input.tsv --dmb={config[dmb]}
 
         ## Remove trailing '.fa'
@@ -106,6 +104,8 @@ rule upload_tables:
 
         ## Log dereplicated MAG to airtable
         python {config[codedir]}/airtable/log_dmb_derep_names_airtable.py --mags={config[workdir]}/dereplicated_mags.tsv
+
+        python {config[codedir]}/airtable/get_mag_info_airtable.py --dmb={config[dmb]}
 
         ## Log AirTable that the run is finished
         python {config[codedir]}/airtable/log_dmb_done_airtable.py --code={config[dmb]}
