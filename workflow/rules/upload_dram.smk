@@ -58,7 +58,7 @@ rule upload_mags:
 
         ## Log DRAM results in AirTable
         for i in {config[magdir]}/*annotate;
-            do echo ${{i/_annotate/}} >> mag_names_at.tsv && cat $i/cazy_hits.tsv >> cazy_hits_at.tsv && cat $i/pfam_hits.tsv >> pfam_hits_at.tsv && cat $i/kegg_hits.tsv >> kegg_hits_at.tsv && cat $i/unannotated.tsv >> unannotated_at.tsv && cat $i/num_genes.tsv >> num_genes_at.tsv;
+            do echo $(basename ${{i/_annotate/}}) >> mag_names_at.tsv && cat $i/cazy_hits.tsv >> cazy_hits_at.tsv && cat $i/pfam_hits.tsv >> pfam_hits_at.tsv && cat $i/kegg_hits.tsv >> kegg_hits_at.tsv && cat $i/unannotated.tsv >> unannotated_at.tsv && cat $i/num_genes.tsv >> num_genes_at.tsv;
         done
 
         echo -e "mag_name\tnumber_genes\tcazy_hits\tpfam_hits\tkegg_hits\tnumber_unannotated_genes" > at_headers.tsv
