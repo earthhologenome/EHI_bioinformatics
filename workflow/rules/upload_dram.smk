@@ -56,6 +56,17 @@ rule upload_mags:
         #Execute batch file to upload the suckers
         sftp -b batchfile.txt erda
 
+        ## Log DRAM results in AirTable
+        for i in {config[magdir]}/*annotate;
+            do echo ${{i/_annotate/}} >> mag_names_at.tsv && cat $i/cazy_hits.tsv >> cazy_hits_at.tsv && cat $i/pfam_hits.tsv >> pfam_hits_at.tsv && cat $i/kegg_hits.tsv >> kegg_hits_at.tsv && cat $i/unannotated.tsv >> unannotated_at.tsv && cat $i/num_genes.tsv >> num_genes_at.tsv;
+        done
+
+        echo -e "mag_name\tnumber_genes\tcazy_hits\tpfam_hits\tkegg_hits\tnumber_unannotated_genes" > at_headers.tsv
+        paste mag_names_at.tsv num_genes_at.tsv cazy_hits_at.tsv pfam_hits_at.tsv kegg_hits_at.tsv unannotated_at.tsv > dram_at.tsv
+        cat at_headers.tsv dram_at.tsv > at_dram.tsv
+
+        python {config[codedir]}/airtable/add_mag_dram_results_airtable.py --table=at_dram.tsv
+
         ## Clean up
         rm -r {config[magdir]}/*
 
