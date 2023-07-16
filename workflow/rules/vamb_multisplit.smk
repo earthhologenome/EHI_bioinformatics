@@ -37,6 +37,7 @@ rule vamb_multisplit:
             --outdir {params.outdir} \
             --fasta {input.contigs} \
             --bamfiles {input.bam} \
+            -o : \
             --minfasta 200000
 
             # rename bins from .fna to .fa

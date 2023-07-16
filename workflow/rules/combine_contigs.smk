@@ -22,7 +22,12 @@ rule combine_contigs:
         "Combining contigs into a single fasta file"
     shell:
         """
-        source activate /projects/mjolnir1/people/ncl550/0_software/miniconda/envs/vamb4.1.3
+        source activate /projects/mjolnir1/people/ncl550/0_software/miniconda/envs/semibin_1.5.1
 
-        python /projects/mjolnir1/people/ncl550/1_projects/binners/vamb/vamb/src/concatenate.py {output} {input}
+        SemiBin2 concatenate_fasta \
+        -i {input} \
+        -o {output} \
+        -s : \
+        -m 2000
+        
         """
