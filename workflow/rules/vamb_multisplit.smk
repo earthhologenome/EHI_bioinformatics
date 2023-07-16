@@ -1,6 +1,6 @@
 ################################################################################
 ### Bin contigs using metaWRAP's binning module
-rule vamb_individual:
+rule vamb_multisplit:
     input:
         bam=expand(
                 os.path.join(
@@ -41,7 +41,7 @@ rule vamb_individual:
 
             # rename bins from .fna to .fa
             for i in {params.outdir}/bins/*.fna;
-                do mv $i ${i/.fna/.fa};
+                do mv $i ${{i/.fna/.fa}};
             done
 
             # Create output for the next rule
