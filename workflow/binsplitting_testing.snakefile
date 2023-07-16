@@ -44,16 +44,24 @@ def estimate_time_download(wildcards, attempt):
     return attempt * 20
 
 def estimate_time_assembly(wildcards, attempt):
-    return attempt * 960
+    row = get_row(wildcards)
+    metagenomic_bases = row["metagenomic_bases"]
+    singlem_fraction = row["singlem_fraction"]
+    diversity = row["diversity"]
+    C = row["C"]
+    gbp_post_mapping = calculate_input_size_gb(metagenomic_bases)
+    estimate_time_assembly = -112.01 + (11.10 * diversity) - (51.77 * singlem_fraction) + (12.72 * gbp_post_mapping) - (53.05 * C)
+    estimate_time_assembly = max(estimate_time_assembly, 50)
+    return attempt * int(estimate_time_assembly)
 
 def estimate_time_mapping(wildcards, attempt):
     return attempt * 180
 
 def estimate_time_binning(wildcards, attempt):
-    return attempt * 960
+    return attempt * 480
 
 def estimate_time_refinement(wildcards, attempt):
-    return attempt * 960
+    return attempt * 210
 
 def estimate_time_gtdb(wildcards, attempt):
     return attempt * 300

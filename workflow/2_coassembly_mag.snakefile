@@ -50,10 +50,10 @@ def estimate_time_mapping(wildcards, attempt):
     return attempt * 180
 
 def estimate_time_binning(wildcards, attempt):
-    return attempt * 960
+    return attempt * 600
 
 def estimate_time_refinement(wildcards, attempt):
-    return attempt * 960
+    return attempt * 600
 
 def estimate_time_gtdb(wildcards, attempt):
     return attempt * 300
