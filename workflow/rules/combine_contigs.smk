@@ -24,5 +24,5 @@ rule combine_contigs:
         """
         source activate /projects/mjolnir1/people/ncl550/0_software/miniconda/envs/vamb4.1.3
 
-        python concatenate.py {output} {input}
+        python /projects/mjolnir1/people/ncl550/1_projects/binners/vamb/vamb/src/concatenate.py {output} {input}
         """
