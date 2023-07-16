@@ -22,7 +22,7 @@ rule metaWRAP_refinement:
         coverm=os.path.join(
             config["workdir"], 
             "coverm/", 
-            "assembly_coverM.txt"
+            "{EHA}_assembly_coverM.txt"
             ),
     params:
         semibin2=os.path.join(config["workdir"] + "{EHA}_semibin2"),

@@ -10,7 +10,7 @@ rule coassembly_summary:
         coverm=os.path.join(
             config["workdir"], 
             "coverm/", 
-            "assembly_coverM.txt"
+            "{EHA}_assembly_coverM.txt"
             ),
         contigs=os.path.join(
             config["workdir"], 
