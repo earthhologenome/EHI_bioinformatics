@@ -12,6 +12,7 @@ rule combine_contigs:
         os.path.join(config["workdir"], "{EHA}_combined_contigs.fasta.gz")
     params:
         assembler=expand("{assembler}", assembler=config["assembler"]),
+        workdir=config["workdir"]
     # conda:
     #     f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 1
@@ -26,8 +27,10 @@ rule combine_contigs:
 
         SemiBin2 concatenate_fasta \
         -i {input} \
-        -o {output} \
+        -o {params.workdir} \
         -s : \
         -m 2000
+
+        mv {params.workdir}/concatenated.fa {output}
 
         """
