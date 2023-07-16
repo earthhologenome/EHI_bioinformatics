@@ -96,10 +96,5 @@ rule metaWRAP_refinement:
             done
 
             touch {output.coverm}
-            # rm -r {params.binning}/work_files/
-            # rm -r {params.outdir}/work_files/
-            # rm {params.binning}/concoct_bins/*.fa
-            # rm {params.binning}/maxbin2_bins/*.fa
-            # rm {params.binning}/metabat2_bins/*.fa
 
         """
