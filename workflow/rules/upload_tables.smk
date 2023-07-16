@@ -63,6 +63,11 @@ rule upload_tables:
 
         python {config[codedir]}/airtable/get_sample_metadata_airtable.py --samples=read_input.tsv --dmb={config[dmb]}
 
+        ## Log dereplicated MAG to airtable
+        python {config[codedir]}/airtable/log_dmb_derep_names_airtable.py --mags={config[workdir]}/dereplicated_mags.tsv
+
+        python {config[codedir]}/airtable/get_mag_info_airtable.py --dmb={config[dmb]}
+
         ## Remove trailing '.fa'
         sed -i'' 's/\.fa//g' {config[dmb]}_mag_info.tsv
 
@@ -101,11 +106,6 @@ rule upload_tables:
 
         ## Log # of dereplicated MAGs to airtable
         ls -l {config[workdir]}/drep/dereplicated_genomes/*.fa.gz | wc -l > {config[dmb]}_dereplicated_mags.tsv
-
-        ## Log dereplicated MAG to airtable
-        python {config[codedir]}/airtable/log_dmb_derep_names_airtable.py --mags={config[workdir]}/dereplicated_mags.tsv
-
-        python {config[codedir]}/airtable/get_mag_info_airtable.py --dmb={config[dmb]}
 
         ## Log AirTable that the run is finished
         python {config[codedir]}/airtable/log_dmb_done_airtable.py --code={config[dmb]}

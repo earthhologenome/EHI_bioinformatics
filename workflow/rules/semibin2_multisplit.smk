@@ -31,7 +31,7 @@ rule semibin2_individual:
         "Binning {wildcards.EHA} contigs with semibin2"
     shell:
         """
-            conda activate /projects/mjolnir1/people/ncl550/0_software/miniconda/envs/semibin_1.5.1
+            source activate /projects/mjolnir1/people/ncl550/0_software/miniconda/envs/semibin_1.5.1
             # Run semibin2
             SemiBin2 multi_easy_bin \
                     --self-supervised \

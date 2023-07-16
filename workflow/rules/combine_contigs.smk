@@ -22,7 +22,7 @@ rule combine_contigs:
         "Combining contigs into a single fasta file"
     shell:
         """
-        conda activate /projects/mjolnir1/people/ncl550/0_software/miniconda/envs/vamb4.1.3
+        source activate /projects/mjolnir1/people/ncl550/0_software/miniconda/envs/vamb4.1.3
 
         python concatenate.py {output} {input}
         """

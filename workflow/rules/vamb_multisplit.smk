@@ -31,7 +31,7 @@ rule vamb_multisplit:
         "Binning {wildcards.EHA} contigs with vamb"
     shell:
         """
-            conda activate /projects/mjolnir1/people/ncl550/0_software/miniconda/envs/vamb4.1.3
+            source activate /projects/mjolnir1/people/ncl550/0_software/miniconda/envs/vamb4.1.3
             # Run vamb
             vamb \
             --outdir {params.outdir} \
