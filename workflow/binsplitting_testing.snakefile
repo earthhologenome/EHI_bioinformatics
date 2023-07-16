@@ -97,6 +97,7 @@ rule all:
 include: os.path.join(config["codedir"], "rules/create_ASB_folder.smk")
 include: os.path.join(config["codedir"], "rules/download_preprocessed.smk")
 include: os.path.join(config["codedir"], "rules/individual_assembly.smk")
+include: os.path.join(config["codedir"], "rules/combine_contigs.smk")
 #include: os.path.join(config["codedir"], "rules/QUAST_coassembly.smk")
 include: os.path.join(config["codedir"], "rules/multisplit_index.smk")
 include: os.path.join(config["codedir"], "rules/multisplit_mapping.smk")

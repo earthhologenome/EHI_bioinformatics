@@ -39,6 +39,11 @@ rule vamb_individual:
             --bamfiles {input.bam} \
             --minfasta 200000
 
+            # rename bins from .fna to .fa
+            for i in {params.outdir}/bins/*.fna;
+                do mv $i ${i/.fna/.fa};
+            done
+
             # Create output for the next rule
             touch {output}
         """

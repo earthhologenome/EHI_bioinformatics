@@ -33,11 +33,16 @@ rule semibin2_individual:
         """
             conda activate /projects/mjolnir1/people/ncl550/0_software/miniconda/envs/semibin_1.5.1
             # Run semibin2
-            SemiBin single_easy_bin \
-                    --training-type self \
+            SemiBin2 multi_easy_bin \
+                    --self-supervised \
                     -i {input.contigs} \
                     -b {input.bam} \
-                    -o {params.outdir}
+                    -o {params.outdir} \
+                    -p {threads} -t {threads} \
+                    --separator :
+            
+            #gunzip bins for metawrap refinement
+            gunzip {params.outdir}/output_bins/*
 
             # Create output for the next rule
             touch {output}

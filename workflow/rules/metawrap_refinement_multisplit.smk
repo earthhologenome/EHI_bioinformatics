@@ -55,8 +55,8 @@ rule metaWRAP_refinement:
                 -m {resources.mem_gb} \
                 -t {threads} \
                 -o {params.outdir} \
-                -A {params.binning}/concoct_bins/ \
-                -B {params.binning}/maxbin2_bins/ \
+                -A {params.semibin2}/output_bins/ \
+                -B {params.vamb}/bins/ \
                 -c 50 \
                 -x 10
 
