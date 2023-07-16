@@ -1,6 +1,6 @@
 ###############################################################################
 ## Generate output summary for coassemblies, update airtable
-rule coassembly_summary:
+rule multisplit_summary:
     input:
         mw_stats=os.path.join(
             config["workdir"],
@@ -61,7 +61,7 @@ rule coassembly_summary:
         
         #parse QUAST outputs for assembly stats
         for i in {config[workdir]}/bams/*.bam; do 
-            cat {params.quast}/{wildcards.EHA}_assembly_report.tsv >> {params.stats_dir}/temp_report.tsv;
+            echo -e "0\t0\t0\t0\t0" >> {params.stats_dir}/temp_report.tsv;
         done
 
         #Add sample IDs
