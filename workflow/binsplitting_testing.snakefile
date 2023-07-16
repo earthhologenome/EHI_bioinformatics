@@ -75,13 +75,13 @@ rule all:
                 config["workdir"], 
                 "ERDA_folder_created"
         ),
-        expand(
-            os.path.join(
-                config["workdir"], 
-                "{combo[2]}_QUAST"
-            ),
-            combo=valid_combinations,
-        ),
+        # expand(
+        #     os.path.join(
+        #         config["workdir"], 
+        #         "{combo[2]}_QUAST"
+        #     ),
+        #     combo=valid_combinations,
+        # ),
         expand(
             os.path.join(
                 config["workdir"], "{combo[0]}_{combo[1]}_{combo[2]}_uploaded"
