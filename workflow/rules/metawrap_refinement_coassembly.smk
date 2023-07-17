@@ -42,7 +42,10 @@ rule metaWRAP_refinement:
         # Setup checkM path (needed for conda, not module)
         # export checkmdb={config[checkmdb]}
         # printf $checkmdb | checkm data setRoot
-        
+
+        # incase job needs to be rerun
+        rm -rf {params.outdir}
+
         metawrap bin_refinement \
             -m {resources.mem_gb} \
             -t {threads} \

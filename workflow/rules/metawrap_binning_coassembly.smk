@@ -34,6 +34,8 @@ rule metaWRAP_binning:
         #seems to be an issue with mamba=1.4.1 module, so unload it to get concoct to work ^_^"
         module unload mamba
 
+        # incase job is relaunched:
+        rm -rf {params.outdir}
         # Create dummy fq/assembly files to trick metaWRAP into running without mapping
         mkdir -p {params.outdir}
         mkdir -p {params.outdir}/work_files
