@@ -25,9 +25,9 @@ rule metaWRAP_refinement:
             "{EHA}_assembly_coverM.txt"
             ),
     params:
-        semibin2=os.path.join(config["workdir"] + "{EHA}_semibin2"),
-        vamb=os.path.join(config["workdir"] + "{EHA}_vamb"),
-        outdir=os.path.join(config["workdir"] + "{EHA}_refinement"),
+        semibin2=os.path.join(config["workdir"] + "/{EHA}_semibin2"),
+        vamb=os.path.join(config["workdir"] + "/{EHA}_vamb"),
+        outdir=os.path.join(config["workdir"] + "/{EHA}_refinement"),
         stats_dir=directory(os.path.join(config["workdir"], "{EHA}_stats/"))
     threads: 8
     resources:
@@ -56,7 +56,7 @@ rule metaWRAP_refinement:
                 -t {threads} \
                 -o {params.outdir} \
                 -A {params.semibin2}/output_bins/ \
-                -B {params.vamb}/bins/ \
+                -B {params.vamb}/vamb_bins/ \
                 -c 50 \
                 -x 10
 

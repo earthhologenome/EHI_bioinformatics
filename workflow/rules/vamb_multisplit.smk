@@ -16,7 +16,7 @@ rule vamb_multisplit:
             config["workdir"], "{EHA}_binning/vamb_complete"
             ),
     params:
-        outdir=os.path.join(config["workdir"] + "{EHA}_vamb")
+        outdir=os.path.join(config["workdir"] + "/{EHA}_vamb")
     threads: 16
     # conda:
     #     f"{config['codedir']}/conda_envs/vamb.yaml"
@@ -41,8 +41,10 @@ rule vamb_multisplit:
             --minfasta 200000
 
             # rename bins from .fna to .fa
-            for i in {params.outdir}/bins/*.fna;
-                do mv $i ${{i/.fna/.fa}};
+            mkdir {params.outdir}/vamb_bins
+
+            for i in {params.outdir}/bins/*/*.fna;
+                do mv $i {params.outdir}/vamb_bins/$(basename ${{i/.fna/.fa}});
             done
 
             # Create output for the next rule
