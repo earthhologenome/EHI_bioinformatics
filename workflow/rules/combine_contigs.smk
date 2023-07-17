@@ -12,7 +12,7 @@ rule combine_contigs:
         os.path.join(config["workdir"], "{EHA}_combined_contigs.fasta.gz")
     params:
         assembler=expand("{assembler}", assembler=config["assembler"]),
-        renamed=os.path.join(config["workdir"], "/{EHA}_combined_contigs.fasta,
+        renamed=os.path.join(config["workdir"] + "/{EHA}_combined_contigs.fasta,
         workdir=config["workdir"]
     # conda:
     #     f"{config['codedir']}/conda_envs/assembly_binning.yaml"
