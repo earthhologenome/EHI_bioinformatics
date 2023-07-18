@@ -1,6 +1,6 @@
 ################################################################################
 ### Bin contigs using metaWRAP's binning module
-rule semibin2_individual:
+rule semibin2_multisplit:
     input:
         bam=expand(
                 os.path.join(
@@ -39,11 +39,9 @@ rule semibin2_individual:
                     -b {input.bam} \
                     -o {params.outdir} \
                     -p {threads} -t {threads} \
+                    --compression none \
                     --separator :
             
-            #gunzip bins for metawrap refinement
-            gunzip {params.outdir}/output_bins/*
-
             # Create output for the next rule
             touch {output}
 
