@@ -90,7 +90,7 @@ rule multisplit_summary:
         # for i in {input.coverm};
         #     do cut -f2 $i | sed -n 3p >> {params.stats_dir}/relabun.tsv
         # done 
-        for i in {input.coverm};
+        for i in {config[workdir]}/bams/*.bam;
             do echo "0" >> {params.stats_dir}/relabun.tsv
         done         
 
