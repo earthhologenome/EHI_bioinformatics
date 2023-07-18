@@ -24,7 +24,7 @@ headers = {
 
 # Set up the query parameters to filter the records
 query_params = {
-    'filterByFormula': f"AND(FIND('{args.dmb}', {{DM_batch}}), {{dereplicated}} = 'true')",
+    'filterByFormula': f"FIND('{args.dmb}', {{dereplicated}})",
     'pageSize': 100  # Set the page size to 100 records per request
 }
 

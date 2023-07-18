@@ -64,7 +64,7 @@ rule upload_tables:
         python {config[codedir]}/airtable/get_sample_metadata_airtable.py --samples=read_input.tsv --dmb={config[dmb]}
 
         ## Log dereplicated MAG to airtable
-        python {config[codedir]}/airtable/log_dmb_derep_names_airtable.py --mags={config[workdir]}/dereplicated_mags.tsv
+        python {config[codedir]}/airtable/log_dmb_derep_names_airtable.py --mags={config[workdir]}/dereplicated_mags.tsv --dmb={config[dmb]}
 
         python {config[codedir]}/airtable/get_mag_info_airtable.py --dmb={config[dmb]}
 
