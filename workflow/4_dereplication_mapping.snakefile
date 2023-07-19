@@ -55,6 +55,9 @@ import os
 def estimate_time_download(wildcards, attempt):
     return attempt * 15
 
+def estimate_time_gtdb(wildcards, attempt):
+    return attempt * 300
+
 rule all:
     input:
         os.path.join(

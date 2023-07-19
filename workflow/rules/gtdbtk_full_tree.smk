@@ -31,7 +31,7 @@ rule gtdbtk_full_tree:
         16
     resources:
         mem_gb=456,
-        time='05:00:00'
+        time=estimate_time_gtdb
     benchmark:
         os.path.join(config["logdir"] + "/gtdb-tk_benchmark.tsv")
     log:
