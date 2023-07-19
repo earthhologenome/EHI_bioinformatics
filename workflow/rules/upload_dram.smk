@@ -27,6 +27,7 @@ rule upload_mags:
         ##Rename files from EHA -> EHM
         sed -s '1d;' dereped_mags.csv | tr ',' '\t' > ehm_eha_mapping.tsv
         #fix issue with separators
+        module load dos2unix/7.4.2
         dos2unix ehm_eha_mapping.tsv
 
         while read ehm eha; 
