@@ -106,9 +106,7 @@ rule multisplit_summary:
         python {config[codedir]}/airtable/add_mag_stats_airtable.py --report=/projects/ehi/data/REP/{config[abb]}_mags.tsv
 
 
-        ### Upload contigs, coverm, & gtdb output to ERDA
-        pigz -k -p {threads} {input.contigs}
-        
+       
         lftp sftp://erda -e "put {params.contigs} -o /EarthHologenomeInitiative/Data/ASB/{config[abb]}/; bye"
         sleep 5
         lftp sftp://erda -e "put {output.stats} -o /EarthHologenomeInitiative/Data/REP/; bye"
