@@ -37,15 +37,15 @@ rule upload_mags:
 
         while read ehm eha; 
             do cp {config[magdir]}/"$eha"_anno.tsv.gz {config[magdir]}/"$ehm"_anno.tsv.gz && echo {config[magdir]}/"$ehm"_anno.tsv.gz >> {params.stats_dir}/anno_mag.tsv; 
-        done < ehm_eha_mapping.tsv
+        done < {params.stats_dir}/ehm_eha_mapping.tsv
 
         while read ehm eha; 
             do cp {config[magdir]}/"$eha"_kegg.tsv.gz {config[magdir]}/"$ehm"_kegg.tsv.gz && echo {config[magdir]}/"$ehm"_kegg.tsv.gz >> {params.stats_dir}/kegg_mag.tsv; 
-        done < ehm_eha_mapping.tsv
+        done < {params.stats_dir}/ehm_eha_mapping.tsv
 
         while read ehm eha; 
             do cp {config[magdir]}/"$eha".gbk.gz {config[magdir]}/"$ehm".gbk.gz && echo {config[magdir]}/"$ehm".gbk.gz >> {params.stats_dir}/gbk_mag.tsv; 
-        done < ehm_eha_mapping.tsv
+        done < {params.stats_dir}/ehm_eha_mapping.tsv
 
 
         #Setup batch file for uploading MAGs from erda:
