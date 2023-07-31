@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env
 
 # Copyright (C) 2017, Weizhi Song, Torsten Thomas.
 # songwz03@gmail.com
