@@ -11,7 +11,7 @@
 
 ## Raphael Eisenhofer 2023: I've updated this to work with CheckM2 (and without having to install metawrap conda environment)
 
-SOFT=$/projects/ehi/data/0_Code/EHI_bioinformatics_1/workflow/scripts
+SOFT=/projects/ehi/data/0_Code/EHI_bioinformatics_1/workflow/scripts
 
 
 help_message () {
