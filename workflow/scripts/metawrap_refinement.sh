@@ -37,10 +37,10 @@ help_message () {
 	echo "	--quick			adds --reduced_tree option to checkm, reducing runtime, especially with low memory"
 	echo "";}
 
-comm () { ${SOFT}/metawrap_print_comment.py "$1" "-"; }
-error () { ${SOFT}/metawrap_print_comment.py "$1" "*"; exit 1; }
-warning () { ${SOFT}/metawrap_print_comment.py "$1" "*"; }
-announcement () { ${SOFT}/metawrap_print_comment.py "$1" "#"; }
+comm () { python ${SOFT}/metawrap_print_comment.py "$1" "-"; }
+error () { python ${SOFT}/metawrap_print_comment.py "$1" "*"; exit 1; }
+warning () { python ${SOFT}/metawrap_print_comment.py "$1" "*"; }
+announcement () { python ${SOFT}/metawrap_print_comment.py "$1" "#"; }
 
 
 # runs CheckM2 mini-pipeline on a single folder of bins
