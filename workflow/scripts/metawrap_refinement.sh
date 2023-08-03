@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env
 
 ##############################################################################################################################################################
 #
@@ -52,7 +52,7 @@ run_checkm () {
         checkm2 predict -x fa.gz --threads $threads --output-directory --input $1 ${1}.checkm
         if [[ ! -s ${1}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
         comm "Finalizing CheckM stats and plots..."
-        ${SOFT}/metawrap_summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > ${1}.stats
+        python ${SOFT}/metawrap_summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > ${1}.stats
 	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 }
 
@@ -208,10 +208,10 @@ comm "There are $n_binnings bin sets!"
 
 if [[ ! -s ${out}/work_files/binsA.stats ]]; then
 	comm "Fix contig naming by removing special characters..."
-	for f in ${out}/binsA/*; do ${SOFT}/metawrap_fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
-	for f in ${out}/binsB/*; do ${SOFT}/metawrap_fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+	for f in ${out}/binsA/*; do python ${SOFT}/metawrap_fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+	for f in ${out}/binsB/*; do python ${SOFT}/metawrap_fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
 	if [[ -d $bins3 ]]; then
-		for f in ${out}/binsC/*; do ${SOFT}/metawrap_fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+		for f in ${out}/binsC/*; do python ${SOFT}/metawrap_fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
 	fi
 fi
 
@@ -227,7 +227,7 @@ if [ "$refine" == "true" ] && [[ ! -s work_files/binsA.stats ]]; then
 		comm "There is only one bin folder, so no refinement of bins possible. Moving on..."
 	elif [[ $n_binnings -eq 2 ]]; then
 		comm "There are two bin folders, so we can consolidate them into a third, more refined bin set."
-		${SOFT}/metawrap_binning_refiner.py -1 binsA -2 binsB -o Refined_AB
+		python ${SOFT}/metawrap_binning_refiner.py -1 binsA -2 binsB -o Refined_AB
 		comm "there are $(ls Refined_AB/Refined | grep ".fa" | wc -l) refined bins in binsAB"
 		mv Refined_AB/Refined binsAB
 		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
@@ -235,10 +235,10 @@ if [ "$refine" == "true" ] && [[ ! -s work_files/binsA.stats ]]; then
 	elif [[ $n_binnings -eq 3 ]]; then
 		comm "There are three bin folders, so there 4 ways we can refine the bins (A+B, B+C, A+C, A+B+C). Will try all four in parallel!"
 		
-		${SOFT}/metawrap_binning_refiner.py -1 binsA -2 binsB -3 binsC -o Refined_ABC &
-		${SOFT}/metawrap_binning_refiner.py -1 binsA -2 binsB -o Refined_AB &
-		${SOFT}/metawrap_binning_refiner.py -1 binsC -2 binsB -o Refined_BC &
-		${SOFT}/metawrap_binning_refiner.py -1 binsA -2 binsC -o Refined_AC &
+		python ${SOFT}/metawrap_binning_refiner.py -1 binsA -2 binsB -3 binsC -o Refined_ABC &
+		python ${SOFT}/metawrap_binning_refiner.py -1 binsA -2 binsB -o Refined_AB &
+		python ${SOFT}/metawrap_binning_refiner.py -1 binsC -2 binsB -o Refined_BC &
+		python ${SOFT}/metawrap_binning_refiner.py -1 binsA -2 binsC -o Refined_AC &
 		
 		wait
 	
@@ -306,7 +306,7 @@ if [ "$run_checkm" == "true" ] && [[ ! -s work_files/binsM.stats ]]; then
 		fi
 		
 		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
-		${SOFT}/metawrap_summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
+		python ${SOFT}/metawrap_summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
 		if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 		rm -r ${bin_set}.checkm; rm -r ${bin_set}.tmp
 
@@ -337,7 +337,7 @@ if [ "$cherry_pick" == "true" ]; then
 		cp -r binsA binsM; cp binsA.stats binsM.stats
 		for bins in $(ls | grep .stats | grep -v binsM); do
 			comm "merging $bins and binsM"
-			${SOFT}/metawrap_consolidate_two_sets_of_bins.py binsM ${bins%.*} binsM.stats $bins binsM1 $comp $cont
+			python ${SOFT}/metawrap_consolidate_two_sets_of_bins.py binsM ${bins%.*} binsM.stats $bins binsM1 $comp $cont
 			if [[ $? -ne 0 ]]; then error "Something went wrong with merging two sets of bins"; fi
 			rm -r binsM binsM.stats
 			mv binsM1 binsM; mv binsM1.stats binsM.stats
@@ -349,10 +349,10 @@ if [ "$cherry_pick" == "true" ]; then
 			mv binsM.stats binsO.stats
 		elif [[ $dereplicate == partial ]]; then
 			comm "Scanning to find duplicate contigs between bins and only keep them in the best bin..."
-			${SOFT}/metawrap_dereplicate_contigs_in_bins.py binsM.stats binsM binsO
+			python ${SOFT}/metawrap_dereplicate_contigs_in_bins.py binsM.stats binsM binsO
 		elif [[ $dereplicate == complete ]]; then
 			comm "Scanning to find duplicate contigs between bins and deleting them in all bins..."
-			${SOFT}/metawrap_dereplicate_contigs_in_bins.py binsM.stats binsM binsO remove
+			python ${SOFT}/metawrap_dereplicate_contigs_in_bins.py binsM.stats binsM binsO remove
 		else
 			error "there was an error in deciding how to dereplicate contigs"
 		fi
@@ -408,7 +408,7 @@ if [ "$run_checkm" == "true" ] && [ $dereplicate != "false" ]; then
 
 	if [[ ! -s binsO.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 	rm -r binsO.tmp
-	${SOFT}/metawrap_summarize_checkm.py binsO.checkm/storage/bin_stats_ext.tsv manual binsM.stats | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > binsO.stats
+	python ${SOFT}/metawrap_summarize_checkm.py binsO.checkm/storage/bin_stats_ext.tsv manual binsM.stats | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > binsO.stats
 	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 	rm -r binsO.checkm
 	num=$(cat binsO.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)
@@ -429,7 +429,7 @@ fi
 
 if [ "$run_checkm" == "true" ]; then
 	comm "making completion and contamination ranking plots for all refinement iterations"
-	${SOFT}/metawrap_plot_binning_results.py $comp $cont $(ls | grep ".stats")
+	python ${SOFT}/metawrap_plot_binning_results.py $comp $cont $(ls | grep ".stats")
 	mkdir figures
 	mv binning_results.eps figures/intermediate_binning_results.eps
 	mv binning_results.png figures/intermediate_binning_results.png
@@ -475,7 +475,7 @@ fi
 
 if [ "$run_checkm" == "true" ]; then
         comm "making completion and contamination ranking plots of final outputs"
-        ${SOFT}/metawrap_plot_binning_results.py $comp $cont $(ls | grep ".stats")
+        python ${SOFT}/metawrap_plot_binning_results.py $comp $cont $(ls | grep ".stats")
 	mv binning_results.eps figures/binning_results.eps
 	mv binning_results.png figures/binning_results.png
 	
