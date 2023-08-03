@@ -1,5 +1,3 @@
-#!/usr/bin/env
-
 ##############################################################################################################################################################
 #
 # This script is meant to be run on the outputs of binning.sh pipeline to analyze the metagenomic bins and arrive at the best possible putative genomes.
