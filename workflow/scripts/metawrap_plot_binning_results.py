@@ -1,4 +1,3 @@
-#!/usr/bin/env
 # USAGE:
 # ./script file1.stats file2.stats file3.stats
 

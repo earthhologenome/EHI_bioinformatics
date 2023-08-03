@@ -1,4 +1,3 @@
-#!/usr/bin/env
 # This script prints any comment in a structured and prety way.
 from __future__ import print_function
 import sys

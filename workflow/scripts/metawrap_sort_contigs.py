@@ -1,4 +1,3 @@
-#!/usr/bin/env
 ## From MetaWRAP
 from __future__ import print_function
 import sys
