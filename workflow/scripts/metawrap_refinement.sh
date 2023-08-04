@@ -121,14 +121,14 @@ if [ ! -s $SOFT/metawrap_sort_contigs.py ]; then
 fi
 
 # determine --pplacer_threads count. It is either the max thread count or RAM/40, whichever is higher
-ram_max=$(($mem / 40))
-if (( $ram_max < $threads )); then
-	p_threads=$ram_max
-else
-	p_threads=$threads
-fi
+# ram_max=$(($mem / 40))
+# if (( $ram_max < $threads )); then
+# 	p_threads=$ram_max
+# else
+# 	p_threads=$threads
+# fi
 
-comm "There is $mem RAM and $threads threads available, and each pplacer thread uses >40GB, so I will use $p_threads threads for pplacer"
+# comm "There is $mem RAM and $threads threads available, and each pplacer thread uses >40GB, so I will use $p_threads threads for pplacer"
 
 ########################################################################################################
 ########################               BEGIN REFINEMENT PIPELINE!               ########################
@@ -303,8 +303,8 @@ if [ "$run_checkm" == "true" ] && [[ ! -s work_files/binsM.stats ]]; then
 			checkm2 predict -x fa --input $bin_set --output-directory ${bin_set}.checkm --threads $threads --tmpdir ${bin_set}.tmp 
 		fi
 		
-		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
-		python ${SOFT}/metawrap_summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
+		if [[ ! -s ${bin_set}.checkm/quality_report.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
+		python ${SOFT}/metawrap_summarize_checkm.py ${bin_set}.checkm/quality_report.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
 		if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 		rm -r ${bin_set}.checkm; rm -r ${bin_set}.tmp
 
@@ -404,9 +404,9 @@ if [ "$run_checkm" == "true" ] && [ $dereplicate != "false" ]; then
 		checkm2 predict -x fa --input binsO --output-directory binsO.checkm --threads $threads --tmpdir binsO.tmp
 	fi
 
-	if [[ ! -s binsO.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
+	if [[ ! -s binsO.checkm/quality_report.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 	rm -r binsO.tmp
-	python ${SOFT}/metawrap_summarize_checkm.py binsO.checkm/storage/bin_stats_ext.tsv manual binsM.stats | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > binsO.stats
+	python ${SOFT}/metawrap_summarize_checkm.py binsO.checkm/quality_report.tsv manual binsM.stats | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > binsO.stats
 	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 	rm -r binsO.checkm
 	num=$(cat binsO.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)
