@@ -56,9 +56,9 @@ for bin_file in good_bins_1:
     bins_1[bin_file][contig_name] = contig_len
 
 for bin_file in good_bins_2:
+    bins_2[bin_file] = {}
     contig_len = 0
     contig_name = ""
-    bins_2[bin_file] = {}
     for line in open(sys.argv[2] + '/' + bin_file):
         if not line.startswith('>'):
             contig_len += len(line.strip())
@@ -69,52 +69,54 @@ for bin_file in good_bins_2:
             contig_name = line[1:-1]
     bins_2[bin_file][contig_name] = contig_len
 
-
-print("make all bossible comparisons between the two bin sets, and record total % idential length")
-all_bin_pairs={}
+print("make all possible comparisons between the two bin sets, and record total % identical length")
+all_bin_pairs = {}
 for bin_1 in good_bins_1:
-	all_bin_pairs[bin_1]={}
-	for bin_2 in good_bins_2:
-		# find idential contigs between bin_1 and bin_2
-		match_1_length=0
-		match_2_length=0
-		mismatch_1_length=0
-		mismatch_2_length=0
+    all_bin_pairs[bin_1] = {}
+    for bin_2 in good_bins_2:
+        # find identical contigs between bin_1 and bin_2
+        match_1_length = 0
+        match_2_length = 0
+        mismatch_1_length = 0
+        mismatch_2_length = 0
 
-		for contig in bins_1[bin_1]:
-			if contig in bins_2[bin_2]: match_1_length+=bins_2[bin_2][contig]
-			else: mismatch_1_length+=bins_1[bin_1][contig]
-		for contig in bins_2[bin_2]:
-                        if contig in bins_1[bin_1]: match_2_length+=bins_1[bin_1][contig]
-			else: mismatch_2_length+=bins_2[bin_2][contig]
+        for contig in bins_1[bin_1]:
+            if contig in bins_2[bin_2]:
+                match_1_length += bins_2[bin_2][contig]
+            else:
+                mismatch_1_length += bins_1[bin_1][contig]
+        for contig in bins_2[bin_2]:
+            if contig in bins_1[bin_1]:
+                match_2_length += bins_1[bin_1][contig]
+            else:
+                mismatch_2_length += bins_2[bin_2][contig]
 
-		# chose the highest % ID, dependinsh of which bin is  asubset of the other
-		ratio_1=100*match_1_length/(match_1_length+mismatch_1_length)
-		ratio_2=100*match_2_length/(match_2_length+mismatch_2_length)
+        # choose the highest % ID, depending on which bin is a subset of the other
+        ratio_1 = 100 * match_1_length / (match_1_length + mismatch_1_length)
+        ratio_2 = 100 * match_2_length / (match_2_length + mismatch_2_length)
 
-		all_bin_pairs[bin_1][bin_2]=max([ratio_1, ratio_2])
-
+        all_bin_pairs[bin_1][bin_2] = max([ratio_1, ratio_2])
 
 print("load in completion and contamination scores of all the bins")
-bins_1_stats={}
-bins_2_stats={}
-bins_1_summary={}
-bins_2_summary={}
+bins_1_stats = {}
+bins_2_stats = {}
+bins_1_summary = {}
+bins_2_summary = {}
 for line in open(sys.argv[3]):
-	if "completeness" in line: 
-		bins_1_summary["header"]=line
-		continue
-	cut=line.strip().split('\t')
-	bins_1_stats[cut[0]+'.fa']=(float(cut[1]), float(cut[2]))
-	bins_1_summary[cut[0]+'.fa']=line
+    if "completeness" in line:
+        bins_1_summary["header"] = line
+        continue
+    cut = line.strip().split('\t')
+    bins_1_stats[cut[0] + '.fa'] = (float(cut[1]), float(cut[2]))
+    bins_1_summary[cut[0] + '.fa'] = line
 
 for line in open(sys.argv[4]):
-        if "completeness" in line: 
-		bins_2_summary["header"]=line
-		continue
-        cut=line.strip().split('\t')
-        bins_2_stats[cut[0]+'.fa']=(float(cut[1]), float(cut[2]))
-	bins_2_summary[cut[0]+'.fa']=line
+    if "completeness" in line:
+        bins_2_summary["header"] = line
+        continue
+    cut = line.strip().split('\t')
+    bins_2_stats[cut[0] + '.fa'] = (float(cut[1]), float(cut[2]))
+    bins_2_summary[cut[0] + '.fa'] = line
 
 
 
