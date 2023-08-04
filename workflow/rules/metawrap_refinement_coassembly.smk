@@ -21,9 +21,11 @@ rule metaWRAP_refinement:
         binning=os.path.join(config["workdir"] + "/{EHA}_binning"),
         outdir=os.path.join(config["workdir"] + "/{EHA}_refinement"),
         stats_dir=directory(os.path.join(config["workdir"], "{EHA}_stats/"))
-    threads: 8
+    conda:
+        f"{config['codedir']}/conda_envs/checkm2.yaml"
+    threads: 16
     resources:
-        mem_gb=168,
+        mem_gb=80,
         time=estimate_time_refinement,
     benchmark:
         os.path.join(config["logdir"] + "/refinement_benchmark_{EHA}.tsv")
@@ -33,21 +35,13 @@ rule metaWRAP_refinement:
         "Refining {wildcards.EHA} bins with MetaWRAP's bin refinement module"
     shell:
         """
-        #Installing metawrap via conda is a pain in the arse, so using the module on Mjolnir here.
-        module load metawrap-mg/1.3.2
-        module load bbmap/39.01
-        #seems to be an issue with mamba=1.4.1 module, so unload it to get concoct to work ^_^"
-        module unload mamba
-
-        # Setup checkM path (needed for conda, not module)
-        # export checkmdb={config[checkmdb]}
-        # printf $checkmdb | checkm data setRoot
+        # setup checkm2 db path (in case of first run)
+        checkm2 database --setdblocation {config[checkmdb]}
 
         # incase job needs to be rerun
         rm -rf {params.outdir}
 
-        metawrap bin_refinement \
-            -m {resources.mem_gb} \
+        bash {config[codedir]}/scripts/metawrap_refinement.sh \
             -t {threads} \
             -o {params.outdir} \
             -A {params.binning}/concoct_bins/ \

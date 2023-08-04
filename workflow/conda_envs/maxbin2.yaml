@@ -1,0 +1,6 @@
+ name: metabat2
+ channels:
+    - conda-forge
+    - bioconda
+ dependencies:
+    - maxbin2=2.2.7

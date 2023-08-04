@@ -2,9 +2,17 @@
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
     input:
-        binning=os.path.join(
+        concoct=os.path.join(
             config["workdir"], 
-            "{PRB}_{EHI}_{EHA}_binning/binning_complete"
+            "{PRB}_{EHI}_{EHA}_binning/concoct_binning_complete"
+            ),
+        metabat2=os.path.join(
+            config["workdir"], 
+            "{PRB}_{EHI}_{EHA}_binning/metabat2_binning_complete"
+            ),
+        maxbin2=os.path.join(
+            config["workdir"], 
+            "{PRB}_{EHI}_{EHA}_binning/maxbin2_binning_complete"
             ),
         contigs=os.path.join(
             config["workdir"], "{PRB}_{EHI}_assembly/", "{EHA}_contigs.fasta"
@@ -25,9 +33,11 @@ rule metaWRAP_refinement:
         outdir=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement"),
         stats_dir=directory(os.path.join(config["workdir"], "{EHA}_stats/")),
         contigsize=config["contigsize"]
-    threads: 8
+    conda:
+        f"{config['codedir']}/conda_envs/checkm2.yaml"
+    threads: 16
     resources:
-        mem_gb=164,
+        mem_gb=80,
         time=estimate_time_refinement,
     benchmark:
         os.path.join(config["logdir"] + "/refinement_benchmark_{PRB}_{EHI}_{EHA}.tsv")
@@ -43,19 +53,10 @@ rule metaWRAP_refinement:
             touch {output.contigmap}
 
         else
+            # setup checkm2 db path (in case of first run)
+            checkm2 database --setdblocation {config[checkmdb]}
 
-            #Installing metawrap via conda is a pain in the arse, so using the module on Mjolnir here.
-            module load metawrap-mg/1.3.2
-            module load bbmap/39.01
-            #seems to be an issue with mamba=1.4.1 module, so unload it to get concoct to work ^_^"
-            module unload mamba
-
-            # Setup checkM path (needed for conda, not module)
-            # export checkmdb={config[checkmdb]}
-            # printf $checkmdb | checkm data setRoot
-            
-            metawrap bin_refinement \
-                -m {resources.mem_gb} \
+            bash config[codedir]/scripts/metawrap_refinement.sh \
                 -t {threads} \
                 -o {params.outdir} \
                 -A {params.binning}/concoct_bins/ \

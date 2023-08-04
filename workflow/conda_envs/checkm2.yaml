@@ -6,3 +6,4 @@
     - checkm2=1.0.1
     - biopython=1.79
     - matplotlib=3.3.2
+    - bbmap=39.01
