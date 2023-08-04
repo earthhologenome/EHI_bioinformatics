@@ -2,9 +2,17 @@
 ### Automatically refine bins using metaWRAP's refinement module
 rule metaWRAP_refinement:
     input:
-        os.path.join(
+        concoct=os.path.join(
             config["workdir"], 
             "{EHA}_binning/binning_complete"
+            ),
+        metabat2=os.path.join(
+            config["workdir"], 
+            "{EHA}_binning/metabat2_binning_complete"
+            ),
+        maxbin2=os.path.join(
+            config["workdir"], 
+            "{EHA}_binning/maxbin2_binning_complete"
             ),
     output:
         stats=os.path.join(
