@@ -47,7 +47,7 @@ announcement () { python ${SOFT}/metawrap_print_comment.py "$1" "#"; }
 run_checkm () {
 	if [[ -d ${1}.checkm ]]; then rm -r ${1}.checkm; fi
         comm "Running CheckM on $1 bins"
-        checkm2 predict -x fa.gz --threads $threads --output-directory --input $1 ${1}.checkm
+        checkm2 predict -x fa --threads $threads --output-directory --input $1 ${1}.checkm
         if [[ ! -s ${1}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
         comm "Finalizing CheckM stats and plots..."
         python ${SOFT}/metawrap_summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > ${1}.stats
@@ -298,9 +298,9 @@ if [ "$run_checkm" == "true" ] && [[ ! -s work_files/binsM.stats ]]; then
 		if [[ ! -d ${bin_set}.tmp ]]; then mkdir ${bin_set}.tmp; fi
 		if [ "$quick" == "true" ]; then
 			comm "Note: running with --reduced_tree option"
-			checkm2 predict -x fa.gz --input $bin_set --output-directory ${bin_set}.checkm --threads $threads --tmpdir ${bin_set}.tmp 
+			checkm2 predict -x fa --input $bin_set --output-directory ${bin_set}.checkm --threads $threads --tmpdir ${bin_set}.tmp 
 		else
-			checkm2 predict -x fa.gz --input $bin_set --output-directory ${bin_set}.checkm --threads $threads --tmpdir ${bin_set}.tmp 
+			checkm2 predict -x fa --input $bin_set --output-directory ${bin_set}.checkm --threads $threads --tmpdir ${bin_set}.tmp 
 		fi
 		
 		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
@@ -399,9 +399,9 @@ if [ "$run_checkm" == "true" ] && [ $dereplicate != "false" ]; then
 	mkdir binsO.tmp
 
 	if [ "$quick" == "true" ]; then
-		checkm2 predict -x fa.gz --input binsO --output-directory binsO.checkm --threads $threads --tmpdir binsO.tmp
+		checkm2 predict -x fa --input binsO --output-directory binsO.checkm --threads $threads --tmpdir binsO.tmp
 	else
-		checkm2 predict -x fa.gz --input binsO --output-directory binsO.checkm --threads $threads --tmpdir binsO.tmp
+		checkm2 predict -x fa --input binsO --output-directory binsO.checkm --threads $threads --tmpdir binsO.tmp
 	fi
 
 	if [[ ! -s binsO.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi

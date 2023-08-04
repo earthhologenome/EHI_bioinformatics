@@ -1,0 +1,8 @@
+ name: checkm2
+ channels:
+    - bioconda
+    - conda-forge
+ dependencies:
+    - checkm2=1.0.1
+    - biopython=1.79
+    - matplotlib=3.3.2
