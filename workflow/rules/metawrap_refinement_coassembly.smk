@@ -4,7 +4,7 @@ rule metaWRAP_refinement:
     input:
         concoct=os.path.join(
             config["workdir"], 
-            "{EHA}_binning/binning_complete"
+            "{EHA}_binning/concoct_binning_complete"
             ),
         metabat2=os.path.join(
             config["workdir"], 
