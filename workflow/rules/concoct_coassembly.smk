@@ -46,11 +46,11 @@ rule concoct:
             -t {threads} \
             --coverage_file {params.outdir}/concoct_depth.txt \
             --composition_file {params.outdir}/assembly_10K.fa \
-            -b {params.outdir}/concoct_out
+            -b {params.outdir}
 
-        	merge_cutup_clustering.py {params.outdir}/concoct_out/clustering_gt1500.csv > {params.outdir}/concoct_out/clustering_gt1500_merged.csv
+        	merge_cutup_clustering.py {params.outdir}/clustering_gt1500.csv > {params.outdir}/clustering_gt1500_merged.csv
             mkdir -p {params.outdir}/concoct_bins 
-            python {config[codedir]}/scripts/metawrap_split_concoct_bins.py {params.outdir}/concoct_out/clustering_gt1500_merged.csv {input.contigs} {params.outdir}/concoct_bins
+            python {config[codedir]}/scripts/metawrap_split_concoct_bins.py {params.outdir}/clustering_gt1500_merged.csv {input.contigs} {params.outdir}/concoct_bins
 
             # Create output for the next rule
             touch {output}
