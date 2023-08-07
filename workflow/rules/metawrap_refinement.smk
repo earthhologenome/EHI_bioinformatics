@@ -51,7 +51,7 @@ rule metaWRAP_refinement:
             # setup checkm2 db path (in case of first run)
             checkm2 database --setdblocation {config[checkmdb]}
 
-            bash config[codedir]/scripts/metawrap_refinement.sh \
+            bash {config[codedir]}/scripts/metawrap_refinement.sh \
                 -t {threads} \
                 -o {params.outdir} \
                 -A {params.binning}/concoct_bins/ \
