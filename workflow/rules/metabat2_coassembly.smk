@@ -41,7 +41,7 @@ rule metabat2:
             metabat2 \
             -i {input.contigs} \
             -a {params.outdir}/metabat_depth.txt \
-            -o {params.outdir/metabat2_bins/bin \
+            -o {params.outdir}/metabat2_bins/bin \
             -m 1500 \
             -t {threads} \
             --unbinned
