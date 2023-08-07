@@ -112,7 +112,7 @@ rule gtdbtk:
             echo -e 'mag_id\tcontigs\teha_number\tGTDB_version' > {params.outdir}/ncontigs_header.tsv
             cat {params.outdir}/ncontigs_header.tsv {params.outdir}/ncontigs_temp.tsv > {params.outdir}/ncontigs_temp2.tsv
 
-            cut -f1,2,3,4,6,7 {params.refinement}/{wildcards.EHA}_metawrap_50_10_bins.stats > {params.outdir}/mw_stats.tsv
+            cut -f1,2,3,4,6,7,8 {params.refinement}/{wildcards.EHA}_metawrap_50_10_bins.stats > {params.outdir}/mw_stats.tsv
 
             #combine into final table for upload to airtable:
             paste {params.outdir}/gtdb_airtable.tsv {params.outdir}/ncontigs_temp2.tsv {params.outdir}/mw_stats.tsv > /projects/ehi/data/REP/{config[abb]}_{wildcards.EHA}_mags.tsv

@@ -58,6 +58,7 @@ for i, row in df.iterrows():
             'contamination': float(row['contamination']),
             'size': int(row['size']),
             'GC': float(row['GC']),
+            'coding_density': float(row['coding_density']),
             'N50': int(row['N50']),
             'contigs': int(row['contigs'])
         }
