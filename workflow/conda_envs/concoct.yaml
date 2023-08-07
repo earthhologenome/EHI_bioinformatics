@@ -7,3 +7,4 @@
     - concoct == 1.1.0
     - python == 3.8
     - mkl
+    - scikit-learn=1.1.*
