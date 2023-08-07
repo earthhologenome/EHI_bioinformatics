@@ -32,12 +32,6 @@ rule maxbin2:
         "Binning {wildcards.EHA} contigs with maxbin2"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
-        then
-            touch {output}
-
-        else
-
             # summarise contig depths
             jgi_summarize_bam_contig_depths \
             --outputDepth {params.outdir}/mb2_master_depth.txt \
@@ -75,5 +69,4 @@ rule maxbin2:
             # Create output for the next rule
             touch {output}
 
-        fi
         """

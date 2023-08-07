@@ -55,13 +55,13 @@ rule coverM_assembly:
         "Calculating assembly mapping rate for {wildcards.EHA} with CoverM"
     shell:
         """
-        # if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
-        # then
-        #     touch {output.coverm}
-        #     touch {output.euk}
-        #     touch {output.tarball}
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt 1 ]
+        then
+            touch {output.coverm}
+            touch {output.euk}
+            touch {output.tarball}
 
-        # else
+        else
 
             coverm genome \
                 -b {input.bam} \
@@ -84,5 +84,5 @@ rule coverM_assembly:
             # Tarball files then \:
             tar -cvzf {output.tarball} {output.coverm} {input.stats} {input.contigmap} {output.euk}
 
-        # fi
+        fi
         """

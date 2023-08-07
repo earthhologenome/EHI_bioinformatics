@@ -60,7 +60,6 @@ rule assembly_summary:
         "Creating final assembly summary table for {wildcards.EHA}, uploading files to ERDA"
     shell:
         """
-        # if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
         if [ "$(ls -1 *.fa {params.bins} 2>/dev/null | wc -l)" -eq 0 ]
         then
             touch {output.stats}
