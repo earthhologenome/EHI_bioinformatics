@@ -50,7 +50,7 @@ rule maxbin2:
             if [ -f {params.outdir}/mb2_abund_list.txt ]; then rm {params.outdir}/mb2_abund_list.txt; fi
             for i in $(seq 4 $N); do 
                 sample=$(head -n 1 {params.outdir}/mb2_master_depth.txt | cut -f $i)
-                grep -v totalAvgDepth {params.outdir}/mb2_master_depth.txt | cut -f 1,$i > {params.outdir}/mb2_${sample%.*}.txt
+                grep -v totalAvgDepth {params.outdir}/mb2_master_depth.txt | cut -f 1,$i > {params.outdir}/mb2_${{sample%.*}}.txt
                 if [[ $out == /* ]]; then
                     echo {params.outdir}/mb2_${sample%.*}.txt >> {params.outdir}/mb2_abund_list.txt
                 else
