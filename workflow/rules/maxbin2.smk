@@ -64,6 +64,10 @@ rule maxbin2:
 	        -out {params.outdir}/maxbin2_out/bin \
         	-abund_list {params.outdir}/mb2_abund_list.txt
 
+            mkdir -p {params.outdir}/maxbin2_bins
+            for i in {params.outdir}/maxbin2_out/*.fasta;
+                do mv $i {params.outdir}/maxbin2_bins/$(basename ${{i/.fasta/.fa}});
+            done
 
             # Create output for the next rule
             touch {output}
