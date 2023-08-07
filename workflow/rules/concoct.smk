@@ -38,7 +38,7 @@ rule concoct:
 
             for FILE in {input.bam}; do
                 echo $FILE
-                samtools index -@ {params.threads} -b $FILE
+                samtools index -@ {threads} -b $FILE
             done
 
             cut_up_fasta.py {input.contigs} -c 10000 --merge_last -b {params.outdir}/assembly_10K.bed -o 0 > {params.outdir}/assembly_10K.fa
@@ -47,7 +47,7 @@ rule concoct:
 
             concoct \
             -l 1500 \
-            -t {params.threads} \
+            -t {threads} \
             --coverage_file {params.outdir}/concoct_depth.txt \
             --composition_file {params.outdir}/assembly_10K.fa \
             -b {params.outdir}/concoct_out

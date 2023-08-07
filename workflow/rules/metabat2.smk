@@ -46,7 +46,7 @@ rule metabat2:
             -a {params.outdir}/metabat_depth.txt \
             -o {params.outdir/metabat2_bins/bin \
             -m 1500 \
-            -t {params.threads} \
+            -t {threads} \
             --unbinned
 
             # Create output for the next rule

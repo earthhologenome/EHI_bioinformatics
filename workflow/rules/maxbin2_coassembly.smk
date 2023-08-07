@@ -66,7 +66,7 @@ rule maxbin2:
             run_MaxBin.pl \
             -contig {input.contigs} \
             -markerset 107 \
-            -thread {params.threads} \
+            -thread {threads} \
             -min_contig_length 1500 \
 	        -out {params.outdir}/maxbin2_out/bin \
         	-abund_list {params.outdir}/mb2_abund_list.txt
