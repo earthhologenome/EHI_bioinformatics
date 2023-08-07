@@ -49,7 +49,8 @@ rule assembly_summary:
             config["workdir"],
             "{EHA}_stats/")
             ),
-        contigsize=config["contigsize"]
+        contigsize=config["contigsize"],
+        bins=os.path.join(config["workdir"] + "/{PRB}_{EHI}_{EHA}_refinement" + "/metawrap_50_10_bins"),
     threads: 1
     resources:
         load=8,
@@ -59,7 +60,8 @@ rule assembly_summary:
         "Creating final assembly summary table for {wildcards.EHA}, uploading files to ERDA"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
+        # if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
+        if [ "$(ls -1 *.fa {params.bins} 2>/dev/null | wc -l)" -eq 0 ]
         then
             touch {output.stats}
             touch {output.contigs}

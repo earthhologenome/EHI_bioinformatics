@@ -23,18 +23,18 @@ rule concoct:
         mem_gb=64,
         time=estimate_time_binning,
     benchmark:
-        os.path.join(config["logdir"] + "/binning_benchmark_{PRB}_{EHI}_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/concoct_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/binning_log_{PRB}_{EHI}_{EHA}.log")
+        os.path.join(config["logdir"] + "/concoct_log_{PRB}_{EHI}_{EHA}.log")
     message:
         "Binning {wildcards.EHA} contigs with concoct"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
-        then
-            touch {output}
+        # if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
+        # then
+        #     touch {output}
 
-        else
+        # else
 
             for FILE in {input.bam}; do
                 echo $FILE
@@ -59,5 +59,5 @@ rule concoct:
             # Create output for the next rule
             touch {output}
 
-        fi
+        # fi
         """

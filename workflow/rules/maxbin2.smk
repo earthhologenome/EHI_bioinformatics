@@ -23,18 +23,18 @@ rule maxbin2:
         mem_gb=64,
         time=estimate_time_binning,
     benchmark:
-        os.path.join(config["logdir"] + "/binning_benchmark_{PRB}_{EHI}_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/maxbin2_benchmark_{PRB}_{EHI}_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/binning_log_{PRB}_{EHI}_{EHA}.log")
+        os.path.join(config["logdir"] + "/maxbin2_log_{PRB}_{EHI}_{EHA}.log")
     message:
         "Binning {wildcards.EHA} contigs with maxbin2"
     shell:
         """
-        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
-        then
-            touch {output}
+        # if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
+        # then
+        #     touch {output}
 
-        else
+        # else
 
             # summarise contig depths
             jgi_summarize_bam_contig_depths \
@@ -44,7 +44,7 @@ rule maxbin2:
 
             #calculate total numper of columns
             A=($(head -n 1 {params.outdir}/mb2_master_depth.txt)) 
-            N=${#A[*]}
+            N=${{#A[*]}}
 
             # split the contig depth file into multiple files
             if [ -f {params.outdir}/mb2_abund_list.txt ]; then rm {params.outdir}/mb2_abund_list.txt; fi
@@ -73,5 +73,5 @@ rule maxbin2:
             # Create output for the next rule
             touch {output}
 
-        fi
+        # fi
         """

@@ -24,9 +24,9 @@ rule metabat2:
         mem_gb=64,
         time=estimate_time_binning,
     benchmark:
-        os.path.join(config["logdir"] + "/binning_benchmark_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/maxbin2_benchmark_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/binning_log_{EHA}.log")
+        os.path.join(config["logdir"] + "/maxbin2_log_{EHA}.log")
     message:
         "Binning {wildcards.EHA} contigs with metabat2"
     shell:

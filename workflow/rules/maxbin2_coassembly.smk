@@ -46,7 +46,7 @@ rule maxbin2:
 
             #calculate total numper of columns
             A=($(head -n 1 {params.outdir}/mb2_master_depth.txt)) 
-            N=${#A[*]}
+            N=${{#A[*]}}
 
             # split the contig depth file into multiple files
             if [ -f {params.outdir}/mb2_abund_list.txt ]; then rm {params.outdir}/mb2_abund_list.txt; fi
