@@ -10,7 +10,7 @@ logdir: /projects/ehi/data/RUN/ASBATCH/logs
 #assembler you want to use (megahit or metaspades)
 assembler: megahit
 #path to checkmdb
-checkmdb: /projects/ehi/data/0_Environments/databases/CheckM2_database/
+checkmdb: /projects/ehi/data/0_Environments/databases/CheckM2_database/uniref100.KO.1.dmnd
 GTDB_data: /projects/mjolnir1/data/databases/GTDBTK_DB/release214
 #min contig length for binning
 minlength: 1500
