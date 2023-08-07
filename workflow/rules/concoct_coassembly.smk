@@ -39,7 +39,7 @@ rule concoct:
 
             cut_up_fasta.py {input.contigs} -c 10000 --merge_last -b {params.outdir}/assembly_10K.bed -o 0 > {params.outdir}/assembly_10K.fa
 
-            concoct_coverage_table.py {params.outdir}/assembly_10K.bed {input.bam} > {params.outdir}/concoct_depth.txt"
+            concoct_coverage_table.py {params.outdir}/assembly_10K.bed {input.bam} > {params.outdir}/concoct_depth.txt
 
             concoct \
             -l 1500 \
