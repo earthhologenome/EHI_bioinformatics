@@ -115,7 +115,7 @@ rule gtdbtk:
             cut -f1,2,3,4,6,7,8 {params.refinement}/{wildcards.EHA}_metawrap_50_10_bins.stats > {params.outdir}/mw_stats.tsv
 
             #combine into final table for upload to airtable:
-            paste {params.outdir}/gtdb_airtable.tsv {params.outdir}/ncontigs_temp2.tsv {params.outdir}/mw_stats.tsv > /projects/ehi/data/REP/{config[abb]}_{wildcards.EHA}_mags.tsv
+            paste {params.outdir}/ncontigs_temp2.tsv {params.outdir}/mw_stats.tsv {params.outdir}/gtdb_airtable.tsv > /projects/ehi/data/REP/{config[abb]}_{wildcards.EHA}_mags.tsv
 
 
         fi
