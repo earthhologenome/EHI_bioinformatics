@@ -32,7 +32,7 @@ rule metabat2:
             # summarise contig depths
             jgi_summarize_bam_contig_depths --outputDepth {params.outdir}/metabat_depth.txt {input.bam}
 
-            {params.outdir}/metabat2_bins/
+            mkdir -p {params.outdir}/metabat2_bins/
 
             # Run metabat2
             metabat2 \

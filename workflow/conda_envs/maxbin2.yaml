@@ -4,3 +4,4 @@
     - bioconda
  dependencies:
     - maxbin2=2.2.7
+    - metabat2=2.15
