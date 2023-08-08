@@ -28,8 +28,17 @@ rule map_to_ref:
         ),
         host_bam=temp(os.path.join(
             config["workdir"],
+            "{sample}_host.bam"
+            )
+        ),
+        markdup_bam=temp(os.path.join(
+            config["workdir"],
             "{sample}_G.bam"
             )
+        ),
+        markdup=os.path.join(
+            config["workdir"],
+            "{sample}_markdupes.txt"
         ),
         non_host_r1=os.path.join(
             config["workdir"],
@@ -74,4 +83,11 @@ rule map_to_ref:
         # Send host reads to BAM
         samtools view -b -F12 -@ {threads} {output.all_bam} \
         | samtools sort -@ {threads} -o {output.host_bam} -
+
+        # Get % duplicates from host BAM
+        picard MarkDuplicates \
+        -I {output.host_bam} \
+        -O {output.markdup_bam} \
+        -M {output.markdup}
+        
         """

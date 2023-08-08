@@ -53,7 +53,8 @@ for i, row in df.iterrows():
             'LR': int(row['LR']),
             'modelR': float(row['modelR']),
             'LRstar': int(row['LRstar']),
-            'diversity': float(row['diversity'])
+            'diversity': float(row['diversity']),
+            'host_duplicate_fraction': float(row['host_duplicate_fraction'])
         }
     }
 

@@ -11,3 +11,4 @@
     - bowtie2=2.4.4
     - requests
     - pandas
+    - picard=3.0.0
