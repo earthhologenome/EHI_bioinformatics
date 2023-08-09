@@ -22,7 +22,7 @@ rule coverM:
     resources:
         load=1,
         mem_gb=8,
-        time='00:10:00'
+        time=estimate_time_coverm
     benchmark:
         os.path.join(config["logdir"] + "/{sample}_coverM.benchmark.tsv")
     log:

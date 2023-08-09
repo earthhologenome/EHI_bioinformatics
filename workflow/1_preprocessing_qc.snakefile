@@ -99,6 +99,9 @@ def estimate_time_singlem(wildcards, attempt):
     estimate_time_singlem = ((input_size_gb) + 7) * 4.5
     return attempt * int(estimate_time_singlem)
 
+def estimate_time_coverm(wildcards, attempt):
+    return attempt * 5
+
 ################################################################################
 ### Setup the desired outputs
 rule all:
