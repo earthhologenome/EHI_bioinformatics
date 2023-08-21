@@ -34,10 +34,10 @@ rule upload_mags:
             do cat $i >> {params.stats_dir}/merged_kegg.tsv.gz;
         done
 
-        # zcat {params.stats_dir}/merged_kegg.tsv.gz | head -1 > {params.stats_dir}/merged_kegg_header.tsv
-        echo "hi" >> {params.stats_dir}/HI.txt
         zcat {params.stats_dir}/merged_kegg.tsv.gz | grep -v 'genome' > {params.stats_dir}/merged_kegg_body.tsv
         echo "ho" >> {params.stats_dir}/HO.txt
+        zcat {params.stats_dir}/merged_kegg.tsv.gz | head -1 > {params.stats_dir}/merged_kegg_header.tsv
+        echo "hi" >> {params.stats_dir}/HI.txt
 
         cat {params.stats_dir}/merged_kegg_header.tsv {params.stats_dir}/merged_kegg_body.tsv > {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
         gzip {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
