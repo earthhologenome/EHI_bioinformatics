@@ -37,9 +37,7 @@ rule upload_mags:
         gunzip {params.stats_dir}/merged_kegg.tsv.gz
 
         grep -v 'genome' {params.stats_dir}/merged_kegg.tsv > {params.stats_dir}/merged_kegg_body.tsv
-        echo "ho" >> {params.stats_dir}/HO.txt
-        head -1 {params.stats_dir}/merged_kegg.tsv > {params.stats_dir}/merged_kegg_head.tsv 2>&1 >> {params.stats_dir}/log.txt
-        echo "hi" >> {params.stats_dir}/HI.txt
+        head -1 {params.stats_dir}/merged_kegg.tsv > {params.stats_dir}/merged_kegg_head.tsv
 
         cat {params.stats_dir}/merged_kegg_head.tsv {params.stats_dir}/merged_kegg_body.tsv > {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
         gzip {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
