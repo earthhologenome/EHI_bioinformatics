@@ -35,9 +35,10 @@ rule upload_mags:
         done
 
         zcat {params.stats_dir}/merged_kegg.tsv.gz | head -1 > {params.stats_dir}/merged_kegg_header.tsv
-        zcat {params.stats_dir}/merged_kegg.tsv.gz | grep -v 'genome' > {params.stats_dir}/merged_kegg_body.tsv
+        zcat {params.stats_dir}/merged_kegg.tsv.gz | grep -v 'genome' > {params.stats_dir}/merged_kegg_body.tsv 2> log.log
         cat {params.stats_dir}/merged_kegg_header.tsv {params.stats_dir}/merged_kegg_body.tsv > {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
         gzip {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
+        
         lftp sftp://erda -e "put {params.stats_dir}/{config[dmb]}_merged_kegg.tsv.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
 
         ##Rename files from EHA -> EHM
