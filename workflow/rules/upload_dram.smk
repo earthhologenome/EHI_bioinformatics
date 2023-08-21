@@ -29,6 +29,17 @@ rule upload_mags:
         rm -rf {params.stats_dir}
         mkdir -p {params.stats_dir}
 
+        ##Combine kegg outputs to a single table per DMB
+        for i in {config[magdir]}/*_kegg.tsv.gz;
+            do cat $i >> {params.stats_dir}/merged_kegg.tsv.gz;
+        done
+
+        zcat {params.stats_dir}/merged_kegg.tsv.gz | head -1 > {params.stats_dir}/merged_kegg_header.tsv
+        zcat {params.stats_dir}/merged_kegg.tsv.gz | grep -v 'genome' > {params.stats_dir}/merged_kegg_body.tsv
+        cat {params.stats_dir}/merged_kegg_header.tsv {params.stats_dir}/merged_kegg_body.tsv > {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
+        gzip {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
+        lftp sftp://erda -e "put {params.stats_dir}/{config[dmb]}_merged_kegg.tsv.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+
         ##Rename files from EHA -> EHM
         sed -s '1d;' dereped_mags.csv | tr ',' '\t' > {params.stats_dir}/ehm_eha_mapping.tsv
         #fix issue with separators
@@ -45,8 +56,7 @@ rule upload_mags:
 
         while read ehm eha; 
             do cp {config[magdir]}/"$eha".gbk.gz {config[magdir]}/"$ehm".gbk.gz && echo {config[magdir]}/"$ehm".gbk.gz >> {params.stats_dir}/gbk_mag.tsv; 
-        done < {params.stats_dir}/ehm_eha_mapping.tsv
-
+        done < {params.stats_dir}/ehm_eha_mapping.tsv   
 
         #Setup batch file for uploading MAGs from erda:
         for mag in {config[magdir]}/EHM*_anno.tsv.gz;
