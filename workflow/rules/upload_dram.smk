@@ -36,10 +36,10 @@ rule upload_mags:
 
         zcat {params.stats_dir}/merged_kegg.tsv.gz | grep -v 'genome' > {params.stats_dir}/merged_kegg_body.tsv
         echo "ho" >> {params.stats_dir}/HO.txt
-        zcat {params.stats_dir}/merged_kegg.tsv.gz | head -1 > {params.stats_dir}/merged_kegg_header.tsv
+        zcat {params.stats_dir}/merged_kegg.tsv.gz | head -1 > {params.stats_dir}/merged_kegg_head.tsv
         echo "hi" >> {params.stats_dir}/HI.txt
 
-        cat {params.stats_dir}/merged_kegg_header.tsv {params.stats_dir}/merged_kegg_body.tsv > {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
+        cat {params.stats_dir}/merged_kegg_head.tsv {params.stats_dir}/merged_kegg_body.tsv > {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
         gzip {params.stats_dir}/{config[dmb]}_merged_kegg.tsv
 
         lftp sftp://erda -e "put {params.stats_dir}/{config[dmb]}_merged_kegg.tsv.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
