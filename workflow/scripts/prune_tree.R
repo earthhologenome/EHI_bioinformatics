@@ -22,7 +22,7 @@ args <- parser$parse_args()
 #Load and bind trees
 archaea_tree <- ape::read.tree(args$archaea)
 bacteria_tree <- ape::read.tree(args$bacteria)
-prokaryote_tree <- bind.tree(bacteria_tree, archaea_tree)
+prokaryote_tree <- bind.tree(archaea_tree, bacteria_tree)
 
 #Prune tree
 genomes <- read.table(args$info, sep = '\t', skip = 1)[,1]
