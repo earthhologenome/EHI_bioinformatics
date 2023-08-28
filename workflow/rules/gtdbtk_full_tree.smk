@@ -40,6 +40,9 @@ rule gtdbtk_full_tree:
         "Creating phylogenetic tree from derepliated mags using GTDB-tk"
     shell:
         """
+        # Clean up in case of rerun
+        rm -rf {params.outdir}
+
         # Specify path to reference data:
         export GTDBTK_DATA_PATH={params.GTDB_data}
 
