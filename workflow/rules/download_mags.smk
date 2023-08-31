@@ -23,7 +23,7 @@ rule download_mags:
     resources:
         load=8,
         mem_gb=8,
-        time="02:00:00"
+        time="06:00:00"
     benchmark:
         os.path.join(config["logdir"] + "/download_mags_benchmark.tsv")
     message:
