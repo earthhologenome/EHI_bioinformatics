@@ -44,7 +44,13 @@ def estimate_time_download(wildcards, attempt):
     return attempt * 20
 
 def estimate_time_assembly(wildcards, attempt):
-    return attempt * 480
+    assembly_size = pd.read_csv("assembly_size.csv")
+    assembly_size_value = assembly_size['assembly_size'].values[0]
+
+    if assembly_size_value > 100:
+        return attempt * 1440
+    else:
+        return attempt * 480
 
 def estimate_time_mapping(wildcards, attempt):
     return attempt * 50
