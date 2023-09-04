@@ -23,13 +23,17 @@ rule download_mags:
     resources:
         load=8,
         mem_gb=8,
-        time="06:00:00"
+        time=estimate_time_download_mags
     benchmark:
         os.path.join(config["logdir"] + "/download_mags_benchmark.tsv")
     message:
         "Fetching MAGs from ERDA"
     shell:
         """
+        rm -f {config[workdir]}/batchfile.txt
+        rm -f {config[workdir]}/mag.tsv
+        rm -f {config[workdir]}/get.tsv
+
         #Setup batch file for downloading MAGs from erda:
         for mag in {output.mags};
             do echo "get EarthHologenomeInitiative/Data/MAG/*/" >> {config[workdir]}/get.tsv && echo $(basename $mag) >> {config[workdir]}/mag.tsv;
