@@ -53,7 +53,14 @@ print(MAG)
 import os
 
 def estimate_time_download(wildcards, attempt):
-    return attempt * 15
+    return attempt * 120
+
+## Setup dynamic time for downloading MAGs
+num_mags = pd.read_csv("num_mags.csv")
+
+def estimate_time_download_mags(wildcards, attempt):
+    return attempt * (num_mags['number_of_input_MAGs'] * 0.2)
+
 
 def estimate_time_gtdb(wildcards, attempt):
     return attempt * 300
