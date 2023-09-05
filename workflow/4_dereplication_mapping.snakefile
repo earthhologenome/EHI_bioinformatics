@@ -59,7 +59,7 @@ def estimate_time_download(wildcards, attempt):
 num_mags = pd.read_csv("num_mags.csv")
 
 def estimate_time_download_mags(wildcards, attempt):
-    return attempt * (num_mags['number_of_input_MAGs'] * 0.2)
+    return attempt * float(num_mags['number_of_input_MAGs'] * 0.2)
 
 
 def estimate_time_gtdb(wildcards, attempt):
