@@ -10,7 +10,11 @@ rule prune_tree:
             config["workdir"], 
             "coverm/", 
             config["dmb"] + "_count_table.tsv"
-        )
+        ),
+        gtdbtk=os.path.join(
+            config["workdir"], 
+            config["dmb"] + "_gtdbtk_combined_summary.tsv"
+        )      
     output:
         tree=os.path.join(
             config["workdir"],
@@ -29,6 +33,11 @@ rule prune_tree:
             config["workdir"],
             "gtdbtk/classify/gtdbtk.ar53.classify.tree"
         ),
+        ct_temp=os.path.join(
+            config["workdir"], 
+            "coverm/", 
+            config["dmb"] + "_count_table_temp.tsv"
+        )
     conda:
         f"{config['codedir']}/conda_envs/R_tidyverse.yaml"
     threads:
@@ -42,6 +51,12 @@ rule prune_tree:
         "Pruning tree & splitting count table"
     shell:
         """
+        # Clean up MAGs that don't have GTDBtk classifications
+        grep 'No bacterial or archaeal marker' {input.gtdbtk} | cut -f1 >> {config[workdir]}/rm_tax.tsv
+        grep 'Insufficient number of amino acids in MSA' {input.gtdbtk} | cut -f1 >> {config[workdir]}/rm_tax.tsv
+        sed -i 's/.fa//g' {config[workdir]}/rm_tax.tsv
+        grep -v -F -f {config[workdir]}/rm_tax.tsv {input.count_table} > {params.ct_temp}
+
         #IF statement, as sometimes we won't have an archaeal tree
         if [ -f {params.arch_tree} ]
         then
@@ -58,10 +73,10 @@ rule prune_tree:
         sed -i'' 's/\.fa//g' {output.tree}
 
         ## Remove '.fa' suffix for mag_info, and keep only EHI number for count table
-        sed -i'' 's/PRB.....//g' {input.count_table}
-        sed -i'' 's/_DMB....//g' {input.count_table}
+        sed -i'' 's/PRB.....//g' {params.ct_temp}
+        sed -i'' 's/_DMB....//g' {params.ct_temp}
 
         ## Script to split evenness of coverage and counts
-        Rscript {config[codedir]}/scripts/split_table.R -i {input.count_table} -c {output.counts} -v {output.coverage}
+        Rscript {config[codedir]}/scripts/split_table.R -i {params.ct_temp} -c {output.counts} -v {output.coverage}
 
         """
