@@ -23,7 +23,7 @@ headers = {
 
 # Set up the query parameters to filter the records
 query_params = {
-    'filterByFormula': f"FIND('{args.dmb}', {{DM_batch}})",
+    'filterByFormula': f"AND(FIND('{args.dmb}', {{DM_batch}}), NOT({{domain}} = 'Unclassified'))",
     'pageSize': 100  # Set the page size to 100 records per request
 }
 
