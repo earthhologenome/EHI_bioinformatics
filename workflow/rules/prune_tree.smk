@@ -60,14 +60,14 @@ rule prune_tree:
         #IF statement, as sometimes we won't have an archaeal tree
         if [ -f {params.arch_tree} ]
         then
-            Rscript {config[codedir]}/scripts/prune_tree.R -b {input.tree} -a {params.arch_tree} -i {input.count_table} -o {output.tree}
+            Rscript {config[codedir]}/scripts/prune_tree.R -b {input.tree} -a {params.arch_tree} -i {params.ct_temp} -o {output.tree}
 
         else
-            Rscript {config[codedir]}/scripts/prune_tree_bact.R -b {input.tree} -i {input.count_table} -o {output.tree}
+            Rscript {config[codedir]}/scripts/prune_tree_bact.R -b {input.tree} -i {params.ct_temp} -o {output.tree}
         fi
 
         ## Create list of dereplicated MAG names for updating AirTable
-        cut -f1 {input.count_table} | sed '1d;' | sed 's/$/.fa/g' > {config[workdir]}/dereplicated_mags.tsv
+        cut -f1 {params.ct_temp} | sed '1d;' | sed 's/$/.fa/g' > {config[workdir]}/dereplicated_mags.tsv
 
         ## Remove trailing '.fa'
         sed -i'' 's/\.fa//g' {output.tree}
