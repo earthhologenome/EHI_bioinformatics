@@ -36,6 +36,10 @@ rule prune_tree:
         ct_temp=os.path.join(
             config["workdir"], 
             "count_table_temp.tsv"
+        ),
+        rm_tax=os.path.join(
+            config["workdir"], 
+            "rm_tax.tsv"
         )
     conda:
         f"{config['codedir']}/conda_envs/R_tidyverse.yaml"
@@ -51,11 +55,13 @@ rule prune_tree:
     shell:
         """
         # Clean up MAGs that don't have GTDBtk classifications
-        grep 'No bacterial or archaeal marker' {input.gtdbtk} | cut -f1 >> {config[workdir]}/rm_tax.tsv
-        grep 'Insufficient number of amino acids in MSA' {input.gtdbtk} | cut -f1 >> {config[workdir]}/rm_tax.tsv
-        sed -i 's/.fa//g' {config[workdir]}/rm_tax.tsv
+        grep 'No bacterial or archaeal marker' {input.gtdbtk} | cut -f1 > {params.rm_tax}
+        touch {config[workdir]}/grep1_done
+        grep 'Insufficient number of amino acids in MSA' {input.gtdbtk} | cut -f1 >> {params.rm_tax}
+        touch {config[workdir]}/grep2_done
+        sed -i 's/.fa//g' {params.rm_tax}
         touch {config[workdir]}/rm_tax_done
-        grep -v -f {config[workdir]}/rm_tax.tsv {input.count_table} > {params.ct_temp}
+        grep -v -f {params.rm_tax} {input.count_table} > {params.ct_temp}
         touch {config[workdir]}/ct_gemp_done
 
         #IF statement, as sometimes we won't have an archaeal tree
