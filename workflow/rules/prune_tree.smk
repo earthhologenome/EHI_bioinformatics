@@ -35,8 +35,7 @@ rule prune_tree:
         ),
         ct_temp=os.path.join(
             config["workdir"], 
-            "coverm/", 
-            config["dmb"] + "_count_table_temp.tsv"
+            "count_table_temp.tsv"
         )
     conda:
         f"{config['codedir']}/conda_envs/R_tidyverse.yaml"
