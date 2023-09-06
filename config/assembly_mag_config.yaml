@@ -15,4 +15,4 @@ GTDB_data: /projects/mjolnir1/data/databases/GTDBTK_DB/release214
 #min contig length for binning
 minlength: 1500
 #minimum size of contigs file to proceed with binning
-contigsize: 40
+contigsize: 25

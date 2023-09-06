@@ -47,7 +47,12 @@ rule metaWRAP_refinement:
         "Refining {wildcards.EHA} bins with MetaWRAP's bin refinement module"
     shell:
         """
+        if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
+        then
+            touch {output}
 
+        else
+        
             # setup checkm2 db path (in case of first run)
             checkm2 database --setdblocation {config[checkmdb]}
 
