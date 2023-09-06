@@ -54,9 +54,9 @@ rule prune_tree:
         grep 'No bacterial or archaeal marker' {input.gtdbtk} | cut -f1 >> {config[workdir]}/rm_tax.tsv
         grep 'Insufficient number of amino acids in MSA' {input.gtdbtk} | cut -f1 >> {config[workdir]}/rm_tax.tsv
         sed -i 's/.fa//g' {config[workdir]}/rm_tax.tsv
-        echo "rm_tax_done"
-        grep -v -F -f {config[workdir]}/rm_tax.tsv {input.count_table} > {params.ct_temp}
-        echo "ct_gemp_done"
+        touch {config[workdir]}/rm_tax_done
+        grep -v -f {config[workdir]}/rm_tax.tsv {input.count_table} > {params.ct_temp}
+        touch {config[workdir]}/ct_gemp_done
 
         #IF statement, as sometimes we won't have an archaeal tree
         if [ -f {params.arch_tree} ]
