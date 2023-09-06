@@ -55,9 +55,9 @@ rule prune_tree:
     shell:
         """
         # Clean up MAGs that don't have GTDBtk classifications
-        grep 'No bacterial or archaeal marker' {input.gtdbtk} | cut -f1 > {params.rm_tax}
+        grep "No bacterial or archaeal marker" {input.gtdbtk} | cut -f1 > {params.rm_tax}
         touch {config[workdir]}/grep1_done
-        grep 'Insufficient number of amino acids in MSA' {input.gtdbtk} | cut -f1 >> {params.rm_tax}
+        grep "Insufficient number of amino acids in MSA" {input.gtdbtk} | cut -f1 >> {params.rm_tax}
         touch {config[workdir]}/grep2_done
         sed -i 's/.fa//g' {params.rm_tax}
         touch {config[workdir]}/rm_tax_done
