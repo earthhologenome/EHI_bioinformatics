@@ -55,7 +55,9 @@ rule prune_tree:
         grep 'No bacterial or archaeal marker' {input.gtdbtk} | cut -f1 >> {config[workdir]}/rm_tax.tsv
         grep 'Insufficient number of amino acids in MSA' {input.gtdbtk} | cut -f1 >> {config[workdir]}/rm_tax.tsv
         sed -i 's/.fa//g' {config[workdir]}/rm_tax.tsv
+        echo "rm_tax_done"
         grep -v -F -f {config[workdir]}/rm_tax.tsv {input.count_table} > {params.ct_temp}
+        echo "ct_gemp_done"
 
         #IF statement, as sometimes we won't have an archaeal tree
         if [ -f {params.arch_tree} ]
@@ -65,6 +67,8 @@ rule prune_tree:
         else
             Rscript {config[codedir]}/scripts/prune_tree_bact.R -b {input.tree} -i {params.ct_temp} -o {output.tree}
         fi
+
+        echo "tree_pruned"
 
         ## Create list of dereplicated MAG names for updating AirTable
         cut -f1 {params.ct_temp} | sed '1d;' | sed 's/$/.fa/g' > {config[workdir]}/dereplicated_mags.tsv
