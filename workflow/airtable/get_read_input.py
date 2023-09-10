@@ -30,14 +30,22 @@ query_params = {
 
 }
 
-# Make the request to get the records
-response = requests.get(AIRTABLE_API_ENDPOINT, params=query_params, headers=headers)
+initial_offset = 1
+all_records = []
 
-# Convert the response to a JSON object
-data = response.json()
-
-# Extract the records from the JSON object
-records = data['records']
+# Loop until there are no more pages
+while initial_offset != 0:
+  print(initial_offset)
+  response = requests.get(AIRTABLE_API_ENDPOINT, params=query_params, headers=headers)
+  data = response.json()
+  records = data['records']    
+  all_records.extend(records)  
+  if 'offset' in data:
+    initial_offset = data['offset']
+    query_params['offset'] = initial_offset
+  else:
+    initial_offset = 0
+    break
 
 # Set up the output TSV file
 output_file_path = 'read_input.tsv'
@@ -52,7 +60,7 @@ with open(output_file_path, 'w', newline='') as tsvfile:
         if offset:
             query_params['offset'] = offset
 
-        for record in records:
+        for record in all_records:
             # Get the values of the PR_batch and EHI_number lookup fields
             record_id = record['id']
 
