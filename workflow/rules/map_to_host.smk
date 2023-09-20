@@ -85,7 +85,7 @@ rule map_to_ref:
         | samtools sort -@ {threads} -o {output.host_bam} -
 
         # Get % duplicates from host BAM
-        picard MarkDuplicates \
+        picard -Xmx{resources.mem_gb}g MarkDuplicates \
         -I {output.host_bam} \
         -O {output.markdup_bam} \
         -M {output.markdup}
