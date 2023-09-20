@@ -58,5 +58,5 @@ rule concoct:
 
             # Create output for the next rule
             touch {output}
-
+        fi
         """

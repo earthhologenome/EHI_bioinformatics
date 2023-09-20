@@ -51,5 +51,5 @@ rule metabat2:
 
             # Create output for the next rule
             touch {output}
-
+        fi
         """
