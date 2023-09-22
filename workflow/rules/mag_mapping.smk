@@ -44,6 +44,9 @@ rule mag_mapping:
         "Mapping {wildcards.EHI} to MAG catalogue using Bowtie2"
     shell:
         """
+        # Remove tmp files (in case of rerun)
+        rm -rf {output}.tmp*
+        
         # Map reads to assembly using Bowtie2
         bowtie2 \
             --time \

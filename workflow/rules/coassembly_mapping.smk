@@ -32,6 +32,9 @@ rule coassembly_mapping:
         "Mapping {wildcards.EHI} to {wildcards.EHA} assembly using Bowtie2"
     shell:
         """
+        # Remove tmp files (in case of rerun)
+        rm -rf {output}.tmp*
+
         # Map reads to assembly using Bowtie2
         bowtie2 \
             --time \

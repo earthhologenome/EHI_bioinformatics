@@ -37,6 +37,9 @@ rule assembly_mapping:
             touch {output}
         
         else
+        # Remove tmp files (in case of rerun)
+        rm -rf {output}.tmp*
+        
         # Map reads to assembly using Bowtie2
         bowtie2 \
             --time \
