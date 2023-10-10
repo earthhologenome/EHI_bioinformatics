@@ -44,6 +44,7 @@ rule assembly:
         then
             touch {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_uploaded
             mkdir -p {config[workdir]}/bams
+            mkdir -p {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_QUAST
             touch {config[workdir]}/bams/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}.bam
             mkdir -p {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_binning
             touch {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_binning/binning_complete
