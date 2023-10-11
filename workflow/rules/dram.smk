@@ -57,8 +57,6 @@ rule DRAM:
                 --rrna_path {params.outdir}/rrnas.tsv \
                 --trna_path {params.outdir}/trnas.tsv \
                 -o {output.distillate}
-            else
-            echo "trnas AND rrnas are both not present"
             fi
 
             if test -f {params.outdir}/trnas.tsv && test ! -f {params.outdir}/rrnas.tsv
@@ -68,7 +66,7 @@ rule DRAM:
                 --trna_path {params.outdir}/trnas.tsv \
                 -o {output.distillate}
             else
-            echo "only trnas found"
+                echo "B not needed"
             fi
 
             if test ! -f {params.outdir}/trnas.tsv && test -f {params.outdir}/rrnas.tsv
@@ -78,7 +76,7 @@ rule DRAM:
                 --rrna_path {params.outdir}/rrnas.tsv \
                 -o {output.distillate}
             else
-            echo "only rrnas found"
+                echo "C not needed"
             fi
 
             if test ! -f {params.outdir}/trnas.tsv && test ! -f {params.outdir}/rrnas.tsv
@@ -87,7 +85,7 @@ rule DRAM:
                 -i {params.outdir}/annotations.tsv \
                 -o {output.distillate}
             else
-            echo "neither trnas nor rrnas found"
+                echo "D not needed"
             fi        
 
             ##get stats from annotations
@@ -100,7 +98,7 @@ rule DRAM:
             #number of cazy hits
             sed '1d;' {params.outdir}/annotations.tsv | cut -f19 | grep -v '^$' | wc -l > {params.outdir}/cazy_hits.tsv
             #number of genes without annotations
-            awk -F'\t' 'BEGIN {{ count = 0; }} {{ empty = 1; for (i = 9; i <= 19; i++) {{ if ($i != "") {{ empty = 0; break; }} }} if (empty == 1) {{ count++; }} }} END {{ print count; }}' {params.outdir}/annotations.tsv > {params.outdir}/unannotated.tsv
+            bash {config[codedir]}/scrips/count_unannotated.sh {params.outdir}/annotations.tsv {params.outdir}/unannotated.tsv
 
 
 
