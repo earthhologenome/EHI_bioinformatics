@@ -50,7 +50,13 @@ rule metaWRAP_refinement:
         if [ $(( $(stat -c '%s' {input.contigs}) / 1024 / 1024 )) -lt {params.contigsize} ]
         then
             touch {output}
+            
+        elif
+            [ $(ls -l {params.binning}/metabat2_bins/*.fa) -lt 6 ]
 
+        then
+            touch {output}
+        
         else
         
             # setup checkm2 db path (in case of first run)
