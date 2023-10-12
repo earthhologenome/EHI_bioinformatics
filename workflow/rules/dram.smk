@@ -98,7 +98,7 @@ rule DRAM:
             #number of cazy hits
             sed '1d;' {params.outdir}/annotations.tsv | cut -f19 | grep -v '^$' | wc -l > {params.outdir}/cazy_hits.tsv
             #number of genes without annotations
-            bash {config[codedir]}/scrips/count_unannotated.sh {params.outdir}/annotations.tsv {params.outdir}/unannotated.tsv
+            bash {config[codedir]}/scripts/count_unannotated.sh {params.outdir}/annotations.tsv {params.outdir}/unannotated.tsv
 
 
 

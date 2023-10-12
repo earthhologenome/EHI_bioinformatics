@@ -52,7 +52,7 @@ rule metaWRAP_refinement:
             touch {output}
             
         elif
-            [ $(ls -l {params.binning}/metabat2_bins/*.fa) -lt 6 ]
+            [ $(ls -l {params.binning}/metabat2_bins/*.fa | wc -l) -lt 6 ]
 
         then
             touch {output}
