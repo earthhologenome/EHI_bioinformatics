@@ -15,11 +15,11 @@ rule DRAM:
         annotations = os.path.join(config["magdir"], "{MAG}_anno.tsv.gz"),
         product = os.path.join(config["magdir"], "{MAG}_kegg.tsv.gz"),
         gbk = os.path.join(config["magdir"], "{MAG}.gbk.gz"),
-        distillate = directory(os.path.join(config["magdir"], "{MAG}_distillate"))
     params:
         outdir=os.path.join(config["magdir"], "{MAG}_annotate"),
         trnas=os.path.join(config["magdir"], "{MAG}_trnas.tsv"),
-        rrnas=os.path.join(config["magdir"], "{MAG}_rrnas.tsv")
+        rrnas=os.path.join(config["magdir"], "{MAG}_rrnas.tsv"),
+        distillate=os.path.join(config["magdir"], "{MAG}_distillate")
     # conda:
     #     f"{config['codedir']}/conda_envs/DRAM.yaml"
     threads:
@@ -37,7 +37,7 @@ rule DRAM:
         """
         # Remove tmp files in case job needs to be rerun
         rm -rf {params.outdir}
-        rm -rf {output.distillate}
+        rm -rf {params.distillate}
 
         #Loading DRAM from our custom DRAM build:
         source activate /projects/mjolnir1/people/ncl550/0_software/miniconda3/envs/DRAM_more_modules
@@ -56,7 +56,7 @@ rule DRAM:
                 -i {params.outdir}/annotations.tsv \
                 --rrna_path {params.outdir}/rrnas.tsv \
                 --trna_path {params.outdir}/trnas.tsv \
-                -o {output.distillate}
+                -o {params.distillate}
             fi
 
             if test -f {params.outdir}/trnas.tsv && test ! -f {params.outdir}/rrnas.tsv
@@ -64,7 +64,7 @@ rule DRAM:
             DRAM.py distill \
                 -i {params.outdir}/annotations.tsv \
                 --trna_path {params.outdir}/trnas.tsv \
-                -o {output.distillate}
+                -o {params.distillate}
             else
                 echo "B not needed"
             fi
@@ -74,7 +74,7 @@ rule DRAM:
             DRAM.py distill \
                 -i {params.outdir}/annotations.tsv \
                 --rrna_path {params.outdir}/rrnas.tsv \
-                -o {output.distillate}
+                -o {params.distillate}
             else
                 echo "C not needed"
             fi
@@ -83,7 +83,7 @@ rule DRAM:
             then
             DRAM.py distill \
                 -i {params.outdir}/annotations.tsv \
-                -o {output.distillate}
+                -o {params.distillate}
             else
                 echo "D not needed"
             fi        
@@ -91,28 +91,31 @@ rule DRAM:
             ##get stats from annotations
             #number of gene calls
             sed '1d;' {params.outdir}/annotations.tsv | wc -l > {params.outdir}/num_genes.tsv
+            sleep 5
             #number of genes with KEGG hits
             sed '1d;' {params.outdir}/annotations.tsv | cut -f9 | grep -v '^$' | wc -l > {params.outdir}/kegg_hits.tsv
+            sleep 5
             #number of pfam hits
             sed '1d;' {params.outdir}/annotations.tsv | cut -f18 | grep -v '^$' | wc -l > {params.outdir}/pfam_hits.tsv
+            sleep 5
             #number of cazy hits
             sed '1d;' {params.outdir}/annotations.tsv | cut -f19 | grep -v '^$' | wc -l > {params.outdir}/cazy_hits.tsv
+            sleep 5
             #number of genes without annotations
-            bash {config[codedir]}/scripts/count_unannotated.sh {params.outdir}/annotations.tsv {params.outdir}/unannotated.tsv
+            sleep 5
+            bash {config[codedir]}/scripts/count_unannotated.sh {params.outdir}/annotations.tsv {params.outdir}/unannotated.tsv 2> {params.outdir}/error.log
+            sleep 5
 
-
-
-            #fetch only KEGG modules from product (keep DRAM distillate)
-            cut -f1-381 {output.distillate}/product.tsv > {output.distillate}/kegg_product.tsv
-#            cut -f1,382-466 {output.distillate}/product.tsv > {output.distillate}/dram_product.tsv
+            #fetch only KEGG modules from product
+            cut -f1-381 {params.distillate}/product.tsv > {params.distillate}/kegg_product.tsv
 
             #compress, clean, move
             pigz -p {threads} {params.outdir}/annotations.tsv
-            pigz -p {threads} {output.distillate}/kegg_product.tsv
+            pigz -p {threads} {params.distillate}/kegg_product.tsv
             pigz -p {threads} {params.outdir}/genbank/*.gbk
 
             mv {params.outdir}/annotations.tsv.gz {output.annotations}
-            mv {output.distillate}/kegg_product.tsv.gz {output.product}
+            mv {params.distillate}/kegg_product.tsv.gz {output.product}
             mv {params.outdir}/genbank/*.gbk.gz {output.gbk}
           
         """
