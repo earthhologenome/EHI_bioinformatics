@@ -81,6 +81,8 @@ rule upload_tables:
         gzip -k {input.counts}
         gzip -k {input.coverage}
 
+        lftp sftp://erda -e "put {config[workdir]}/drep/{config[dmb]}_drep_figures.tar.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        sleep 5
         lftp sftp://erda -e "put {input.count_table}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
         lftp sftp://erda -e "put {input.tree}.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"

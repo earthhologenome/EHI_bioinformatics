@@ -47,4 +47,6 @@ rule drep:
             do mv $i {config[workdir]}/drep/figures/{config[dmb]}_$(basename "$i");
         done
 
+        tar -cvzf {config[workdir]}/drep/{config[dmb]}_drep_figures.tar.gz {config[workdir]}/drep/figures/
+
         """
