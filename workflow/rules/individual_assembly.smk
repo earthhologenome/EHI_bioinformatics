@@ -40,7 +40,7 @@ rule assembly:
 
 
         # if statement for situations where the assembly is too small to continue binning
-        if [ $(( $(stat -c '%s' {output}) / 1024 / 1024 )) -lt 50 ]
+        if [ $(( $(stat -c '%s' {output}) / 1024 / 1024 )) -lt {params.contigsize} ]
         then
             touch {config[workdir]}/{wildcards.PRB}_{wildcards.EHI}_{wildcards.EHA}_uploaded
             mkdir -p {config[workdir]}/bams
