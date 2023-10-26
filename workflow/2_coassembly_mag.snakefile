@@ -34,11 +34,20 @@ df = pd.read_csv("asb_input.tsv", sep="\t")
 
 # Use set to create a list of valid combinations of wildcards.
 valid_combinations = set(
-    (row["PR_batch"], row["EHI_number"], row["Assembly_code"]) for _, row in df.iterrows()
+    (row["PR_batch"], row["EHI_number"], row["Assembly_code"], row["metagenomic_bases"], row["singlem_fraction"], row["diversity"], row["C"]) for _, row in df.iterrows()
 )
 
 ## Set up dynamic times for rules based on input data:
 ## values are derived from benchmarks (gbp / time required) see URL TO GITHUB MD *********
+def get_row(wildcards):
+    return df[
+        (df["PR_batch"] == wildcards.PRB) &
+        (df["EHI_number"] == wildcards.EHI)
+    ].iloc[0]
+
+def calculate_input_size_gb(metagenomic_bases):
+    # convert from bytes to gigabytes
+    return metagenomic_bases / (1024 * 1024 * 1024)
 
 def estimate_time_download(wildcards, attempt):
     return attempt * 20
@@ -53,7 +62,15 @@ def estimate_time_assembly(wildcards, attempt):
         return attempt * 480
 
 def estimate_time_mapping(wildcards, attempt):
-    return attempt * 50
+    row = get_row(wildcards)
+    metagenomic_bases = row["metagenomic_bases"]
+    singlem_fraction = row["singlem_fraction"]
+    diversity = row["diversity"]
+    C = row["C"]
+    gbp_post_mapping = calculate_input_size_gb(row["metagenomic_bases"])
+    estimate_time_mapping = -59.69 + (2.14 * diversity) - (0.016 * singlem_fraction) + (4.34 * gbp_post_mapping) + (22.22 * C)
+    estimate_time_mapping = max(estimate_time_mapping, 20)
+    return attempt * int(estimate_time_mapping)
 
 def estimate_time_binning(wildcards, attempt):
     return attempt * 250
