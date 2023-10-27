@@ -73,7 +73,7 @@ def estimate_time_mapping(wildcards, attempt):
     return attempt * int(estimate_time_mapping)
 
 def estimate_time_binning(wildcards, attempt):
-    return attempt * 250
+    return attempt * 400
 
 def estimate_time_refinement(wildcards, attempt):
     return attempt * 450
