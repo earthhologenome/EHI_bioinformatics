@@ -50,16 +50,16 @@ suppressPackageStartupMessages(library(Rtsne))
 #+ load_data, echo=FALSE, warning=FALSE
 # Load all files produced by the EHI pipeline
 batch <- params$batch
-count_table <- read.table(gunzip(params$count_file, remove=FALSE, overwrite=TRUE),sep="\t",row.names=1,header=T)
-coverage_table <- read.table(gunzip(params$coverage_file, remove=FALSE, overwrite=TRUE),sep="\t",row.names=1,header=T)
-sample_table <- read.table(gunzip(params$sample_file, remove=FALSE, overwrite=TRUE),sep="\t",header=T) %>%
+count_table <- read.table(params$count_file,sep="\t",row.names=1,header=T)
+coverage_table <- read.table(params$coverage_file,sep="\t",row.names=1,header=T)
+sample_table <- read.table(params$sample_file,sep="\t",header=T) %>%
 	rename(sample=EHI_plaintext)
-mags_table <- read.table(gunzip(params$mags_file, remove=FALSE, overwrite=TRUE),sep="\t",header=T)
+mags_table <- read.table(params$mags_file,sep="\t",header=T)
 rownames(mags_table) <- mags_table[,1]
-tree <- read.tree(gunzip(params$tree_file, remove=FALSE, overwrite=TRUE))
+tree <- read.tree(params$tree_file)
 if(file.exists(params$kegg_file)){
 	func = "yes"
-	kegg_table <- read.table(gunzip(params$kegg_file, remove=FALSE, overwrite=TRUE),sep="\t",header=T, row.names=1)
+	kegg_table <- read.table(params$kegg_file,sep="\t",header=T, row.names=1)
 }else{
 	func = "no"
 }
