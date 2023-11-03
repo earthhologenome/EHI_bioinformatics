@@ -37,7 +37,9 @@ rule final_report:
 
 
         #Execute R script
-        Rscript {config[codedir]}/scripts/final_report_render.r -s {config[codedir]}/scripts/final_report.r -b {config[dmb]} -p {config[dmb]}.pdf
+        cp {config[codedir]}/scripts/final_report_render.r . 
+        cp {config[codedir]}/scripts/final_report.r . 
+        Rscript final_report_render.r -s final_report.r -b {config[dmb]} -p {config[dmb]}.pdf
 
         #Unload conda environment
         conda deactivate /projects/ehi/data/0_Environments/conda/final_report
