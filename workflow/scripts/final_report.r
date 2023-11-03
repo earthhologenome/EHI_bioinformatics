@@ -50,18 +50,27 @@ suppressPackageStartupMessages(library(Rtsne))
 #+ load_data, echo=FALSE, warning=FALSE
 # Load all files produced by the EHI pipeline
 batch <- params$batch
-count_table <- read.table(params$count_file,sep="\t",row.names=1,header=T)
-coverage_table <- read.table(params$coverage_file,sep="\t",row.names=1,header=T)
-sample_table <- read.table(params$sample_file,sep="\t",header=T) %>%
-	rename(sample=EHI_plaintext)
 mags_table <- read.table(params$mags_file,sep="\t",header=T)
-#rownames(mags_table) <- mags_table[,1] {Raph: not needed? breaks code...}
-tree <- read.tree(params$tree_file)
+rownames(mags_table) <- mags_table[,1]
+
+count_table <- read.table(params$count_file,sep="\t",row.names=1,header=T)
+count_table <- count_table[mags_table$genome,]
+
+coverage_table <- read.table(params$coverage_file,sep="\t",row.names=1,header=T)
+coverage_table <- coverage_table[mags_table$genome,]
+
+sample_table <- read.table(params$sample_file,sep="\t",header=T) %>%
+    rename(sample=EHI_plaintext)
+
+tree <- read.tree(params$tree_file) %>%
+    keep.tip(tip=mags_table$genome)
+
+
 if(file.exists(params$kegg_file)){
-	func = "yes"
-	kegg_table <- read.table(params$kegg_file,sep="\t",header=T, row.names=1)
+    func = "yes"
+    kegg_table <- read.table(params$kegg_file,sep="\t",header=T, row.names=1)
 }else{
-	func = "no"
+    func = "no"
 }
 #+ load_colors, echo=FALSE, warning=FALSE
 # Load EHI taxonomy colours
@@ -713,7 +722,7 @@ vertical_tree +
 
 #Add count scale
 #+ count_legends, echo=FALSE, warning=FALSE, comments="", message=FALSE, results="hide", fig.height=1.5
-countscale <- seq(log(max(count_table_cov_size)), 0, length.out = 5)
+countscale <- seq(log(max(count_table_cov_size, na.rm=T)), 0, length.out = 5)
 
 count_legend <- data.frame(value = countscale, x = c(round(exp(countscale[1]),2),round(exp(countscale[2]),2),round(exp(countscale[3]),2),round(exp(countscale[4]),2),"0")) %>%
 	mutate(x = factor(x, levels = x)) %>%
