@@ -1,11 +1,11 @@
 # EHI_Bioinformatics 
 # 🐨->💩->🦠->🧬->🖥️->😏
-Bioinformatics pipeline to process EHI data.
+Bioinformatics pipeline for processing EHI data.
 
-*updated 29/03/2023, Raphael Eisenhofer*
+*updated 03/11/2023, Raphael Eisenhofer*
 
 #### General information:
-This pipeline uses [![Snakemake](https://img.shields.io/badge/snakemake-≥5.6.0-brightgreen.svg?style=flat)](https://snakemake.readthedocs.io), and manages dependencies using conda (or mamba) for reproducibility and deployability. The 0_Code directory contains the snakefiles, scripts, and conda environment yamls. 
+Note, this branch is only for running on Mjolnir (University of Copenhagen), as it contains many scripts/API calls specific to ERDA and the EHI AirTable database. For the general, deployable version of the pipeline, see the main branch.
 
 #### Getting started:
 Firstly, you'll need to set up an alias for connecting to ERDA -- this is **essential** for proper function.
