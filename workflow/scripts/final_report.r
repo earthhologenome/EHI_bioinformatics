@@ -55,7 +55,7 @@ coverage_table <- read.table(params$coverage_file,sep="\t",row.names=1,header=T)
 sample_table <- read.table(params$sample_file,sep="\t",header=T) %>%
 	rename(sample=EHI_plaintext)
 mags_table <- read.table(params$mags_file,sep="\t",header=T)
-rownames(mags_table) <- mags_table[,1]
+#rownames(mags_table) <- mags_table[,1] {Raph: not needed? breaks code...}
 tree <- read.tree(params$tree_file)
 if(file.exists(params$kegg_file)){
 	func = "yes"
