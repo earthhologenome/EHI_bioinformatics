@@ -33,7 +33,7 @@ output_file_path = f'{args.dmb}_mag_info.tsv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
-    writer.writerow(['genome', 'domain', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'completeness', 'contamination', 'mag_size'])
+    writer.writerow(['genome', 'domain', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'completeness', 'contamination', 'mag_size', 'mag_url'])
 
     offset = None
     while True:

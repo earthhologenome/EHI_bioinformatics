@@ -68,8 +68,8 @@ rule upload_tables:
 
         python {config[codedir]}/airtable/get_mag_info_airtable.py --dmb={config[dmb]}
 
-        ## Remove trailing '.fa'
-        sed -i'' 's/\.fa//g' {config[dmb]}_mag_info.tsv
+        ## Remove trailing '.fa' for magname
+        sed -i'' 's/\.fa//' {config[dmb]}_mag_info.tsv
 
         ## Upload other files to AirTable (count table, tree)
         gzip -k {input.count_table}
