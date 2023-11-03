@@ -1,0 +1,21 @@
+ name: final_report
+ channels:
+    - conda-forge
+    - bioconda
+    - defaults
+ dependencies:
+    - r-knitr=1.45
+    - r-tidyverse=2.0.0
+    - r-ape=5.7
+    - r-phytools=1.9_16
+    - bioconductor-ggtree=3.8.0
+    - r-ggrepel=0.9.4
+    - r-ggpubr=0.6.0
+    - r-ggnewscale=0.4.9
+    - bioconductor-ggtreeextra=1.10.0
+    - r-gridExtra=2.3
+    - r-spaa=0.2.2
+    - r-vegan=2.6_4
+    - r-Rtsne=0.16
+    - r-geiger=2.0.11
+## N.b. you need to also install hilldiv2 manually in the environment (not on conda at the moment)

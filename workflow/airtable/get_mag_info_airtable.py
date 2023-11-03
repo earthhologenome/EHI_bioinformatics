@@ -72,9 +72,10 @@ with open(output_file_path, 'w', newline='') as tsvfile:
             completeness = record_response.json()['fields'].get('completeness', '')
             contamination = record_response.json()['fields'].get('contamination', '')
             mag_size = record_response.json()['fields'].get('size', '')
+            mag_url = record_response.json()['fields'].get('MAG_url', '')
 
             # Write the row to the CSV file
-            row = [mag_name, domain, phylum, phyclass, order, family, genus, species, completeness, contamination, mag_size]
+            row = [mag_name, domain, phylum, phyclass, order, family, genus, species, completeness, contamination, mag_size, mag_url]
             writer.writerow(row)
 
         if 'offset' in data:
