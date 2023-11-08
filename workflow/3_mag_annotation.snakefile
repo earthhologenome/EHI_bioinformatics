@@ -53,13 +53,8 @@ rule all:
         os.path.join(
             config["magdir"],
             "MAGs_uploaded"
-        ),
-        os.path.join(
-            config["magdir"],
-            "report_uploaded"
         )
 
 include: os.path.join(config["codedir"], "rules/download_dereplicated.smk")
 include: os.path.join(config["codedir"], "rules/dram.smk")
 include: os.path.join(config["codedir"], "rules/upload_dram.smk")
-include: os.path.join(config["codedir"], "rules/final_report.smk")

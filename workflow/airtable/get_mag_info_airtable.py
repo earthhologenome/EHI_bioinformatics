@@ -33,7 +33,7 @@ output_file_path = f'{args.dmb}_mag_info.tsv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
-    writer.writerow(['genome', 'domain', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'completeness', 'contamination', 'mag_size', 'mag_url'])
+    writer.writerow(['genome', 'domain', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'completeness', 'contamination', 'mag_size'])
 
     offset = None
     while True:
@@ -72,10 +72,9 @@ with open(output_file_path, 'w', newline='') as tsvfile:
             completeness = record_response.json()['fields'].get('completeness', '')
             contamination = record_response.json()['fields'].get('contamination', '')
             mag_size = record_response.json()['fields'].get('size', '')
-            mag_url = record_response.json()['fields'].get('MAG_url', '')
 
             # Write the row to the CSV file
-            row = [mag_name, domain, phylum, phyclass, order, family, genus, species, completeness, contamination, mag_size, mag_url]
+            row = [mag_name, domain, phylum, phyclass, order, family, genus, species, completeness, contamination, mag_size]
             writer.writerow(row)
 
         if 'offset' in data:
