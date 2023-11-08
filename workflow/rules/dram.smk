@@ -102,9 +102,7 @@ rule DRAM:
             sed '1d;' {params.outdir}/annotations.tsv | cut -f19 | grep -v '^$' | wc -l > {params.outdir}/cazy_hits.tsv
             sleep 5
             #number of genes without annotations
-            sleep 5
             bash {config[codedir]}/scripts/count_unannotated.sh {params.outdir}/annotations.tsv {params.outdir}/unannotated.tsv 2> {params.outdir}/error.log
-            sleep 5
 
             #fetch only KEGG modules from product
             cut -f1-381 {params.distillate}/product.tsv > {params.distillate}/kegg_product.tsv
