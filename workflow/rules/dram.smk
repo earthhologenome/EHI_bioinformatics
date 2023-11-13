@@ -99,7 +99,7 @@ rule DRAM:
             sed '1d;' {params.outdir}/annotations.tsv | cut -f18 | grep -v '^$' | wc -l > {params.outdir}/pfam_hits.tsv
             sleep 5
             #number of cazy hits
-            sed '1d;' {params.outdir}/annotations.tsv | cut -f19 | grep -v '^$' | wc -l > {params.outdir}/cazy_hits.tsv
+            sed '1d;' {params.outdir}/annotations.tsv | cut -f19 | grep -v '^$' | wc -l > {params.outdir}/cazy_hits.tsv || true
             sleep 5
             #number of genes without annotations
             bash {config[codedir]}/scripts/count_unannotated.sh {params.outdir}/annotations.tsv {params.outdir}/unannotated.tsv 2> {params.outdir}/error.log
