@@ -91,7 +91,7 @@ rule gtdbtk:
         done
 
         paste {params.outdir}/mag_names.tsv {params.outdir}/n_contigs.tsv {params.outdir}/EHA.tsv {params.outdir}/version_catted.tsv > {params.outdir}/ncontigs_temp.tsv
-        sort -k1,1 -t$'\t' {params.outdir}/ncontigs_temp.tsv > ncontigs_temp_sorted.tsv
+        sort -k1,1 -t$'\t' {params.outdir}/ncontigs_temp.tsv > {params.outdir}/ncontigs_temp_sorted.tsv
         echo -e 'mag_id\tcontigs\teha_number\tGTDB_version' > {params.outdir}/ncontigs_header.tsv
         cat {params.outdir}/ncontigs_header.tsv {params.outdir}/ncontigs_temp_sorted.tsv > {params.outdir}/ncontigs_temp2.tsv
 
