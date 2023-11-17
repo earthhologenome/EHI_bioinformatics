@@ -40,7 +40,7 @@ rule upload_mags:
 
         cat {config[magdir]}/header.tsv {config[magdir]}/annos.tsv > {config[magdir]}/{config[dmb]}_merged_annos.tsv
         gzip {config[magdir]}/{config[dmb]}_merged_annos.tsv
-        lftp sftp://erda -e "put {config[magdir]}/{config[dmb]}_merged_annos.tsv -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        lftp sftp://erda -e "put {config[magdir]}/{config[dmb]}_merged_annos.tsv.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
 
         ##Combine kegg outputs to a single table per DMB
         for i in {config[magdir]}/*_kegg.tsv.gz;
