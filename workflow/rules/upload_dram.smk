@@ -29,6 +29,19 @@ rule upload_mags:
         rm -rf {params.stats_dir}
         mkdir -p {params.stats_dir}
 
+        ##combine annotations into a single file
+        for i in {config[magdir]}/*_anno.tsv.gz;
+            do zcat $i | head -1 > {config[magdir]}/header.tsv;
+        done
+
+        for i in {config[magdir]}/*_anno.tsv.gz;
+            do zcat $i | sed '1d;' >> {config[magdir]}/annos.tsv;
+        done
+
+        cat {config[magdir]}/header.tsv {config[magdir]}/annos.tsv > {config[magdir]}/{config[dmb]}_merged_annos.tsv
+        gzip {config[magdir]}/{config[dmb]}_merged_annos.tsv
+        lftp sftp://erda -e "put {config[magdir]}/{config[dmb]}_merged_annos.tsv -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+
         ##Combine kegg outputs to a single table per DMB
         for i in {config[magdir]}/*_kegg.tsv.gz;
             do cat $i >> {params.stats_dir}/merged_kegg.tsv.gz;
