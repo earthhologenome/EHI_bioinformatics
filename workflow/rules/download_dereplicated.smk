@@ -28,7 +28,7 @@ rule download_mags:
         #Log airtable that pipeline is running
         python {config[codedir]}/airtable/log_ann_start_airtable.py --code={config[dmb]}
         
-        rm {config[workdir]}/*
+        rm -f {config[workdir]}/*
 
         #Setup batch file for downloading MAGs from erda:
         for mag in {output.mags};
