@@ -18,7 +18,7 @@ rule download_mags:
     resources:
         load=8,
         mem_gb=8,
-        time="04:00:00"
+        time="08:00:00"
     benchmark:
         os.path.join(config["logdir"] + "/download_mags_benchmark.tsv")
     message:
@@ -28,7 +28,7 @@ rule download_mags:
         #Log airtable that pipeline is running
         python {config[codedir]}/airtable/log_ann_start_airtable.py --code={config[dmb]}
         
-        rm -f {config[workdir]}/*
+        rm -rf {config[workdir]}/*
 
         #Setup batch file for downloading MAGs from erda:
         for mag in {output.mags};
