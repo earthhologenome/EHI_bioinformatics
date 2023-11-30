@@ -1,6 +1,6 @@
 ###############################################################################
 ## Upload DRAM annotations to ERDA and update AirTable MAG database
-rule upload_mags:
+rule upload_dram:
     input:
         mags=expand(
             os.path.join(
@@ -27,6 +27,7 @@ rule upload_mags:
     shell:
         """
         rm -rf {params.stats_dir}
+        rm -f {config[magdir]}/annos.tsv
         mkdir -p {params.stats_dir}
 
         ##combine annotations into a single file
