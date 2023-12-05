@@ -26,7 +26,7 @@ rule upload_dram:
         os.path.join(config["logdir"] + "/upload_mag_benchmark.tsv")    
     shell:
         """
-        
+        lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/DMB/{config[dmb]} ; bye"
         rm -rf {params.stats_dir}
         mkdir -p {params.stats_dir}
 
