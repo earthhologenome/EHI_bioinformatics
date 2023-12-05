@@ -26,22 +26,20 @@ rule upload_dram:
         os.path.join(config["logdir"] + "/upload_mag_benchmark.tsv")    
     shell:
         """
+        
         rm -rf {params.stats_dir}
-        rm -f {config[magdir]}/annos.tsv
         mkdir -p {params.stats_dir}
 
         ##combine annotations into a single file
-        for i in {config[magdir]}/*_anno.tsv.gz;
-            do zcat $i | head -1 > {config[magdir]}/header.tsv;
-        done
+        echo -e "fasta\tscaffold\tgene_position\tstart_position\tend_position\tstrandedness\trank\tkegg_id\tkegg_hit\tpeptidase_id\tpeptidase_family\tpeptidase_hit\tpeptidase_RBH\tpeptidase_identity\tpeptidase_bitScore\tpeptidase_eVal\tpfam_hits\tcazy_hits\theme_regulatory_motif_count" > {params.stats_dir}/header.tsv
 
         for i in {config[magdir]}/*_anno.tsv.gz;
-            do zcat $i | sed '1d;' >> {config[magdir]}/annos.tsv;
+            do zcat $i | sed '1d;' >> {params.stats_dir}/annos.tsv;
         done
 
-        cat {config[magdir]}/header.tsv {config[magdir]}/annos.tsv > {config[magdir]}/{config[dmb]}_merged_annos.tsv
-        gzip {config[magdir]}/{config[dmb]}_merged_annos.tsv
-        lftp sftp://erda -e "put {config[magdir]}/{config[dmb]}_merged_annos.tsv.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
+        cat {params.stats_dir}/header.tsv {params.stats_dir}/annos.tsv > {params.stats_dir}/{config[dmb]}_merged_annos.tsv
+        gzip {params.stats_dir}/{config[dmb]}_merged_annos.tsv
+        lftp sftp://erda -e "put {params.stats_dir}/{config[dmb]}_merged_annos.tsv.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
 
         ##Combine kegg outputs to a single table per DMB
         for i in {config[magdir]}/*_kegg.tsv.gz;
