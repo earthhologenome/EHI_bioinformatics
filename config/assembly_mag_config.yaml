@@ -11,7 +11,7 @@ logdir: /projects/ehi/data/RUN/ASBATCH/logs
 assembler: megahit
 #path to checkmdb
 checkmdb: /projects/ehi/data/0_Environments/databases/CheckM2_database/uniref100.KO.1.dmnd
-GTDB_data: /projects/mjolnir1/data/databases/GTDBTK_DB/release214
+GTDB_data: /datasets/mjolnir_databases/gtdbtk_db/20230509/release214
 #min contig length for binning
 minlength: 1500
 #minimum size of contigs file to proceed with binning
