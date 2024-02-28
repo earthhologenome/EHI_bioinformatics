@@ -81,6 +81,8 @@ rule report:
         "Creating a final preprocessing report"
     shell:
         """
+        rm -rf {params.tmpdir}
+
         #Create nonpareil sample metadata file
         mkdir -p {params.tmpdir}
         for i in {params.npar}; do echo $(basename $i) >> {params.tmpdir}/files.txt; done

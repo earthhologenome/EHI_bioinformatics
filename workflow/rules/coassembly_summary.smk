@@ -96,9 +96,12 @@ rule coassembly_summary:
         paste {params.stats_dir}/temp2_report.tsv {params.stats_dir}/bins.tsv > {params.stats_dir}/temp3_report.tsv
 
         #Grab coverm mapping rate. 'cut -f2' pulls the second column, 'sed -n 3p' prints only the third line (% mapping)
-        for i in {input.coverm};
+        for i in {config[workdir]}/coverm/*.txt;
             do cut -f2 $i | sed -n 3p >> {params.stats_dir}/relabun.tsv
         done 
+
+        #in case 0% mapping to bam, replace nan with 0.
+        sed -i'' 's/NaN/0/g' {params.stats_dir}/relabun.tsv
 
         paste {params.stats_dir}/temp3_report.tsv {params.stats_dir}/relabun.tsv > {params.stats_dir}/temp4_report.tsv
 
