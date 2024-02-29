@@ -1,0 +1,96 @@
+---
+title: "Illustrative example of updating EHI AirTable values"
+author: "Raphael Eisenhofer"
+format: html
+editor: visual
+---
+
+## About
+
+I made an error in the assembly binning pipeline relating to the reporting of the coassembly mapping rates. Here's I'll show you can one can fix this programmatically for thousands of samples.
+
+## Get entries you want to change
+
+We'll use rAirTable for this. Note that you'll need to setup your API key first – see the rairtable documentation for how to do this.
+
+```{r}
+#| warning: false
+#| output: false
+
+library(tidyverse)
+library(rairtable)
+
+#Select the right table id
+table <- airtable('tblG6ZIvkYN844I97', 'appQpr6MxnaiVHsHy')
+#Select the right view id
+view <- airtable('tblG6ZIvkYN844I97', 
+                 'appQpr6MxnaiVHsHy', 
+                 view = 'viwYWXmPnF4zB3sjC')
+
+airtable_data <- read_airtable(table, 
+                               id_to_col = TRUE, 
+                               max_rows = 50000) %>%
+  filter(`Type (from AB Batch)` == "Coassembly") %>%
+  select(airtable_record_id, Assembly_code, PR_batch_api, 
+         EHI_number_api, assembly_mapping_percent, AB_batch_api)
+
+erda_url <- airtable_data %>%
+  mutate(coverm = "coverm",
+         filename = "_assembly_coverM.txt",
+         erda = "https://sid.erda.dk/share_redirect/BaMZodj9sA/ASB") %>%
+  unite(., "path", PR_batch_api, EHI_number_api, Assembly_code) %>%
+  unite(., "path2", erda, AB_batch_api, coverm, path, sep = "/") %>%
+  unite(., "path3", path2, filename, sep = "") %>%
+  select(!assembly_mapping_percent)
+
+#Use purrr to download each file.
+dir.create("temp")
+
+download_safely <- safely(function(url) {
+  tryCatch(
+    download.file(url, destfile = file.path("temp", basename(url))),
+    error = function(e) e
+  )
+})
+
+# Map the function over the URLs to download files to "temp" dir
+result <- map(erda_url$path3, download_safely)
+
+
+# Now load the files into a df
+files <- list.files("temp", pattern = "*.txt", full.names = TRUE)
+
+import_func <- function(file){  read_delim(file,
+                 col_names = c("header", "percent")) %>%
+  filter(header != "unmapped") %>%
+  select(percent) %>%
+  t() %>%
+  as.data.frame() %>%
+  mutate(V1 = str_replace_all(V1, " Relative.*", ""))
+}
+  
+updated_coverm <- map(files, import_func) %>%
+  bind_rows() %>%
+  rename(sample = V1) %>%
+  rename(percent = V2)
+
+updated_coverm_split <- updated_coverm %>%
+  separate(sample, into = c("PR_batch_api", 
+                            "EHI_number_api", 
+                            "Assembly_code"))
+
+#Now merge the tables with the correct values, then update AirTable
+merged <- airtable_data %>%
+  inner_join(., updated_coverm_split, by = join_by(PR_batch_api,
+                                                   EHI_number_api,
+                                                   Assembly_code)) %>%
+  select(!assembly_mapping_percent) %>%
+  rename(assembly_mapping_percent = percent) %>%
+  mutate(assembly_mapping_percent = as.double(assembly_mapping_percent)) %>%
+#function for updating records in AirTable
+  update_records(airtable = table, 
+                 airtable_id_col = airtable_record_id,
+                 columns = assembly_mapping_percent)
+
+
+```
