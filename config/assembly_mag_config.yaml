@@ -16,3 +16,5 @@ GTDB_data: /datasets/mjolnir_databases/gtdbtk_db/20230509/release214
 minlength: 1500
 #minimum size of contigs file to proceed with binning
 contigsize: 50
+assembly_time: 172
+assembly_memory: estimate_time_assembly
