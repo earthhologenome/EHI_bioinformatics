@@ -90,7 +90,7 @@ def estimate_time_binning(wildcards, attempt):
     diversity = row["diversity"]
     C = row["C"]
     gbp_post_mapping = calculate_input_size_gb(row["metagenomic_bases"])
-    estimate_time_binning = -595.79 + (25.59 * diversity) - (0.18 * singlem_fraction) + (5.72 * gbp_post_mapping) + (169.88 * C)
+    estimate_time_binning = -595.79 + (25.59 * diversity) - (0.18 * singlem_fraction) + (9 * gbp_post_mapping) + (169.88 * C)
     estimate_time_binning = max(estimate_time_binning, 20)
     return attempt * int(estimate_time_binning)
 
