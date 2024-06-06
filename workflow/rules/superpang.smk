@@ -1,6 +1,6 @@
 ################################################################################
-### Dereplicate MAGs using dRep
-rule drep:
+### superPang
+rule superpang:
     input:
         downloaded=os.path.join(
             config["magdir"],
@@ -24,39 +24,36 @@ rule drep:
     log:
         os.path.join(config["logdir"] + "/drep.log")
     message:
-        "Dereplicating MAGs with dRep"
+        "MESSAGE"
     shell:
         """
         # remove folder (in case of restart/server interruption)
         rm -rf {config[workdir]}/drep
 
-        # Load dRep module, as the conda recipe is cooked atm
-        module load drep/3.4.0
-
         # Massage genome info file:
         sed 's/.fa/.fa.gz/g' mags.csv > mags_formatted.csv
 
         # Dereplicate these suckers:
-        dRep dereplicate \
-                {config[workdir]}/drep \
-                -p {threads} \
-                -comp 50 \
-                -sa {config[ani]} \
-                -g {config[magdir]}/*.fa.gz \
-                --genomeInfo mags_formatted.csv
+        SuperPang.py \
+                -f genome_path.tsv \
+                -q genome_completeness.tsv \
+                -t {threads} \
+                -o output_dir \
+                -u <header prefix>
                 2> {log}
 
         for i in {config[workdir]}/drep/figures/*;
             do mv $i {config[workdir]}/drep/figures/{config[dmb]}_$(basename "$i");
         done
 
-        #join Cdb [genome, secondary_cluster] and Chdb [bin_id, completeness] (by genome == bin_id)
+        #OUTPUTS: 
+        - <name>_graph.fastg
+        - <name>_graph_NBPorigins.csv
 
-        #split joined table into multiple secondary clusters files (2 per secondary cluster)
+        #NEXT RULES = DRAM / mapping (NO GTDBTK) -> coverm
 
-        #genome_path.tsv[pwd/<genome>.fa] & genome_completeness.tsv[genome(without extension), completeness(0-100)]
-
-        #collect into a folder for next rule (superPang)
+        #ALSO - R script for counts by contig && type [aux, core, sing] && genome <INPUT = COVERM OUTPUT>
+        #ALSO API to pull GTDB taxonomy from AirTable
 
         tar -cvzf {config[workdir]}/drep/{config[dmb]}_drep_figures.tar.gz {config[workdir]}/drep/figures/
 

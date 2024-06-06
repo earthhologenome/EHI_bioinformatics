@@ -75,6 +75,10 @@ def estimate_time_mapping(wildcards, attempt):
 def estimate_time_binning(wildcards, attempt):
     return attempt * 400
 
+#maxbin seems to be taking longer than other binners, so add extra time here
+def estimate_time_maxbin(wildcards, attempt):
+    return attempt * 600
+
 def estimate_time_refinement(wildcards, attempt):
     return attempt * 450
 

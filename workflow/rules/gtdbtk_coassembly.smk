@@ -85,6 +85,9 @@ rule gtdbtk:
             do echo $(basename $i) >> {params.outdir}/mag_names.tsv && zcat $i | grep '>' | wc -l >> {params.outdir}/n_contigs.tsv;
         done
 
+        # remove .fa.gz suffix for proper sorting
+        sed -i 's/.fa.gz//' {params.outdir}/mag_names.tsv
+
         # Get the EHA number
         for i in {params.bins}/*.fa.gz;
             do echo {wildcards.EHA} >> {params.outdir}/EHA.tsv;

@@ -23,11 +23,11 @@ rule maxbin2:
     threads: 16
     resources:
         mem_gb=64,
-        time=estimate_time_binning,
+        time=estimate_time_maxbin,
     benchmark:
-        os.path.join(config["logdir"] + "/binning_benchmark_{EHA}.tsv")
+        os.path.join(config["logdir"] + "/maxbin2_benchmark_{EHA}.tsv")
     log:
-        os.path.join(config["logdir"] + "/binning_log_{EHA}.log")
+        os.path.join(config["logdir"] + "/maxbin2_log_{EHA}.log")
     message:
         "Binning {wildcards.EHA} contigs with maxbin2"
     shell:
