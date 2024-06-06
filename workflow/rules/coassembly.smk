@@ -28,7 +28,7 @@ rule coassembly:
         f"{config['codedir']}/conda_envs/assembly_binning.yaml"
     threads: 16
     resources:
-        mem_gb=172,
+        mem_gb=config['assembly_memory'],
         time=estimate_time_assembly,
     benchmark:
         os.path.join(config["logdir"] + "/assembly_benchmark_{EHA}.tsv")
