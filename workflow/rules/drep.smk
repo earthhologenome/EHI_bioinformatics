@@ -58,6 +58,6 @@ rule drep:
 
         #collect into a folder for next rule (superPang)
 
-        tar -cvzf {config[workdir]}/drep/{config[dmb]}_drep_figures.tar.gz {config[workdir]}/drep/figures/
+        tar -cvzf {config[workdir]}/drep/{config[dmb]}_drep.tar.gz {config[workdir]}/drep/
 
         """
