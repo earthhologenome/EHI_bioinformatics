@@ -36,15 +36,15 @@ rule download_mags:
 
         #Setup batch file for downloading MAGs from erda:
         for mag in {output.mags};
-            do echo "get EarthHologenomeInitiative/Data/MAG" >> {config[workdir]}/get.tsv;
+            do echo "get EarthHologenomeInitiative/Data/MAG" >> get.tsv;
         done
 
         #strip characters & format for batch file
-        sed "s/'//g" {config[workdir]}/mags.csv | sed 's/\[//' | sed 's/\]//' > {config[workdir]}/mags_stripped.csv
+        sed "s/'//g" mags.csv | sed 's/\[//' | sed 's/\]//' > mags_stripped.csv
 
-        cut -f1 {config[workdir]}/mags_stripped.csv -d ',' | sed '1d;' | sed 's/.fa/.fa.gz/g' > {config[workdir]}/mag_name.txt
-        cut -f2 {config[workdir]}/mags_stripped.csv -d ',' | sed '1d;' > {config[workdir]}/ab_batch.txt
-        paste {config[workdir]}/get.tsv {config[workdir]}/ab_batch.txt {config[workdir]}/mag_name.txt -d '/' > {config[workdir]}/batchfile.txt
+        cut -f1 mags_stripped.csv -d ',' | sed '1d;' | sed 's/.fa/.fa.gz/g' > mag_name.txt
+        cut -f2 mags_stripped.csv -d ',' | sed '1d;' > ab_batch.txt
+        paste get.tsv ab_batch.txt mag_name.txt -d '/' > {config[workdir]}/batchfile.txt
 
         #Execute batch file to pull the suckers
         cd {config[magdir]}
