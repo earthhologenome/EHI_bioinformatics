@@ -50,6 +50,10 @@ rule drep:
             do mv $i {config[workdir]}/drep/figures/{config[dmb]}_$(basename "$i");
         done
 
+        for i in {config[workdir]}/drep/data_tables/*;
+            do mv $i {config[workdir]}/drep/data_tables/{config[dmb]}_$(basename "$i");
+        done
+
         #join Cdb [genome, secondary_cluster] and Chdb [bin_id, completeness] (by genome == bin_id)
 
         #split joined table into multiple secondary clusters files (2 per secondary cluster)
@@ -58,6 +62,6 @@ rule drep:
 
         #collect into a folder for next rule (superPang)
 
-        tar -cvzf {config[workdir]}/drep/{config[dmb]}_drep.tar.gz {config[workdir]}/drep/
+        tar -cvzf {config[workdir]}/{config[dmb]}_drep.tar.gz {config[workdir]}/drep/data_tables {config[workdir]}/drep/figures
 
         """
