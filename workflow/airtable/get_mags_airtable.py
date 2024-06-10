@@ -32,7 +32,7 @@ output_file_path = 'mags.csv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter=',')
-    writer.writerow(['genome', 'completeness', 'contamination'])
+    writer.writerow(['genome', 'AB_batch', 'completeness', 'contamination'])
 
     offset = None
     while True:
@@ -59,11 +59,12 @@ with open(output_file_path, 'w', newline='') as tsvfile:
 
             # Extract the values of the completeness and contamination fields
             mag_name = record_response.json()['fields'].get('mag_name', '')
+            AB_batch = record_response.json()['fields'].get('AB_batch', '')
             completeness = record_response.json()['fields'].get('completeness', '')
             contamination = record_response.json()['fields'].get('contamination', '')
 
             # Write the row to the CSV file
-            row = [mag_name, completeness, contamination]
+            row = [mag_name, AB_batch, completeness, contamination]
             writer.writerow(row)
 
         # Check if there are more records to retrieve

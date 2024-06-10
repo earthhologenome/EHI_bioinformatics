@@ -34,7 +34,7 @@ rule drep:
         module load drep/3.4.0
 
         # Massage genome info file:
-        sed 's/.fa/.fa.gz/g' mags.csv > mags_formatted.csv
+        cut -f1,3,4 -d ',' mags.csv | sed 's/.fa/.fa.gz/g' > mags_formatted.csv
 
         # Dereplicate these suckers:
         dRep dereplicate \
