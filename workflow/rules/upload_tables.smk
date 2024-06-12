@@ -43,7 +43,7 @@ rule upload_tables:
     resources:
         load=8,
         mem_gb=16,
-        time='04:00:00'
+        time='08:00:00'
     benchmark:
         os.path.join(config["logdir"] + "/upload_tables_benchmark.tsv")    
     shell:
@@ -72,14 +72,14 @@ rule upload_tables:
         sed -i'' 's/\.fa//g' {config[dmb]}_mag_info.tsv
 
         ## Upload other files to AirTable (count table, tree)
-        gzip -k {input.count_table}
-        gzip -k {config[dmb]}_metadata.tsv
-        gzip -k {input.tree}
-        gzip -k {input.pruned_tree}
-        gzip -k {config[dmb]}_mag_info.tsv
-        gzip -k {input.combined}
-        gzip -k {input.counts}
-        gzip -k {input.coverage}
+        gzip -k -f {input.count_table}
+        gzip -k -f {config[dmb]}_metadata.tsv
+        gzip -k -f {input.tree}
+        gzip -k -f {input.pruned_tree}
+        gzip -k -f {config[dmb]}_mag_info.tsv
+        gzip -k -f {input.combined}
+        gzip -k -f {input.counts}
+        gzip -k -f {input.coverage}
 
         lftp sftp://erda -e "put {config[workdir]}/{config[dmb]}_drep.tar.gz -o /EarthHologenomeInitiative/Data/DMB/{config[dmb]}/; bye"
         sleep 5
