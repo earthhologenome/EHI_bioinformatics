@@ -2,10 +2,12 @@
 # 🐨->💩->🦠->🧬->🖥️->😏
 Bioinformatics pipeline for processing EHI data.
 
-*updated 03/11/2023, Raphael Eisenhofer*
+*updated 13/06/2024, Raphael Eisenhofer*
 
 #### General information:
 Note, this branch is only for running on Mjolnir (University of Copenhagen), as it contains many scripts/API calls specific to ERDA and the EHI AirTable database. For the general, deployable version of the pipeline, see the main branch.
+
+[See here](http://www.earthhologenome.org/bioinformatics/index.html) for a desciption of the steps and tools run throughout the pipeline.
 
 #### Getting started:
 Firstly, you'll need to set up an alias for connecting to ERDA -- this is **essential** for proper function.
