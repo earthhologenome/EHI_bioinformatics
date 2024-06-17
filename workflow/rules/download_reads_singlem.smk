@@ -16,12 +16,15 @@ rule download_reads_singlem:
     resources:
         load=8,
         mem_gb=8,
-        time='00:01:00'
+        time='01:00:00'
     message:
         "Fetching metagenomics reads for {wildcards.EHI} from ERDA"
     shell:
         """
-        wget `grep '{wildcards.EHI}' singlem_input.csv | cut -f3 -d ,`
+        wget --no-verbose `grep '{wildcards.EHI}' singlem_input.csv | cut -f3 -d ,`
+        mv {wildcards.EHI}_1.fq.gz {output.r1}
 
-        wget `grep '{wildcards.EHI}' singlem_input.csv | cut -f4 -d ,`
+        wget --no-verbose `grep '{wildcards.EHI}' singlem_input.csv | cut -f4 -d ,`
+        mv {wildcards.EHI}_2.fq.gz {output.r2}
+
         """
