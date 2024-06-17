@@ -22,9 +22,9 @@ rule download_reads_singlem:
     shell:
         """
         wget --no-verbose `grep '{wildcards.EHI}' singlem_input.csv | cut -f3 -d ,`
-        mv {wildcards.EHI}_1.fq.gz {output.r1}
+        mv {wildcards.EHI}_M_1.fq.gz {output.r1}
 
         wget --no-verbose `grep '{wildcards.EHI}' singlem_input.csv | cut -f4 -d ,`
-        mv {wildcards.EHI}_2.fq.gz {output.r2}
+        mv {wildcards.EHI}_M_2.fq.gz {output.r2}
 
         """
