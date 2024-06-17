@@ -1,0 +1,9 @@
+### Config file for updating singlem, just enter the latest version
+### You'll also need to change the EHI pipeline version number e.g. '1.1' below
+### RE 06/2024
+
+version: 0.18.0
+codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_1.1/workflow
+workdir: /projects/ehi/data/SMF/0.18.0
+conda_singlem: /projects/ehi/data/SMF/conda/singlem_0.18.0
+conda_rairtable: /projects/ehi/data/SMF/conda/rairtable
