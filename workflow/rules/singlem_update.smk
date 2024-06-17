@@ -60,8 +60,8 @@ rule singlem:
 
         #Run singlem pipe
         singlem pipe \
-            -1 {input.non_host_r1} \
-            -2 {input.non_host_r2} \
+            -1 {input.r1} \
+            -2 {input.r2} \
             --otu-table {output.otu_table} \
             --taxonomic-profile {output.profile} \
             --archive-otu-table {params.archive} \
@@ -69,8 +69,8 @@ rule singlem:
 
         #Run singlem microbial_fraction
         singlem microbial_fraction \
-            -1 {input.non_host_r1} \
-            -2 {input.non_host_r2} \
+            -1 {input.r1} \
+            -2 {input.r2} \
             -p {output.profile} \
             --output-tsv {output.read_fraction} \
             --output-per-taxon-read-fractions {output.per_taxon}

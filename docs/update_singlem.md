@@ -25,5 +25,12 @@ conda deactivate
 
 ### Execute the snakefile
 ```
-
+snakemake \
+    -s /projects/ehi/data/0_Code/EHI_bioinformatics_1.1/bonus/update_singlem_airtable.snakefile \
+    --configfile /projects/ehi/data/0_Code/EHI_bioinformatics_1.1/config/singlem_update.yaml \
+    -j 2 \
+    --cluster "sbatch --mem {resources.mem_gb}G -c {threads} --time {resources.time} -v" \
+    --use-conda \
+    --conda-frontend conda \
+    --latency-wait 600 
 ```
