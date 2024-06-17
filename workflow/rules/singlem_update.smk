@@ -50,10 +50,6 @@ rule singlem:
         "Estimating microbial fraction using singlem"
     shell:
         """
-        # #Temp fix until snakemake is fixed or singlem conda recipe is updated
-        # export PATH='/projects/ehi/data/0_Environments/github_repos/singlem/bin':$PATH
-        # export SINGLEM_METAPACKAGE_PATH='/projects/ehi/data/0_Environments/databases/S3.1.0.metapackage_20221209.smpkg.zb/'
-
         #Try to fix /tmp folder running out of space:
         export TMPDIR={config[workdir]}/tmpdir
         mkdir -p $TMPDIR

@@ -35,8 +35,6 @@ rule patch_singlem_updates:
             do XXX >> {params.stats_dir}/annos.tsv;
         done
 
-        cat {params.stats_dir}/header.tsv {params.stats_dir}/annos.tsv > {params.stats_dir}/{config[dmb]}_merged_annos.tsv
-
         lftp sftp://erda -e "put {params.stats_dir} -o /EarthHologenomeInitiative/Data/SMF/{config[version]}/; bye"
 
         lftp sftp://erda -e "put outputs/ -o /EarthHologenomeInitiative/Data/SMF/{config[version]}/; bye"
