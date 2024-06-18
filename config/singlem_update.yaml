@@ -5,5 +5,5 @@
 version: 0.18.0
 codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_1.1/workflow
 workdir: /projects/ehi/data/SMF/0.18.0
-conda_singlem: singlem_0.18.0
+conda_singlem: /projects/ehi/data/SMF/conda/singlem_0.18.0
 conda_rairtable: /projects/ehi/data/SMF/conda/rairtable
