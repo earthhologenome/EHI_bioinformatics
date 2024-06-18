@@ -51,7 +51,7 @@ rule singlem:
         mkdir -p $TMPDIR
 
         #load conda environment
-        conda activate {config[conda_singlem]}
+        source activate {config[conda_singlem]}
 
         #Run singlem pipe
         singlem pipe \
