@@ -27,7 +27,7 @@ rule patch_singlem_updates:
         time='08:00:00'
     shell:
         """
-        load conda environment
+        #load conda environment
         module load conda/24.5.0
         source activate {config[conda_rairtable]}
 
