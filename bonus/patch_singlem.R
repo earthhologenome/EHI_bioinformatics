@@ -1,6 +1,7 @@
 #Script for patching new SingleM microbial fraction values to AirTable
 #Raphael Eisenhofer 2024
 
+library(readr)
 library(magrittr)
 library(dplyr)
 library(ggplot2)
