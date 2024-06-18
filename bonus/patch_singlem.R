@@ -4,6 +4,10 @@
 library(tidyverse)
 library(rairtable)
 
+#setup api key
+apikey <- read_file("/projects/ehi/data/.airtable_api_key.txt")
+set_airtable_api_key(apikey)
+
 #Select the right view id
 ##Note that I've filtered out samples that give NaN or #ERROR in formulas, as 
 ##these prevent rAirtable from pulling the data. See 'singlem_update' view
