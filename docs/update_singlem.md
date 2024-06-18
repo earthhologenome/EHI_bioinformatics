@@ -29,6 +29,7 @@ conda deactivate
 ```
 
 ### Execute the snakefile
+Had to edit conda.py in /projects/ehi/data/SMF/conda/snakemake, see https://github.com/snakemake/snakemake/pull/1708/files
 ```
 conda activate /projects/ehi/data/SMF/conda/snakemake
 
