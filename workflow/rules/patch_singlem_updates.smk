@@ -40,7 +40,7 @@ rule patch_singlem_updates:
 
         lftp sftp://erda -e "mirror -R {config[workdir]}/output /EarthHologenomeInitiative/Data/SMF/{config[version]}/; bye"
 
-        Rscript {config[codedir]}/bonus/patch_singlem.R
+        Rscript {config[codedir]}/patch_singlem.R
 
         touch {output}
         """

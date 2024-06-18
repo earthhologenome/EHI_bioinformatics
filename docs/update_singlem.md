@@ -23,7 +23,7 @@ cd /projects/ehi/data/SMF
 
 conda activate /projects/ehi/data/SMF/conda/rairtable
 
-Rscript get_singlem_stats_and_input.R
+Rscript /projects/ehi/data/0_Code/EHI_bioinformatics_1.1/bonus/get_singlem_stats_and_input.R/get_singlem_stats_and_input.R
 
 conda deactivate
 ```
