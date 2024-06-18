@@ -51,8 +51,8 @@ rule singlem:
         mkdir -p $TMPDIR
 
         #load conda environment
-        module load snakemake/7.20.0
-        source activate {config[conda_singlem]}
+        module load conda/24.5.0
+        conda activate {config[conda_singlem]}
 
         #Run singlem pipe
         singlem pipe \
