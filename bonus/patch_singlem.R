@@ -24,14 +24,27 @@ airtable_data <- read_airtable(view, id_to_col = TRUE, max_rows = 50000) %>%
 new_smf <- read.delim("singlem_new.tsv", sep = "\t", header = FALSE, 
                       col.names = c("EHI_number", "singlem_fraction", "average_genome_size"))
 
-#Now merge the tables with the correct values, then update AirTable
-airtable_data %>%
-  inner_join(., new_smf, by = join_by(EHI_plaintext == EHI_number)) %>%
-  #function for updating records in AirTable
-  update_records(airtable = view, 
-                 airtable_id_col = airtable_record_id,
-                 columns = c(singlem_fraction, average_genome_size),
-                 safely = FALSE)
+
+tryCatch({
+  result <- airtable_data %>%
+    inner_join(., new_smf, by = join_by(EHI_plaintext == EHI_number)) %>%
+    #function for updating records in AirTable
+    update_records(airtable = view, 
+                   airtable_id_col = airtable_record_id,
+                   columns = c(singlem_fraction, average_genome_size),
+                   safely = FALSE)
+  print(result)
+}, error = function(e) {
+  # Print the error message
+  print(e)
+  
+  # Additional debugging
+  if (inherits(e, "HTTPError")) {
+    response <- e$response
+    print(content(response, "text", encoding = "UTF-8"))
+  }
+})
+
 
 #Create plot comparing old to new SMF values
 figure <- read.delim("singlem_input.csv", sep = ",") %>%
