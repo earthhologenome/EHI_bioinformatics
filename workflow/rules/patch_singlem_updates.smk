@@ -18,8 +18,6 @@ rule patch_singlem_updates:
             config["workdir"],
             "stats/")
             ),
-    # conda:
-    #     f"{config['conda_rairtable']}"
     threads: 1
     resources:
         load=8,
@@ -40,7 +38,7 @@ rule patch_singlem_updates:
 
         lftp sftp://erda -e "mirror -R {config[workdir]}/output /EarthHologenomeInitiative/Data/SMF/{config[version]}/; bye"
 
-        Rscript {config[codedir]}/patch_singlem.R
+        Rscript {config[codedir]}/bonus/patch_singlem.R
 
         touch {output}
         """

@@ -49,7 +49,7 @@ rule all:
             "singlem_updated"
         )
 
-include: os.path.join(config["codedir"], "rules/download_reads_singlem.smk")
-include: os.path.join(config["codedir"], "rules/singlem_update.smk")
-include: os.path.join(config["codedir"], "rules/patch_singlem_updates.smk")
+include: os.path.join(config["codedir"], "workflow/rules/download_reads_singlem.smk")
+include: os.path.join(config["codedir"], "workflow/rules/singlem_update.smk")
+include: os.path.join(config["codedir"], "workflow/rules/patch_singlem_updates.smk")
 
