@@ -18,8 +18,8 @@ rule patch_singlem_updates:
             config["workdir"],
             "stats/")
             ),
-    conda:
-        f"{config['conda_rairtable']}"
+    # conda:
+    #     f"{config['conda_rairtable']}"
     threads: 1
     resources:
         load=8,
@@ -27,6 +27,9 @@ rule patch_singlem_updates:
         time='08:00:00'
     shell:
         """
+        load conda environment
+        conda activate {config[conda_rairtable]}
+
         lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/SMF/{config[version]} ; bye"
         rm -rf singlem_new.tsv
 

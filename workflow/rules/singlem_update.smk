@@ -34,8 +34,8 @@ rule singlem:
             config["workdir"],
             "output/{EHI}_archive.json"
         ),
-    conda:
-        f"{config['conda_singlem']}"
+    # conda:
+    #     f"{config['conda_singlem']}"
     threads:
         2
     resources:
@@ -49,6 +49,9 @@ rule singlem:
         #Try to fix /tmp folder running out of space:
         export TMPDIR={config[workdir]}/tmpdir
         mkdir -p $TMPDIR
+
+        #load conda environment
+        conda activate {config[conda_singlem]}
 
         #Run singlem pipe
         singlem pipe \
