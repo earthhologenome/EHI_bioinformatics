@@ -28,6 +28,7 @@ rule patch_singlem_updates:
     shell:
         """
         load conda environment
+        module load snakemake/7.20.0
         source activate {config[conda_rairtable]}
 
         lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/SMF/{config[version]} ; bye"
