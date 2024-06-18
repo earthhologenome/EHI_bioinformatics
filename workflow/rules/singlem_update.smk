@@ -13,10 +13,6 @@ rule singlem:
             "{EHI}_M_2.fq.gz"
         )
     output:
-        archive_gz=os.path.join(
-            config["workdir"],
-            "output/{EHI}_archive.json.gz"
-        ),
         profile=os.path.join(
             config["workdir"],
             "output/{EHI}_profile.tsv"

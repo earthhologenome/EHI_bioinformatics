@@ -12,6 +12,9 @@ conda activate /projects/ehi/data/SMF/conda/singlem_0.18.0
 
 singlem data --output-directory /projects/ehi/data/SMF/metapackages/
 
+#set path to metapackage variable in conda
+conda env config vars set SINGLEM_METAPACKAGE_PATH=/projects/ehi/data/SMF/metapackages/S4.3.0.GTDB_r220.metapackage_20240523.smpkg.zb
+
 ```
 
 ### Load the rairtable conda environment and get inputs
