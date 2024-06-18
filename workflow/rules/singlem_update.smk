@@ -52,7 +52,7 @@ rule singlem:
 
         #load conda environment
         module load conda/24.5.0
-        conda activate {config[conda_singlem]}
+        source activate {config[conda_singlem]}
 
         #Run singlem pipe
         singlem pipe \

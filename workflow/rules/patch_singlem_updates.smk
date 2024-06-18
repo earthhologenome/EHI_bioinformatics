@@ -29,7 +29,7 @@ rule patch_singlem_updates:
         """
         load conda environment
         module load conda/24.5.0
-        conda activate {config[conda_rairtable]}
+        source activate {config[conda_rairtable]}
 
         lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/SMF/{config[version]} ; bye"
         rm -rf singlem_new.tsv
