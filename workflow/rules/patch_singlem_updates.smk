@@ -28,16 +28,13 @@ rule patch_singlem_updates:
     shell:
         """
         lftp sftp://erda -e "mkdir -f EarthHologenomeInitiative/Data/SMF/{config[version]} ; bye"
-        rm -rf {params.stats_dir}
-        mkdir -p {params.stats_dir}
+        rm -rf singlem_new.tsv
 
         for i in {config[workdir]}/output/*_readfraction.tsv;
-            do XXX >> {params.stats_dir}/annos.tsv;
+            do sed '1d;' $i | sed 's/_M_1//' | cut -f1,4,5 >> singlem_new.tsv;
         done
 
-        lftp sftp://erda -e "put {params.stats_dir} -o /EarthHologenomeInitiative/Data/SMF/{config[version]}/; bye"
-
-        lftp sftp://erda -e "put outputs/ -o /EarthHologenomeInitiative/Data/SMF/{config[version]}/; bye"
+        lftp sftp://erda -e "mirror -R {config[workdir]}/output /EarthHologenomeInitiative/Data/SMF/{config[version]}/; bye"
 
         Rscript {config[codedir]}/bonus/patch_singlem.R
 
