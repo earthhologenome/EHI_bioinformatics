@@ -1,8 +1,8 @@
 #Script for pulling current SingleM values from AirTable and for creating the 
 #input file for update_singlem_airtable.snakefile
 #Raphael Eisenhofer 2024
-
-library(tidyverse)
+library(magrittr)
+library(dplyr)
 library(rairtable)
 
 #setup api key

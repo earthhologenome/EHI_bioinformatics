@@ -1,7 +1,9 @@
 #Script for patching new SingleM microbial fraction values to AirTable
 #Raphael Eisenhofer 2024
 
-library(tidyverse)
+library(magrittr)
+library(dplyr)
+library(ggplot2)
 library(rairtable)
 
 #setup api key
@@ -18,7 +20,8 @@ view <- airtable('tblJfLRU2FIVz37Y1',
 airtable_data <- read_airtable(view, id_to_col = TRUE, max_rows = 50000) %>%
   select(-singlem_fraction, -average_genome_size)
 
-new_smf <- read_delim("singlem_new.tsv", col_names = c("EHI_number", "singlem_fraction", "average_genome_size"))
+new_smf <- read.delim("singlem_new.tsv", sep = "\t", header = FALSE, 
+                      col.names = c("EHI_number", "singlem_fraction", "average_genome_size"))
 
 #Now merge the tables with the correct values, then update AirTable
 airtable_data %>%
@@ -30,7 +33,7 @@ airtable_data %>%
                  safely = FALSE)
 
 #Create plot comparing old to new SMF values
-figure <- read_delim("singlem_input.csv") %>%
+figure <- read.delim("singlem_input.csv", sep = ",") %>%
   inner_join(new_smf, by = join_by(alias_fastq == EHI_number)) %>%
   ggplot(aes(x = singlem_fraction_before, y = singlem_fraction)) +
   geom_point(alpha = 0.3) +
