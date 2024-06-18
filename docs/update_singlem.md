@@ -44,3 +44,15 @@ snakemake \
     --retries 3 \
     --latency-wait 600 
 ```
+
+# Patch AirTable
+Note that for some reason I couldn't get this to work on mjolnir, I was getting this error:
+`Error: Error in PATCH Error Code 422: Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.
+
+Ensure that the column types in R are compatible with the column types of your Airtable table.`
+Therefore, you'll need to download the output data locally and run the following Rscript:
+
+```
+
+
+```
