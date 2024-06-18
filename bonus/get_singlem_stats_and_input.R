@@ -2,6 +2,7 @@
 #input file for update_singlem_airtable.snakefile
 #Raphael Eisenhofer 2024
 
+library(stringr)
 library(readr)
 library(magrittr)
 library(dplyr)
