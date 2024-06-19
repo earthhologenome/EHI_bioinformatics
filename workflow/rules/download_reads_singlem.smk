@@ -21,10 +21,10 @@ rule download_reads_singlem:
         "Fetching metagenomics reads for {wildcards.EHI} from ERDA"
     shell:
         """
-        wget --no-verbose `grep '{wildcards.EHI}' singlem_input.csv | cut -f3 -d ,`
+        wget --no-verbose `grep '{wildcards.EHI}' singlem_input.csv | cut -f4 -d ,`
         mv {wildcards.EHI}_M_1.fq.gz {output.r1}
 
-        wget --no-verbose `grep '{wildcards.EHI}' singlem_input.csv | cut -f4 -d ,`
+        wget --no-verbose `grep '{wildcards.EHI}' singlem_input.csv | cut -f5 -d ,`
         mv {wildcards.EHI}_M_2.fq.gz {output.r2}
 
         """
