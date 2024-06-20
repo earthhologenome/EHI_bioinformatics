@@ -4,7 +4,7 @@ rule upload_to_ERDA:
     input:
         otu=os.path.join(
             config["workdir"],
-            "misc/{sample}_otu.tsv.gz"
+            "misc/{sample}_OTU.tsv.gz"
         ),      
         non_host_r1=os.path.join(
             config["workdir"],
