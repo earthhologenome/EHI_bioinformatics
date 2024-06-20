@@ -2,13 +2,13 @@
 ### Fetch preprocessed reads from ERDA
 rule download_reads_singlem:
     output:
-        temp(r1=os.path.join(
+        r1=temp(os.path.join(
             config["workdir"], 
             "reads/", 
             "{EHI}_M_1.fq.gz"
             )
         ),
-        temp(r2=os.path.join(
+        r2=temp(os.path.join(
             config["workdir"], 
             "reads/", 
             "{EHI}_M_2.fq.gz"
