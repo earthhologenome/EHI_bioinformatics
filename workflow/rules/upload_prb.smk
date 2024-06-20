@@ -2,9 +2,9 @@
 ### Calculate % of each sample's reads mapping to host genome/s (also upload PPR reads to ERDA)
 rule upload_to_ERDA:
     input:
-        pipe=os.path.join(
+        otu=os.path.join(
             config["workdir"],
-            "misc/{sample}_pipe.tsv.gz"
+            "misc/{sample}_otu.tsv.gz"
         ),      
         non_host_r1=os.path.join(
             config["workdir"],
