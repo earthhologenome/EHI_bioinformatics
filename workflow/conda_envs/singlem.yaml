@@ -4,4 +4,4 @@
     - bioconda
     - defaults
  dependencies:
-    - singlem
+    - singlem=0.18.0
