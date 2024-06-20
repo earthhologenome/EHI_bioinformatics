@@ -34,12 +34,9 @@ rule singlem:
             config["workdir"],
             "output/{EHI}_archive.json"
         ),
-    # conda:
-    #     f"{config['conda_singlem']}"
     threads:
         2
     resources:
-        load=1,
         mem_gb=8,
         time=estimate_time_singlem
     message:

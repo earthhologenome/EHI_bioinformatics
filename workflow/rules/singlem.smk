@@ -15,9 +15,9 @@ rule singlem:
             "{sample}_M_2.fq.gz"
         )
     output:
-        pipe=os.path.join(
+        otu=os.path.join(
             config["workdir"],
-            "misc/{sample}_pipe.tsv.gz"
+            "misc/{sample}_OTU.tsv.gz"
         ),
         condense=os.path.join(
             config["workdir"],
@@ -28,14 +28,18 @@ rule singlem:
             "misc/{sample}_readfraction.tsv"
         )
     params:
-        pipe_uncompressed=os.path.join(
+        otu_uncompressed=os.path.join(
             config["workdir"],
-            "misc/{sample}_pipe.tsv"
+            "misc/{sample}_OTU.tsv"
         ),
         read_fraction_taxa=os.path.join(
             config["workdir"],
             "misc/{sample}_readfraction_per_taxa.tsv"
-        )
+        ),
+        archive=os.path.join(
+            config["workdir"],
+            "misc/{sample}_archive.json"
+        ),
 # Current issue with snakemake and pre-built conda environments: https://github.com/snakemake/snakemake/pull/1708
     conda:
         f"{config['codedir']}/conda_envs/singlem.yaml"
@@ -53,7 +57,7 @@ rule singlem:
         """
         #Temp fix until snakemake is fixed or singlem conda recipe is updated
         export PATH='/projects/ehi/data/0_Environments/github_repos/singlem/bin':$PATH
-        export SINGLEM_METAPACKAGE_PATH='/projects/ehi/data/0_Environments/databases/S3.1.0.metapackage_20221209.smpkg.zb/'
+        export SINGLEM_METAPACKAGE_PATH='/projects/ehi/data/0_Environments/databases/S4.3.0.GTDB_r220.metapackage_20240523.smpkg.zb'
 
         #Try to fix /tmp folder running out of space:
         export TMPDIR={config[workdir]}/tmpdir
@@ -70,17 +74,19 @@ rule singlem:
         singlem pipe \
             -1 {input.non_host_r1} \
             -2 {input.non_host_r2} \
-            --otu-table {params.pipe_uncompressed} \
+            --otu-table {params.otu_uncompressed} \
             --taxonomic-profile {output.condense} \
+            --archive-otu-table {params.archive} \
             --threads {threads}
 
         #Compress pipe file
-        gzip {params.pipe_uncompressed}
+        gzip {params.otu_uncompressed}
+        gzip {params.archive}
 
             #IF statement for files without data
             if [ $(( $(stat -c '%s' {output.condense}) )) -eq 25 ]
             then
-            echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\n0\t0\t0\t0.0%" > {output.read_fraction}
+            echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\taverage_genome_size\n0\t0\t0\t0.0\t0" > {output.read_fraction}
             
             else        
             #Run singlem read_fraction
@@ -90,14 +96,18 @@ rule singlem:
                 --input-profile {output.condense} \
                 --output-tsv {output.read_fraction} \
                 --output-per-taxon-read-fractions {params.read_fraction_taxa}
+
+            #And upload untarred files for easy access
+            sftp erda:/EarthHologenomeInitiative/Data/PPR/{config[prb]} <<< $'put {config[workdir]}/misc/{wildcards.sample}*'
+
             fi
 
         #Otheriwse, don't run singlem
         else
         echo "SingleM analysis not performed"
         touch {output.condense}
-        touch {output.pipe}
-        echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\n0\t0\t0\t0.0%" > {output.read_fraction}
+        touch {output.otu}
+        echo -e "sample\tbacterial_archaeal_bases\tmetagenome_size\tread_fraction\taverage_genome_size\n0\t0\t0\t0.0\t0" > {output.read_fraction}
         
         fi
 

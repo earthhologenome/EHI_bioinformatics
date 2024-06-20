@@ -40,7 +40,6 @@ snakemake \
     --configfile /projects/ehi/data/0_Code/EHI_bioinformatics_1.1/config/singlem_update.yaml \
     -j 100 \
     --cluster "sbatch --mem {resources.mem_gb}G -c {threads} --time {resources.time} --job-name=EHI-SMF-{rule} --parsable -v" \
-    --resources load=40 \
     --retries 3 \
     --latency-wait 600 
 ```

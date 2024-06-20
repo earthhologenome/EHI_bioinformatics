@@ -39,7 +39,7 @@ print("Detected these samples")
 print(EHI)
 
 def estimate_time_singlem(wildcards, attempt):
-    return attempt * 120
+    return attempt * 300
 
 
 rule all:
