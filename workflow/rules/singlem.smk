@@ -80,8 +80,8 @@ rule singlem:
             --threads {threads}
 
         #Compress pipe file
-        gzip {params.otu_uncompressed}
-        gzip {params.archive}
+        gzip -f {params.otu_uncompressed}
+        gzip -f {params.archive}
 
             #IF statement for files without data
             if [ $(( $(stat -c '%s' {output.condense}) )) -eq 25 ]
