@@ -90,7 +90,7 @@ rule singlem:
             
             else        
             #Run singlem read_fraction
-            singlem read_fraction \
+            singlem microbial_fraction \
                 -1 {input.non_host_r1} \
                 -2 {input.non_host_r2} \
                 --input-profile {output.condense} \
