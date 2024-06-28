@@ -1,0 +1,8 @@
+### Config file for 5_ena_upload.snakefile
+### RE 06/2024
+
+ehs: EHSBATCH
+codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/workflow
+workdir: /projects/ehi/data/DMB/DMBATCH
+magdir: /projects/ehi/data/ENA/EHSBATCH/mags
+logdir: /projects/ehi/data/RUN/EHSBATCH/logs

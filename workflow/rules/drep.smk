@@ -54,14 +54,6 @@ rule drep:
             do mv $i {config[workdir]}/drep/data_tables/{config[dmb]}_$(basename "$i");
         done
 
-        #join Cdb [genome, secondary_cluster] and Chdb [bin_id, completeness] (by genome == bin_id)
-
-        #split joined table into multiple secondary clusters files (2 per secondary cluster)
-
-        #genome_path.tsv[pwd/<genome>.fa] & genome_completeness.tsv[genome(without extension), completeness(0-100)]
-
-        #collect into a folder for next rule (superPang)
-
         tar -cvzf {config[workdir]}/{config[dmb]}_drep.tar.gz {config[workdir]}/drep/data_tables {config[workdir]}/drep/figures
 
         """

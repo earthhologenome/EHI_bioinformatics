@@ -1,6 +1,13 @@
 # Guide for updating SingleM values in AirTable
 Raphael Eisenhofer 2024/06
 
+### Intro
+Use this guide if you want to update SingleM and the associated metapackages.
+
+SingleM outputs and stats are stored on ERDA:
+`/EarthHologenomeInitiative/Data/SMF/`
+
+
 ### First, create a new conda environment with the latest version of SingleM
 ```
 mamba create --prefix /projects/ehi/data/SMF/conda/singlem_0.18.0 singlem=0.18.0
@@ -46,9 +53,8 @@ snakemake \
 
 # Patch AirTable
 Note that for some reason I couldn't get this to work on mjolnir, I was getting this error:
-`Error: Error in PATCH Error Code 422: Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.
+`Error: Error in PATCH Error Code 422: Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.`
 
-Ensure that the column types in R are compatible with the column types of your Airtable table.`
 Therefore, you'll need to download the output data locally and run the following Rscript:
 
 ```
