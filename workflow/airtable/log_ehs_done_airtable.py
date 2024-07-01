@@ -9,7 +9,6 @@ import json
 parser = argparse.ArgumentParser()
 parser.add_argument('--ehs', required=True, help='EHS number')
 args = parser.parse_args()
-code_value = args.code
 
 #Read the API key from config file
 with open('/projects/ehi/data/.airtable_api_key.json') as f:

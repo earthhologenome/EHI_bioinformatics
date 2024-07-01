@@ -30,8 +30,8 @@ import pandas as pd
 ## it as 'ehi_numbers.tsv'.
 
 # Get list of samples (EHI numbers)
-with open("ehi_numbers.tsv", "r") as f:
-    EHI = [line.strip() for line in f]
+df = pd.read_csv("ehi_numbers.tsv", sep="\t")
+EHI = list(df.iloc[:, 0])
 
 print("Detected these samples")
 print(EHI)
