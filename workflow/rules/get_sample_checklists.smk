@@ -38,6 +38,8 @@ rule get_sample_checklists:
         python {config[codedir]}/airtable/get_sample_checklist_airtable.py \
         --ehi={wildcards.EHI} \
         --sample=`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`
+
+        mv {wildcards.EHI}_sample_checklist.tsv {output.sample_checklist}
         
         sed -i'' "s/'//g" {output.sample_checklist}
         sed -i'' "s/\[//g" {output.sample_checklist}
@@ -47,14 +49,16 @@ rule get_sample_checklists:
         python {config[codedir]}/airtable/get_experiment_checklist_airtable.py \
         --ehi={wildcards.EHI}
 
+        mv {wildcards.EHI}_experiment_checklist.tsv {output.experiment_checklist}
+
         sed -i'' "s/'//g" {output.experiment_checklist}
         sed -i'' "s/\[//g" {output.experiment_checklist}
         sed -i'' "s/\]//g" {output.experiment_checklist}
 
         #make run checklist
-        echo -e "alias\texperiment_alias\tfile_name\tfile_type" >> run_header.tsv
-        echo -e "{wildcards.EHI}\t`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`\t{input.r1}\tfastq" > run_r1.tsv
-        echo -e "{wildcards.EHI}\t`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`\t{input.r2}\tfastq" > run_r2.tsv
-        cat run_header.tsv run_r1.tsv run_r2.tsv > {output.run_checklist}
+        echo -e "alias\texperiment_alias\tfile_name\tfile_type" > {wildcards.EHI}_run_header.tsv
+        echo -e "{wildcards.EHI}\t`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`\t{input.r1}\tfastq" > {wildcards.EHI}_run_r1.tsv
+        echo -e "{wildcards.EHI}\t`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`\t{input.r2}\tfastq" > {wildcards.EHI}_run_r2.tsv
+        cat {wildcards.EHI}_run_header.tsv {wildcards.EHI}_run_r1.tsv {wildcards.EHI}_run_r2.tsv > {output.run_checklist}
 
         """
