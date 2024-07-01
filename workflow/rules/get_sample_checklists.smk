@@ -29,7 +29,7 @@ rule get_sample_checklists:
         1
     resources:
         mem_gb=8,
-        time=00:10:00
+        time="00:10:00"
     message:
         "Fetching sample checklist for {wildcards.EHI}"
     shell:

@@ -1,15 +1,1 @@
-"mkdir -p /projects/ehi/data/RUN/"&{ID}&" && \
-mkdir -p /projects/ehi/data/RUN/"&{ID}&"/logs && \
-cd /projects/ehi/data/RUN/"&{ID}&" && \
-module purge && \
-module load snakemake/7.20.0 mamba/1.3.1 && \
-python /projects/ehi/data/0_Code/EHI_bioinformatics_"&{EHI script version}&"/workflow/airtable/get_ena_input.py --ehs="&{ID}&" && \
-dos2unix ehi_numbers.tsv && \
-cp /projects/ehi/data/0_Code/EHI_bioinformatics_"&{EHI script version}&"/workflow/5_ena_upload.snakefile . && \
-sed -i'' 's/EMAIL_ADD/"&Emails&"/g' 5_ena_upload.snakefile && \
-cp /projects/ehi/data/0_Code/EHI_bioinformatics_"&{EHI script version}&"/config/ena_upload.yaml . && \
-sed -i'' 's/EHSBATCH/"&{ID}&"/g' ena_upload.yaml && \
-sed -i'' 's/EHI_VERSION/"&{ID}&"/g' ena_upload.yaml && \
-echo -e \"module purge && module load snakemake/7.20.0 mamba/1.4.1 && snakemake -s 5_ena_upload.snakefile --resources -j 40 --cluster 'sbatch -o /projects/ehi/data/RUN/"&{ID}&"/logs/slurm-{rule}-%j.out --mem {resources.mem_gb}G --time {resources.time} -c {threads} --job-name=EHI-"&{ID}&"-{rule} --parsable -v' --retries 3 --cluster-status /projects/ehi/data/0_Code/slurm_status.py --rerun-triggers mtime --use-conda --conda-frontend mamba --conda-prefix /projects/ehi/data/0_Environments/conda --latency-wait 600\" > /projects/ehi/data/RUN/"&{ID}&"/"&{ID}&".sh && \
-chmod a+x /projects/ehi/data/RUN/"&{ID}&"/"&{ID}&".sh && \
-screen -dmS "&{ID}&" sh /projects/ehi/data/RUN/"&{ID}&"/"&{ID}&".sh"
+IF(Status = 'Done','Finished job. Change Status to see the script.', "mkdir -p /projects/ehi/data/RUN/"&{ID}&" && mkdir -p /projects/ehi/data/RUN/"&{ID}&"/logs && cd /projects/ehi/data/RUN/"&{ID}&" && module purge && module load snakemake/7.20.0 mamba/1.3.1 && python /projects/ehi/data/0_Code/EHI_bioinformatics_"&{EHI script version}&"/workflow/airtable/get_ena_input.py --ehs="&{ID}&" && dos2unix ehi_numbers.tsv && cp /projects/ehi/data/0_Code/EHI_bioinformatics_"&{EHI script version}&"/workflow/5_ena_upload.snakefile . && sed -i'' 's/EMAIL_ADD/"&Emails&"/g' 5_ena_upload.snakefile && cp /projects/ehi/data/0_Code/EHI_bioinformatics_"&{EHI script version}&"/config/ena_upload.yaml . && sed -i'' 's/EHSBATCH/"&{ID}&"/g' ena_upload.yaml && sed -i'' 's/EHI_VERSION/"&{EHI script version}&"/g' ena_upload.yaml && echo -e \"module purge && module load snakemake/7.20.0 mamba/1.4.1 && snakemake -s 5_ena_upload.snakefile --resources -j 40 --cluster 'sbatch -o /projects/ehi/data/RUN/"&{ID}&"/logs/slurm-{rule}-%j.out --mem {resources.mem_gb}G --time {resources.time} -c {threads} --job-name=EHI-"&{ID}&"-{rule} --parsable -v' --retries 3 --cluster-status /projects/ehi/data/0_Code/slurm_status.py --rerun-triggers mtime --use-conda --conda-frontend mamba --conda-prefix /projects/ehi/data/0_Environments/conda --latency-wait 600\" > /projects/ehi/data/RUN/"&{ID}&"/"&{ID}&".sh && chmod a+x /projects/ehi/data/RUN/"&{ID}&"/"&{ID}&".sh && screen -dmS "&{ID}&" sh /projects/ehi/data/RUN/"&{ID}&"/"&{ID}&".sh")
