@@ -3,6 +3,6 @@
 
 ehs: EHSBATCH
 codedir: /projects/ehi/data/0_Code/EHI_bioinformatics_EHI_VERSION/workflow
-workdir: /projects/ehi/data/DMB/DMBATCH
+workdir: /projects/ehi/data/ENA/EHSBATCH
 magdir: /projects/ehi/data/ENA/EHSBATCH/mags
 logdir: /projects/ehi/data/RUN/EHSBATCH/logs
