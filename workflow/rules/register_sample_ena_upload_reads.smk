@@ -52,7 +52,7 @@ rule register_sample_ena_upload_reads:
         --experiment {input.experiment_checklist} \
         --run {input.run_checklist} \
         --checklist ERC000013 \
-        --data {wildcards.EHI}*.fq.gz \
+        --data {config[workdir]}/{wildcards.EHI}*.fq.gz \
         --secret /projects/ehi/data/.secret.yml
 
         #Use API to patch the ENA sample accession to the EHI AirTable (Samples table)
