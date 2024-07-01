@@ -6,7 +6,8 @@ rule log_finish:
             os.path.join(
             config["workdir"],
             "{EHI}_accessions_uploaded"
-            )
+            ),
+            EHI=EHI
         )
     output:
         os.path.join(
