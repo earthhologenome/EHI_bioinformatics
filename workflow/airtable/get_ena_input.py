@@ -44,6 +44,7 @@ output_file_path = 'ehi_numbers.tsv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
+    writer.writerow(['EHI', 'SAMPLE', 'r1', 'r2'])
 
     offset = None
     while True:
