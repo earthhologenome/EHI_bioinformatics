@@ -1,6 +1,11 @@
 ################################################################################
 ### Fetch raw data from ERDA
 rule download_raw:
+    input:
+        os.path.join(
+            config["workdir"], 
+            "pipeline_started"
+        )
     output:
         r1=temp(
             os.path.join(
