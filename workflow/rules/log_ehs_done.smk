@@ -26,7 +26,7 @@ rule log_finish:
     shell:
         """
         # Log on the AirTable that the pipeline has finished:
-        python {config[codedir]}/airtable/log_ehs_done_airtable.py  --code={config[ehs]}
+        python {config[codedir]}/airtable/log_ehs_done_airtable.py  --ehs={config[ehs]}
 
         touch {output}
         """

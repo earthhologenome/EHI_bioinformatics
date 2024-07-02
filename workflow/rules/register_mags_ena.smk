@@ -22,6 +22,7 @@ rule register_mags_ena:
         "Registering MAGs at the ENA for {wildcards.EHI}"
     shell:
         """
+
         ena-upload
         
         """

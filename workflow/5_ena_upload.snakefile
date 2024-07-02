@@ -49,7 +49,7 @@ rule all:
 
 include: os.path.join(config["codedir"], "rules/log_ehs_start.smk")
 include: os.path.join(config["codedir"], "rules/download_raw_ena.smk")
-#include: os.path.join(config["codedir"], "rules/download_ena_mags.smk")
+#include: os.path.join(config["codedir"], "rules/download_mags_ena.smk")
 include: os.path.join(config["codedir"], "rules/get_sample_checklists.smk")
 include: os.path.join(config["codedir"], "rules/register_sample_ena_upload_reads.smk")
 #include: os.path.join(config["codedir"], "rules/register_mags_ena.smk")
