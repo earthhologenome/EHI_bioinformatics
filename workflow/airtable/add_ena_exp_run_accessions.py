@@ -33,8 +33,8 @@ record_id = data['records'][0]['id']
     # Set the cell data you want to update
 data = {
         'fields': {
-            'ENA_experiment_accession': {args.exp_acc},
-            'ENA_run_accession': {args.run_acc},
+            'ENA_experiment_accession': f'{args.exp_acc}',
+            'ENA_run_accession': f'{args.run_acc}',
         }
     }
 
