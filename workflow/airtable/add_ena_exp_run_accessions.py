@@ -39,7 +39,7 @@ data = {
     }
 
     # Send a PATCH request to update the record
-    response = requests.patch(f'{url}/{record_id}', headers=headers, data=json.dumps(data))
+response = requests.patch(f'{url}/{record_id}', headers=headers, data=json.dumps(data))
 
     # Print the response status code
-    print(response.status_code)
+print(response.status_code)
