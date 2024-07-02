@@ -57,8 +57,8 @@ rule get_sample_checklists:
 
         #make run checklist
         echo -e "alias\texperiment_alias\tfile_name\tfile_type" > {wildcards.EHI}_run_header.tsv
-        echo -e "{wildcards.EHI}\t`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`\t{input.r1}\tfastq" > {wildcards.EHI}_run_r1.tsv
-        echo -e "{wildcards.EHI}\t`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`\t{input.r2}\tfastq" > {wildcards.EHI}_run_r2.tsv
+        echo -e "{wildcards.EHI}\t`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`\t{wildcards.EHI}_raw_1.fq.gz\tfastq" > {wildcards.EHI}_run_r1.tsv
+        echo -e "{wildcards.EHI}\t`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`\t{wildcards.EHI}_raw_2.fq.gz\tfastq" > {wildcards.EHI}_run_r2.tsv
         cat {wildcards.EHI}_run_header.tsv {wildcards.EHI}_run_r1.tsv {wildcards.EHI}_run_r2.tsv > {output.run_checklist}
 
         """
