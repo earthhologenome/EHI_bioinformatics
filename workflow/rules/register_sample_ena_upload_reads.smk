@@ -63,6 +63,8 @@ rule register_sample_ena_upload_reads:
         --data {config[workdir]}/{wildcards.EHI}*.fq.gz \
         --secret /projects/ehi/data/.secret.yml
 
+        source activate /projects/ehi/data/0_Environments/conda/6152bcb1b359a9912e706c7a3d8c7f5a_
+
         #Use API to patch the ENA sample accession to the EHI AirTable (Samples table)
         python {config[codedir]}/airtable/add_ena_sample_accession.py \
         --sample `sed '1d;' {output.sample_checklist_updated} | cut -f1` \

@@ -21,9 +21,6 @@ headers = {
     'Content-Type': 'application/json'
 }
 
-#Read in the TSV file using pandas
-df = pd.read_csv(args.report, sep='\t')
-
 # Loop through each row in the dataframe
 for i, row in df.iterrows():
     # Get the record ID for the row based on the value in the 'ehi_number' column and 'pr_batch'
