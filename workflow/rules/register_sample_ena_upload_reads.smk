@@ -2,6 +2,14 @@
 ### Register samples and upload reads to ENA (also push ENA codes to airtable)
 rule register_sample_ena_upload_reads:
     input:
+        r1=os.path.join(
+            config["workdir"],
+            "{EHI}_raw_1.fq.gz"
+        ),
+        r2=os.path.join(
+            config["workdir"],
+            "{EHI}_raw_2.fq.gz"
+        ),
         sample_checklist=os.path.join(
             config["workdir"],
             "{EHI}_sample_checklist.tsv"
