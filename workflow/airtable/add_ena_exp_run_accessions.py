@@ -22,19 +22,16 @@ headers = {
     'Content-Type': 'application/json'
 }
 
-# Loop through each row in the dataframe
-for i, row in df.iterrows():
-    # Get the record ID for the row based on the value in the 'ehi_number' column and 'pr_batch'
-    params = {
+params = {
     'filterByFormula': f"{{EHI_number}} = '{args.ehi}'",
 
     }
-    response = requests.get(url, headers=headers, params=params)
-    data = response.json()
-    record_id = data['records'][0]['id']
+response = requests.get(url, headers=headers, params=params)
+data = response.json()
+record_id = data['records'][0]['id']
 
     # Set the cell data you want to update
-    data = {
+data = {
         'fields': {
             'ENA_experiment_accession': {args.exp_acc},
             'ENA_run_accession': {args.run_acc},
