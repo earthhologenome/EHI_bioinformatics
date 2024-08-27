@@ -32,7 +32,7 @@ query_params = {
 output_file_path = f'{args.ehi}_mag_checklist_temp.tsv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
-    writer = csv.writer(tsvfile, delimiter='/t')
+    writer = csv.writer(tsvfile, delimiter='\t')
     writer.writerow(['mag_id', 'mag_name', 'metagenomic source', 'assembly software', 
     'binning software', 'binning parameters', 'assembly quality', 'completeness software',
     'completeness score', 'contamination score', 'taxonomic identity marker', 'taxonomic classification'])
@@ -91,8 +91,7 @@ with open(output_file_path, 'w', newline='') as tsvfile:
 output_file_path = f'{args.ehi}_mag_urls.tsv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
-    writer = csv.writer(tsvfile, delimiter='/t')
-    writer.writerow(['MAG_url'])
+    writer = csv.writer(tsvfile, delimiter='\t')
 
     offset = None
     while True:
