@@ -62,15 +62,15 @@ rule upload_dram:
         module load dos2unix/7.4.2
         dos2unix {params.stats_dir}/ehm_eha_mapping.tsv
 
-        while read ehm eha; 
+        while read ehm eha abb; 
             do cp {config[magdir]}/"$eha"_anno.tsv.gz {config[magdir]}/"$ehm"_anno.tsv.gz && echo {config[magdir]}/"$ehm"_anno.tsv.gz >> {params.stats_dir}/anno_mag.tsv; 
         done < {params.stats_dir}/ehm_eha_mapping.tsv
 
-        while read ehm eha; 
+        while read ehm eha abb; 
             do cp {config[magdir]}/"$eha"_kegg.tsv.gz {config[magdir]}/"$ehm"_kegg.tsv.gz && echo {config[magdir]}/"$ehm"_kegg.tsv.gz >> {params.stats_dir}/kegg_mag.tsv; 
         done < {params.stats_dir}/ehm_eha_mapping.tsv
 
-        while read ehm eha; 
+        while read ehm eha abb; 
             do cp {config[magdir]}/"$eha".gbk.gz {config[magdir]}/"$ehm".gbk.gz && echo {config[magdir]}/"$ehm".gbk.gz >> {params.stats_dir}/gbk_mag.tsv; 
         done < {params.stats_dir}/ehm_eha_mapping.tsv   
 

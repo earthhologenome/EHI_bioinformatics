@@ -46,30 +46,32 @@ with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter='\t')
     writer.writerow(['EHI', 'SAMPLE', 'r1', 'r2'])
 
-    offset = None
+    offset = None  # Initialize offset
     while True:
-        # Update the query parameters with the offset if it exists
+        # Include offset in query parameters if it exists
         if offset:
             query_params['offset'] = offset
 
-        for record in records:
-            # Get the values of the PR_batch and EHI_number lookup fields
-            record_id = record['id']
+        # Make the request
+        response = requests.get(AIRTABLE_API_ENDPOINT, params=query_params, headers=headers)
+        if response.status_code != 200:
+            raise Exception(f"Error: {response.status_code}, {response.text}")
+        
+        # Parse response JSON
+        data = response.json()
 
-            # Make requests to retrieve the linked records
-            record_response = requests.get(f"{AIRTABLE_API_ENDPOINT}/{record_id}", headers=headers)
+        # Process records
+        for record in data.get('records', []):
+            fields = record['fields']
+            ehi_number_value = fields.get('EHI_number', '')
+            sample_number_value = fields.get('sample_alias', '')
+            forward_url_value = fields.get('forward_url', '')
+            reverse_url_value = fields.get('reverse_url', '')
 
-            # Extract the values of the linked fields from the linked records
-            ehi_number_value = record_response.json()['fields'].get('EHI_number', '')
-            sample_number_value = record_response.json()['fields'].get('sample_alias', '')
-            forward_url_value = record_response.json()['fields'].get('forward_url', '')
-            reverse_url_value = record_response.json()['fields'].get('reverse_url', '')
+            # Write to file
+            writer.writerow([ehi_number_value, sample_number_value, forward_url_value, reverse_url_value])
 
-            # Write the row to the TSV file
-            row = [ehi_number_value, sample_number_value, forward_url_value, reverse_url_value]
-            writer.writerow(row)
-
-        if 'offset' in data:
-            offset = data['offset']
-        else:
+        # Check for next page
+        offset = data.get('offset')
+        if not offset:
             break

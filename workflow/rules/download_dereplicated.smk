@@ -30,12 +30,22 @@ rule download_mags:
         
         rm -rf {config[workdir]}/*
 
-        #Setup batch file for downloading MAGs from erda:
-        for mag in {output.mags};
-            do echo "get EarthHologenomeInitiative/Data/MAG/*/" >> {config[workdir]}/get.tsv && echo $(basename $mag) >> {config[workdir]}/mag.tsv;
-        done
+        #Strip characters from derep mag list
+        sed '1d;' /projects/ehi/data/RUN/{config[dmb]}/dereped_mags.csv > {config[workdir]}/dereped_mags.csv
 
-        paste {config[workdir]}/get.tsv {config[workdir]}/mag.tsv -d '' > {config[workdir]}/batchfile.txt
+        sed 's/\[//g' dereped_mags.csv | sed 's/\]//g' | sed "s/'//g" | tr ',' '\t' > dereped_mags_clean.csv
+
+        while read ehm eha abb; 
+            do echo -e "get EarthHologenomeInitiative/Data/MAG/""$abb" >> {config[workdir]}/get.tsv
+        done < dereped_mags_clean.csv
+
+        while read ehm eha abb; 
+            do echo -e "$eha"".gz" >> {config[workdir]}/eha.tsv
+        done < dereped_mags_clean.csv
+
+        dos2unix {config[workdir]}/ena.tsv && dos2unix {config[workdir]}/get.tsv 
+
+        paste {config[workdir]}/get.tsv {config[workdir]}/ena.tsv -d '/' > {config[workdir]}/batchfile.txt
 
         #Execute batch file to pull the suckers
         mkdir -p {config[magdir]}

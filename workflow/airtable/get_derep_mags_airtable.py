@@ -65,9 +65,10 @@ with open(output_file_path, 'w', newline='') as tsvfile:
             # Extract the values of the completeness and contamination fields
             ehm = record_response.json()['fields'].get('ID', '')
             mag_name = record_response.json()['fields'].get('mag_name', '')
+            ab_batch = record_response.json()['fields'].get('AB_batch', '')
 
             # Write the row to the csv file
-            row = [ehm, mag_name]
+            row = [ehm, mag_name, ab_batch]
             writer.writerow(row)
 
         # Check if there are more records to retrieve
