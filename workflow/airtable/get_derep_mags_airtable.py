@@ -37,7 +37,7 @@ output_file_path = 'dereped_mags.csv'
 
 with open(output_file_path, 'w', newline='') as tsvfile:
     writer = csv.writer(tsvfile, delimiter=',')
-    writer.writerow(['ehm', 'mag_name'])
+    writer.writerow(['ehm', 'mag_name', 'ab_batch'])
 
     offset = None
     while True:
