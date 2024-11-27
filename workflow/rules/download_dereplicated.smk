@@ -43,9 +43,9 @@ rule download_mags:
             do echo -e "$eha"".gz" >> {config[workdir]}/eha.tsv
         done < dereped_mags_clean.csv
 
-        dos2unix {config[workdir]}/ena.tsv && dos2unix {config[workdir]}/get.tsv 
+        dos2unix {config[workdir]}/eha.tsv && dos2unix {config[workdir]}/get.tsv 
 
-        paste {config[workdir]}/get.tsv {config[workdir]}/ena.tsv -d '/' > {config[workdir]}/batchfile.txt
+        paste {config[workdir]}/get.tsv {config[workdir]}/eha.tsv -d '/' > {config[workdir]}/batchfile.txt
 
         #Execute batch file to pull the suckers
         mkdir -p {config[magdir]}
