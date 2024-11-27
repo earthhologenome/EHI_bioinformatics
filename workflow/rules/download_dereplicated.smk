@@ -33,7 +33,7 @@ rule download_mags:
         #Strip characters from derep mag list
         sed '1d;' /projects/ehi/data/RUN/{config[dmb]}/dereped_mags.csv > {config[workdir]}/dereped_mags.csv
 
-        sed 's/\[//g' dereped_mags.csv | sed 's/\]//g' | sed "s/'//g" | tr ',' '\t' > dereped_mags_clean.csv
+        sed 's/\[//g' {config[workdir]}/dereped_mags.csv | sed 's/\]//g' | sed "s/'//g" | tr ',' '\t' > {config[workdir]}/dereped_mags_clean.csv
 
         while read ehm eha abb; 
             do echo -e "get EarthHologenomeInitiative/Data/MAG/""$abb" >> {config[workdir]}/get.tsv
@@ -41,7 +41,7 @@ rule download_mags:
 
         while read ehm eha abb; 
             do echo -e "$eha"".gz" >> {config[workdir]}/eha.tsv
-        done < dereped_mags_clean.csv
+        done < {config[workdir]}/dereped_mags_clean.csv
 
         dos2unix {config[workdir]}/eha.tsv && dos2unix {config[workdir]}/get.tsv 
 
