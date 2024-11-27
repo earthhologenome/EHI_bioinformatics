@@ -37,7 +37,7 @@ rule download_mags:
 
         while read ehm eha abb; 
             do echo -e "get EarthHologenomeInitiative/Data/MAG/""$abb" >> {config[workdir]}/get.tsv
-        done < dereped_mags_clean.csv
+        done < {config[workdir]}/dereped_mags_clean.csv
 
         while read ehm eha abb; 
             do echo -e "$eha"".gz" >> {config[workdir]}/eha.tsv
