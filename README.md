@@ -51,15 +51,9 @@ ssh-rsa asd79as7d98as7d987as987d98a79d87a897d9a7d98a98d9 ncl550@mjolnirhead01fl.
 
 Now, log into ERDA via your browser `https://erda.dk/wsgi-bin/home.py`
 
-Navigate to your 'settings' in the bottom right corner:
+Navigate to 'setup' (person icon in lower left corner), and then click the SFTP tab at the top.
 
-![setup1](figures/setup1.png)
-
-And click the SFTP tab at the top:
-
-![setup1](figures/setup2.png)
-
-You then want to paste your public SSH key into the box (see yellow arrow). Then click save.
+You then want to paste your public SSH key into the box, then click save.
 
 Now, relog into mjolnir (or reload your shell if you know how to), and test the alias:
 ```
