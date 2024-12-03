@@ -26,7 +26,7 @@ headers = {
 
 # Set up the query parameters to filter the records
 query_params = {
-    'filterByFormula': f"AND({{Submissions}} = '{args.ehs}', {{ENA Sample accession (from ENA)}} = '')"
+    'filterByFormula': f"{{Submissions}} = '{args.ehs}'"
 
 }
 

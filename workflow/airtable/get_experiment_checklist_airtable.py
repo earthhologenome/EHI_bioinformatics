@@ -68,7 +68,7 @@ with open(output_file_path, 'w', newline='') as tsvfile:
             record_response = requests.get(f"{AIRTABLE_API_ENDPOINT}/{record_id}", headers=headers)
 
             # Extract the values of the linked fields from the linked records
-            alias_value = record_response.json()['fields'].get('sample_alias', '')
+            alias_value = record_response.json()['fields'].get('EHI_number', '')
             title_value = record_response.json()['fields'].get('EHI_number', '')
             study_alias_value = record_response.json()['fields'].get('study_alias', '')
             sample_alias_value = record_response.json()['fields'].get('sample_alias', '')
