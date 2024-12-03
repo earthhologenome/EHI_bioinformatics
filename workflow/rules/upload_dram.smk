@@ -100,7 +100,7 @@ rule upload_dram:
         python {config[codedir]}/airtable/add_mag_dram_results_airtable.py --table={params.stats_dir}/at_dram.tsv
 
         ## Clean up
-        rm -r {config[magdir]}/*
+        rm -r {config[magdir]}
 
         ## Log job is done on AirTable
         python {config[codedir]}/airtable/log_ann_done_airtable.py --code={config[dmb]}
