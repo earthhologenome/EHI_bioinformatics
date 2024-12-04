@@ -75,7 +75,7 @@ rule register_sample_ena_upload_reads:
             --data {config[workdir]}/{wildcards.EHI}*.fq.gz \
             --secret /projects/ehi/data/.secret.yml
 
-            source deactivate
+            conda deactivate
 
             #Use API to patch the ENA sample accession to the EHI AirTable (Samples table)
             python {config[codedir]}/airtable/add_ena_sample_accession.py \
@@ -99,7 +99,7 @@ rule register_sample_ena_upload_reads:
             --data {config[workdir]}/{wildcards.EHI}*.fq.gz \
             --secret /projects/ehi/data/.secret.yml
 
-            source deactivate
+            conda deactivate
 
             #Use API to patch the ENA experiment and run accessions to the EHI AirTable ('SE Samples' table)
             python {config[codedir]}/airtable/add_ena_exp_run_accessions.py \
@@ -109,7 +109,7 @@ rule register_sample_ena_upload_reads:
 
         fi
 
-
         #Close job
         touch {output.accessions_uploaded}
+
         """
