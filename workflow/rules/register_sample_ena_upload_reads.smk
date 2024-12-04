@@ -88,6 +88,9 @@ rule register_sample_ena_upload_reads:
             --exp_acc `sed '1d;' {output.experiment_checklist_updated} | cut -f16` \
             --run_acc `tail -1 {output.run_checklist_updated} | cut -f5 `
 
+            #Close job
+            touch {output.accessions_uploaded}
+
         else
             #Register just the experiment and run, and upload the reads to the ENA
             ena-upload-cli \
@@ -107,9 +110,9 @@ rule register_sample_ena_upload_reads:
             --exp_acc `sed '1d;' {output.experiment_checklist_updated} | cut -f16` \
             --run_acc `tail -1 {output.run_checklist_updated} | cut -f5 `
 
-        fi
+            #Close job
+            touch {output.accessions_uploaded}
 
-        #Close job
-        touch {output.accessions_uploaded}
+        fi
 
         """
