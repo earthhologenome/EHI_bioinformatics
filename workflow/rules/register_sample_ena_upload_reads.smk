@@ -54,7 +54,7 @@ rule register_sample_ena_upload_reads:
         # API call to see if an ENA sample accession already exists for a given tube code, e.g. "AJP51"
         python {config[codedir]}/airtable/get_ena_sample_accession.py \
             --ehi {wildcards.EHI} \
-            --sample=--sample=`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`
+            --sample=`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`
 
 
         source activate /projects/ehi/data/0_Environments/conda/ena_upload
