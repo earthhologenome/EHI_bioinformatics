@@ -77,6 +77,11 @@ rule register_sample_ena_upload_reads:
 
             conda deactivate
 
+            #temp fix for manually fixing suppressed ENA accessions
+            sed -i'' 's/_fixed//g' {output.sample_checklist_updated}
+            sed -i'' 's/_fixed//g' {output.experiment_checklist_updated}
+
+
             #Use API to patch the ENA sample accession to the EHI AirTable (Samples table)
             python {config[codedir]}/airtable/add_ena_sample_accession.py \
             --sample `sed '1d;' {output.sample_checklist_updated} | cut -f1` \
