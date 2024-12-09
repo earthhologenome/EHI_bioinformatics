@@ -23,6 +23,11 @@ rule register_sample_ena_upload_reads:
             "{EHI}_run_checklist.tsv"
         )
     output:
+        accessions_uploaded=os.path.join(
+            config["workdir"],
+            "{EHI}_accessions_uploaded"
+        )
+    params:
         sample_checklist_updated=os.path.join(
             config["workdir"],
             "{EHI}_sample_checklist_updated.tsv"
@@ -34,10 +39,6 @@ rule register_sample_ena_upload_reads:
         run_checklist_updated=os.path.join(
             config["workdir"],
             "{EHI}_run_checklist_updated.tsv"
-        ),
-        accessions_uploaded=os.path.join(
-            config["workdir"],
-            "{EHI}_accessions_uploaded"
         )
     conda:
         f"{config['codedir']}/conda_envs/lftp.yaml"
@@ -78,20 +79,20 @@ rule register_sample_ena_upload_reads:
             conda deactivate
 
             #temp fix for manually fixing suppressed ENA accessions
-            sed -i'' 's/_fixed//g' {output.sample_checklist_updated}
-            sed -i'' 's/_fixed//g' {output.experiment_checklist_updated}
+            sed -i'' 's/_fixed//g' {params.sample_checklist_updated}
+            sed -i'' 's/_fixed//g' {params.experiment_checklist_updated}
 
 
             #Use API to patch the ENA sample accession to the EHI AirTable (Samples table)
             python {config[codedir]}/airtable/add_ena_sample_accession.py \
-            --sample `sed '1d;' {output.sample_checklist_updated} | cut -f1` \
-            --sample_acc `sed '1d;' {output.sample_checklist_updated} | cut -f20`
+            --sample `sed '1d;' {params.sample_checklist_updated} | cut -f1` \
+            --sample_acc `sed '1d;' {params.sample_checklist_updated} | cut -f20`
 
             #Use API to patch the ENA experiment and run accessions to the EHI AirTable ('SE Samples' table)
             python {config[codedir]}/airtable/add_ena_exp_run_accessions.py \
-            --ehi `sed '1d;' {output.experiment_checklist_updated} | cut -f2` \
-            --exp_acc `sed '1d;' {output.experiment_checklist_updated} | cut -f16` \
-            --run_acc `tail -1 {output.run_checklist_updated} | cut -f5 `
+            --ehi `sed '1d;' {params.experiment_checklist_updated} | cut -f2` \
+            --exp_acc `sed '1d;' {params.experiment_checklist_updated} | cut -f16` \
+            --run_acc `tail -1 {params.run_checklist_updated} | cut -f5 `
 
             #Close job
             touch {output.accessions_uploaded}
@@ -111,9 +112,9 @@ rule register_sample_ena_upload_reads:
 
             #Use API to patch the ENA experiment and run accessions to the EHI AirTable ('SE Samples' table)
             python {config[codedir]}/airtable/add_ena_exp_run_accessions.py \
-            --ehi `sed '1d;' {output.experiment_checklist_updated} | cut -f2` \
-            --exp_acc `sed '1d;' {output.experiment_checklist_updated} | cut -f16` \
-            --run_acc `tail -1 {output.run_checklist_updated} | cut -f5 `
+            --ehi `sed '1d;' {params.experiment_checklist_updated} | cut -f2` \
+            --exp_acc `sed '1d;' {params.experiment_checklist_updated} | cut -f16` \
+            --run_acc `tail -1 {params.run_checklist_updated} | cut -f5 `
 
             #Close job
             touch {output.accessions_uploaded}
