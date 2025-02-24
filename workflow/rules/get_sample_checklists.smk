@@ -58,8 +58,7 @@ rule get_sample_checklists:
         sed -i'' "s/'//g" {output.experiment_checklist}
         sed -i'' "s/\[//g" {output.experiment_checklist}
         sed -i'' "s/\]//g" {output.experiment_checklist}
-        sed -i'' 's/EHI/ena_EHI/' {output.experiment_checklist}
-        sed -i'' 's/EHI/ena_EHI/' {output.experiment_checklist}
+        sed -i'' 's/EHI/ena_EHI/2;s/EHI/ena_EHI/' {output.experiment_checklist}
 
         #make run checklist
         echo -e "alias\texperiment_alias\tfile_name\tfile_type" > {wildcards.EHI}_run_header.tsv
