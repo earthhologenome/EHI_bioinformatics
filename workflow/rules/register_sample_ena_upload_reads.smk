@@ -74,7 +74,7 @@ rule register_sample_ena_upload_reads:
 
             #Use API to patch the ENA sample accession to the EHI AirTable (Samples table)
             python {config[codedir]}/airtable/add_ena_sample_accession.py \
-            --sample `sed '1d;' {params.sample_checklist_updated} | cut -f3` \
+            --sample `grep {wildcards.EHI} ehi_numbers.tsv | cut -f2` \
             --sample_acc `sed '1d;' {params.sample_checklist_updated} | cut -f20`
 
             #Use API to patch the ENA experiment and run accessions to the EHI AirTable ('SE Samples' table)

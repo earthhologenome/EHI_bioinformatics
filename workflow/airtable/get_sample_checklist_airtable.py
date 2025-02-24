@@ -72,8 +72,8 @@ with open(output_file_path, 'w', newline='') as tsvfile:
             # Extract the values of the linked fields from the linked records
             alias_value = "TEMP"
             sample_alias_value = "TEMP"
-            title_value = record_response.json()['fields'].get('title', '')
-            sample_title_value = record_response.json()['fields'].get('sample_title', '')
+            title_value = "TEMP"
+            sample_title_value = "TEMP"
             sample_description_value = record_response.json()['fields'].get('sample_description', '')
             host_subject_id_value = record_response.json()['fields'].get('host subject id', '')
             host_common_name_value = record_response.json()['fields'].get('host common name', '')
