@@ -1,5 +1,8 @@
 ################################################################################
 ### Get ENA checklist information for sample
+## Note, I added an '_ena' prefix to the EHI numbers in the experiment/run checklists.
+## This is to fix an issue with a previous variant of the ENA pipeline already creating accessions -
+## with these codes. 
 rule get_sample_checklists:
     input:
         r1=os.path.join(
@@ -55,11 +58,13 @@ rule get_sample_checklists:
         sed -i'' "s/'//g" {output.experiment_checklist}
         sed -i'' "s/\[//g" {output.experiment_checklist}
         sed -i'' "s/\]//g" {output.experiment_checklist}
+        sed -i'' 's/EHI/ena_EHI/' {output.experiment_checklist}
+        sed -i'' 's/EHI/ena_EHI/' {output.experiment_checklist}
 
         #make run checklist
         echo -e "alias\texperiment_alias\tfile_name\tfile_type" > {wildcards.EHI}_run_header.tsv
-        echo -e "{wildcards.EHI}\t`echo {wildcards.EHI}`\t{wildcards.EHI}_raw_1.fq.gz\tfastq" > {wildcards.EHI}_run_r1.tsv
-        echo -e "{wildcards.EHI}\t`echo {wildcards.EHI}`\t{wildcards.EHI}_raw_2.fq.gz\tfastq" > {wildcards.EHI}_run_r2.tsv
+        echo -e "ena_{wildcards.EHI}\t`echo ena_{wildcards.EHI}`\t{wildcards.EHI}_raw_1.fq.gz\tfastq" > {wildcards.EHI}_run_r1.tsv
+        echo -e "ena_{wildcards.EHI}\t`echo ena_{wildcards.EHI}`\t{wildcards.EHI}_raw_2.fq.gz\tfastq" > {wildcards.EHI}_run_r2.tsv
         cat {wildcards.EHI}_run_header.tsv {wildcards.EHI}_run_r1.tsv {wildcards.EHI}_run_r2.tsv > {output.run_checklist}
 
         """

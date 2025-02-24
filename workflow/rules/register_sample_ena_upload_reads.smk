@@ -79,7 +79,7 @@ rule register_sample_ena_upload_reads:
 
             #Use API to patch the ENA experiment and run accessions to the EHI AirTable ('SE Samples' table)
             python {config[codedir]}/airtable/add_ena_exp_run_accessions.py \
-            --ehi `sed '1d;' {params.experiment_checklist_updated} | cut -f2` \
+            --ehi {wildcards.EHI} \
             --exp_acc `sed '1d;' {params.experiment_checklist_updated} | cut -f16` \
             --run_acc `tail -1 {params.run_checklist_updated} | cut -f5 `
 
