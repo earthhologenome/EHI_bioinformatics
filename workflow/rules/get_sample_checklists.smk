@@ -44,6 +44,7 @@ rule get_sample_checklists:
         sed -i'' "s/'//g" {output.sample_checklist}
         sed -i'' "s/\[//g" {output.sample_checklist}
         sed -i'' "s/\]//g" {output.sample_checklist}
+        sed -i'' 's/TEMP/{wildcards.EHI}/g' {output.sample_checklist}
 
         #pull experiment checklist
         python {config[codedir]}/airtable/get_experiment_checklist_airtable.py \

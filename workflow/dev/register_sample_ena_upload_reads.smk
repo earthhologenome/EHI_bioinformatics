@@ -1,5 +1,8 @@
 ################################################################################
 ### Register samples and upload reads to ENA (also push ENA codes to airtable)
+### NOTE THAT THIS IS AN OLDER VERSION, WHERE TUBE ID = Sample accession
+### I've changed it such that EHI ID = Sample accession now
+
 rule register_sample_ena_upload_reads:
     input:
         r1=os.path.join(
@@ -52,8 +55,21 @@ rule register_sample_ena_upload_reads:
     shell:
         """
 
+        # API call to see if an ENA sample accession already exists for a given tube code, e.g. "AJP51"
+        python {config[codedir]}/airtable/get_ena_sample_accession.py \
+            --ehi {wildcards.EHI} \
+            --sample=`grep {wildcards.EHI} ehi_numbers.tsv | cut -f2`
+
+
         source activate /projects/ehi/data/0_Environments/conda/ena_upload
 
+        # This solves the issue of multiple libraries/extractions from a single sample
+        # get_ena_sample_accession.py checks 'ENA_sample_accession' column on 'Samples' table (AirTable)
+        # IF statement on output of get_ena_sample_accession.py: 
+        # 1)IF does not exist, ena-upload-cli call with sample/exp/run (creating the ENA sample)
+        # 2)ELSE, ena-upload-cli call with just exp/run (does not create the ENA sample, as it already exists)
+
+        if [[ `grep '"' {wildcards.EHI}_ENA_sample_accession.txt` ]]; then
             #Register the samples and upload the reads to the ENA
             ena-upload-cli \
             --action add \
@@ -86,5 +102,28 @@ rule register_sample_ena_upload_reads:
             #Close job
             touch {output.accessions_uploaded}
 
+        else
+            #Register just the experiment and run, and upload the reads to the ENA
+            ena-upload-cli \
+            --action add \
+            --center 'Earth Hologenome Initiative' \
+            --experiment {input.experiment_checklist} \
+            --run {input.run_checklist} \
+            --checklist ERC000013 \
+            --data {config[workdir]}/{wildcards.EHI}*.fq.gz \
+            --secret /projects/ehi/data/.secret.yml
+
+            conda deactivate
+
+            #Use API to patch the ENA experiment and run accessions to the EHI AirTable ('SE Samples' table)
+            python {config[codedir]}/airtable/add_ena_exp_run_accessions.py \
+            --ehi `sed '1d;' {params.experiment_checklist_updated} | cut -f2` \
+            --exp_acc `sed '1d;' {params.experiment_checklist_updated} | cut -f16` \
+            --run_acc `tail -1 {params.run_checklist_updated} | cut -f5 `
+
+            #Close job
+            touch {output.accessions_uploaded}
+
+        fi
 
         """

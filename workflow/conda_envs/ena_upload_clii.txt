@@ -1,0 +1,6 @@
+#How to install if not a module:
+module load mamba
+mamba create --prefix <path_to_where_you_want>
+mamba activate <the environment you created>
+module load <python that is > 3.8>
+pip install ena-upload-cli
