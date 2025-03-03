@@ -51,7 +51,7 @@ rule register_sample_ena_upload_reads:
         "Regsitering {wildcards.EHI} to ENA and uploading raw reads"
     shell:
         """
-
+        ## note: as of 25/2/25, there is a module available on mjolnir: 'module load ena-upload-cli/0.8.0'
         source activate /projects/ehi/data/0_Environments/conda/ena_upload
 
             #Register the samples and upload the reads to the ENA
@@ -81,7 +81,7 @@ rule register_sample_ena_upload_reads:
             python {config[codedir]}/airtable/add_ena_exp_run_accessions.py \
             --ehi {wildcards.EHI} \
             --exp_acc `sed '1d;' {params.experiment_checklist_updated} | cut -f16` \
-            --run_acc `tail -1 {params.run_checklist_updated} | cut -f5 `
+            --run_acc `tail -1 {params.run_checklist_updated} | cut -f6 `
 
             #Close job
             touch {output.accessions_uploaded}
