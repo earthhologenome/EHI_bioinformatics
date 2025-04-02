@@ -30,8 +30,10 @@ rule drep:
         # remove folder (in case of restart/server interruption)
         rm -rf {config[workdir]}/drep
 
-        # Load dRep module, as the conda recipe is cooked atm
-        module load drep/3.4.0
+        # mjolnir drep module needs to have dependencies installed, here's a temp solution
+        module load conda/25.1.1
+        module load fastani/1.33
+        source activate /projects/ehi/data/0_Environments/conda/drep
 
         # Massage genome info file:
         cut -f1,3,4 -d ',' mags.csv | sed 's/.fa/.fa.gz/g' > mags_formatted.csv
