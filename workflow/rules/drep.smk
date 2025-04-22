@@ -32,7 +32,6 @@ rule drep:
 
         # mjolnir drep module needs to have dependencies installed, here's a temp solution
         module load conda/25.1.1
-        module load fastani/1.33
         source activate /projects/ehi/data/0_Environments/conda/drep
 
         # Massage genome info file:
