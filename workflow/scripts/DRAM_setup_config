@@ -1,0 +1,17 @@
+DRAM-setup.py set_database_locations \
+--kofam_hmm_loc /datasets/globe_databases/dram/20220824/kofam_profiles.hmm \
+--kofam_ko_list_loc /datasets/globe_databases/dram/20220824/kofam_ko_list.tsv \
+--pfam_db_loc /datasets/globe_databases/dram/20220824/pfam.mmspro \
+--pfam_hmm_dat /datasets/globe_databases/dram/20220824/Pfam-A.hmm.dat.gz \
+--dbcan_db_loc /datasets/globe_databases/dram/20220824/dbCAN-HMMdb-V9.txt \
+--dbcan_fam_activities /datasets/globe_databases/dram/20220824/CAZyDB.07302020.fam-activities.txt \
+--vogdb_db_loc /datasets/globe_databases/dram/20220824/vog_latest_hmms.txt \
+--vog_annotations /datasets/globe_databases/dram/20220824/vog_annotations_latest.tsv.gz \
+--viral_db_loc /datasets/globe_databases/dram/20220824/refseq_viral.20220825.mmsdb \
+--peptidase_db_loc /datasets/globe_databases/dram/20220824/peptidases.20220825.mmsdb \
+--description_db_loc /datasets/globe_databases/dram/20220824/description_db.sqlite \
+--genome_summary_form_loc /datasets/globe_databases/dram/20220824/genome_summary_form.20220825.tsv \
+--module_step_form_loc /datasets/globe_databases/dram/20220824/module_step_form.20220825.tsv \
+--etc_module_database_loc /datasets/globe_databases/dram/20220824/etc_mdoule_database.20220825.tsv \
+--function_heatmap_form_loc /datasets/globe_databases/dram/20220824/function_heatmap_form.20220825.tsv \
+--amg_database_loc /datasets/globe_databases/dram/20220824/amg_database.20220825.tsv
