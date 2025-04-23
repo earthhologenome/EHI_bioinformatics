@@ -40,7 +40,7 @@ rule DRAM:
         rm -rf {params.distillate}
 
         #Loading DRAM from our custom DRAM build:
-        source activate /projects/mjolnir1/people/ncl550/0_software/miniconda3/envs/DRAM_more_modules
+        source activate /projects/ehi/data/0_Environments/conda/DRAM_more_modules
 
             DRAM.py annotate \
                 -i {input.mag} \
