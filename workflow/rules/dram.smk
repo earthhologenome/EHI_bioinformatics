@@ -40,7 +40,8 @@ rule DRAM:
         rm -rf {params.distillate}
 
         #Loading DRAM from our custom DRAM build:
-        source activate /projects/ehi/data/0_Environments/conda/DRAM_more_modules
+        # See /scripts/DRAM_setup_config on the EHI bioinfo github repo for install instructions
+        source activate /projects/ehi/data/0_Environments/conda/DRAM
 
             DRAM.py annotate \
                 -i {input.mag} \

@@ -1,3 +1,11 @@
+git clone https://github.com/EisenRa/DRAM_more_modules.git -b 1.2.4_more_modules
+
+conda env create --prefix=/projects/ehi/data/0_Environments/conda/DRAM -f /projects/ehi/data/0_Environments/github_repos/DRAM_more_modules/environment.yaml
+
+conda activate /projects/ehi/data/0_Environments/conda/DRAM
+
+pip install dataclasses
+
 DRAM-setup.py set_database_locations \
 --kofam_hmm_loc /datasets/globe_databases/dram/20220824/kofam_profiles.hmm \
 --kofam_ko_list_loc /datasets/globe_databases/dram/20220824/kofam_ko_list.tsv \
