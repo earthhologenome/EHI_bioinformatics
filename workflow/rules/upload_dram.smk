@@ -59,7 +59,6 @@ rule upload_dram:
         ##Rename files from EHA -> EHM
         sed -s '1d;' dereped_mags.csv | tr ',' '\t' > {params.stats_dir}/ehm_eha_mapping.tsv
         #fix issue with separators
-        module load dos2unix/7.4.2
         dos2unix {params.stats_dir}/ehm_eha_mapping.tsv
 
         while read ehm eha abb; 
