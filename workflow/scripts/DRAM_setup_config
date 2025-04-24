@@ -2,6 +2,8 @@ git clone https://github.com/EisenRa/DRAM_more_modules.git -b 1.2.4_more_modules
 
 conda env create --prefix=/projects/ehi/data/0_Environments/conda/DRAM -f /projects/ehi/data/0_Environments/github_repos/DRAM_more_modules/environment.yaml
 
+cp /projects/ehi/data/0_Environments/github_repos/DRAM_more_modules/mag_annotator/summarize_genomes.py /projects/ehi/data/0_Environments/conda/DRAM/lib/python3.6/site-packages/mag_annotator/
+
 conda activate /projects/ehi/data/0_Environments/conda/DRAM
 
 pip install dataclasses
