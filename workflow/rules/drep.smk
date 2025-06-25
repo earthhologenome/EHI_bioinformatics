@@ -32,6 +32,7 @@ rule drep:
 
         # mjolnir drep module needs to have dependencies installed, here's a temp solution (ticket created for Bent 22/4/2025)
         # note that only fastANI 1.3 binaries work with the drep code (due to the check_dependencies)
+        module purge
         module load conda/25.1.1
         source activate /projects/ehi/data/0_Environments/conda/drep
 
