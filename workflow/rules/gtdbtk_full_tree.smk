@@ -25,8 +25,8 @@ rule gtdbtk_full_tree:
         GTDB_data=expand("{GTDB_data}", GTDB_data=config['GTDB_data']),
         outdir=os.path.join(config["workdir"] + "/gtdbtk"),
         dereplicated_mags=os.path.join(config["workdir"] + "/drep/dereplicated_genomes"),
-    conda:
-        f"{config['codedir']}/conda_envs/GTDB-tk.yaml"
+   # conda:
+   #     f"{config['codedir']}/conda_envs/GTDB-tk.yaml"
     threads:
         16
     resources:
@@ -42,6 +42,10 @@ rule gtdbtk_full_tree:
         """
         # Clean up in case of rerun
         rm -rf {params.outdir}
+
+        module purge
+        module load conda/25.1.1
+        source activate /projects/ehi/data/0_Environments/conda/1f1193fc5897e6143ed190423b019f91_
 
         # Specify path to reference data:
         export GTDBTK_DATA_PATH={params.GTDB_data}
